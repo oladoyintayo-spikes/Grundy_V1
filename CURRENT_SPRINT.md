@@ -6,7 +6,7 @@
 
 **Sprint Status:** 🟡 In Progress
 
-**Last Updated:** December 2024
+**Last Updated:** December 2024 (Aligned with ORCHESTRATOR.md + TASKS.md)
 
 ---
 
@@ -15,12 +15,16 @@
 | Resource | Location |
 |----------|----------|
 | **Design SoT** | `docs/GRUNDY_MASTER_BIBLE.md` |
+| **Agent Workflow** | `ORCHESTRATOR.md` |
+| **Task List** | `TASKS.md` |
 | **Asset List** | `docs/ASSET_MANIFEST.md` |
 | **This File** | `CURRENT_SPRINT.md` |
 
 > ⚠️ **Design SoT: `docs/GRUNDY_MASTER_BIBLE.md`**
 > 
 > If code or other docs conflict with the Bible, the Bible wins.
+>
+> **For AI Agents:** See `ORCHESTRATOR.md` for workflow, roles, and prompt templates.
 
 ---
 
@@ -49,6 +53,18 @@
 ---
 
 ## 📋 BACKLOG (Ordered by Priority)
+
+> **Note:** These sprint tasks map to `TASKS.md` Phase 0 (Pre-Flight).
+> Use `TASKS.md` as the master task list. This section provides sprint-specific context.
+
+| Sprint ID | TASKS.md ID | Mapping |
+|-----------|-------------|---------|
+| S1 | P0-1, P0-5 | Build + Deploy |
+| S2 | P0-3 | Hide DevPanel |
+| S3 | P0-4 | PWA Manifest |
+| S4 | P0-6 | Loading State |
+| S5 | P0-7 | Mobile Viewport |
+| S6 | P0-8 | Error Boundary |
 
 ### P0 — Must Complete This Sprint
 
@@ -391,12 +407,45 @@ describe('Feature', () => {
 
 ## 🔗 REFERENCES
 
-- **Design SoT:** `docs/GRUNDY_MASTER_BIBLE.md` ← START HERE
-- **Asset Manifest:** `docs/ASSET_MANIFEST.md`
-- **Design Decisions:** `/GRUNDY_MASTER_DECISIONS.md`
-- **Ticket Details:** `/TICKETS_WEB.yaml`
-- **Agent Workflow:** `/ORCHESTRATOR_WEB.md`
-- **Claude Code Tasks:** `/CLAUDE_CODE_MASTER_TODO.md`
+| Document | Location | Purpose |
+|----------|----------|---------|
+| **Design SoT** | `docs/GRUNDY_MASTER_BIBLE.md` | ← START HERE — Canonical design |
+| **Agent Workflow** | `ORCHESTRATOR.md` | Roles, prompts, approval workflow |
+| **Task List** | `TASKS.md` | 89 tasks, 13 phases, gap analysis |
+| **Asset Manifest** | `docs/ASSET_MANIFEST.md` | 120 sprites, state mapping |
+| **Lore Codex** | `docs/GRUNDY_LORE_CODEX.md` | Extended lore fragments |
+| **Onboarding Flow** | `docs/GRUNDY_ONBOARDING_FLOW.md` | FTUE detail |
+
+**Archived (Legacy):**
+- `GRUNDY_MASTER_DECISIONS.md` → moved to `archive/`
+- `TICKETS_WEB.yaml` → superseded by `TASKS.md`
+- `ORCHESTRATOR_WEB.md` → renamed to `ORCHESTRATOR.md`
+- `CLAUDE_CODE_MASTER_TODO.md` → superseded by `TASKS.md`
+
+---
+
+## 🤖 NOTES FOR AI AGENTS
+
+**Before starting any task:**
+1. Read `ORCHESTRATOR.md` — Understand your role and workflow
+2. Read `TASKS.md` — Find your assigned task and acceptance criteria
+3. Read relevant Bible section — Understand the spec
+
+**Key Rules:**
+- When design and code disagree, Bible wins
+- Do NOT invent systems not in the Bible
+- Mark inferences with `Assumption:`
+- Small, focused changes only
+
+**This Sprint Focus:**
+- Phase 0 tasks are BLOCKING — complete before feature work
+- Primary goal: Deploy to GitHub Pages for testing
+- No mini-games or advanced features until P0 complete
+
+**Protected Files (Do NOT edit without Chief Engineer approval):**
+- `docs/GRUNDY_MASTER_BIBLE.md`
+- `docs/ASSET_MANIFEST.md`
+- `ORCHESTRATOR.md`
 
 ---
 
@@ -409,4 +458,4 @@ describe('Feature', () => {
 
 ---
 
-*Sprint priorities live here. Design SoT: `docs/GRUNDY_MASTER_BIBLE.md`*
+*Sprint priorities live here. Design SoT: `docs/GRUNDY_MASTER_BIBLE.md` | Agent Workflow: `ORCHESTRATOR.md` | Tasks: `TASKS.md`*
