@@ -1,8 +1,9 @@
 # TASKS.md
 ## Grundy Development Task List
 
-**Last Updated:** December 2024  
-**Design SoT:** `docs/GRUNDY_MASTER_BIBLE.md`
+**Last Updated:** December 9, 2024  
+**Design SoT:** `docs/GRUNDY_MASTER_BIBLE.md`  
+**Pre-Flight Report:** December 9, 2024 ✅
 
 ---
 
@@ -28,26 +29,66 @@
 
 ---
 
+## PRE-FLIGHT REPORT SUMMARY
+
+> Completed: December 9, 2024
+
+### Critical Blockers Identified
+
+| Issue | Severity | Impact |
+|-------|----------|--------|
+| No `vite.config.ts` | 🔴 CRITICAL | `npm run dev/build` fails |
+| No `src/main.tsx` | 🔴 CRITICAL | App can't mount to DOM |
+| No `src/App.tsx` | 🔴 CRITICAL | No app shell |
+| No `tailwind.config.js` | 🔴 CRITICAL | Tailwind classes ignored |
+| No `postcss.config.js` | 🔴 CRITICAL | CSS processing broken |
+| Type errors in `systems.ts` | 🔴 CRITICAL | TypeScript compile fails |
+| No `public/` folder | 🔴 CRITICAL | PWA won't work |
+
+### Data Misalignments
+
+| Issue | Code | Bible | Resolution |
+|-------|------|-------|------------|
+| Pet count | 3 pets | 8 pets | Add missing 5 in Phase 1 |
+| Pet names | sprout, ripple | munchlet, fizz | Fix in Phase 1 |
+| Food count | 8 foods | 10 foods | Add Dream Treat, Golden Feast |
+| Currency types | bites/shinies | coins/gems | Standardize to coins/gems |
+| Evolution levels | youth=10, adult=25 | youth=7, evolved=13 | Use Bible values |
+
+### Decisions Made
+
+1. **Pet name migration:** Fix in Phase 1 (prototype is throwaway)
+2. **Store architecture:** Keep prototype isolated; Zustand for production
+3. **Starting inventory:** Bible wins → 100 coins, 0 gems
+4. **Evolution levels:** Bible wins → youth=7, evolved=13
+5. **Test infrastructure:** P0-2 creates scaffold, not "verify existing"
+
+---
+
 ## GAP ANALYSIS: Code vs Bible
 
-> Last analyzed: December 2024
+> Last analyzed: December 9, 2024 (Post Pre-Flight)
 
 ### System Status Overview
 
 | System | Bible Section | Status | Gap Summary |
 |--------|---------------|--------|-------------|
-| **FTUE / Onboarding** | 7 | 🟡 PARTIAL | Tutorial exists, but lore intro, mode select, personality dialogue missing |
-| **Core Loop (Feeding)** | 4, 5 | 🟡 PARTIAL | Basic feeding works; affinity matrix, weight system, some reactions missing |
-| **Lore Journal** | 6.4 | 🔴 MISSING | Not implemented — fragments, unlocks, journal UI all needed |
-| **Mini-Games** | 8 | 🟡 PARTIAL | Snack Catch exists; Memory Match, Rhythm Tap, Poop Scoop missing; energy system missing |
-| **Shop & Economy** | 11 | 🟡 PARTIAL | Basic shop exists; tabs, categories, bundles, inventory expansion missing |
-| **Pet Slots** | 11.6 | 🔴 MISSING | Not implemented — multi-pet care system |
-| **Cozy vs Classic** | 9 | 🟡 PARTIAL | Mode toggle exists; sickness, neglect warnings, runaway mechanic missing |
-| **Art / Sprite States** | 13.6 | 🟡 PARTIAL | Basic sprites work; state resolution function, weight variants missing |
-| **Sound & Vibration** | 12 | 🔴 MISSING | Not implemented — Web Audio, vibration patterns |
-| **Pet Abilities** | 3.7 | 🟡 PARTIAL | Some abilities work; need audit for all 8 pets |
-| **Progression** | 6 | 🟢 ALIGNED | XP formula, level curve working |
-| **PWA / Deploy** | 15 | 🟡 PARTIAL | Manifest exists; needs verification and deployment |
+| **Toolchain** | — | 🔴 MISSING | vite.config, main.tsx, tailwind config all missing |
+| **FTUE / Onboarding** | 7 | 🔴 MISSING | No FTUE components exist |
+| **Core Loop (Feeding)** | 4, 5 | 🟡 PARTIAL | Basic feeding in GrundyPrototype.tsx only |
+| **Lore Journal** | 6.4 | 🔴 MISSING | Not implemented |
+| **Mini-Games** | 8 | 🔴 MISSING | No SnackCatch or hub exists |
+| **Shop & Economy** | 11 | 🟡 PARTIAL | Basic shop in prototype |
+| **Pet Slots** | 11.6 | 🔴 MISSING | Not implemented |
+| **Cozy vs Classic** | 9 | 🔴 MISSING | No mode system exists |
+| **Art / Sprite States** | 13.6 | 🟡 PARTIAL | 120 sprites exist, no state logic |
+| **Sound & Vibration** | 12 | 🔴 MISSING | Not implemented |
+| **Pet Abilities** | 3.7 | 🔴 MISSING | No abilities implemented |
+| **Progression** | 6 | 🟡 NEEDS AUDIT | XP formula present, evolution levels conflict |
+| **PWA / Deploy** | 15 | 🔴 MISSING | No manifest/public folder |
+| **Pet Data** | 3 | 🟠 MISALIGNED | Only 3 pets (need 8), deprecated names |
+| **Food Data** | 5 | 🟠 MISALIGNED | Only 8 foods (need 10) |
+| **Currency Types** | 11 | 🟠 MISALIGNED | Mixed bites/shinies vs coins/gems |
 
 ### Gap Legend
 
@@ -60,37 +101,113 @@
 
 ---
 
-## PHASE 0: Pre-Flight (BLOCKING)
+## PHASE 0: Pre-Flight & Toolchain (BLOCKING)
 
-> Complete these before any feature work.
+> ⚠️ NOTHING ELSE CAN PROCEED UNTIL PHASE 0 IS COMPLETE
+
+### P0-0: Scaffold Missing Toolchain
+
+> Pre-Flight revealed critical missing files. Must complete first.
+
+| ID | Task | Status | File | Notes |
+|----|------|--------|------|-------|
+| P0-0a | Create Vite config | ⬜ | `vite.config.ts` | Standard Vite + React + path aliases |
+| P0-0b | Create app entry point | ⬜ | `src/main.tsx` | ReactDOM.createRoot, import App |
+| P0-0c | Create app shell | ⬜ | `src/App.tsx` | Import GrundyPrototype, basic wrapper |
+| P0-0d | Create CSS entry | ⬜ | `src/index.css` | `@tailwind base/components/utilities` |
+| P0-0e | Create Tailwind config | ⬜ | `tailwind.config.js` | Content: `src/**/*.{ts,tsx}` |
+| P0-0f | Create PostCSS config | ⬜ | `postcss.config.js` | tailwindcss + autoprefixer |
+| P0-0g | Create public folder | ⬜ | `public/` | Empty folder for static assets |
+| P0-0h | Fix systems.ts types | ⬜ | `src/game/systems.ts` | Remove refs to non-existent properties |
+| P0-0i | Standardize currency | ⬜ | `src/types/index.ts` | Change to `'coins' \| 'gems' \| 'eventTokens'` |
+| P0-0j | Run npm install | ⬜ | — | Install all dependencies |
+
+**Validation Checkpoint:**
+```bash
+npm install        # Must complete without errors
+npm run build      # Must exit 0
+```
+
+### P0-1: Verify Build
+
+| ID | Task | Status | Acceptance Criteria |
+|----|------|--------|---------------------|
+| P0-1 | Verify build compiles | ⬜ | `npm run build` succeeds with no errors |
+
+### P0-2: Test Infrastructure
+
+| ID | Task | Status | Acceptance Criteria |
+|----|------|--------|---------------------|
+| P0-2a | Verify Vitest installed | ⬜ | `vitest` in devDependencies |
+| P0-2b | Create test setup file | ⬜ | `src/test/setup.ts` exists |
+| P0-2c | Create smoke test | ⬜ | `src/__tests__/smoke.test.ts` with 1 passing test |
+| P0-2 | Run test suite | ⬜ | `npm test` passes |
+
+### P0-3 through P0-8: Verification & Deploy
 
 | ID | Task | Status | Bible | Acceptance Criteria |
 |----|------|--------|-------|---------------------|
-| P0-1 | Verify build compiles | ⬜ | — | `npm run build` succeeds with no errors |
-| P0-2 | Verify tests pass | ⬜ | — | `npm test` passes all existing tests |
 | P0-3 | Hide DevPanel in production | ⬜ | — | DevPanel only visible when `import.meta.env.DEV` |
-| P0-4 | Verify PWA manifest exists | ⬜ | 15.2 | `manifest.json` in public/, icons present |
+| P0-4 | Create PWA manifest | ⬜ | 15.2 | `public/manifest.json` with icons |
 | P0-5 | Deploy to GitHub Pages | ⬜ | — | Live URL accessible, game playable |
-| P0-6 | Add loading state for initial render | ⬜ | — | Prevents flash of unstyled content |
+| P0-6 | Add loading state | ⬜ | — | Prevents flash of unstyled content |
 | P0-7 | Mobile viewport verification | ⬜ | — | Proper scaling on mobile devices |
 | P0-8 | Add error boundary | ⬜ | — | Graceful crash recovery |
+
+**Phase 0 Exit Criteria:**
+- [ ] `npm run build` exits 0
+- [ ] `npm test` passes
+- [ ] Game loads in browser at localhost
+- [ ] No TypeScript errors
+- [ ] No console errors on load
 
 ---
 
 ## PHASE 1: Core Systems Alignment
 
-> Ensure existing code matches Bible specs.
+> Ensure existing code matches Bible specs. Fix all MISALIGNED items.
+
+### P1-A: Fix Data Misalignments (from Pre-Flight)
+
+| ID | Task | Status | Issue | Resolution |
+|----|------|--------|-------|------------|
+| P1-A1 | Update pet names | ⬜ | sprout→munchlet, ripple→fizz | Update `src/data/pets.ts` |
+| P1-A2 | Add missing 5 pets | ⬜ | Only 3 pets exist | Add plompo, chomper, whisp, luxe, fizz |
+| P1-A3 | Add missing 2 foods | ⬜ | Only 8 foods | Add Dream Treat, Golden Feast |
+| P1-A4 | Fix evolution levels | ⬜ | youth=10→7, adult=25→13 | Update `src/data/config.ts` |
+| P1-A5 | Fix starting inventory | ⬜ | Match Bible | 100 coins, 0 gems |
+
+### P1-B: Audit Definitions
 
 | ID | Task | Status | Bible | Acceptance Criteria |
 |----|------|--------|-------|---------------------|
-| P1-1 | Audit pet definitions match Bible | ⬜ | 3.x | All 8 pets have correct abilities, colors, unlock costs per Section 3 |
-| P1-2 | Audit food definitions match Bible | ⬜ | 5.x | All foods have correct stats, costs per Section 5.4 |
-| P1-3 | Implement complete affinity matrix | ⬜ | 5.5 | All 8 pets × all foods affinity matches Bible table |
-| P1-4 | Verify XP formula matches Bible | ⬜ | 6.2 | `XP(L) = 20 + (L² × 1.4)` implemented correctly |
-| P1-5 | Verify mood tiers match Bible | ⬜ | 4.2 | 5 mood tiers with correct XP multipliers |
-| P1-6 | Verify affinity multipliers | ⬜ | 5.3 | Loved=2×, Liked=1.5×, Neutral=1×, Disliked=0.5× |
-| P1-7 | Audit pet abilities implementation | ⬜ | 3.7 | All 8 pet abilities trigger correctly per Bible |
-| P1-8 | Implement pet ability indicators | ⬜ | 3.7 | Show "+25% 🎮" style indicators when ability triggers |
+| P1-B1 | Audit pet definitions | ⬜ | 3.x | All 8 pets have correct abilities, colors, unlock costs |
+| P1-B2 | Audit food definitions | ⬜ | 5.x | All 10 foods have correct stats, costs |
+| P1-B3 | Implement affinity matrix | ⬜ | 5.5 | All 8 pets × 10 foods (80 entries) |
+| P1-B4 | Verify XP formula | ⬜ | 6.2 | `XP(L) = 20 + (L² × 1.4)` |
+| P1-B5 | Verify mood tiers | ⬜ | 4.2 | 5 tiers with correct XP multipliers |
+| P1-B6 | Verify affinity multipliers | ⬜ | 5.3 | Loved=2×, Liked=1.5×, Neutral=1×, Disliked=0.5× |
+
+### P1-C: Pet Abilities
+
+| ID | Task | Status | Bible | Acceptance Criteria |
+|----|------|--------|-------|---------------------|
+| P1-C1 | Implement Munchlet ability | ⬜ | 3.7 | +10% bond from feeding |
+| P1-C2 | Implement Grib ability | ⬜ | 3.7 | -20% mood penalty from disliked food |
+| P1-C3 | Implement Plompo ability | ⬜ | 3.7 | -20% stat decay rate |
+| P1-C4 | Implement Fizz ability | ⬜ | 3.7 | +25% minigame score bonus |
+| P1-C5 | Implement Ember ability | ⬜ | 3.7 | 2× coins from spicy foods |
+| P1-C6 | Implement Chomper ability | ⬜ | 3.7 | No dislikes (neutral minimum) |
+| P1-C7 | Implement Whisp ability | ⬜ | 3.7 | +50% XP from rare foods |
+| P1-C8 | Implement Luxe ability | ⬜ | 3.7 | +100% gem drops |
+| P1-C9 | Add ability indicators | ⬜ | 3.7 | Show "+25% 🎮" when ability triggers |
+
+**Phase 1 Exit Criteria:**
+- [ ] All 8 pets defined with correct data
+- [ ] All 10 foods defined
+- [ ] Affinity matrix complete (80 entries)
+- [ ] All 8 abilities trigger correctly
+- [ ] No MISALIGNED items remain
 
 ---
 
@@ -100,12 +217,17 @@
 
 | ID | Task | Status | Bible | Acceptance Criteria |
 |----|------|--------|-------|---------------------|
-| P2-1 | Create `getDisplayState()` function | ⬜ | 13.6 | Returns correct state based on stats priority |
-| P2-2 | Implement transient state handling | ⬜ | 13.6 | Eating, excited, pooping states work |
-| P2-3 | Implement need state handling | ⬜ | 13.6 | Hungry, sad, crying states at correct thresholds |
-| P2-4 | Implement ambient state handling | ⬜ | 13.6 | Happy, ecstatic based on mood range |
-| P2-5 | Connect sprites to display states | ⬜ | 13.6 | Pet component shows correct sprite for state |
-| P2-6 | Implement eating reaction states | ⬜ | 13.6 | loved, liked, neutral, disliked eating animations |
+| P2-1 | Create `getDisplayState()` | ⬜ | 13.6 | Returns correct state based on priority |
+| P2-2 | Implement transient states | ⬜ | 13.6 | Eating, excited, pooping states |
+| P2-3 | Implement need states | ⬜ | 13.6 | Hungry, sad, crying at thresholds |
+| P2-4 | Implement ambient states | ⬜ | 13.6 | Happy, ecstatic based on mood |
+| P2-5 | Connect sprites to states | ⬜ | 13.6 | Pet shows correct sprite |
+| P2-6 | Implement eating reactions | ⬜ | 13.6 | loved, liked, neutral, disliked |
+
+**Phase 2 Exit Criteria:**
+- [ ] Pet sprite changes based on state
+- [ ] All eating animations work
+- [ ] State priority order correct
 
 ---
 
@@ -115,14 +237,19 @@
 
 | ID | Task | Status | Bible | Acceptance Criteria |
 |----|------|--------|-------|---------------------|
-| P3-1 | Audit current FTUE vs Bible | ⬜ | 7.x | Document gaps between implementation and spec |
-| P3-2 | Implement world intro screen | ⬜ | 7.3 | 5-second lore snippet with fade-in text |
-| P3-3 | Add pet origin snippets to selection | ⬜ | 7.4 | Each pet shows 2-line origin + loves/hates |
-| P3-4 | Implement locked pet teasers | ⬜ | 7.4 | Locked pets show partial lore snippets |
-| P3-5 | Add personality dialogue to tutorial | ⬜ | 7.6 | Pet-specific greetings, reactions per Bible tables |
-| P3-6 | Implement mode select screen | ⬜ | 7.7 | Cozy vs Classic choice after tutorial |
-| P3-7 | Enforce FTUE rules | ⬜ | 7.8 | No monetization, first reaction always positive |
-| P3-8 | Verify <60 second FTUE timing | ⬜ | 7.1 | Total onboarding under 60 seconds |
+| P3-1 | Audit current FTUE vs Bible | ⬜ | 7.x | Document all gaps |
+| P3-2 | Implement world intro | ⬜ | 7.3 | 5-second lore snippet |
+| P3-3 | Add pet origin snippets | ⬜ | 7.4 | 2-line origin + loves/hates |
+| P3-4 | Implement locked pet teasers | ⬜ | 7.4 | Partial lore for locked pets |
+| P3-5 | Add personality dialogue | ⬜ | 7.6 | Pet-specific greetings |
+| P3-6 | Implement mode select | ⬜ | 7.7 | Cozy vs Classic choice |
+| P3-7 | Enforce FTUE rules | ⬜ | 7.8 | No monetization, first reaction positive |
+| P3-8 | Verify <60s timing | ⬜ | 7.1 | Total onboarding under 60 seconds |
+
+**Phase 3 Exit Criteria:**
+- [ ] New player can complete FTUE in <60s
+- [ ] Mode selection works
+- [ ] First feeding always positive
 
 ---
 
@@ -132,14 +259,14 @@
 
 | ID | Task | Status | Bible | Acceptance Criteria |
 |----|------|--------|-------|---------------------|
-| P4-1 | Audit current shop vs Bible | ⬜ | 11.5 | Document gaps in item catalog, categories |
-| P4-2 | Implement shop tabs | ⬜ | 11.5 | Food & Care, Cosmetics, Utility, Bundles, Event tabs |
-| P4-3 | Implement tab visibility rules | ⬜ | 11.5 | Utility at Lv5+, Bundles at Lv3+, Event only during events |
-| P4-4 | Add all Bible shop items | ⬜ | 11.5 | Complete item catalog from Bible tables |
-| P4-5 | Implement item visibility rules | ⬜ | 11.5 | Level-locked grayed, bond-locked grayed, owned shows ✓ |
-| P4-6 | Implement "Recommended For You" | ⬜ | 11.5 | Context-aware recommendations |
-| P4-7 | Add purchase confirmation for gems | ⬜ | 11.1 | Confirm dialog for purchases ≥50 gems |
-| P4-8 | Add shop milestones | ⬜ | 11.5 | "Window Shopper", "Coin Roller", etc. badges |
+| P4-1 | Audit shop vs Bible | ⬜ | 11.5 | Document gaps |
+| P4-2 | Implement shop tabs | ⬜ | 11.5 | Food, Cosmetics, Utility, Bundles, Event |
+| P4-3 | Implement tab visibility | ⬜ | 11.5 | Utility Lv5+, Bundles Lv3+, Event during events |
+| P4-4 | Add all Bible items | ⬜ | 11.5 | Complete catalog |
+| P4-5 | Implement visibility rules | ⬜ | 11.5 | Level-locked gray, owned shows ✓ |
+| P4-6 | Add "Recommended" section | ⬜ | 11.5 | Context-aware recommendations |
+| P4-7 | Add gem confirm dialog | ⬜ | 11.1 | Confirm for ≥50 gems |
+| P4-8 | Add shop milestones | ⬜ | 11.5 | Achievement badges |
 
 ---
 
@@ -149,11 +276,11 @@
 
 | ID | Task | Status | Bible | Acceptance Criteria |
 |----|------|--------|-------|---------------------|
-| P5-1 | Add inventory capacity to state | ⬜ | 11.7 | `inventoryCapacity` field, default 15 |
-| P5-2 | Implement capacity check on acquire | ⬜ | 11.7 | Cannot add food if inventory full |
-| P5-3 | Add inventory expansion items | ⬜ | 11.7 | 4 tiers: 25/50/100/150 gems |
-| P5-4 | Implement expansion purchase | ⬜ | 11.7 | Purchase increases capacity by 5, max 35 |
-| P5-5 | Show capacity in UI | ⬜ | 11.7 | "12/15" style display in food bag |
+| P5-1 | Add inventory capacity | ⬜ | 11.7 | Default 15 |
+| P5-2 | Implement capacity check | ⬜ | 11.7 | Block if full |
+| P5-3 | Add expansion items | ⬜ | 11.7 | 25/50/100/150 gems |
+| P5-4 | Implement expansion | ⬜ | 11.7 | +5 per purchase, max 35 |
+| P5-5 | Show capacity in UI | ⬜ | 11.7 | "12/15" display |
 
 ---
 
@@ -163,12 +290,12 @@
 
 | ID | Task | Status | Bible | Acceptance Criteria |
 |----|------|--------|-------|---------------------|
-| P6-1 | Add pet slots to state | ⬜ | 11.6 | `activeSlots: string[]`, `maxSlots: number` |
-| P6-2 | Implement slot purchase | ⬜ | 11.6 | 100/150/200 gems for slots 2/3/4 |
-| P6-3 | Update pet selector for slots | ⬜ | 11.6 | Can assign pet to slot, swap between slots |
-| P6-4 | Implement parallel decay | ⬜ | 11.6 | All slotted pets decay independently |
-| P6-5 | Update notifications for slots | ⬜ | 11.6 | Notifications can come from any slotted pet |
-| P6-6 | Add slot UI indicator | ⬜ | 11.6 | Show which slot is active, quick-switch |
+| P6-1 | Add pet slots to state | ⬜ | 11.6 | `activeSlots`, `maxSlots` |
+| P6-2 | Implement slot purchase | ⬜ | 11.6 | 100/150/200 gems |
+| P6-3 | Update pet selector | ⬜ | 11.6 | Assign/swap slots |
+| P6-4 | Implement parallel decay | ⬜ | 11.6 | All slotted pets decay |
+| P6-5 | Update notifications | ⬜ | 11.6 | Any pet can trigger |
+| P6-6 | Add slot UI | ⬜ | 11.6 | Active indicator, quick-switch |
 
 ---
 
@@ -178,14 +305,14 @@
 
 | ID | Task | Status | Bible | Acceptance Criteria |
 |----|------|--------|-------|---------------------|
-| P7-1 | Implement sickness trigger | ⬜ | 9.4 | Hunger=0 for 4h OR random when overweight/dirty |
-| P7-2 | Implement sick state | ⬜ | 9.4 | 2× decay, can't play games, shows sick sprite |
-| P7-3 | Implement medicine cure | ⬜ | 9.4 | Medicine item cures instantly |
-| P7-4 | Implement weight system | ⬜ | 5.7 | Hidden weight 0-100, visual stages, snack risk |
-| P7-5 | Implement neglect warnings | ⬜ | 9.4 | 4-stage warning system before runaway |
-| P7-6 | Implement runaway mechanic | ⬜ | 9.4 | Pet leaves after sustained neglect |
+| P7-1 | Implement sickness trigger | ⬜ | 9.4 | Hunger=0 4h OR overweight/dirty |
+| P7-2 | Implement sick state | ⬜ | 9.4 | 2× decay, can't play games |
+| P7-3 | Implement medicine | ⬜ | 9.4 | Instant cure |
+| P7-4 | Implement weight system | ⬜ | 5.7 | Hidden 0-100, visual stages |
+| P7-5 | Implement neglect warnings | ⬜ | 9.4 | 4-stage warning |
+| P7-6 | Implement runaway | ⬜ | 9.4 | Pet leaves after neglect |
 | P7-7 | Implement return options | ⬜ | 9.4 | 48h wait OR 25 gems, bond -50% |
-| P7-8 | Hide care items in Cozy mode | ⬜ | 9.4 | Medicine, Diet Food not visible in Cozy |
+| P7-8 | Hide care items in Cozy | ⬜ | 9.4 | Medicine not visible |
 
 ---
 
@@ -195,13 +322,13 @@
 
 | ID | Task | Status | Bible | Acceptance Criteria |
 |----|------|--------|-------|---------------------|
-| P8-1 | Audit Snack Catch matches Bible | ⬜ | 8.3 | Scoring, tiers, rewards match spec |
-| P8-2 | Implement energy system | ⬜ | 8.2 | 50 max, 10/game, first daily free, regen 1/3min |
-| P8-3 | Implement Memory Match | ⬜ | 8.4 | 4×4 grid, 60s, scoring per Bible |
-| P8-4 | Implement Rhythm Tap | ⬜ | 8.5 | Timing game, 30-60s, scoring per Bible |
-| P8-5 | Implement Poop Scoop | ⬜ | 8.6 | Tap-to-clean, 60s, scoring per Bible |
-| P8-6 | Implement pet ability effects on games | ⬜ | 8.1 | Whisp peek, Plompo slow-mo, Grib 2× poop pts |
-| P8-7 | Add daily high score tracking | ⬜ | 8.1 | Track and display daily best per game |
+| P8-1 | Audit Snack Catch | ⬜ | 8.3 | Match Bible scoring |
+| P8-2 | Implement energy system | ⬜ | 8.2 | 50 max, 10/game, first free |
+| P8-3 | Implement Memory Match | ⬜ | 8.4 | 4×4, 60s |
+| P8-4 | Implement Rhythm Tap | ⬜ | 8.5 | Timing, 30-60s |
+| P8-5 | Implement Poop Scoop | ⬜ | 8.6 | Tap-to-clean, 60s |
+| P8-6 | Implement pet abilities | ⬜ | 8.1 | Whisp peek, Plompo slow-mo |
+| P8-7 | Add daily high scores | ⬜ | 8.1 | Track per game |
 
 ---
 
@@ -211,13 +338,13 @@
 
 | ID | Task | Status | Bible | Acceptance Criteria |
 |----|------|--------|-------|---------------------|
-| P9-1 | Create sound manager | ⬜ | 12.1 | Web Audio API wrapper with mute support |
-| P9-2 | Implement UI sounds | ⬜ | 12.1 | Button tap, menu open/close, modal appear |
-| P9-3 | Implement feeding sounds | ⬜ | 12.1 | Basic, liked, loved, disliked, full sounds |
-| P9-4 | Implement reward sounds | ⬜ | 12.1 | XP gain, coin, gem, level up, unlock |
-| P9-5 | Implement pet sounds | ⬜ | 12.1 | Happy, sad, hungry, poop, clean, sleep |
-| P9-6 | Implement vibration patterns | ⬜ | 12.3 | Android-only patterns per Bible table |
-| P9-7 | Add volume settings | ⬜ | 12.4 | Master, Music, SFX, Vibration toggles |
+| P9-1 | Create sound manager | ⬜ | 12.1 | Web Audio + mute |
+| P9-2 | Implement UI sounds | ⬜ | 12.1 | Tap, menu, modal |
+| P9-3 | Implement feeding sounds | ⬜ | 12.1 | Basic, liked, loved, disliked |
+| P9-4 | Implement reward sounds | ⬜ | 12.1 | XP, coin, gem, level up |
+| P9-5 | Implement pet sounds | ⬜ | 12.1 | Happy, sad, hungry |
+| P9-6 | Implement vibration | ⬜ | 12.3 | Android patterns |
+| P9-7 | Add volume settings | ⬜ | 12.4 | Master, Music, SFX, Vibration |
 
 ---
 
@@ -227,12 +354,12 @@
 
 | ID | Task | Status | Bible | Acceptance Criteria |
 |----|------|--------|-------|---------------------|
-| P10-1 | Create journal data structure | ⬜ | 6.4 | Fragments, unlock states per pet |
-| P10-2 | Create journal UI | ⬜ | 6.4 | Codex view, locked/unlocked fragment display |
-| P10-3 | Implement fragment unlocks | ⬜ | 6.4 | Bond level triggers per Bible table |
-| P10-4 | Implement general lore unlocks | ⬜ | 6.4 | Tutorial complete, 7 days, 3 pets, Bond 50 |
-| P10-5 | Add preference notes auto-fill | ⬜ | 6.4 | Discovered preferences recorded |
-| P10-6 | Implement completion rewards | ⬜ | 6.4 | Titles and cosmetics per milestone |
+| P10-1 | Create journal data | ⬜ | 6.4 | Fragments, unlock states |
+| P10-2 | Create journal UI | ⬜ | 6.4 | Codex view |
+| P10-3 | Implement unlocks | ⬜ | 6.4 | Bond level triggers |
+| P10-4 | Implement general lore | ⬜ | 6.4 | Tutorial, 7 days, 3 pets |
+| P10-5 | Add preference notes | ⬜ | 6.4 | Auto-fill discovered |
+| P10-6 | Implement rewards | ⬜ | 6.4 | Titles, cosmetics |
 
 ---
 
@@ -242,27 +369,27 @@
 
 | ID | Task | Status | Bible | Acceptance Criteria |
 |----|------|--------|-------|---------------------|
-| P11-1 | Add cosmetics to state | ⬜ | 11.5 | `ownedCosmetics`, `equippedCosmetics` |
-| P11-2 | Create cosmetics data | ⬜ | 11.5 | All cosmetics from Bible with rarity, cost |
-| P11-3 | Implement cosmetic purchase | ⬜ | 11.5 | Gems only, shows "Owned ✓" after purchase |
-| P11-4 | Implement cosmetic equip | ⬜ | 11.5 | Can equip hat, accessory, aura per pet |
-| P11-5 | Render equipped cosmetics | ⬜ | 11.5 | Cosmetics overlay on pet sprite |
-| P11-6 | Implement rarity badges | ⬜ | 11.5 | Common/Uncommon/Rare/Epic/Legendary borders |
+| P11-1 | Add cosmetics to state | ⬜ | 11.5 | owned, equipped |
+| P11-2 | Create cosmetics data | ⬜ | 11.5 | All items with rarity |
+| P11-3 | Implement purchase | ⬜ | 11.5 | Gems only |
+| P11-4 | Implement equip | ⬜ | 11.5 | Hat, accessory, aura |
+| P11-5 | Render cosmetics | ⬜ | 11.5 | Overlay on sprite |
+| P11-6 | Implement rarity badges | ⬜ | 11.5 | Common→Legendary borders |
 
 ---
 
 ## PHASE 12: Future Systems (Deferred)
 
-> These require additional planning or are post-MVP.
+> Post-MVP features.
 
 | ID | Task | Status | Bible | Acceptance Criteria |
 |----|------|--------|-------|---------------------|
-| P12-1 | Season Pass design | ⏸️ | 11.9 | 30-tier hybrid system |
-| P12-2 | Season Pass implementation | ⏸️ | 11.9 | Free + Premium tracks, XP gain |
-| P12-3 | Ad SDK integration | ⏸️ | 11.10 | Interstitials + rewarded ads |
-| P12-4 | Rewarded ad opportunities | ⏸️ | 11.10 | 6 placement types per Bible |
+| P12-1 | Season Pass design | ⏸️ | 11.9 | 30-tier system |
+| P12-2 | Season Pass implementation | ⏸️ | 11.9 | Free + Premium tracks |
+| P12-3 | Ad SDK integration | ⏸️ | 11.10 | Interstitials + rewarded |
+| P12-4 | Rewarded ad placements | ⏸️ | 11.10 | 6 types |
 | P12-5 | LiveOps scheduler | ⏸️ | 10 | Time-based events |
-| P12-6 | Achievements system | ⏸️ | — | Full achievement framework |
+| P12-6 | Achievements system | ⏸️ | — | Full framework |
 
 ---
 
@@ -272,40 +399,49 @@
 
 | ID | Task | Status | Scope |
 |----|------|--------|-------|
-| T-1 | Core loop test suite | ⬜ | Feed → XP → Level up → Rewards |
-| T-2 | Economy test suite | ⬜ | Buy → Spend → Balance correct |
-| T-3 | Multi-pet test suite | ⬜ | Switch pets → State preserved |
-| T-4 | Persistence test suite | ⬜ | Refresh → State restored |
-| T-5 | Mobile interaction tests | ⬜ | Touch interactions work |
-| T-6 | PWA install test | ⬜ | Install to home screen works |
-| T-7 | FTUE flow test | ⬜ | Complete onboarding <60s |
-| T-8 | Mini-game scoring tests | ⬜ | Rewards match Bible tiers |
+| T-1 | Core loop tests | ⬜ | Feed → XP → Level → Rewards |
+| T-2 | Economy tests | ⬜ | Buy → Spend → Balance |
+| T-3 | Multi-pet tests | ⬜ | Switch → State preserved |
+| T-4 | Persistence tests | ⬜ | Refresh → State restored |
+| T-5 | Mobile tests | ⬜ | Touch interactions |
+| T-6 | PWA tests | ⬜ | Install to home |
+| T-7 | FTUE tests | ⬜ | Complete <60s |
+| T-8 | Mini-game tests | ⬜ | Rewards match Bible |
 
 ---
 
 ## TASK DEPENDENCIES
 
 ```
-PHASE 0 (Pre-Flight) ←── BLOCKING
-    ↓
-PHASE 1 (Core Alignment)
-    ↓
+PHASE 0 (Pre-Flight + Toolchain) ←── BLOCKING
+    │
+    ▼
+PHASE 1 (Core Alignment + Data Fixes)
+    │
+    ▼
 PHASE 2 (Art/Sprite States)
-    ↓
+    │
+    ▼
 ┌───┬───┬───┬───┐
-↓   ↓   ↓   ↓   ↓
+│   │   │   │   │
+▼   ▼   ▼   ▼   ▼
 P3  P4  P7  P8  P9
 FTUE Shop Classic Mini Sound
-        ↓
+        │
+        ▼
       P5 (Inventory)
-        ↓
+        │
+        ▼
       P6 (Pet Slots)
-        ↓
+        │
+        ▼
 ┌───────┴───────┐
-↓               ↓
+│               │
+▼               ▼
 P10             P11
-Lore Journal    Cosmetics
-        ↓
+Lore            Cosmetics
+        │
+        ▼
       P12 (Future)
 ```
 
@@ -344,25 +480,105 @@ Lore Journal    Cosmetics
 | Shop data | `src/data/shop.ts` |
 | Types | `src/types/index.ts` |
 | Config | `src/data/config.ts` |
+| Systems | `src/game/systems.ts` |
+
+### P0-0 File Templates
+
+When creating P0-0 files, use these patterns:
+
+**vite.config.ts:**
+```typescript
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import path from 'path'
+
+export default defineConfig({
+  plugins: [react()],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+    },
+  },
+})
+```
+
+**src/main.tsx:**
+```typescript
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from './App'
+import './index.css'
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+)
+```
+
+**src/App.tsx:**
+```typescript
+import GrundyPrototype from './GrundyPrototype'
+
+function App() {
+  return <GrundyPrototype />
+}
+
+export default App
+```
+
+**src/index.css:**
+```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+```
+
+**tailwind.config.js:**
+```javascript
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  theme: { extend: {} },
+  plugins: [],
+}
+```
+
+**postcss.config.js:**
+```javascript
+export default {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+}
+```
 
 ---
 
 ## Notes
 
-### Assumptions Made
+### Pre-Flight Findings (December 9, 2024)
 
-1. `Assumption:` Current prototype has basic feeding loop working — needs verification in P0
-2. `Assumption:` Snack Catch mini-game exists but may not match Bible scoring — needs audit in P8-1
-3. `Assumption:` Mode toggle exists but Classic consequences not fully implemented — confirmed in Bible 15.6
-4. `Assumption:` Test framework is Vitest based on CURRENT_SPRINT.md references
+1. **README describes full prototype that doesn't exist** — Only GrundyPrototype.tsx exists
+2. **GrundyPrototype.tsx is functional** — Use as starting point, not throwaway
+3. **120 sprites confirmed** — Art assets are ready
+4. **store.ts and systems.ts exist** — But have type errors and wrong pet names
+5. **No public/ folder** — Must create for PWA
 
-### Sources for This Analysis
+### Assumptions
 
-- `docs/GRUNDY_MASTER_BIBLE.md` v1.3 (Section 15.6 Known Gaps)
-- `docs/ASSET_MANIFEST.md` (120 sprites confirmed)
-- `CURRENT_SPRINT.md` (existing sprint tasks merged)
-- `docs/GRUNDY_ONBOARDING_FLOW.md` (FTUE detail)
-- `docs/GRUNDY_LORE_CODEX.md` (journal fragment content)
+1. GrundyPrototype.tsx is the intended prototype to wrap with App.tsx
+2. Deprecated pet names are legacy and will be fixed in P1-A
+3. Bible values override any conflicting code values
+4. Vitest is the test framework (per package.json)
+
+### Sources
+
+- `docs/GRUNDY_MASTER_BIBLE.md` v1.3
+- `docs/ASSET_MANIFEST.md` (120 sprites)
+- `Pre_flight_2025-12-09.md` (diagnostic report)
+- `ORCHESTRATOR.md` (agent workflow)
 
 ---
 
