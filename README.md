@@ -288,11 +288,22 @@ npm test -- FeedingSystem
 ## Quick Reference Links
 
 - **Design SoT:** `docs/GRUNDY_MASTER_BIBLE.md` ← START HERE
+- **AI Agent Workflow:** `ORCHESTRATOR.md` ← HOW AGENTS WORK ON THIS REPO
+- **Task List:** `TASKS.md`
+- **Current Sprint:** `CURRENT_SPRINT.md`
 - **Design Decisions:** See `GRUNDY_MASTER_DECISIONS.md`
-- **Ticket Breakdown:** See `TICKETS_WEB.yaml`
-- **AI Agent Workflow:** See `ORCHESTRATOR_WEB.md`
-- **Development History:** See `DEVLOG_AND_HISTORY.md`
-- **Current Sprint:** See `CURRENT_SPRINT.md`
+
+---
+
+## Contributing (AI Agents)
+
+For how AI agents should work on this repo, see `ORCHESTRATOR.md`.
+
+Key rules:
+- Read `TASKS.md` for the current task list
+- When design and code disagree, `docs/GRUNDY_MASTER_BIBLE.md` wins
+- Do not edit protected files directly (Bible, Asset Manifest, Orchestrator)
+- Mark any inferences with `Assumption:`
 
 ---
 
