@@ -1,18 +1,21 @@
 // ============================================
 // GRUNDY WEB PROTOTYPE — TYPE DEFINITIONS
-// ALIGNED WITH: grundy_interactive_mockup.html
 // ============================================
 
 // --- Currency ---
-export type CurrencyType = 'bites' | 'shinies' | 'eventTokens';
+// Per Bible: coins and gems (not bites/shinies)
+export type CurrencyType = 'coins' | 'gems' | 'eventTokens';
 
-// --- Affinity (from mockup) ---
+// --- Affinity (from Bible) ---
 export type Affinity = 'loved' | 'liked' | 'neutral' | 'disliked';
 
 // --- Rarity ---
 export type Rarity = 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary';
 
-// --- Mood (1-5 scale from mockup) ---
+// --- Mood State (string-based for store.ts compatibility) ---
+export type MoodState = 'happy' | 'neutral' | 'sad' | 'ecstatic';
+
+// --- Mood Tier (1-5 scale, alternative representation) ---
 export type MoodTier = 1 | 2 | 3 | 4 | 5;
 
 export interface MoodData {
@@ -31,9 +34,15 @@ export const MOOD_DATA: Record<MoodTier, MoodData> = {
 };
 
 // --- Evolution ---
-export type EvolutionStage = 'baby' | 'youth' | 'evolved';
+// Note: store.ts uses 'adult', config.ts uses 'adult' - keeping for compatibility
+// TODO: P1-x - Bible says youth=7, evolved=13 - reconcile naming
+export type EvolutionStage = 'baby' | 'youth' | 'adult';
 
-// --- Pet ---
+// --- Reaction Type ---
+// Includes 'ecstatic' for loved food reactions
+export type ReactionType = 'ecstatic' | 'positive' | 'neutral' | 'negative';
+
+// --- Pet Definition (static data) ---
 export interface PetDefinition {
   id: string;
   name: string;
@@ -44,23 +53,19 @@ export interface PetDefinition {
   dislikes: string[];
 }
 
+// --- Pet State (runtime state for store.ts) ---
 export interface PetState {
   id: string;
-  name: string;
-  type: string;
+  customName?: string;
   level: number;
   xp: number;
-  xpToNext: number;
-  hunger: number;
-  mood: MoodTier;
-  energy: number;
   bond: number;
+  mood: MoodState;
+  hunger: number;
   evolutionStage: EvolutionStage;
 }
 
-// --- Food ---
-export type ReactionType = 'neutral' | 'positive' | 'negative';
-
+// --- Food Definition ---
 export interface FoodDefinition {
   id: string;
   name: string;
@@ -76,15 +81,15 @@ export interface FoodDefinition {
   emoji: string;
 }
 
-// --- Feeding ---
+// --- Feed Result ---
 export interface FeedResult {
   success: boolean;
   foodId: string;
-  affinity: Affinity;
+  affinity?: Affinity;
   reaction: ReactionType;
   xpGained: number;
-  hungerRestored: number;
-  moodChange: number;
+  hungerRestored?: number;
+  moodChange?: number;
   bondGained: number;
   coinsGained: number;
   leveledUp: boolean;
@@ -93,20 +98,69 @@ export interface FeedResult {
   newStage?: EvolutionStage;
 }
 
-// --- Game State ---
-export interface Currencies {
-  bites: number;
-  shinies: number;
-  eventTokens?: number;
-}
-
+// --- Game Stats ---
 export interface GameStats {
-  feedCount: number;
+  totalFeeds: number;
   totalXpEarned: number;
   totalCoinsEarned: number;
   sessionStartTime: number;
+  lastFeedTime: number;
 }
 
+// --- Game Settings ---
+export interface GameSettings {
+  soundEnabled: boolean;
+  musicEnabled: boolean;
+  autoSave: boolean;
+}
+
+// --- Game Config ---
+export interface GameConfig {
+  maxLevel: number;
+  xpFormula: {
+    base: number;
+    multiplier: number;
+  };
+  maxBond: number;
+  maxHunger: number;
+  hungerDecayPerMinute: number;
+  evolutionLevels: {
+    youth: number;
+    adult: number;
+  };
+  moodModifiers: Record<MoodState, number>;
+  reactionModifiers: Record<ReactionType, number>;
+  coinRewards: Record<ReactionType, number>;
+}
+
+// --- Game Store (Zustand) ---
+export interface GameStore {
+  // State
+  pet: PetState;
+  currencies: Record<CurrencyType, number>;
+  inventory: Record<string, number>;
+  stats: GameStats;
+  settings: GameSettings;
+
+  // Actions
+  feed: (foodId: string) => FeedResult | null;
+  addCurrency: (type: CurrencyType, amount: number, source: string) => void;
+  spendCurrency: (type: CurrencyType, amount: number, sink: string) => boolean;
+  buyFood: (foodId: string, quantity: number) => boolean;
+  addFood: (foodId: string, quantity: number) => void;
+  updateMood: (mood: MoodState) => void;
+  tick: (deltaMinutes: number) => void;
+  resetGame: () => void;
+}
+
+// --- Legacy Currencies interface (for compatibility) ---
+export interface Currencies {
+  coins: number;
+  gems: number;
+  eventTokens?: number;
+}
+
+// --- Legacy Game State (for compatibility) ---
 export interface GameState {
   pet: PetState;
   currencies: Currencies;
@@ -124,7 +178,7 @@ export interface PetCaptions {
   negative: string[];
 }
 
-// --- Affinity Multipliers (from mockup) ---
+// --- Affinity Multipliers (from Bible) ---
 export const AFFINITY_MULTIPLIERS: Record<Affinity, number> = {
   loved: 2.0,
   liked: 1.5,
@@ -133,6 +187,7 @@ export const AFFINITY_MULTIPLIERS: Record<Affinity, number> = {
 };
 
 // --- Config Constants ---
+// TODO: P1-x - Align with Bible (youth=7, evolved=13)
 export const EVOLUTION_LEVELS = {
   youth: 7,
   evolved: 13,
