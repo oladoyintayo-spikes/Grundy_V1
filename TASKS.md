@@ -1,7 +1,7 @@
 # TASKS.md
 ## Grundy Development Task List
 
-**Last Updated:** December 10, 2024 (P5-PWA-CORE)
+**Last Updated:** December 10, 2024 (P5-UX-A11Y)
 **Design SoT:** `docs/GRUNDY_MASTER_BIBLE.md`
 **Pre-Flight Report:** December 9, 2024 ✅
 
@@ -562,6 +562,15 @@ P8-TEST
 | P5-ART-PETS | Pet avatar visuals (real art) | ✅ | src/art, components | PetAvatar + petSprites using assets/pets/* |
 | P5-ART-ROOMS | Room foreground visuals | ✅ | src/art, components | RoomScene + roomScenes config for all rooms |
 | P5-ART-DOC | Art integration documentation | ✅ | docs/ | ART_NOTES.md created |
+
+### P5-UX-A11Y: UX & Accessibility Sweep
+
+| ID | Task | Status | Scope | Notes |
+|----|------|--------|-------|-------|
+| P5-UX-KEYS | Keyboard navigation & focus styles | ✅ | All interactive components | FOCUS_RING_CLASS pattern, tabIndex, keyboard handlers |
+| P5-UX-CONTRAST | Contrast/readability updates | ✅ | Text colors | slate-400 → slate-300 for better contrast |
+| P5-A11Y-LABELS | ARIA labels and semantics | ✅ | All components | aria-current, aria-label, aria-pressed, roles |
+| P5-A11Y-DOC | UX/A11Y documentation | ✅ | docs/ | UX_A11Y_NOTES.md created |
 
 ### P5-POLISH: Web 1.0 Readiness
 

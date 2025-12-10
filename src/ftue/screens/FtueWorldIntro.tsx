@@ -1,10 +1,14 @@
 // ============================================
 // GRUNDY — FTUE WORLD INTRO SCREEN
 // Bible §7.4 — LOCKED canonical text
+// P5-A11Y-LABELS, P5-UX-KEYS
 // ============================================
 
 import React, { useState, useEffect } from 'react';
 import { WORLD_INTRO_LINES, FTUE_COPY } from '../../copy/ftue';
+
+// Focus ring class for keyboard navigation (P5-UX-KEYS)
+const FOCUS_RING_CLASS = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#1A1025]';
 
 interface FtueWorldIntroProps {
   onContinue: () => void;
@@ -33,7 +37,7 @@ export function FtueWorldIntro({ onContinue }: FtueWorldIntroProps) {
   }, [onContinue]);
 
   // Render line with emphasis on "you"
-  const renderLine = (line: string, index: number) => {
+  const renderLine = (line: string) => {
     if (line.includes('*you*')) {
       const parts = line.split('*you*');
       return (
@@ -49,39 +53,45 @@ export function FtueWorldIntro({ onContinue }: FtueWorldIntroProps) {
 
   return (
     <div
-      className="h-full w-full flex flex-col items-center justify-center bg-gradient-to-b from-[#2D1B4E] to-[#1A1025] px-8 cursor-pointer"
-      onClick={showButton ? onContinue : undefined}
+      className="h-full w-full flex flex-col items-center justify-center bg-gradient-to-b from-[#2D1B4E] to-[#1A1025] px-8"
+      role="article"
+      aria-label="World introduction"
     >
       {/* Decorative stars */}
-      <div className="text-slate-500 mb-8 text-sm tracking-widest">
+      <div className="text-slate-400 mb-8 text-sm tracking-widest" aria-hidden="true">
         ✦ · ✧ · ✦ · ✧
       </div>
 
-      {/* World intro lines */}
-      <div className="text-center space-y-4 mb-12">
+      {/* World intro lines (P5-A11Y-LABELS) */}
+      <div className="text-center space-y-4 mb-12" role="region" aria-label="Story introduction">
+        <h1 className="sr-only">Welcome to Grundy</h1>
         {WORLD_INTRO_LINES.map((line, index) => (
-          <div
+          <p
             key={index}
             className={`text-lg text-[#FFF8E7] font-serif transition-opacity duration-800 ${
               index < visibleLines ? 'opacity-100' : 'opacity-0'
             } ${index === 2 ? 'text-xl mt-6' : ''}`}
+            aria-hidden={index >= visibleLines}
           >
-            {renderLine(line, index)}
-          </div>
+            {renderLine(line)}
+          </p>
         ))}
       </div>
 
       {/* Decorative stars */}
-      <div className="text-slate-500 mb-8 text-sm tracking-widest">
+      <div className="text-slate-400 mb-8 text-sm tracking-widest" aria-hidden="true">
         ✦ · ✧ · ✦ · ✧
       </div>
 
       {/* Continue button */}
       <button
+        type="button"
         onClick={onContinue}
-        className={`px-8 py-3 bg-amber-600 hover:bg-amber-500 text-white rounded-xl font-semibold transition-all duration-300 ${
+        className={`px-8 py-3 bg-amber-600 hover:bg-amber-500 text-white rounded-xl font-semibold transition-all duration-300 ${FOCUS_RING_CLASS} ${
           showButton ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
+        tabIndex={showButton ? 0 : -1}
+        aria-hidden={!showButton}
       >
         {FTUE_COPY.worldIntro.continueButton}
       </button>

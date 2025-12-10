@@ -3,6 +3,7 @@
 // Bible §7.5 — Starter selection + locked teasers
 // P4-3: Pet origin snippets
 // P4-4: Locked pet teasers
+// P5-A11Y-LABELS, P5-UX-KEYS
 // ============================================
 
 import React, { useState } from 'react';
@@ -14,6 +15,9 @@ import {
   PET_UNLOCK_LEVELS,
 } from '../../copy/ftue';
 import { getPetById } from '../../data/pets';
+
+// Focus ring class for keyboard navigation (P5-UX-KEYS)
+const FOCUS_RING_CLASS = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#1A1025]';
 
 interface FtuePetSelectProps {
   onSelectPet: (petId: string) => void;
@@ -44,13 +48,13 @@ export function FtuePetSelect({ onSelectPet }: FtuePetSelectProps) {
 
   return (
     <div className="h-full w-full flex flex-col bg-gradient-to-b from-[#2D1B4E] to-[#1A1025] px-4 py-6 overflow-y-auto">
-      {/* Title */}
-      <div className="text-2xl font-bold text-white text-center mb-6">
+      {/* Title (P5-A11Y-LABELS) */}
+      <h1 className="text-2xl font-bold text-white text-center mb-6">
         {FTUE_COPY.petSelect.title}
-      </div>
+      </h1>
 
       {/* Starter Pets (Selectable) */}
-      <div className="grid grid-cols-3 gap-3 mb-4">
+      <div className="grid grid-cols-3 gap-3 mb-4" role="group" aria-label="Available starter pets">
         {STARTER_PET_IDS.map((petId) => {
           const pet = getPetById(petId);
           const lore = getPetLore(petId);
@@ -59,14 +63,17 @@ export function FtuePetSelect({ onSelectPet }: FtuePetSelectProps) {
           return (
             <button
               key={petId}
+              type="button"
               onClick={() => handleSelectStarter(petId)}
-              className={`flex flex-col items-center p-3 rounded-xl transition-all ${
+              aria-label={`Select ${lore?.name}`}
+              aria-pressed={isSelected}
+              className={`flex flex-col items-center p-3 rounded-xl transition-all ${FOCUS_RING_CLASS} ${
                 isSelected
                   ? 'bg-amber-600/30 ring-2 ring-amber-400 scale-105'
                   : 'bg-slate-800/50 hover:bg-slate-700/50'
               }`}
             >
-              <div className="text-3xl mb-1">{pet?.emoji}</div>
+              <div className="text-3xl mb-1" aria-hidden="true">{pet?.emoji}</div>
               <div className="text-sm text-white font-medium">{lore?.name}</div>
               <div className="text-[10px] text-emerald-400">FREE</div>
             </button>
@@ -75,26 +82,30 @@ export function FtuePetSelect({ onSelectPet }: FtuePetSelectProps) {
       </div>
 
       {/* Locked Pets (Teasers) */}
-      <div className="text-xs text-slate-500 text-center mb-2">Coming soon...</div>
-      <div className="grid grid-cols-5 gap-2 mb-4">
+      <div className="text-xs text-slate-400 text-center mb-2">Coming soon...</div>
+      <div className="grid grid-cols-5 gap-2 mb-4" role="group" aria-label="Locked pets preview">
         {LOCKED_PET_IDS.map((petId) => {
           const pet = getPetById(petId);
+          const lore = getPetLore(petId);
           const unlockLevel = PET_UNLOCK_LEVELS[petId];
           const isViewing = viewedLockedPet === petId;
 
           return (
             <button
               key={petId}
+              type="button"
               onClick={() => handleTapLocked(petId)}
-              className={`flex flex-col items-center p-2 rounded-lg transition-all opacity-60 ${
+              aria-label={`Preview ${lore?.name}, locked until level ${unlockLevel}`}
+              aria-pressed={isViewing}
+              className={`flex flex-col items-center p-2 rounded-lg transition-all opacity-60 ${FOCUS_RING_CLASS} ${
                 isViewing ? 'bg-slate-700/50 ring-1 ring-slate-500' : 'bg-slate-800/30'
               }`}
             >
-              <div className="text-xl mb-1 grayscale">
+              <div className="text-xl mb-1 grayscale" aria-hidden="true">
                 {pet?.emoji}
                 <span className="text-xs">🔒</span>
               </div>
-              <div className="text-[10px] text-slate-400">Lv.{unlockLevel}</div>
+              <div className="text-[10px] text-slate-300">Lv.{unlockLevel}</div>
             </button>
           );
         })}
@@ -148,9 +159,11 @@ export function FtuePetSelect({ onSelectPet }: FtuePetSelectProps) {
 
       {/* Choose Button */}
       <button
+        type="button"
         onClick={handleConfirm}
         disabled={!selectedPetId}
-        className={`w-full py-4 rounded-xl font-semibold text-lg transition-all ${
+        aria-label={selectedPetId ? `Choose ${selectedLore?.name} as your pet` : 'Select a pet first'}
+        className={`w-full py-4 rounded-xl font-semibold text-lg transition-all ${FOCUS_RING_CLASS} ${
           selectedPetId
             ? 'bg-amber-600 hover:bg-amber-500 text-white'
             : 'bg-slate-700 text-slate-500 cursor-not-allowed'

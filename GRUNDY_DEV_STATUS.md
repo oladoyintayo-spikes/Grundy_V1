@@ -2,8 +2,8 @@
 
 # Grundy Web Prototype — Development Status
 
-**Last Updated:** December 10, 2024 (P5-ART-DOC)
-**Current Phase:** Web Phase 5 — IN PROGRESS (Audio ✅, PWA ✅, Art ✅)
+**Last Updated:** December 10, 2024 (P5-UX-A11Y)
+**Current Phase:** Web Phase 5 — IN PROGRESS (Audio ✅, PWA ✅, Art ✅, UX/A11Y ✅)
 **Next Phase:** Web Phase 5 completion (QA)
 
 ---
@@ -28,7 +28,7 @@
 | **Web Phase 2** | Mini-Games & Infra | ✅ COMPLETE | All 5 mini-games implemented and tested |
 | **Web Phase 3** | Navigation & Environment | 🟡 IN PROGRESS | P3-NAV ✅, P3-ENV ⬜ |
 | **Web Phase 4** | FTUE / Onboarding | ✅ COMPLETE | All FTUE screens, state, tests done |
-| **Web Phase 5** | Polish / Web 1.0 | 🟡 IN PROGRESS | Audio ✅, PWA ✅, Art ⬜, QA ⬜ |
+| **Web Phase 5** | Polish / Web 1.0 | 🟡 IN PROGRESS | Audio ✅, PWA ✅, Art ✅, UX/A11Y ✅, QA ⬜ |
 
 ### Post-Web 1.0
 
@@ -287,6 +287,32 @@ The following copy is canonical and used across all onboarding documentation:
 | Documentation | ✅ | `docs/ART_NOTES.md` |
 | Tests | ✅ | `src/__tests__/artConfig.test.ts` |
 
+### UX & Accessibility System (P5-UX-A11Y)
+
+| Component | Status | Details |
+|-----------|--------|---------|
+| Focus Ring Pattern | ✅ | FOCUS_RING_CLASS with amber-400 ring on all interactive elements |
+| Keyboard Navigation | ✅ | tabIndex, keyboard handlers for non-button elements |
+| ARIA Labels | ✅ | aria-current, aria-label, aria-pressed, aria-hidden |
+| Semantic Roles | ✅ | banner, navigation, main, dialog, status, region, article |
+| Heading Hierarchy | ✅ | Proper h1/h2 structure across all screens |
+| Contrast Updates | ✅ | slate-400 → slate-300 for secondary text |
+| Pet Alt Text | ✅ | petDisplayName + POSE_LABELS for descriptive alt text |
+| Documentation | ✅ | docs/UX_A11Y_NOTES.md |
+| Tests | ✅ | uxAccessibility.test.ts |
+
+### Files Modified for Accessibility
+
+| File | Changes |
+|------|---------|
+| `src/components/layout/BottomNav.tsx` | Focus ring, aria-current, navigation role |
+| `src/components/layout/AppHeader.tsx` | Banner role, sr-only h1, status role, contrast |
+| `src/components/pet/PetAvatar.tsx` | petDisplayName prop, POSE_LABELS, alt text |
+| `src/components/MiniGameHub.tsx` | Focus ring, semantic header/footer, aria-labels |
+| `src/components/ReadyScreen.tsx` | Focus ring, main role, h1, contrast |
+| `src/components/ResultsScreen.tsx` | Focus ring, h1/h2, dl/dt/dd, aria-labels |
+| `src/ftue/screens/*.tsx` | Focus ring, roles, headings, keyboard handlers |
+
 ### Remaining for Web Phase 5
 
 | Task | Status | Notes |
@@ -308,7 +334,8 @@ The following copy is canonical and used across all onboarding documentation:
 1. ✅ P5-SOUND-1: Add basic SFX/BGM + sound settings (P5-AUDIO-CORE)
 2. ✅ P5-PWA-1: Add PWA manifest, icons, service worker (P5-PWA-CORE)
 3. ✅ P5-ART: Pet sprites wired from assets/pets, room scene overlays, and ART_NOTES.md
-4. P5-QA-1: Full Web 1.0 test pass & release checklist
+4. ✅ P5-UX-A11Y: Keyboard navigation, focus styles, ARIA labels, contrast updates
+5. P5-QA-1: Full Web 1.0 test pass & release checklist
 
 ---
 

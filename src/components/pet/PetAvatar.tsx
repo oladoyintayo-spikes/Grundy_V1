@@ -1,10 +1,22 @@
 // ============================================
 // GRUNDY — PET AVATAR COMPONENT
 // P5-ART-PETS: Image-based pet avatar using sprite assets
+// P5-A11Y-LABELS: Accessible alt text for pet images
 // ============================================
 
 import React from 'react';
 import { getPetSprite, PetPose } from '../../art/petSprites';
+
+// ============================================
+// POSE LABELS FOR ALT TEXT (P5-A11Y-LABELS)
+// ============================================
+
+const POSE_LABELS: Record<PetPose, string> = {
+  idle: 'resting',
+  happy: 'happy',
+  sad: 'sad',
+  sleeping: 'sleeping',
+};
 
 // ============================================
 // TYPES
@@ -21,6 +33,8 @@ export interface PetAvatarProps {
   className?: string;
   /** Whether to show a subtle animation pulse */
   animated?: boolean;
+  /** Display name for accessibility (P5-A11Y-LABELS) */
+  petDisplayName?: string;
 }
 
 // ============================================
@@ -63,10 +77,16 @@ export function PetAvatar({
   size = 'md',
   className = '',
   animated = false,
+  petDisplayName,
 }: PetAvatarProps) {
   const src = getPetSprite(petId, pose);
   const containerClass = sizeClassMap[size];
   const imageClass = imageSizeMap[size];
+
+  // Generate accessible alt text (P5-A11Y-LABELS)
+  const displayName = petDisplayName || petId;
+  const poseDescription = POSE_LABELS[pose] || pose;
+  const altText = `${displayName}, ${poseDescription}`;
 
   return (
     <div
@@ -81,7 +101,7 @@ export function PetAvatar({
     >
       <img
         src={src}
-        alt={`${petId} ${pose}`}
+        alt={altText}
         className={`${imageClass} object-contain`}
         loading="lazy"
         draggable={false}
@@ -103,6 +123,8 @@ export interface PetDisplayProps {
   className?: string;
   /** Whether to apply a subtle breathing animation */
   breathing?: boolean;
+  /** Display name for accessibility (P5-A11Y-LABELS) */
+  petDisplayName?: string;
 }
 
 /**
@@ -121,8 +143,14 @@ export function PetDisplay({
   pose,
   className = '',
   breathing = false,
+  petDisplayName,
 }: PetDisplayProps) {
   const src = getPetSprite(petId, pose);
+
+  // Generate accessible alt text (P5-A11Y-LABELS)
+  const displayName = petDisplayName || petId;
+  const poseDescription = POSE_LABELS[pose] || pose;
+  const altText = `${displayName}, ${poseDescription}`;
 
   return (
     <div
@@ -136,7 +164,7 @@ export function PetDisplay({
     >
       <img
         src={src}
-        alt={`${petId} ${pose}`}
+        alt={altText}
         className="w-32 h-32 sm:w-40 sm:h-40 object-contain drop-shadow-lg"
         loading="lazy"
         draggable={false}
