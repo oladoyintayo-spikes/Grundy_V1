@@ -8,6 +8,7 @@ import { MiniGameHub } from './components/MiniGameHub';
 import { MiniGameWrapper } from './components/MiniGameWrapper';
 import { SnackCatch } from './components/games/SnackCatch';
 import { MemoryMatch } from './components/games/MemoryMatch';
+import { RhythmTap } from './components/games/RhythmTap';
 import { Pips } from './components/games/Pips';
 
 // ============================================
@@ -282,6 +283,8 @@ export default function GrundyPrototype() {
           return <SnackCatch onGameEnd={() => {}} />;
         case 'memory_match':
           return <MemoryMatch onGameEnd={() => {}} />;
+        case 'rhythm_tap':
+          return <RhythmTap onGameEnd={() => {}} />;
         case 'pips':
           return <Pips onGameEnd={() => {}} />;
         default:
