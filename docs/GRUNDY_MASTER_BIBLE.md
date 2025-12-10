@@ -1413,19 +1413,17 @@ Players unlock lore fragments through gameplay, building their own copy of the G
 
 ## 7.4 Screen 2: World Intro
 
-**Duration:** 5 seconds (tap to skip OR auto-advance)
+**Duration:** ~10 seconds (tap to skip OR auto-advance after line 2)
 
-### Lore Text (Exact Copy)
+### Lore Text (LOCKED Copy)
 
 ```
-"They come from moments
- we forget to hold onto.
-
- A feeling strong enough
- to leave something behind."
-
- One found you.
+Sometimes, when a big feeling is left behind…
+A tiny spirit called a Grundy wakes up.
+One of them just found *you*.
 ```
+
+> **Note:** This copy is LOCKED. See `docs/GRUNDY_ONBOARDING_FLOW.md` Screen 2 and `docs/GRUNDY_LORE_CODEX.md` for matching canonical text.
 
 ### Animation Sequence
 
@@ -1433,12 +1431,10 @@ Players unlock lore fragments through gameplay, building their own copy of the G
 |------|--------|
 | 0.0s | Screen fades in |
 | 0.5s | Line 1 fades in |
-| 1.3s | Line 2 fades in |
-| 2.1s | Line 3 fades in |
-| 2.9s | Line 4 fades in |
-| 3.7s | "One found you." fades in (emphasized) |
-| 4.2s | Continue button appears |
-| 5.0s | Auto-advance if no tap |
+| 2.5s | Line 2 fades in |
+| 5.0s | Line 3 fades in (emphasized) |
+| 6.0s | Continue button appears |
+| 10.0s | Auto-advance if no tap |
 
 ### Specs
 

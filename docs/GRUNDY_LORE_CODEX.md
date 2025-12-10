@@ -11,6 +11,7 @@
 
 ## Table of Contents
 
+0. [Short World Intro (FTUE Copy)](#short-world-intro-ftue-copy)
 1. [On the Nature of Grundies](#on-the-nature-of-grundies)
 2. [The Eight Known Varieties](#the-eight-known-varieties)
    - [Munchlet — The Friendly One](#-munchlet)
@@ -24,6 +25,18 @@
 3. [Shared Lore & World Rules](#shared-lore--world-rules)
 4. [In-Game Lore Journal System](#in-game-lore-journal-system)
 5. [Unlockable Fragments](#unlockable-fragments)
+
+---
+
+## Short World Intro (FTUE Copy)
+
+**This is the approved short-form backstory used in the onboarding flow:**
+
+> Sometimes, when a big feeling is left behind…
+> A tiny spirit called a Grundy wakes up.
+> One of them just found *you*.
+
+*Lines appear sequentially with fade-in animation. This copy is LOCKED.*
 
 ---
 
