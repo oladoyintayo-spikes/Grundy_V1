@@ -214,9 +214,9 @@ npm run build      # Must exit 0
 
 | ID | Task | Status | Scope | Blocked By | Notes |
 |----|------|--------|-------|------------|-------|
-| P1-TEST-1 | Add pet data validation tests | ⬜ | `pets.ts` | P1-DATA-1 | Verify all 8 pets have required fields |
-| P1-TEST-2 | Add food data validation tests | ⬜ | `foods.ts` | P1-DATA-4 | Verify all 10 foods, all affinities |
-| P1-TEST-3 | Add ability unit tests | ⬜ | `systems.ts` | P1-ABILITY-2 | Test each ability's effect |
+| P1-TEST-1 | Add pet data validation tests | ✅ | `pets.ts` | P1-DATA-1 | 16 tests: 8 pets, abilities, unlock requirements |
+| P1-TEST-2 | Add food data validation tests | ✅ | `foods.ts` | P1-DATA-4 | 16 tests: 10 foods, 80 affinities, prices |
+| P1-TEST-3 | Add ability unit tests | ✅ | `abilities.ts` | P1-ABILITY-2 | 51 tests: all 8 abilities + 24 integration tests |
 
 ### P1-DOC: Documentation Alignment
 
