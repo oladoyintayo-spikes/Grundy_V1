@@ -93,6 +93,12 @@
 | P1-7 | Audit pet abilities implementation | ⬜ | 3.7 | All 8 pet abilities trigger correctly per Bible |
 | P1-8 | Implement pet ability indicators | ⬜ | 3.7 | Show "+25% 🎮" style indicators when ability triggers |
 
+### P1-DOC: Documentation Alignment
+
+| ID | Task | Status | Scope | Acceptance Criteria |
+|----|------|--------|-------|---------------------|
+| P1-DOC-01 | Apply Bible Update Backlog | ⬜ | `BIBLE_UPDATE_BACKLOG.md` | All ⬜ entries in backlog are applied to Bible and marked ✅ |
+
 ---
 
 ## PHASE 2: Art / Sprite State System
