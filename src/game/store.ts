@@ -27,7 +27,7 @@ import {
 // Initial state factory
 function createInitialState() {
   return {
-    pet: createInitialPet('sprout'),
+    pet: createInitialPet('munchlet'),
     currencies: {
       coins: 100,
       gems: 10,
@@ -242,6 +242,18 @@ export const useGameStore = create<GameStore>()(
         }));
       },
       
+      // ========================================
+      // PET SELECTION
+      // ========================================
+      selectPet: (petId: string) => {
+        set((state) => ({
+          pet: {
+            ...state.pet,
+            id: petId,
+          },
+        }));
+      },
+
       // ========================================
       // RESET
       // ========================================
