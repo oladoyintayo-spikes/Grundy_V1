@@ -1,7 +1,7 @@
 # TASKS.md
 ## Grundy Development Task List
 
-**Last Updated:** December 10, 2024 (P5-QA-CORE)
+**Last Updated:** December 10, 2024 (P5-RELEASE-1.0)
 **Design SoT:** `docs/GRUNDY_MASTER_BIBLE.md`
 **Pre-Flight Report:** December 9, 2024 ✅
 
@@ -591,22 +591,37 @@ P8-TEST
 | P5-ART-1 | Integrate final pet + room art assets | ✅ | assets/ | Replaced by P5-ART tasks |
 | P5-QA-1 | Full Web 1.0 test pass & release checklist | ✅ | All | QA complete; release tagging next |
 
+### P5-RELEASE: Web 1.0 Release
+
+| ID | Task | Status | Scope | Notes |
+|----|------|--------|-------|-------|
+| P5-RELEASE-VERSION | Version bump for Web 1.0 | ✅ | src/version.ts, package.json | GRUNDY_WEB_VERSION = 1.0.0 |
+| P5-RELEASE-NOTES | Release notes for Web 1.0 | ✅ | docs/ | RELEASE_NOTES_WEB1.0.md |
+| P5-RELEASE-TAG-INSTR | Git tagging instructions | ✅ | docs/ | RELEASE_TAG_WEB1.0.md |
+| P5-RELEASE-STATUS | Update dev status for Web 1.0 | ✅ | GRUNDY_DEV_STATUS.md | Phase 5 marked complete |
+| P5-RELEASE-1.0 | Web Edition 1.0 ready for tagging | ✅ | All | QA complete; ready for external release |
+
 **Web Phase 5 Exit Criteria:**
 - [x] Sound system working with mute
 - [x] PWA installable on mobile
 - [x] Final art integrated
-- [x] All tests passing (417 tests)
-- [ ] Web 1.0 release tagged
+- [x] All tests passing (600+ tests)
+- [x] Web 1.0 release versioned and documented
 
 ---
 
-## WEB PHASE 6: Optimization & Telemetry (Future)
+## WEB PHASE 6: Optimization & Enhancements (Future)
 
-> Optimization tasks planned for after Web 1.0 release.
+> Optimization and enhancement tasks planned for after Web 1.0 release.
+> Items from QA_WEB1_ISSUES.md are included here.
 
 | ID | Task | Status | Scope | Notes |
 |----|------|--------|-------|-------|
 | P6-PWA-PRECACHE | Upgrade PWA to vite-plugin-pwa precache | ⬜ | vite.config.ts, SW | Install and configure `vite-plugin-pwa` to generate a precache manifest & SW; replace or refactor the manual service worker for stronger offline behavior. |
+| P6-BRANDING | Replace placeholder PWA icons | ⬜ | public/icons/ | Real branded icons for manifest & PWA (QA-001) |
+| P6-AUDIO-ASSETS | Add real audio files for configured sounds | ⬜ | public/audio/ | Hook actual SFX/BGM assets into audio manager (QA-002) |
+| P6-ENV-UI | Room selection UI & richer kitchen/bedroom UX | ⬜ | Environment system | Build on existing time-of-day theming (QA-003) |
+| P6-PWA-UI | "Install Grundy" UI button in Settings | ⬜ | Settings view | Uses existing install prompt infrastructure (QA-005) |
 
 ---
 
