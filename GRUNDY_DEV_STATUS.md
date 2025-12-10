@@ -2,8 +2,8 @@
 
 # Grundy Web Prototype — Development Status
 
-**Last Updated:** December 10, 2024
-**Current Phase:** Phase 1 — COMPLETE
+**Last Updated:** December 10, 2024 (P4-FTUE-LORE, P8 Complete)
+**Current Phase:** Phase 8 — COMPLETE, Phase 3 — IN PROGRESS
 **Next Phase:** Phase 2 (Art / Sprite State System)
 
 ---
@@ -26,7 +26,9 @@
 | **Phase 0** | ✅ COMPLETE | Infrastructure, toolchain, PWA, GitHub Pages deploy |
 | **Phase 1** | ✅ COMPLETE | Data layer, core loop, abilities, docs alignment |
 | **Phase 2** | ⬜ NOT STARTED | Art / Sprite state system |
-| **Phase 3+** | ⬜ NOT STARTED | FTUE, Shop, Inventory, Mini-games, etc. |
+| **Phase 3** | 🟡 IN PROGRESS | FTUE/Onboarding (P4-FTUE-LORE docs complete) |
+| **Phase 8** | ✅ COMPLETE | All 5 mini-games implemented and tested |
+| **Phase 4-7, 9+** | ⬜ NOT STARTED | Shop, Inventory, Pet Slots, Classic Mode, etc. |
 
 ---
 
@@ -79,12 +81,59 @@
 
 ---
 
+## Phase 8 — COMPLETE (Mini-Games)
+
+**Theme:** Bible Section 8 — All 5 mini-games implemented.
+
+### Mini-Games Implemented
+
+| Game | Tests | Status | Notes |
+|------|-------|--------|-------|
+| Snack Catch | 27 | ✅ | 60s arcade catch game |
+| Memory Match | 39 | ✅ | 90s card matching game |
+| Pips | 38 | ✅ | 120s tile matching game |
+| Rhythm Tap | 43 | ✅ | Music/timing rhythm game |
+| Poop Scoop | 41 | ✅ | 60s cleanup action game |
+| Unified Suite | 40 | ✅ | Cross-game invariants |
+
+### Rules Enforced (LOCKED)
+
+| Rule | Value |
+|------|-------|
+| Energy cost | 10 per game |
+| Daily cap | 3 rewarded plays per game |
+| First daily | FREE |
+| Gems from mini-games | **NEVER** |
+| Rewards | Small helpful gifts only |
+
+---
+
+## FTUE / Narrative
+
+### World Intro Backstory (LOCKED)
+
+The following copy is canonical and used across all onboarding documentation:
+
+> Sometimes, when a big feeling is left behind…
+> A tiny spirit called a Grundy wakes up.
+> One of them just found *you*.
+
+| Document | Status | Section |
+|----------|--------|---------|
+| `GRUNDY_ONBOARDING_FLOW.md` | ✅ | Screen 2 – World Intro |
+| `GRUNDY_LORE_CODEX.md` | ✅ | Short World Intro (FTUE Copy) |
+| `GRUNDY_MASTER_BIBLE.md` | ✅ | §7.4 Screen 2: World Intro |
+
+**Task ID:** P4-FTUE-LORE (completed December 10, 2024)
+
+---
+
 ## Build & Test Status
 
 | Command | Status | Notes |
 |---------|--------|-------|
 | `npm run build` | ✅ PASSING | Production build succeeds |
-| `npm test -- --run` | ✅ PASSING | 102 tests passing |
+| `npm test -- --run` | ✅ PASSING | 320 tests passing |
 
 ---
 

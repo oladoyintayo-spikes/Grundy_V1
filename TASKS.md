@@ -1,7 +1,7 @@
 # TASKS.md
 ## Grundy Development Task List
 
-**Last Updated:** December 10, 2024 (P8-PIPS-1)
+**Last Updated:** December 10, 2024 (P4-FTUE-LORE, P8-RHYTHM-1, P8-POOP-1, P8-TEST)
 **Design SoT:** `docs/GRUNDY_MASTER_BIBLE.md`  
 **Pre-Flight Report:** December 9, 2024 ✅
 
@@ -335,6 +335,12 @@ P1-CORE-4, P1-DOC-1,2 ── Can run in parallel
 | P3-7 | Enforce FTUE rules | ⬜ | 7.8 | No monetization, first reaction positive |
 | P3-8 | Verify <60s timing | ⬜ | 7.1 | Total onboarding under 60 seconds |
 
+### P3-DOC: FTUE Documentation
+
+| ID | Task | Status | Scope | Notes |
+|----|------|--------|-------|-------|
+| P4-FTUE-LORE | Add World Intro backstory to docs | ✅ | Onboarding, Lore, Bible | LOCKED copy across all docs |
+
 **Phase 3 Exit Criteria:**
 - [ ] New player can complete FTUE in <60s
 - [ ] Mode selection works
@@ -442,13 +448,13 @@ P1-CORE-4, P1-DOC-1,2 ── Can run in parallel
 
 | ID | Task | Status | Design Doc | Notes |
 |----|------|--------|------------|-------|
-| P8-RHYTHM-1 | Implement Rhythm Tap game | ⬜ | [GRUNDY_RHYTHM_TAP_DESIGN.md](docs/minigames/GRUNDY_RHYTHM_TAP_DESIGN.md) | Music/timing |
+| P8-RHYTHM-1 | Implement Rhythm Tap game | ✅ | [GRUNDY_RHYTHM_TAP_DESIGN.md](docs/minigames/GRUNDY_RHYTHM_TAP_DESIGN.md) | Music/timing; all 8 pet abilities |
 
 ### P8-POOP: Poop Scoop
 
 | ID | Task | Status | Design Doc | Notes |
 |----|------|--------|------------|-------|
-| P8-POOP-1 | Implement Poop Scoop game | ⬜ | [GRUNDY_POOP_SCOOP_DESIGN.md](docs/minigames/GRUNDY_POOP_SCOOP_DESIGN.md) | 60s action |
+| P8-POOP-1 | Implement Poop Scoop game | ✅ | [GRUNDY_POOP_SCOOP_DESIGN.md](docs/minigames/GRUNDY_POOP_SCOOP_DESIGN.md) | 60s action; all 8 pet abilities |
 
 ### P8-TEST: Mini-Game Tests
 
@@ -459,7 +465,9 @@ P1-CORE-4, P1-DOC-1,2 ── Can run in parallel
 | P8-TEST-3 | Snack Catch tests | ✅ | __tests__/snackCatch.test.ts | 27 tests: scoring, abilities, combo, difficulty |
 | P8-TEST-4 | Memory Match tests | ✅ | __tests__/memoryMatch.test.ts | 39 tests: cards, scoring, abilities, win/lose |
 | P8-TEST-5 | Pips tests | ✅ | __tests__/pips.test.ts | 38 tests: board, scoring, combos, abilities |
-| P8-TEST-6 | Game integration tests | ⬜ | __tests__/ | Integration tests (per remaining game) |
+| P8-TEST-6 | Rhythm Tap tests | ✅ | __tests__/rhythmTap.test.ts | 43 tests: beats, scoring, judgment, abilities |
+| P8-TEST-7 | Poop Scoop tests | ✅ | __tests__/poopScoop.test.ts | 41 tests: cleanup, scoring, danger, abilities |
+| P8-TEST-8 | Unified mini-game invariant tests | ✅ | __tests__/miniGameSuite.test.ts | 40 tests: cross-game invariants, all 5 games |
 
 ### Execution Order
 

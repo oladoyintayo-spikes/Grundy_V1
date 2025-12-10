@@ -121,15 +121,15 @@
 │                                     │
 │      ✦  ·  ✧  ·  ✦  ·  ✧           │
 │                                     │
-│     "They come from moments         │
-│      we forget to hold onto.        │
+│   Sometimes, when a big feeling     │
+│   is left behind…                   │
 │                                     │
-│      A feeling strong enough        │
-│      to leave something behind."    │
+│   A tiny spirit called a Grundy     │
+│   wakes up.                         │
 │                                     │
 │      ✦  ·  ✧  ·  ✦  ·  ✧           │
 │                                     │
-│         One found you.              │
+│   One of them just found *you*.     │
 │                                     │
 │                                     │
 │          [ Continue ]               │
@@ -137,28 +137,24 @@
 └─────────────────────────────────────┘
 ```
 
-### Lore Text (Exact Copy)
+#### World Intro Copy (LOCKED)
 
-```
-"They come from moments
- we forget to hold onto.
+> Sometimes, when a big feeling is left behind…
+> A tiny spirit called a Grundy wakes up.
+> One of them just found *you*.
 
- A feeling strong enough
- to leave something behind."
-
- One found you.
-```
+This is the canonical 10-second World Intro backstory for the Grundy Web Edition. Lines appear sequentially (fade-in). The Continue button is enabled after line 2 appears.
 
 ### Specifications
 
 | Element | Spec |
 |---------|------|
+| Background | Soft gradient + subtle particle drift |
 | Text style | Serif/elegant font, cream color (#FFF8E7) |
 | Animation | Fade in line-by-line, 0.8s per line |
 | Decorative stars | Gentle twinkle animation |
-| Background | Dark purple with soft vignette |
 | Audio | Mystical ambient pad, very soft |
-| Button | "Continue" appears after all text |
+| Button | "Continue" appears after line 2 |
 | Auto-advance | 5 seconds after last line appears |
 
 ### Animation Sequence
@@ -166,12 +162,10 @@
 | Time | Action |
 |------|--------|
 | 0.0s | Screen fades in |
-| 0.5s | Line 1 fades in |
-| 1.3s | Line 2 fades in |
-| 2.1s | Line 3 fades in |
-| 2.9s | Line 4 fades in |
-| 3.7s | "One found you." fades in (emphasized) |
-| 4.2s | Continue button appears |
+| 0.5s | Line 1 fades in ("Sometimes, when a big feeling is left behind…") |
+| 1.5s | Line 2 fades in ("A tiny spirit called a Grundy wakes up.") |
+| 2.5s | Line 3 fades in ("One of them just found *you*.") — emphasized |
+| 3.0s | Continue button appears (enabled) |
 | 5.0s | Auto-advance if no tap |
 
 ---
