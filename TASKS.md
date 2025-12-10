@@ -154,7 +154,7 @@ npm run build      # Must exit 0
 | P0-4 | Verify PWA manifest exists | ✅ | 15.2 | manifest.json created, index.html linked; icons need replacement |
 | P0-5 | Deploy to GitHub Pages | ✅ | — | Workflow created; URL: oladoyintayo-spikes.github.io/Grundy_V1/ |
 | P0-6 | Add loading state for initial render | ✅ | — | Spinner + paw emoji shown until React mounts |
-| P0-7 | Mobile viewport verification | ⬜ | — | Proper scaling on mobile devices |
+| P0-7 | Mobile viewport verification | ✅ | — | Viewport meta OK; safe-area padding + overflow-x guard added |
 | P0-8 | Add error boundary | ⬜ | — | Graceful crash recovery |
 
 **Phase 0 Exit Criteria:**

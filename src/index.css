@@ -1,3 +1,18 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* P0-7: Mobile viewport safeguards */
+@layer base {
+  html, body {
+    overflow-x: hidden; /* Prevent accidental horizontal scroll */
+    -webkit-tap-highlight-color: transparent; /* Cleaner touch feedback */
+  }
+
+  /* Safe area support for notched devices (iPhone X+) */
+  body {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
