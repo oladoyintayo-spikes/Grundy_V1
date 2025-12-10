@@ -27,7 +27,7 @@ import {
 // Initial state factory
 function createInitialState() {
   return {
-    pet: createInitialPet('sprout'),
+    pet: createInitialPet('munchlet'), // Bible-compliant default starter
     currencies: {
       coins: 100,
       gems: 10,

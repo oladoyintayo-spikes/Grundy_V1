@@ -192,7 +192,7 @@ npm run build      # Must exit 0
 
 | ID | Task | Status | Bible | Blocked By | Notes |
 |----|------|--------|-------|------------|-------|
-| P1-CORE-1 | Fix default pet ID to `'munchlet'` | ⬜ | — | P1-DATA-1 | store.ts:30 uses deprecated `'sprout'` |
+| P1-CORE-1 | Fix default pet ID to `'munchlet'` | ✅ | — | P1-DATA-1 | Fixed in store.ts:30 |
 | P1-CORE-2 | Add `selectPet(petId)` action | ⬜ | — | P1-CORE-1 | For switching active pet |
 | P1-CORE-3 | Add `unlockedPets: string[]` to state | ⬜ | §3.2 | P1-DATA-2 | Track which pets player has unlocked |
 | P1-CORE-4 | Audit XP/evolution formulas | ⬜ | §6.1-2 | — | Verify against Bible; document any code-wins decisions |
