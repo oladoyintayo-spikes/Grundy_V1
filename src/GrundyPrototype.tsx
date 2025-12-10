@@ -8,6 +8,7 @@ import { MiniGameHub } from './components/MiniGameHub';
 import { MiniGameWrapper } from './components/MiniGameWrapper';
 import { SnackCatch } from './components/games/SnackCatch';
 import { MemoryMatch } from './components/games/MemoryMatch';
+import { Pips } from './components/games/Pips';
 
 // ============================================
 // COMPONENTS
@@ -281,6 +282,8 @@ export default function GrundyPrototype() {
           return <SnackCatch onGameEnd={() => {}} />;
         case 'memory_match':
           return <MemoryMatch onGameEnd={() => {}} />;
+        case 'pips':
+          return <Pips onGameEnd={() => {}} />;
         default:
           return (
             <div className="h-full flex items-center justify-center bg-gray-800">
