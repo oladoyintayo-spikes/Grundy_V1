@@ -16,6 +16,7 @@ import {
 } from '../types';
 import { STARTING_INVENTORY, getFoodById } from '../data/foods';
 import { GAME_CONFIG, getXPForLevel } from '../data/config';
+import { STARTER_PETS, getPetUnlockRequirement } from '../data/pets';
 import {
   createInitialPet,
   processFeed,
@@ -47,6 +48,7 @@ function createInitialState() {
       musicEnabled: true,
       autoSave: true,
     } as GameSettings,
+    unlockedPets: [...STARTER_PETS], // Start with munchlet, grib, plompo
   };
 }
 
@@ -260,6 +262,78 @@ export const useGameStore = create<GameStore>()(
       },
 
       // ========================================
+      // PET UNLOCKING
+      // ========================================
+      unlockPet: (petId: string): boolean => {
+        const state = get();
+
+        // Already unlocked
+        if (state.unlockedPets.includes(petId)) {
+          return false;
+        }
+
+        const requirement = getPetUnlockRequirement(petId);
+        if (!requirement) {
+          return false;
+        }
+
+        // Free pets should already be unlocked, but handle edge case
+        if (requirement.type === 'free') {
+          set((state) => ({
+            unlockedPets: [...state.unlockedPets, petId],
+          }));
+          console.log(`[Unlock] Pet ${petId} unlocked (free)`);
+          return true;
+        }
+
+        // Premium pets can only be unlocked with gems
+        if (requirement.type === 'premium') {
+          return false;
+        }
+
+        // TODO: Add checks for bond_level and minigames_completed
+        // when those tracking systems are implemented
+        // For now, these unlocks require gem skip
+
+        return false;
+      },
+
+      unlockPetWithGems: (petId: string): boolean => {
+        const state = get();
+
+        // Already unlocked
+        if (state.unlockedPets.includes(petId)) {
+          return false;
+        }
+
+        const requirement = getPetUnlockRequirement(petId);
+        if (!requirement || !requirement.gemSkipCost) {
+          return false;
+        }
+
+        // Check if player has enough gems
+        if (state.currencies.gems < requirement.gemSkipCost) {
+          return false;
+        }
+
+        // Spend gems and unlock
+        set((state) => ({
+          currencies: {
+            ...state.currencies,
+            gems: state.currencies.gems - requirement.gemSkipCost!,
+          },
+          unlockedPets: [...state.unlockedPets, petId],
+        }));
+
+        console.log(`[Unlock] Pet ${petId} unlocked with ${requirement.gemSkipCost} gems`);
+        return true;
+      },
+
+      isPetUnlocked: (petId: string): boolean => {
+        return get().unlockedPets.includes(petId);
+      },
+
+      // ========================================
       // RESET
       // ========================================
       resetGame: () => {
@@ -278,3 +352,4 @@ export const usePet = () => useGameStore((state) => state.pet);
 export const useCurrencies = () => useGameStore((state) => state.currencies);
 export const useInventory = () => useGameStore((state) => state.inventory);
 export const useStats = () => useGameStore((state) => state.stats);
+export const useUnlockedPets = () => useGameStore((state) => state.unlockedPets);

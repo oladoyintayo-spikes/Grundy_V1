@@ -73,6 +73,19 @@ export interface PetAbility {
   };
 }
 
+// --- Pet Unlock Requirements (Bible §3.2, §6) ---
+export type UnlockRequirementType =
+  | 'free'                // Starter pets - unlocked from beginning
+  | 'bond_level'          // Unlock when any pet reaches bond level
+  | 'minigames_completed' // Unlock after completing X minigames
+  | 'premium';            // Gem-only unlock (can also skip other requirements)
+
+export interface UnlockRequirement {
+  type: UnlockRequirementType;
+  value?: number;         // Required amount (bond level, minigame count)
+  gemSkipCost?: number;   // Cost to unlock with gems instead
+}
+
 // --- Pet State (runtime state for store.ts) ---
 export interface PetState {
   id: string;
@@ -161,6 +174,7 @@ export interface GameStore {
   inventory: Record<string, number>;
   stats: GameStats;
   settings: GameSettings;
+  unlockedPets: string[];  // Pet IDs that the player has unlocked
 
   // Actions
   feed: (foodId: string) => FeedResult | null;
@@ -171,6 +185,9 @@ export interface GameStore {
   updateMood: (mood: MoodState) => void;
   tick: (deltaMinutes: number) => void;
   selectPet: (petId: string) => void;
+  unlockPet: (petId: string) => boolean;      // Unlock via requirements met
+  unlockPetWithGems: (petId: string) => boolean; // Unlock by spending gems
+  isPetUnlocked: (petId: string) => boolean;  // Check if pet is unlocked
   resetGame: () => void;
 }
 

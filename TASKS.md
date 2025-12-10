@@ -181,7 +181,7 @@ npm run build      # Must exit 0
 | ID | Task | Status | Bible | Blocked By | Notes |
 |----|------|--------|-------|------------|-------|
 | P1-DATA-1 | Add 5 missing pets to `pets.ts` | ✅ | §3.2 | — | Added Fizz, Ember, Chomper, Whisp, Luxe |
-| P1-DATA-2 | Add unlock requirements to pets | ⬜ | §3.2 | P1-DATA-1 | Level unlock + gem skip costs |
+| P1-DATA-2 | Add unlock requirements to pets | ✅ | §3.2 | P1-DATA-1 | UnlockRequirement type + gemSkipCost for all 8 pets |
 | P1-DATA-3 | Add 2 missing foods to `foods.ts` | ✅ | §5.4 | — | Added Dream Treat, Golden Feast with 8-pet affinities |
 | P1-DATA-4 | Complete affinity matrix (80 entries) | ✅ | §5.5 | P1-DATA-1,3 | All 10 foods × 8 pets = 80 entries |
 | P1-DATA-5 | Add ability definitions to pets | ✅ | §3.2 | P1-DATA-1 | All 8 pets have abilities in pets.ts |
@@ -193,8 +193,8 @@ npm run build      # Must exit 0
 | ID | Task | Status | Bible | Blocked By | Notes |
 |----|------|--------|-------|------------|-------|
 | P1-CORE-1 | Fix default pet ID to `'munchlet'` | ✅ | — | P1-DATA-1 | Fixed in store.ts:30 |
-| P1-CORE-2 | Add `selectPet(petId)` action | ⬜ | — | P1-CORE-1 | For switching active pet |
-| P1-CORE-3 | Add `unlockedPets: string[]` to state | ⬜ | §3.2 | P1-DATA-2 | Track which pets player has unlocked |
+| P1-CORE-2 | Add `selectPet(petId)` action | ✅ | — | P1-CORE-1 | Implemented in store.ts |
+| P1-CORE-3 | Add `unlockedPets: string[]` to state | ✅ | §3.2 | P1-DATA-2 | unlockedPets + unlockPet/unlockPetWithGems actions |
 | P1-CORE-4 | Audit XP/evolution formulas | ⬜ | §6.1-2 | — | Verify against Bible; document any code-wins decisions |
 
 ### P1-ABILITY: Implement Pet Abilities
