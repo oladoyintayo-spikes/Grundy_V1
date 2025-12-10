@@ -7,6 +7,7 @@ import { getXPForLevel } from './data/config';
 import { MiniGameHub } from './components/MiniGameHub';
 import { MiniGameWrapper } from './components/MiniGameWrapper';
 import { SnackCatch } from './components/games/SnackCatch';
+import { MemoryMatch } from './components/games/MemoryMatch';
 
 // ============================================
 // COMPONENTS
@@ -278,6 +279,8 @@ export default function GrundyPrototype() {
       switch (selectedGame) {
         case 'snack_catch':
           return <SnackCatch onGameEnd={() => {}} />;
+        case 'memory_match':
+          return <MemoryMatch onGameEnd={() => {}} />;
         default:
           return (
             <div className="h-full flex items-center justify-center bg-gray-800">

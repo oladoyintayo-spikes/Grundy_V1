@@ -1,7 +1,7 @@
 # TASKS.md
 ## Grundy Development Task List
 
-**Last Updated:** December 10, 2024 (P8-SNACK-1)  
+**Last Updated:** December 10, 2024 (P8-MEMORY-1)  
 **Design SoT:** `docs/GRUNDY_MASTER_BIBLE.md`  
 **Pre-Flight Report:** December 9, 2024 ✅
 
@@ -430,7 +430,7 @@ P1-CORE-4, P1-DOC-1,2 ── Can run in parallel
 
 | ID | Task | Status | Design Doc | Notes |
 |----|------|--------|------------|-------|
-| P8-MEMORY-1 | Implement Memory Match game | ⬜ | [GRUNDY_MEMORY_MATCH_DESIGN.md](docs/minigames/GRUNDY_MEMORY_MATCH_DESIGN.md) | Card matching |
+| P8-MEMORY-1 | Implement Memory Match game | ✅ | [GRUNDY_MEMORY_MATCH_DESIGN.md](docs/Minigames/GRUNDY_MEMORY_MATCH_DESIGN.md) | Card puzzle; all 8 pet abilities |
 
 ### P8-RHYTHM: Rhythm Tap
 
@@ -451,7 +451,8 @@ P1-CORE-4, P1-DOC-1,2 ── Can run in parallel
 | P8-TEST-1 | Energy system tests | ✅ | __tests__/miniGameInfra.test.ts | Deduction, regen, daily free, caps |
 | P8-TEST-2 | Reward calculation tests | ✅ | __tests__/miniGameInfra.test.ts | Tier thresholds, Fizz bonus, no gems |
 | P8-TEST-3 | Snack Catch tests | ✅ | __tests__/snackCatch.test.ts | 27 tests: scoring, abilities, combo, difficulty |
-| P8-TEST-4 | Game integration tests | ⬜ | __tests__/ | Individual game tests (per remaining game) |
+| P8-TEST-4 | Memory Match tests | ✅ | __tests__/memoryMatch.test.ts | 39 tests: board gen, scoring, efficiency, abilities |
+| P8-TEST-5 | Game integration tests | ⬜ | __tests__/ | Individual game tests (per remaining game) |
 
 ### Execution Order
 
