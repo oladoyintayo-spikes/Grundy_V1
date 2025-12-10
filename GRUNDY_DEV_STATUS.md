@@ -2,7 +2,7 @@
 
 # Grundy Web Prototype — Development Status
 
-**Last Updated:** December 10, 2024 (P4-FTUE-LORE, P8 Complete)
+**Last Updated:** December 10, 2024 (P3-NAV-CORE)
 **Current Phase:** Phase 8 — COMPLETE, Phase 3 — IN PROGRESS
 **Next Phase:** Phase 2 (Art / Sprite State System)
 
@@ -26,7 +26,7 @@
 | **Phase 0** | ✅ COMPLETE | Infrastructure, toolchain, PWA, GitHub Pages deploy |
 | **Phase 1** | ✅ COMPLETE | Data layer, core loop, abilities, docs alignment |
 | **Phase 2** | ⬜ NOT STARTED | Art / Sprite state system |
-| **Phase 3** | 🟡 IN PROGRESS | FTUE/Onboarding (P4-FTUE-LORE docs complete) |
+| **Phase 3** | 🟡 IN PROGRESS | FTUE/Onboarding (P3-NAV navigation complete, P4-FTUE-LORE docs complete) |
 | **Phase 8** | ✅ COMPLETE | All 5 mini-games implemented and tested |
 | **Phase 4-7, 9+** | ⬜ NOT STARTED | Shop, Inventory, Pet Slots, Classic Mode, etc. |
 
@@ -128,12 +128,44 @@ The following copy is canonical and used across all onboarding documentation:
 
 ---
 
+## Phase 3 – Navigation & Chrome
+
+App shell with header, bottom navigation, and view switching.
+
+### Components Created
+
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| `AppHeader` | `src/components/layout/AppHeader.tsx` | Shows active pet, coins, energy |
+| `BottomNav` | `src/components/layout/BottomNav.tsx` | 3-tab navigation (Home/Games/Settings) |
+| `HomeView` | `src/GrundyPrototype.tsx` | Pet care screen (feeding, stats) |
+| `GamesView` | `src/GrundyPrototype.tsx` | Mini-game hub + game sessions |
+| `SettingsView` | `src/GrundyPrototype.tsx` | Settings placeholder (reset game) |
+
+### Navigation Behavior
+
+- **Default view on load:** `home`
+- **View switching:** Bottom nav tabs (Home/Games/Settings)
+- **Mini-Game Hub:** Accessible from Games tab
+- **Shop modal:** Available from Home view
+
+### Tasks Completed
+
+| ID | Task | Status |
+|----|------|--------|
+| P3-NAV-1 | Introduce AppView model + state | ✅ |
+| P3-NAV-2 | Add app header (pet + coins + energy) | ✅ |
+| P3-NAV-3 | Add bottom nav + view switching | ✅ |
+| P3-NAV-4 | Wire Mini-Game Hub into navigation | ✅ |
+
+---
+
 ## Build & Test Status
 
 | Command | Status | Notes |
 |---------|--------|-------|
 | `npm run build` | ✅ PASSING | Production build succeeds |
-| `npm test -- --run` | ✅ PASSING | 320 tests passing |
+| `npm test -- --run` | ✅ PASSING | 338 tests passing |
 
 ---
 
@@ -161,6 +193,8 @@ The following copy is canonical and used across all onboarding documentation:
 - Currency system (coins/gems)
 - Pet selection and switching
 - Pet unlock via gems
+- App shell with header and bottom navigation
+- View switching (Home/Games/Settings)
 
 ### Data Layer
 - 8 pets with abilities and unlock requirements
@@ -171,7 +205,7 @@ The following copy is canonical and used across all onboarding documentation:
 ### Infrastructure
 - React 18 + TypeScript (strict mode)
 - Zustand state management with persistence
-- Vitest test suite (102 tests)
+- Vitest test suite (338 tests)
 - Vite build system
 - PWA manifest
 - GitHub Pages deployment

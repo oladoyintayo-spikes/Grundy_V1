@@ -1,7 +1,7 @@
 # TASKS.md
 ## Grundy Development Task List
 
-**Last Updated:** December 10, 2024 (P4-FTUE-LORE, P8-RHYTHM-1, P8-POOP-1, P8-TEST)
+**Last Updated:** December 10, 2024 (P3-NAV-CORE)
 **Design SoT:** `docs/GRUNDY_MASTER_BIBLE.md`  
 **Pre-Flight Report:** December 9, 2024 ✅
 
@@ -341,10 +341,22 @@ P1-CORE-4, P1-DOC-1,2 ── Can run in parallel
 |----|------|--------|-------|-------|
 | P4-FTUE-LORE | Add World Intro backstory to docs | ✅ | Onboarding, Lore, Bible | LOCKED copy across all docs |
 
+### P3-NAV: Navigation & Chrome
+
+| ID | Task | Status | Files | Notes |
+|----|------|--------|-------|-------|
+| P3-NAV-1 | Introduce AppView model + state | ✅ | types, navigation.ts | home/games/settings enum |
+| P3-NAV-2 | Add app header (pet + coins + energy) | ✅ | AppHeader.tsx | Shows active pet, coins, energy |
+| P3-NAV-3 | Add bottom nav + view switching | ✅ | BottomNav.tsx | 3-tab navigation bar |
+| P3-NAV-4 | Wire Mini-Game Hub into navigation | ✅ | GrundyPrototype.tsx | Games tab shows hub + games |
+
 **Phase 3 Exit Criteria:**
 - [ ] New player can complete FTUE in <60s
 - [ ] Mode selection works
 - [ ] First feeding always positive
+- [x] App header shows pet, coins, energy
+- [x] Bottom nav switches between Home/Games/Settings
+- [x] Games tab shows mini-game hub
 
 ---
 

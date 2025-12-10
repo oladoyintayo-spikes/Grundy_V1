@@ -2,6 +2,9 @@
 // GRUNDY WEB PROTOTYPE — TYPE DEFINITIONS
 // ============================================
 
+// --- App View (Navigation) ---
+export type AppView = 'home' | 'games' | 'settings';
+
 // --- Currency ---
 // Per Bible: coins and gems (not bites/shinies)
 export type CurrencyType = 'coins' | 'gems' | 'eventTokens';

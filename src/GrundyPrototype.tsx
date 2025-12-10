@@ -2,8 +2,11 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useGameStore } from './game/store';
 import { PETS, getAllPets, getPetById } from './data/pets';
 import { getAllFoods, getShopFoods } from './data/foods';
-import { ReactionType, FoodDefinition, FeedResult, MiniGameId, MiniGameResult } from './types';
+import { ReactionType, FoodDefinition, FeedResult, MiniGameId, MiniGameResult, AppView } from './types';
 import { getXPForLevel } from './data/config';
+import { DEFAULT_VIEW } from './game/navigation';
+import { AppHeader } from './components/layout/AppHeader';
+import { BottomNav } from './components/layout/BottomNav';
 import { MiniGameHub } from './components/MiniGameHub';
 import { MiniGameWrapper } from './components/MiniGameWrapper';
 import { SnackCatch } from './components/games/SnackCatch';
@@ -13,7 +16,7 @@ import { Pips } from './components/games/Pips';
 import { PoopScoop } from './components/games/PoopScoop';
 
 // ============================================
-// COMPONENTS
+// SHARED COMPONENTS
 // ============================================
 
 // Progress Bar Component
@@ -149,9 +152,13 @@ const LevelUpModal = ({ level, onClose }: { level: number; onClose: () => void }
 );
 
 // ============================================
-// MAIN APP
+// VIEW: HOME (Pet Care Screen)
 // ============================================
-export default function GrundyPrototype() {
+interface HomeViewProps {
+  onOpenShop: () => void;
+}
+
+function HomeView({ onOpenShop }: HomeViewProps) {
   // Get state and actions from Zustand store
   const pet = useGameStore((state) => state.pet);
   const currencies = useGameStore((state) => state.currencies);
@@ -165,13 +172,8 @@ export default function GrundyPrototype() {
   // UI State (local)
   const [lastReaction, setLastReaction] = useState<ReactionType | null>(null);
   const [reactionMessage, setReactionMessage] = useState('');
-  const [showShop, setShowShop] = useState(false);
   const [showLevelUp, setShowLevelUp] = useState(false);
   const [isFeeding, setIsFeeding] = useState(false);
-
-  // Mini-game state
-  const [view, setView] = useState<'main' | 'minigame-hub' | 'minigame-play'>('main');
-  const [selectedGame, setSelectedGame] = useState<MiniGameId | null>(null);
 
   // Get pet display data from canonical pets.ts
   const petData = getPetById(pet.id);
@@ -238,120 +240,14 @@ export default function GrundyPrototype() {
 
   }, [pet.id, inventory, isFeeding, feed, petName]);
 
-  // Buy food using store
-  const handleBuy = useCallback((foodId: string) => {
-    buyFood(foodId, 1);
-  }, [buyFood]);
-
   // Change pet using store
   const changePet = (petId: string) => {
     selectPet(petId);
   };
 
-  // Mini-game handlers
-  const handleOpenMiniGames = () => setView('minigame-hub');
-  const handleSelectGame = (gameId: MiniGameId) => {
-    setSelectedGame(gameId);
-    setView('minigame-play');
-  };
-  const handleGameComplete = (result: MiniGameResult) => {
-    setView('minigame-hub');
-    setSelectedGame(null);
-  };
-  const handleGameQuit = () => {
-    setView('minigame-hub');
-    setSelectedGame(null);
-  };
-  const handleBackFromHub = () => {
-    setView('main');
-    setSelectedGame(null);
-  };
-
-  // Render mini-game hub
-  if (view === 'minigame-hub') {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900">
-        <MiniGameHub onSelectGame={handleSelectGame} onBack={handleBackFromHub} />
-      </div>
-    );
-  }
-
-  // Render active mini-game
-  if (view === 'minigame-play' && selectedGame) {
-    const renderGame = () => {
-      switch (selectedGame) {
-        case 'snack_catch':
-          return <SnackCatch onGameEnd={() => {}} />;
-        case 'memory_match':
-          return <MemoryMatch onGameEnd={() => {}} />;
-        case 'rhythm_tap':
-          return <RhythmTap onGameEnd={() => {}} />;
-        case 'pips':
-          return <Pips onGameEnd={() => {}} />;
-        case 'poop_scoop':
-          return <PoopScoop onGameEnd={() => {}} />;
-        default:
-          return (
-            <div className="h-full flex items-center justify-center bg-gray-800">
-              <div className="text-center text-white">
-                <p className="text-4xl mb-4">🚧</p>
-                <p className="text-xl">Coming Soon!</p>
-                <button
-                  onClick={handleGameQuit}
-                  className="mt-4 px-4 py-2 bg-white/20 rounded-lg hover:bg-white/30"
-                >
-                  Back
-                </button>
-              </div>
-            </div>
-          );
-      }
-    };
-
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900">
-        <MiniGameWrapper
-          gameId={selectedGame}
-          onComplete={handleGameComplete}
-          onQuit={handleGameQuit}
-        >
-          {renderGame()}
-        </MiniGameWrapper>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 text-white p-4">
+    <div className="h-full overflow-y-auto text-white p-4">
       <div className="max-w-md mx-auto">
-
-        {/* Header */}
-        <div className="flex justify-between items-center mb-4">
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1 bg-yellow-500/20 px-3 py-1 rounded-full">
-              <span>🪙</span>
-              <span className="text-yellow-400 font-bold">{currencies.coins}</span>
-            </div>
-            <div className="flex items-center gap-1 bg-purple-500/20 px-3 py-1 rounded-full">
-              <span>💎</span>
-              <span className="text-purple-400 font-bold">{currencies.gems}</span>
-            </div>
-          </div>
-          <div className="flex gap-2">
-            <button
-              onClick={handleOpenMiniGames}
-              className="px-4 py-2 bg-purple-500 hover:bg-purple-600 rounded-full font-bold text-sm transition-colors"
-            >
-              🎮 Games
-            </button>
-            <button
-              onClick={() => setShowShop(true)}
-              className="px-4 py-2 bg-green-500 hover:bg-green-600 rounded-full font-bold text-sm transition-colors"
-            >
-              🏪 Shop
-            </button>
-          </div>
-        </div>
 
         {/* Pet Selection */}
         <div className="flex justify-center gap-2 mb-4 flex-wrap">
@@ -431,6 +327,16 @@ export default function GrundyPrototype() {
           </div>
         </div>
 
+        {/* Shop Button */}
+        <div className="text-center mb-4">
+          <button
+            onClick={onOpenShop}
+            className="px-6 py-3 bg-green-500 hover:bg-green-600 rounded-full font-bold text-sm transition-colors"
+          >
+            🏪 Open Shop
+          </button>
+        </div>
+
         {/* Stats Footer */}
         <div className="text-center text-gray-500 text-sm">
           Total feeds: {stats.totalFeeds} | Session started: {new Date(stats.sessionStartTime).toLocaleTimeString()}
@@ -439,24 +345,234 @@ export default function GrundyPrototype() {
         {/* Hint */}
         {pet.hunger < 30 && (
           <div className="mt-4 text-center text-orange-400 text-sm animate-pulse">
-            ⚠️ {petName} is getting hungry! Feed them soon!
+            {petName} is getting hungry! Feed them soon!
           </div>
         )}
 
       </div>
 
-      {/* Modals */}
+      {/* Level Up Modal */}
+      {showLevelUp && (
+        <LevelUpModal level={pet.level} onClose={() => setShowLevelUp(false)} />
+      )}
+    </div>
+  );
+}
+
+// ============================================
+// VIEW: GAMES (Mini-Game Hub)
+// ============================================
+function GamesView() {
+  const [selectedGame, setSelectedGame] = useState<MiniGameId | null>(null);
+
+  const handleSelectGame = (gameId: MiniGameId) => {
+    setSelectedGame(gameId);
+  };
+
+  const handleGameComplete = (result: MiniGameResult) => {
+    setSelectedGame(null);
+  };
+
+  const handleGameQuit = () => {
+    setSelectedGame(null);
+  };
+
+  const handleBackToHub = () => {
+    setSelectedGame(null);
+  };
+
+  // If a game is selected, show the game
+  if (selectedGame) {
+    const renderGame = () => {
+      switch (selectedGame) {
+        case 'snack_catch':
+          return <SnackCatch onGameEnd={() => {}} />;
+        case 'memory_match':
+          return <MemoryMatch onGameEnd={() => {}} />;
+        case 'rhythm_tap':
+          return <RhythmTap onGameEnd={() => {}} />;
+        case 'pips':
+          return <Pips onGameEnd={() => {}} />;
+        case 'poop_scoop':
+          return <PoopScoop onGameEnd={() => {}} />;
+        default:
+          return (
+            <div className="h-full flex items-center justify-center bg-gray-800">
+              <div className="text-center text-white">
+                <p className="text-4xl mb-4">🚧</p>
+                <p className="text-xl">Coming Soon!</p>
+                <button
+                  onClick={handleGameQuit}
+                  className="mt-4 px-4 py-2 bg-white/20 rounded-lg hover:bg-white/30"
+                >
+                  Back
+                </button>
+              </div>
+            </div>
+          );
+      }
+    };
+
+    return (
+      <div className="h-full">
+        <MiniGameWrapper
+          gameId={selectedGame}
+          onComplete={handleGameComplete}
+          onQuit={handleGameQuit}
+        >
+          {renderGame()}
+        </MiniGameWrapper>
+      </div>
+    );
+  }
+
+  // Show the hub
+  return (
+    <div className="h-full">
+      <MiniGameHub onSelectGame={handleSelectGame} onBack={handleBackToHub} />
+    </div>
+  );
+}
+
+// ============================================
+// VIEW: SETTINGS
+// ============================================
+function SettingsView() {
+  const settings = useGameStore((state) => state.settings);
+  const resetGame = useGameStore((state) => state.resetGame);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
+
+  const handleReset = () => {
+    resetGame();
+    setShowResetConfirm(false);
+  };
+
+  return (
+    <div className="h-full flex flex-col items-center justify-center text-slate-200 p-4">
+      <div className="max-w-sm w-full space-y-6">
+        <div className="text-center mb-8">
+          <h2 className="text-xl font-semibold mb-2">Settings</h2>
+          <p className="text-sm text-slate-400">
+            More settings will be added in a later phase.
+          </p>
+        </div>
+
+        {/* Sound Settings (Visual only - stubs) */}
+        <div className="bg-slate-800/50 rounded-xl p-4 space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <span className="text-xl">🔊</span>
+              <span>Sound Effects</span>
+            </div>
+            <div className={`w-12 h-6 rounded-full relative transition-colors ${settings.soundEnabled ? 'bg-green-500' : 'bg-slate-600'}`}>
+              <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${settings.soundEnabled ? 'right-1' : 'left-1'}`} />
+            </div>
+          </div>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <span className="text-xl">🎵</span>
+              <span>Music</span>
+            </div>
+            <div className={`w-12 h-6 rounded-full relative transition-colors ${settings.musicEnabled ? 'bg-green-500' : 'bg-slate-600'}`}>
+              <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${settings.musicEnabled ? 'right-1' : 'left-1'}`} />
+            </div>
+          </div>
+        </div>
+
+        {/* Danger Zone */}
+        <div className="bg-red-900/20 border border-red-500/30 rounded-xl p-4">
+          <h3 className="text-sm font-medium text-red-400 mb-3">Danger Zone</h3>
+          {!showResetConfirm ? (
+            <button
+              onClick={() => setShowResetConfirm(true)}
+              className="w-full py-2 px-4 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg transition-colors"
+            >
+              Reset Game Data
+            </button>
+          ) : (
+            <div className="space-y-2">
+              <p className="text-xs text-red-300">Are you sure? This cannot be undone!</p>
+              <div className="flex gap-2">
+                <button
+                  onClick={handleReset}
+                  className="flex-1 py-2 px-4 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors"
+                >
+                  Yes, Reset
+                </button>
+                <button
+                  onClick={() => setShowResetConfirm(false)}
+                  className="flex-1 py-2 px-4 bg-slate-600 hover:bg-slate-500 text-white rounded-lg transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Version Info */}
+        <div className="text-center text-xs text-slate-500">
+          Grundy Web Prototype v0.1.0
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================
+// MAIN APP
+// ============================================
+export default function GrundyPrototype() {
+  // Navigation state
+  const [currentView, setCurrentView] = useState<AppView>(DEFAULT_VIEW);
+
+  // Shop modal state (shared across views)
+  const [showShop, setShowShop] = useState(false);
+  const currencies = useGameStore((state) => state.currencies);
+  const inventory = useGameStore((state) => state.inventory);
+  const buyFood = useGameStore((state) => state.buyFood);
+
+  // View change handler
+  const handleChangeView = useCallback((view: AppView) => {
+    setCurrentView(view);
+  }, []);
+
+  // Shop handlers
+  const handleOpenShop = () => setShowShop(true);
+  const handleCloseShop = () => setShowShop(false);
+  const handleBuy = useCallback((foodId: string) => {
+    buyFood(foodId, 1);
+  }, [buyFood]);
+
+  return (
+    <div className="h-screen w-screen flex flex-col bg-gradient-to-b from-slate-900 via-slate-950 to-black overflow-hidden">
+      {/* App Header */}
+      <AppHeader />
+
+      {/* Main Content */}
+      <main className="flex-1 overflow-hidden">
+        {currentView === 'home' && (
+          <HomeView onOpenShop={handleOpenShop} />
+        )}
+        {currentView === 'games' && (
+          <GamesView />
+        )}
+        {currentView === 'settings' && (
+          <SettingsView />
+        )}
+      </main>
+
+      {/* Bottom Navigation */}
+      <BottomNav currentView={currentView} onChangeView={handleChangeView} />
+
+      {/* Shop Modal (available from any view) */}
       <ShopModal
         isOpen={showShop}
-        onClose={() => setShowShop(false)}
+        onClose={handleCloseShop}
         coins={currencies.coins}
         onBuy={handleBuy}
         inventory={inventory}
       />
-
-      {showLevelUp && (
-        <LevelUpModal level={pet.level} onClose={() => setShowLevelUp(false)} />
-      )}
     </div>
   );
 }
