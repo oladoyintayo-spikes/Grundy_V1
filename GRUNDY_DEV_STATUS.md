@@ -2,9 +2,9 @@
 
 # Grundy Web Prototype — Development Status
 
-**Last Updated:** December 10, 2024 (P3-NAV-CORE)
-**Current Phase:** Phase 8 — COMPLETE, Phase 3 — IN PROGRESS
-**Next Phase:** Phase 2 (Art / Sprite State System)
+**Last Updated:** December 10, 2024 (CE-P3-PLAN)
+**Current Phase:** Web Phase 3 — IN PROGRESS (Navigation ✅, Environment ⬜)
+**Next Phase:** Web Phase 4 (FTUE / Onboarding)
 
 ---
 
@@ -19,20 +19,31 @@
 
 ---
 
-## Phase Status Overview
+## Web Edition Phase Structure
 
-| Phase | Status | Summary |
-|-------|--------|---------|
-| **Phase 0** | ✅ COMPLETE | Infrastructure, toolchain, PWA, GitHub Pages deploy |
-| **Phase 1** | ✅ COMPLETE | Data layer, core loop, abilities, docs alignment |
-| **Phase 2** | ⬜ NOT STARTED | Art / Sprite state system |
-| **Phase 3** | 🟡 IN PROGRESS | FTUE/Onboarding (P3-NAV navigation complete, P4-FTUE-LORE docs complete) |
-| **Phase 8** | ✅ COMPLETE | All 5 mini-games implemented and tested |
-| **Phase 4-7, 9+** | ⬜ NOT STARTED | Shop, Inventory, Pet Slots, Classic Mode, etc. |
+| Web Phase | Theme | Status | Summary |
+|-----------|-------|--------|---------|
+| **Web Phase 0** | Setup & Toolchain | ✅ COMPLETE | Infrastructure, toolchain, PWA, GitHub Pages deploy |
+| **Web Phase 1** | Core Loop & Data | ✅ COMPLETE | Data layer, core loop, abilities, docs alignment |
+| **Web Phase 2** | Mini-Games & Infra | ✅ COMPLETE | All 5 mini-games implemented and tested |
+| **Web Phase 3** | Navigation & Environment | 🟡 IN PROGRESS | P3-NAV ✅, P3-ENV ⬜ |
+| **Web Phase 4** | FTUE / Onboarding | ⬜ NOT STARTED | Splash → Age Gate → World Intro → Pet Select |
+| **Web Phase 5** | Polish / Web 1.0 | ⬜ NOT STARTED | Sound, PWA, art integration, release |
+
+### Post-Web 1.0
+
+| System | Status | Summary |
+|--------|--------|---------|
+| Art / Sprite States | ⬜ DEFERRED | Connect stats to visual states (getDisplayState) |
+| Sound & Vibration | ⬜ DEFERRED | Audio feedback, vibration patterns |
+| Shop & Economy | ⬜ NOT STARTED | Shop tabs, gem confirm, milestones |
+| Inventory | ⬜ NOT STARTED | Capacity, expansion items |
+| Pet Slots | ⬜ NOT STARTED | Multi-pet care system |
+| Classic Mode | ⬜ NOT STARTED | Sickness, neglect, runaway |
 
 ---
 
-## Phase 1 — COMPLETE
+## Web Phase 1 — COMPLETE
 
 **Theme:** Complete Data Layer & Core Loop Alignment
 
@@ -81,7 +92,7 @@
 
 ---
 
-## Phase 8 — COMPLETE (Mini-Games)
+## Web Phase 2 — COMPLETE (Mini-Games)
 
 **Theme:** Bible Section 8 — All 5 mini-games implemented.
 
@@ -128,44 +139,12 @@ The following copy is canonical and used across all onboarding documentation:
 
 ---
 
-## Phase 3 – Navigation & Chrome
-
-App shell with header, bottom navigation, and view switching.
-
-### Components Created
-
-| Component | Location | Purpose |
-|-----------|----------|---------|
-| `AppHeader` | `src/components/layout/AppHeader.tsx` | Shows active pet, coins, energy |
-| `BottomNav` | `src/components/layout/BottomNav.tsx` | 3-tab navigation (Home/Games/Settings) |
-| `HomeView` | `src/GrundyPrototype.tsx` | Pet care screen (feeding, stats) |
-| `GamesView` | `src/GrundyPrototype.tsx` | Mini-game hub + game sessions |
-| `SettingsView` | `src/GrundyPrototype.tsx` | Settings placeholder (reset game) |
-
-### Navigation Behavior
-
-- **Default view on load:** `home`
-- **View switching:** Bottom nav tabs (Home/Games/Settings)
-- **Mini-Game Hub:** Accessible from Games tab
-- **Shop modal:** Available from Home view
-
-### Tasks Completed
-
-| ID | Task | Status |
-|----|------|--------|
-| P3-NAV-1 | Introduce AppView model + state | ✅ |
-| P3-NAV-2 | Add app header (pet + coins + energy) | ✅ |
-| P3-NAV-3 | Add bottom nav + view switching | ✅ |
-| P3-NAV-4 | Wire Mini-Game Hub into navigation | ✅ |
-
----
-
 ## Build & Test Status
 
 | Command | Status | Notes |
 |---------|--------|-------|
 | `npm run build` | ✅ PASSING | Production build succeeds |
-| `npm test -- --run` | ✅ PASSING | 338 tests passing |
+| `npm test -- --run` | ✅ PASSING | 320 tests passing |
 
 ---
 
@@ -193,8 +172,6 @@ App shell with header, bottom navigation, and view switching.
 - Currency system (coins/gems)
 - Pet selection and switching
 - Pet unlock via gems
-- App shell with header and bottom navigation
-- View switching (Home/Games/Settings)
 
 ### Data Layer
 - 8 pets with abilities and unlock requirements
@@ -205,7 +182,7 @@ App shell with header, bottom navigation, and view switching.
 ### Infrastructure
 - React 18 + TypeScript (strict mode)
 - Zustand state management with persistence
-- Vitest test suite (338 tests)
+- Vitest test suite (102 tests)
 - Vite build system
 - PWA manifest
 - GitHub Pages deployment
@@ -213,14 +190,22 @@ App shell with header, bottom navigation, and view switching.
 
 ---
 
-## Next Steps (Phase 2)
+## Next Steps (Web Phase 3 → 4)
 
-1. P2-1: Create `getDisplayState()` for sprite state management
-2. P2-2: Implement transient states (eating, excited, pooping)
-3. P2-3: Implement need states (hungry, sad, crying)
-4. P2-4: Implement ambient states (happy, ecstatic)
-5. P2-5: Connect sprites to state system
-6. P2-6: Implement eating reaction animations
+### Web Phase 3: Environment (Remaining)
+
+1. P3-ENV-1: Time-of-day theming (Morning/Day/Evening/Night)
+2. P3-ENV-2: Room contexts (Kitchen/Bedroom/Playroom/Yard)
+3. P3-ENV-3: Hook nav/views into room/time context
+
+### Web Phase 4: FTUE / Onboarding
+
+1. P4-FTUE-CORE: Implement full FTUE flow in UI
+2. P4-1: Audit current FTUE vs Bible
+3. P4-2: Implement world intro screen
+4. P4-3: Add pet origin snippets
+5. P4-6: Implement mode select (Cozy vs Classic)
+6. P4-8: Verify <60s timing
 
 ---
 

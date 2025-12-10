@@ -1,9 +1,22 @@
 # TASKS.md
 ## Grundy Development Task List
 
-**Last Updated:** December 10, 2024 (P3-NAV-CORE)
-**Design SoT:** `docs/GRUNDY_MASTER_BIBLE.md`  
+**Last Updated:** December 10, 2024 (CE-P3-PLAN)
+**Design SoT:** `docs/GRUNDY_MASTER_BIBLE.md`
 **Pre-Flight Report:** December 9, 2024 ✅
+
+---
+
+## Web Edition Phase Structure
+
+| Web Phase | Theme | Status |
+|-----------|-------|--------|
+| Web Phase 0 | Setup & Toolchain | ✅ COMPLETE |
+| Web Phase 1 | Core Loop & Data | ✅ COMPLETE |
+| Web Phase 2 | Mini-Games & Infra | ✅ COMPLETE |
+| Web Phase 3 | Navigation & Environment | 🟡 IN PROGRESS |
+| Web Phase 4 | FTUE / Onboarding | ⬜ NOT STARTED |
+| Web Phase 5 | Polish / Web 1.0 | ⬜ NOT STARTED |
 
 ---
 
@@ -101,9 +114,9 @@
 
 ---
 
-## PHASE 0: Pre-Flight & Toolchain (BLOCKING)
+## WEB PHASE 0: Setup & Toolchain ✅
 
-> ⚠️ NOTHING ELSE CAN PROCEED UNTIL PHASE 0 IS COMPLETE
+> ⚠️ COMPLETE — All infrastructure tasks done. Ready for Phase 1.
 
 ### P0-0: Scaffold Missing Toolchain
 
@@ -168,11 +181,11 @@ npm run build      # Must exit 0
 
 ---
 
-## PHASE 1: Complete Data Layer & Core Loop Alignment
+## WEB PHASE 1: Core Loop & Data ✅
 
 > **Theme:** Unify the data layer and align with Bible specs.
 >
-> **Primary Bottleneck:** store.ts uses `'sprout'` as default pet, but this ID doesn't exist in pets.ts. The affinity matrix only covers 3×8=24 entries; Bible requires 8×10=80.
+> **Status:** COMPLETE — All data layer, core loop, abilities, and documentation aligned.
 
 ### P1-DATA: Complete Data Definitions
 
@@ -240,6 +253,12 @@ npm run build      # Must exit 0
 |----|------|--------|-------|-------|
 | P2-DOC-2 | Align Bible & mini-game docs to NO-GEMS rule | ✅ | Bible §8, DEV_STATUS | Mini-games never award gems; Rainbow = coins/XP/food only |
 
+### CE-P3: Chief Engineer Planning Tasks
+
+| ID | Task | Status | Scope | Notes |
+|----|------|--------|-------|-------|
+| CE-P3-PLAN | Normalize TASKS.md to Web Phases 3-5 | ✅ | TASKS.md, DEV_STATUS, Roadmap | Web Phase structure + P3-ENV + P4-FTUE + P5-POLISH |
+
 ### P1-ART: Asset Creation (Deferred)
 
 | ID | Task | Status | Scope | Notes |
@@ -300,67 +319,11 @@ P1-CORE-4, P1-DOC-1,2 ── Can run in parallel
 
 ---
 
-## PHASE 2: Art / Sprite State System
+## POST-WEB 1.0 SYSTEMS
 
-> Bible Section 13.6 — Connect stats to visual states.
+> These features are planned for after the Web 1.0 release.
 
-| ID | Task | Status | Bible | Acceptance Criteria |
-|----|------|--------|-------|---------------------|
-| P2-1 | Create `getDisplayState()` | ⬜ | 13.6 | Returns correct state based on priority |
-| P2-2 | Implement transient states | ⬜ | 13.6 | Eating, excited, pooping states |
-| P2-3 | Implement need states | ⬜ | 13.6 | Hungry, sad, crying at thresholds |
-| P2-4 | Implement ambient states | ⬜ | 13.6 | Happy, ecstatic based on mood |
-| P2-5 | Connect sprites to states | ⬜ | 13.6 | Pet shows correct sprite |
-| P2-6 | Implement eating reactions | ⬜ | 13.6 | loved, liked, neutral, disliked |
-
-**Phase 2 Exit Criteria:**
-- [ ] Pet sprite changes based on state
-- [ ] All eating animations work
-- [ ] State priority order correct
-
----
-
-## PHASE 3: FTUE / Onboarding Alignment
-
-> Bible Section 7 — Complete onboarding flow.
-
-| ID | Task | Status | Bible | Acceptance Criteria |
-|----|------|--------|-------|---------------------|
-| P3-1 | Audit current FTUE vs Bible | ⬜ | 7.x | Document all gaps |
-| P3-2 | Implement world intro | ⬜ | 7.3 | 5-second lore snippet |
-| P3-3 | Add pet origin snippets | ⬜ | 7.4 | 2-line origin + loves/hates |
-| P3-4 | Implement locked pet teasers | ⬜ | 7.4 | Partial lore for locked pets |
-| P3-5 | Add personality dialogue | ⬜ | 7.6 | Pet-specific greetings |
-| P3-6 | Implement mode select | ⬜ | 7.7 | Cozy vs Classic choice |
-| P3-7 | Enforce FTUE rules | ⬜ | 7.8 | No monetization, first reaction positive |
-| P3-8 | Verify <60s timing | ⬜ | 7.1 | Total onboarding under 60 seconds |
-
-### P3-DOC: FTUE Documentation
-
-| ID | Task | Status | Scope | Notes |
-|----|------|--------|-------|-------|
-| P4-FTUE-LORE | Add World Intro backstory to docs | ✅ | Onboarding, Lore, Bible | LOCKED copy across all docs |
-
-### P3-NAV: Navigation & Chrome
-
-| ID | Task | Status | Files | Notes |
-|----|------|--------|-------|-------|
-| P3-NAV-1 | Introduce AppView model + state | ✅ | types, navigation.ts | home/games/settings enum |
-| P3-NAV-2 | Add app header (pet + coins + energy) | ✅ | AppHeader.tsx | Shows active pet, coins, energy |
-| P3-NAV-3 | Add bottom nav + view switching | ✅ | BottomNav.tsx | 3-tab navigation bar |
-| P3-NAV-4 | Wire Mini-Game Hub into navigation | ✅ | GrundyPrototype.tsx | Games tab shows hub + games |
-
-**Phase 3 Exit Criteria:**
-- [ ] New player can complete FTUE in <60s
-- [ ] Mode selection works
-- [ ] First feeding always positive
-- [x] App header shows pet, coins, energy
-- [x] Bottom nav switches between Home/Games/Settings
-- [x] Games tab shows mini-game hub
-
----
-
-## PHASE 4: Shop System
+### Shop System
 
 > Bible Section 11.5 — Complete shop implementation.
 
@@ -423,10 +386,12 @@ P1-CORE-4, P1-DOC-1,2 ── Can run in parallel
 
 ---
 
-## PHASE 8: Mini-Games
+## WEB PHASE 2: Mini-Games & Infra ✅
 
-> Bible Section 8 — Complete all 4 mini-games.
+> Bible Section 8 — All 5 mini-games implemented and tested.
 > Design docs: `docs/minigames/`
+>
+> **Status:** COMPLETE — Energy system, rewards, daily caps, and all 5 games working.
 
 ### P8-INFRA: Mini-Game Infrastructure
 
@@ -505,7 +470,110 @@ P8-TEST
 
 ---
 
-## PHASE 9: Sound & Vibration
+## WEB PHASE 3: Navigation & Environment 🟡
+
+> App shell, navigation chrome, time-of-day theming, and rooms.
+
+### P3-NAV: App Shell & Navigation
+
+| ID | Task | Status | Files | Notes |
+|----|------|--------|-------|-------|
+| P3-NAV-1 | Introduce AppView model (home/games/settings) | ✅ | types, navigation.ts | Local state in GrundyPrototype |
+| P3-NAV-2 | Add app header (pet + coins + energy) | ✅ | AppHeader.tsx | Shows active pet, coins, energy |
+| P3-NAV-3 | Add bottom nav + view switching | ✅ | BottomNav.tsx | 3-tab navigation bar |
+| P3-NAV-4 | Wire Mini-Game Hub into Games view | ✅ | GrundyPrototype.tsx | Games tab shows MiniGameHub + sessions |
+
+### P3-ENV: Time-of-Day & Rooms
+
+| ID | Task | Status | Files | Notes |
+|----|------|--------|-------|-------|
+| P3-ENV-1 | Time-of-day theming (Morning/Day/Evening/Night) | ⬜ | theme.ts, types | Background gradients + theme state |
+| P3-ENV-2 | Room contexts (Kitchen/Bedroom/Playroom/Yard) | ⬜ | rooms.ts, types | Simple enum + mapping to views |
+| P3-ENV-3 | Hook nav/views into room/time context | ⬜ | GrundyPrototype.tsx | Home/Games use appropriate room + theme |
+
+**Web Phase 3 Exit Criteria:**
+- [x] App header shows pet, coins, energy
+- [x] Bottom nav switches between Home/Games/Settings
+- [x] Games tab shows mini-game hub
+- [ ] Time-of-day theming applied
+- [ ] Rooms integrated into views
+
+---
+
+## WEB PHASE 4: FTUE / Onboarding ⬜
+
+> Bible Section 7 — Complete onboarding flow.
+> Splash → Age Gate → World Intro → Pet Selection → Guided First Session
+
+### P4-FTUE: Onboarding Core
+
+| ID | Task | Status | Bible | Notes |
+|----|------|--------|-------|-------|
+| P4-FTUE-CORE | Implement full FTUE flow in UI | ⬜ | 7.x | Splash → Age Gate → World Intro → Pet Select → First Session |
+| P4-FTUE-LORE | Lock World Intro backstory across docs | ✅ | 7.4 | Lore Codex, Bible, Onboarding aligned |
+
+### P4-FTUE: Screen Implementation (from Bible §7)
+
+| ID | Task | Status | Bible | Acceptance Criteria |
+|----|------|--------|-------|---------------------|
+| P4-1 | Audit current FTUE vs Bible | ⬜ | 7.x | Document all gaps |
+| P4-2 | Implement world intro | ⬜ | 7.3 | 10-second lore snippet |
+| P4-3 | Add pet origin snippets | ⬜ | 7.4 | 2-line origin + loves/hates |
+| P4-4 | Implement locked pet teasers | ⬜ | 7.4 | Partial lore for locked pets |
+| P4-5 | Add personality dialogue | ⬜ | 7.6 | Pet-specific greetings |
+| P4-6 | Implement mode select | ⬜ | 7.7 | Cozy vs Classic choice |
+| P4-7 | Enforce FTUE rules | ⬜ | 7.8 | No monetization, first reaction positive |
+| P4-8 | Verify <60s timing | ⬜ | 7.1 | Total onboarding under 60 seconds |
+
+**Web Phase 4 Exit Criteria:**
+- [ ] New player can complete FTUE in <60s
+- [ ] Mode selection works
+- [ ] First feeding always positive
+- [ ] World Intro shows LOCKED copy
+
+---
+
+## WEB PHASE 5: Polish / Web 1.0 ⬜
+
+> Final polish, sound, PWA support, art integration, and release.
+
+### P5-POLISH: Web 1.0 Readiness
+
+| ID | Task | Status | Scope | Notes |
+|----|------|--------|-------|-------|
+| P5-SOUND-1 | Add basic SFX/BGM + sound settings | ⬜ | Audio, store | Core events: feed, evolve, mini-game |
+| P5-PWA-1 | Add PWA manifest, icons, service worker | ⬜ | public/, sw.js | Installable on mobile |
+| P5-ART-1 | Integrate final pet + room art assets | ⬜ | assets/ | Replace emoji placeholders |
+| P5-QA-1 | Full Web 1.0 test pass & release checklist | ⬜ | All | Tag Web Edition 1.0 |
+
+**Web Phase 5 Exit Criteria:**
+- [ ] Sound system working with mute
+- [ ] PWA installable on mobile
+- [ ] Final art integrated
+- [ ] All tests passing
+- [ ] Web 1.0 release tagged
+
+---
+
+## DEFERRED SYSTEMS
+
+> These tasks are planned for after Web 1.0 release.
+
+### Art / Sprite State System (Deferred)
+
+> Bible Section 13.6 — Connect stats to visual states.
+> **Rationale:** Deferred until Web Phase 5 art integration.
+
+| ID | Task | Status | Bible | Acceptance Criteria |
+|----|------|--------|-------|---------------------|
+| P2-1 | Create `getDisplayState()` | ⬜ | 13.6 | Returns correct state based on priority |
+| P2-2 | Implement transient states | ⬜ | 13.6 | Eating, excited, pooping states |
+| P2-3 | Implement need states | ⬜ | 13.6 | Hungry, sad, crying at thresholds |
+| P2-4 | Implement ambient states | ⬜ | 13.6 | Happy, ecstatic based on mood |
+| P2-5 | Connect sprites to states | ⬜ | 13.6 | Pet shows correct sprite |
+| P2-6 | Implement eating reactions | ⬜ | 13.6 | loved, liked, neutral, disliked |
+
+### Sound & Vibration (Deferred to P5)
 
 > Bible Section 12 — Audio feedback.
 
