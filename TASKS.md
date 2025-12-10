@@ -228,6 +228,12 @@ npm run build      # Must exit 0
 
 **✅ PHASE 1 DOCUMENTATION COMPLETE**
 
+### CE-P2: Chief Engineer Planning Tasks
+
+| ID | Task | Status | Scope | Notes |
+|----|------|--------|-------|-------|
+| CE-P2-01 | Create Phase 8 mini-game implementation prompts | ✅ | prompts/phase2/ | 6 prompts: INFRA, SNACK, MEMORY, PIPS, RHYTHM, POOP |
+
 ### P1-ART: Asset Creation (Deferred)
 
 | ID | Task | Status | Scope | Notes |
