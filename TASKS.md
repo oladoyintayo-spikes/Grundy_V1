@@ -222,8 +222,10 @@ npm run build      # Must exit 0
 
 | ID | Task | Status | Scope | Notes |
 |----|------|--------|-------|-------|
-| P1-DOC-1 | Apply Bible Update Backlog | ⬜ | `BIBLE_UPDATE_BACKLOG.md` | Evolution levels: code wins (youth=10, adult=25) |
-| P1-DOC-2 | Update README starting gems | ⬜ | `README.md` | Line 203 says 0 gems, should be 10 |
+| P1-DOC-1 | Apply Bible Update Backlog | ✅ | `BIBLE_UPDATE_BACKLOG.md` | Bible §6.1 updated: Baby 1-9, Youth 10-24, Evolved 25+ |
+| P1-DOC-2 | Update README with current status | ✅ | `README.md` | Progression section updated to match code |
+
+**✅ PHASE 1 DOCUMENTATION COMPLETE**
 
 ### P1-ART: Asset Creation (Deferred)
 

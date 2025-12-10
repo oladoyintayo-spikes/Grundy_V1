@@ -1227,9 +1227,9 @@ Cure: Don't feed snacks for 24 hours, or use "Diet Food" item
 
 | Stage | Levels | Look |
 |-------|--------|------|
-| Baby | 1-6 | Simple, small |
-| Youth | 7-12 | Growing, developing |
-| Evolved | 13+ | Full design |
+| Baby | 1-9 | Simple, small |
+| Youth | 10-24 | Growing, developing |
+| Evolved | 25+ | Full design |
 
 Care quality affects appearance in Classic mode (see Section 9).
 
