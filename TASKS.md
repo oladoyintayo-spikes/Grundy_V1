@@ -224,6 +224,18 @@ npm run build      # Must exit 0
 |----|------|--------|-------|---------------------|
 | P1-ART-01 | Create PWA icons | ⬜ | `public/` | icon-192.png and icon-512.png created with Grundy branding |
 
+### P1-CORE: Core System Naming Alignment
+
+| ID | Task | Status | Scope | Acceptance Criteria |
+|----|------|--------|-------|---------------------|
+| P1-CORE-2 | Rename 'adult' evolution stage to 'evolved' | ✅ | types, config, systems, prototype | All references updated; Bible naming §6.1 |
+
+### P1-UI: UI Integration
+
+| ID | Task | Status | Scope | Acceptance Criteria |
+|----|------|--------|-------|---------------------|
+| P1-UI-01 | Connect GrundyPrototype.tsx to Zustand store | ⬜ | GrundyPrototype.tsx, store.ts | Currently uses local useState with legacy pet data; needs to use canonical pets.ts + store |
+
 ---
 
 ## PHASE 2: Art / Sprite State System

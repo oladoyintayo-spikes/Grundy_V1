@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 // TYPES
 // ============================================
 type MoodState = 'happy' | 'neutral' | 'sad' | 'ecstatic';
-type EvolutionStage = 'baby' | 'youth' | 'adult';
+type EvolutionStage = 'baby' | 'youth' | 'evolved';
 type ReactionType = 'neutral' | 'positive' | 'negative' | 'ecstatic';
 type FoodCategory = 'basic' | 'tasty' | 'rare' | 'premium';
 
@@ -261,7 +261,7 @@ export default function GrundyPrototype() {
   const xpProgress = (pet.xp / xpForNextLevel) * 100;
   
   // Evolution emoji
-  const evolutionEmoji = pet.evolutionStage === 'adult' ? '🌳' : pet.evolutionStage === 'youth' ? '🌿' : '🌱';
+  const evolutionEmoji = pet.evolutionStage === 'evolved' ? '🌳' : pet.evolutionStage === 'youth' ? '🌿' : '🌱';
   
   // Mood emoji
   const moodEmoji = { happy: '😊', neutral: '😐', sad: '😢', ecstatic: '🤩' }[pet.mood];
@@ -306,7 +306,7 @@ export default function GrundyPrototype() {
     
     setPet(p => {
       const newLevel = leveledUp ? p.level + 1 : p.level;
-      const newStage = newLevel >= 25 ? 'adult' : newLevel >= 10 ? 'youth' : 'baby';
+      const newStage = newLevel >= 25 ? 'evolved' : newLevel >= 10 ? 'youth' : 'baby';
       
       return {
         ...p,

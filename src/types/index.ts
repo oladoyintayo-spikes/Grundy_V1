@@ -34,9 +34,8 @@ export const MOOD_DATA: Record<MoodTier, MoodData> = {
 };
 
 // --- Evolution ---
-// Note: store.ts uses 'adult', config.ts uses 'adult' - keeping for compatibility
-// TODO: P1-x - Bible says youth=7, evolved=13 - reconcile naming
-export type EvolutionStage = 'baby' | 'youth' | 'adult';
+// Bible (§6.1): Baby → Youth → Evolved
+export type EvolutionStage = 'baby' | 'youth' | 'evolved';
 
 // --- Reaction Type ---
 // Includes 'ecstatic' for loved food reactions
@@ -126,7 +125,7 @@ export interface GameConfig {
   hungerDecayPerMinute: number;
   evolutionLevels: {
     youth: number;
-    adult: number;
+    evolved: number;
   };
   moodModifiers: Record<MoodState, number>;
   reactionModifiers: Record<ReactionType, number>;
