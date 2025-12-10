@@ -22,33 +22,9 @@
 
 | ID | Area | Bible Section | Current Bible | Target Value | Decision Source | Status |
 |----|------|---------------|---------------|--------------|-----------------|--------|
-| BIB-01 | Evolution youth level | §6.1 | 7 | 10 | CE-03 (Amos, 2024-12-10) | ⬜ |
-| BIB-02 | Evolution evolved level | §6.1 | 13 | 25 | CE-03 (Amos, 2024-12-10) | ⬜ |
+| — | — | — | — | — | — | — |
 
-### BIB-01: Evolution Youth Level
-
-**Bible §6.1 Currently Says:**
-```
-| Stage | Levels | Look |
-|-------|--------|------|
-| Baby | 1-6 | Simple, small |
-| Youth | 7-12 | Growing, developing |
-| Evolved | 13+ | Full design |
-```
-
-**Code (config.ts:22-25):**
-```typescript
-evolutionLevels: {
-  youth: 10,
-  adult: 25,
-},
-```
-
-**Rationale:** Code wins for pacing. Slower evolution creates more anticipation and aligns with "Curved progression — fast early, slow late" design philosophy (Bible §6.2). Players have longer time in Baby and Youth stages before evolution.
-
-### BIB-02: Evolution Evolved Level
-
-Same as above — Bible says Evolved at 13+, code uses 25 for the same pacing reasons.
+*No pending updates at this time.*
 
 ---
 
@@ -56,7 +32,10 @@ Same as above — Bible says Evolved at 13+, code uses 25 for the same pacing re
 
 | ID | Area | Updated | By |
 |----|------|---------|-----|
-| — | — | — | — |
+| BIB-01 | Evolution youth level (7→10) | 2024-12-10 | P1-DOC-1 |
+| BIB-02 | Evolution evolved level (13→25) | 2024-12-10 | P1-DOC-1 |
+
+**Rationale (BIB-01 & BIB-02):** Code wins for pacing. Slower evolution creates more anticipation and aligns with "Curved progression — fast early, slow late" design philosophy (Bible §6.2). Players have longer time in Baby and Youth stages before evolution.
 
 ---
 
@@ -64,8 +43,13 @@ Same as above — Bible says Evolved at 13+, code uses 25 for the same pacing re
 
 | Area | Bible Says | Code Says | Question |
 |------|------------|-----------|----------|
-| Evolution stage naming | "Evolved" (§6.1) | `'adult'` (types, config) | Should code rename to 'evolved' or Bible update to 'adult'? Semantic choice. |
-| README starting gems | N/A (Bible is correct) | N/A | README.md line 203 says "Starting Gems: 0" but Bible §7.8 and code both say 10. README needs update (not Bible). |
+| — | — | — | — |
+
+*No items pending human decision.*
+
+**Resolved (2024-12-10):**
+- ✅ Evolution stage naming: Code renamed `'adult'` → `'evolved'` (P1-CORE-2)
+- ✅ README starting gems: README updated to show 10 gems
 
 ---
 
@@ -91,4 +75,4 @@ These were checked and confirmed to already match:
 
 ---
 
-*Last updated: 2024-12-10*
+*Last updated: 2024-12-10 (P1-DOC-1 completed)*

@@ -176,9 +176,9 @@ Each food has an affinity (loved/liked/neutral/disliked) for each of the 8 pets.
 
 | Level Range | Stage | Scale |
 |-------------|-------|-------|
-| 1-6 | Baby | 1.0× |
-| 7-12 | Youth | 1.12× |
-| 13-20 | Evolved | 1.25× |
+| 1-9 | Baby | 1.0× |
+| 10-24 | Youth | 1.12× |
+| 25+ | Evolved | 1.25× |
 
 ### Mood System
 
