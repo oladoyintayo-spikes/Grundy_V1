@@ -1,10 +1,12 @@
 // ============================================
 // GRUNDY — READY SCREEN
 // Pre-game confirmation/info screen
+// P5-AUDIO-HOOKS
 // ============================================
 
 import React from 'react';
 import type { MiniGameId } from '../types';
+import { playUiConfirm, playUiBack } from '../audio/audioManager';
 
 interface ReadyScreenProps {
   gameId: MiniGameId;
@@ -45,6 +47,16 @@ const GAME_INFO: Record<MiniGameId, { name: string; emoji: string; instructions:
 export function ReadyScreen({ gameId, isFree, energyCost, onStart, onBack }: ReadyScreenProps) {
   const gameInfo = GAME_INFO[gameId];
 
+  const handleStart = () => {
+    playUiConfirm();
+    onStart();
+  };
+
+  const handleBack = () => {
+    playUiBack();
+    onBack();
+  };
+
   return (
     <div className="h-full bg-gradient-to-b from-indigo-900 to-purple-900 flex flex-col items-center justify-center p-6">
       {/* Game Icon */}
@@ -70,13 +82,13 @@ export function ReadyScreen({ gameId, isFree, energyCost, onStart, onBack }: Rea
       {/* Buttons */}
       <div className="flex gap-4">
         <button
-          onClick={onBack}
+          onClick={handleBack}
           className="bg-white/10 backdrop-blur rounded-xl px-6 py-3 text-white hover:bg-white/20 transition"
         >
           Back
         </button>
         <button
-          onClick={onStart}
+          onClick={handleStart}
           className="bg-green-500 rounded-xl px-8 py-3 text-white font-bold hover:bg-green-600 transition active:scale-95"
         >
           Play!

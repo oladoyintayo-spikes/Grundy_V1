@@ -1,7 +1,7 @@
 # TASKS.md
 ## Grundy Development Task List
 
-**Last Updated:** December 10, 2024 (CE-P3-PLAN)
+**Last Updated:** December 10, 2024 (P5-AUDIO-CORE)
 **Design SoT:** `docs/GRUNDY_MASTER_BIBLE.md`
 **Pre-Flight Report:** December 9, 2024 ✅
 
@@ -16,7 +16,7 @@
 | Web Phase 2 | Mini-Games & Infra | ✅ COMPLETE |
 | Web Phase 3 | Navigation & Environment | 🟡 IN PROGRESS |
 | Web Phase 4 | FTUE / Onboarding | ✅ COMPLETE |
-| Web Phase 5 | Polish / Web 1.0 | ⬜ NOT STARTED |
+| Web Phase 5 | Polish / Web 1.0 | 🟡 IN PROGRESS |
 
 ---
 
@@ -535,21 +535,29 @@ P8-TEST
 
 ---
 
-## WEB PHASE 5: Polish / Web 1.0 ⬜
+## WEB PHASE 5: Polish / Web 1.0 🟡
 
 > Final polish, sound, PWA support, art integration, and release.
+
+### P5-AUDIO: Audio System
+
+| ID | Task | Status | Scope | Notes |
+|----|------|--------|-------|-------|
+| P5-AUDIO-CORE | Audio manager + sound/music prefs | ✅ | Audio, store | audioManager, SOUND_CONFIG, MUSIC_CONFIG |
+| P5-AUDIO-HOOKS | Hook core events to SFX/BGM | ✅ | Components | UI taps, mini-game results, pet SFX, BGM |
+| P5-AUDIO-DOC | Audio notes documentation | ✅ | docs/ | AUDIO_NOTES.md created |
 
 ### P5-POLISH: Web 1.0 Readiness
 
 | ID | Task | Status | Scope | Notes |
 |----|------|--------|-------|-------|
-| P5-SOUND-1 | Add basic SFX/BGM + sound settings | ⬜ | Audio, store | Core events: feed, evolve, mini-game |
+| P5-SOUND-1 | Add basic SFX/BGM + sound settings | ✅ | Audio, store | Replaced by P5-AUDIO tasks |
 | P5-PWA-1 | Add PWA manifest, icons, service worker | ⬜ | public/, sw.js | Installable on mobile |
 | P5-ART-1 | Integrate final pet + room art assets | ⬜ | assets/ | Replace emoji placeholders |
 | P5-QA-1 | Full Web 1.0 test pass & release checklist | ⬜ | All | Tag Web Edition 1.0 |
 
 **Web Phase 5 Exit Criteria:**
-- [ ] Sound system working with mute
+- [x] Sound system working with mute
 - [ ] PWA installable on mobile
 - [ ] Final art integrated
 - [ ] All tests passing
@@ -575,19 +583,20 @@ P8-TEST
 | P2-5 | Connect sprites to states | ⬜ | 13.6 | Pet shows correct sprite |
 | P2-6 | Implement eating reactions | ⬜ | 13.6 | loved, liked, neutral, disliked |
 
-### Sound & Vibration (Deferred to P5)
+### Sound & Vibration (Partially Implemented)
 
 > Bible Section 12 — Audio feedback.
+> **Note:** Core audio system implemented in P5-AUDIO. These tasks remain for extended features.
 
 | ID | Task | Status | Bible | Acceptance Criteria |
 |----|------|--------|-------|---------------------|
-| P9-1 | Create sound manager | ⬜ | 12.1 | Web Audio + mute |
-| P9-2 | Implement UI sounds | ⬜ | 12.1 | Tap, menu, modal |
-| P9-3 | Implement feeding sounds | ⬜ | 12.1 | Basic, liked, loved, disliked |
-| P9-4 | Implement reward sounds | ⬜ | 12.1 | XP, coin, gem, level up |
-| P9-5 | Implement pet sounds | ⬜ | 12.1 | Happy, sad, hungry |
+| P9-1 | Create sound manager | ✅ | 12.1 | Web Audio + mute (via P5-AUDIO-CORE) |
+| P9-2 | Implement UI sounds | ✅ | 12.1 | Tap, confirm, back (via P5-AUDIO-HOOKS) |
+| P9-3 | Implement feeding sounds | 🟡 | 12.1 | pet_happy implemented; reaction variants deferred |
+| P9-4 | Implement reward sounds | ✅ | 12.1 | mini_* tier sounds, level_up (via P5-AUDIO-HOOKS) |
+| P9-5 | Implement pet sounds | 🟡 | 12.1 | pet_happy done; sad, hungry deferred |
 | P9-6 | Implement vibration | ⬜ | 12.3 | Android patterns |
-| P9-7 | Add volume settings | ⬜ | 12.4 | Master, Music, SFX, Vibration |
+| P9-7 | Add volume settings | ⬜ | 12.4 | Master, Music, SFX sliders (toggles implemented) |
 
 ---
 

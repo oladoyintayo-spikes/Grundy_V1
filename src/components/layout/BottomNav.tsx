@@ -1,12 +1,13 @@
 // ============================================
 // GRUNDY — BOTTOM NAVIGATION BAR
 // Tab navigation for home/games/settings
-// P3-NAV-3
+// P3-NAV-3, P5-AUDIO-HOOKS
 // ============================================
 
 import React from 'react';
 import type { AppView } from '../../types';
 import { NAV_TABS } from '../../game/navigation';
+import { playUiTap } from '../../audio/audioManager';
 
 interface BottomNavProps {
   currentView: AppView;
@@ -14,6 +15,13 @@ interface BottomNavProps {
 }
 
 export function BottomNav({ currentView, onChangeView }: BottomNavProps) {
+  const handleTabClick = (tabId: AppView) => {
+    if (tabId !== currentView) {
+      playUiTap();
+    }
+    onChangeView(tabId);
+  };
+
   return (
     <nav className="h-16 bg-slate-950/90 border-t border-white/10 flex items-center justify-around safe-area-inset-bottom">
       {NAV_TABS.map((tab) => {
@@ -21,7 +29,7 @@ export function BottomNav({ currentView, onChangeView }: BottomNavProps) {
         return (
           <button
             key={tab.id}
-            onClick={() => onChangeView(tab.id)}
+            onClick={() => handleTabClick(tab.id)}
             className={`flex flex-col items-center justify-center w-full h-full text-xs transition-all ${
               isActive ? 'text-white' : 'text-slate-500 hover:text-slate-300'
             }`}

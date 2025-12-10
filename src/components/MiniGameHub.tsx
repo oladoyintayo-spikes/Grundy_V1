@@ -1,12 +1,13 @@
 // ============================================
 // GRUNDY — MINI-GAME HUB
 // Game selection UI with energy/limit display
-// Bible §8.1
+// Bible §8.1, P5-AUDIO-HOOKS
 // ============================================
 
 import React from 'react';
 import { useGameStore, useEnergy, useDailyMiniGames } from '../game/store';
 import type { MiniGameId } from '../types';
+import { playUiTap, playUiBack } from '../audio/audioManager';
 
 interface MiniGameHubProps {
   onSelectGame: (gameId: MiniGameId) => void;
@@ -52,12 +53,24 @@ export function MiniGameHub({ onSelectGame, onBack }: MiniGameHubProps) {
 
   const timeToNext = getTimeToNextEnergy();
 
+  const handleBack = () => {
+    playUiBack();
+    onBack();
+  };
+
+  const handleSelectGame = (gameId: MiniGameId, allowed: boolean) => {
+    if (allowed) {
+      playUiTap();
+      onSelectGame(gameId);
+    }
+  };
+
   return (
     <div className="h-full bg-gradient-to-b from-indigo-900 to-purple-900 flex flex-col">
       {/* Header */}
       <div className="p-4 flex items-center justify-between">
         <button
-          onClick={onBack}
+          onClick={handleBack}
           className="bg-white/10 backdrop-blur rounded-full p-2 text-white hover:bg-white/20 transition"
         >
           <span className="text-xl">&#8592;</span>
@@ -78,7 +91,7 @@ export function MiniGameHub({ onSelectGame, onBack }: MiniGameHubProps) {
           return (
             <button
               key={game.id}
-              onClick={() => playStatus.allowed && onSelectGame(game.id)}
+              onClick={() => handleSelectGame(game.id, playStatus.allowed)}
               disabled={!playStatus.allowed}
               className={`bg-white/10 backdrop-blur rounded-2xl p-4 flex flex-col items-center gap-2 transition
                 ${playStatus.allowed
