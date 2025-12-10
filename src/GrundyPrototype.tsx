@@ -2,8 +2,11 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useGameStore } from './game/store';
 import { PETS, getAllPets, getPetById } from './data/pets';
 import { getAllFoods, getShopFoods } from './data/foods';
-import { ReactionType, FoodDefinition, FeedResult } from './types';
+import { ReactionType, FoodDefinition, FeedResult, MiniGameId, MiniGameResult } from './types';
 import { getXPForLevel } from './data/config';
+import { MiniGameHub } from './components/MiniGameHub';
+import { MiniGameWrapper } from './components/MiniGameWrapper';
+import { SnackCatch } from './components/games/SnackCatch';
 
 // ============================================
 // COMPONENTS
@@ -162,6 +165,10 @@ export default function GrundyPrototype() {
   const [showLevelUp, setShowLevelUp] = useState(false);
   const [isFeeding, setIsFeeding] = useState(false);
 
+  // Mini-game state
+  const [view, setView] = useState<'main' | 'minigame-hub' | 'minigame-play'>('main');
+  const [selectedGame, setSelectedGame] = useState<MiniGameId | null>(null);
+
   // Get pet display data from canonical pets.ts
   const petData = getPetById(pet.id);
   const petName = petData?.name ?? pet.id;
@@ -237,6 +244,71 @@ export default function GrundyPrototype() {
     selectPet(petId);
   };
 
+  // Mini-game handlers
+  const handleOpenMiniGames = () => setView('minigame-hub');
+  const handleSelectGame = (gameId: MiniGameId) => {
+    setSelectedGame(gameId);
+    setView('minigame-play');
+  };
+  const handleGameComplete = (result: MiniGameResult) => {
+    setView('minigame-hub');
+    setSelectedGame(null);
+  };
+  const handleGameQuit = () => {
+    setView('minigame-hub');
+    setSelectedGame(null);
+  };
+  const handleBackFromHub = () => {
+    setView('main');
+    setSelectedGame(null);
+  };
+
+  // Render mini-game hub
+  if (view === 'minigame-hub') {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900">
+        <MiniGameHub onSelectGame={handleSelectGame} onBack={handleBackFromHub} />
+      </div>
+    );
+  }
+
+  // Render active mini-game
+  if (view === 'minigame-play' && selectedGame) {
+    const renderGame = () => {
+      switch (selectedGame) {
+        case 'snack_catch':
+          return <SnackCatch onGameEnd={() => {}} />;
+        default:
+          return (
+            <div className="h-full flex items-center justify-center bg-gray-800">
+              <div className="text-center text-white">
+                <p className="text-4xl mb-4">🚧</p>
+                <p className="text-xl">Coming Soon!</p>
+                <button
+                  onClick={handleGameQuit}
+                  className="mt-4 px-4 py-2 bg-white/20 rounded-lg hover:bg-white/30"
+                >
+                  Back
+                </button>
+              </div>
+            </div>
+          );
+      }
+    };
+
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900">
+        <MiniGameWrapper
+          gameId={selectedGame}
+          onComplete={handleGameComplete}
+          onQuit={handleGameQuit}
+        >
+          {renderGame()}
+        </MiniGameWrapper>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 text-white p-4">
       <div className="max-w-md mx-auto">
@@ -253,12 +325,20 @@ export default function GrundyPrototype() {
               <span className="text-purple-400 font-bold">{currencies.gems}</span>
             </div>
           </div>
-          <button
-            onClick={() => setShowShop(true)}
-            className="px-4 py-2 bg-green-500 hover:bg-green-600 rounded-full font-bold text-sm transition-colors"
-          >
-            🏪 Shop
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={handleOpenMiniGames}
+              className="px-4 py-2 bg-purple-500 hover:bg-purple-600 rounded-full font-bold text-sm transition-colors"
+            >
+              🎮 Games
+            </button>
+            <button
+              onClick={() => setShowShop(true)}
+              className="px-4 py-2 bg-green-500 hover:bg-green-600 rounded-full font-bold text-sm transition-colors"
+            >
+              🏪 Shop
+            </button>
+          </div>
         </div>
 
         {/* Pet Selection */}
