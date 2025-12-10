@@ -224,6 +224,7 @@ npm run build      # Must exit 0
 |----|------|--------|-------|-------|
 | P1-DOC-1 | Apply Bible Update Backlog | ✅ | `BIBLE_UPDATE_BACKLOG.md` | Bible §6.1 updated: Baby 1-9, Youth 10-24, Evolved 25+ |
 | P1-DOC-2 | Update README with current status | ✅ | `README.md` | Progression section updated to match code |
+| P1-DOC-3 | Add mini-game design doc references | ✅ | Bible §8, TASKS.md | Added §8.0 + design doc links in P8 tasks |
 
 **✅ PHASE 1 DOCUMENTATION COMPLETE**
 
@@ -395,16 +396,71 @@ P1-CORE-4, P1-DOC-1,2 ── Can run in parallel
 ## PHASE 8: Mini-Games
 
 > Bible Section 8 — Complete all 4 mini-games.
+> Design docs: `docs/minigames/`
 
-| ID | Task | Status | Bible | Acceptance Criteria |
-|----|------|--------|-------|---------------------|
-| P8-1 | Audit Snack Catch | ⬜ | 8.3 | Match Bible scoring |
-| P8-2 | Implement energy system | ⬜ | 8.2 | 50 max, 10/game, first free |
-| P8-3 | Implement Memory Match | ⬜ | 8.4 | 4×4, 60s |
-| P8-4 | Implement Rhythm Tap | ⬜ | 8.5 | Timing, 30-60s |
-| P8-5 | Implement Poop Scoop | ⬜ | 8.6 | Tap-to-clean, 60s |
-| P8-6 | Implement pet abilities | ⬜ | 8.1 | Whisp peek, Plompo slow-mo |
-| P8-7 | Add daily high scores | ⬜ | 8.1 | Track per game |
+### P8-INFRA: Mini-Game Infrastructure
+
+| ID | Task | Status | Files | Notes |
+|----|------|--------|-------|-------|
+| P8-INFRA-1 | Energy system (50 max, 10/game, regen) | ⬜ | store.ts, types | First daily free |
+| P8-INFRA-2 | Reward tier calculator | ⬜ | systems.ts | Bronze/Silver/Gold/Rainbow |
+| P8-INFRA-3 | Mini-game hub UI | ⬜ | components/ | Game selection screen |
+| P8-INFRA-4 | Game session wrapper | ⬜ | components/ | Start/end/rewards flow |
+| P8-INFRA-5 | Stats tracking (minigamesCompleted) | ⬜ | store.ts | For Chomper unlock |
+
+### P8-SNACK: Snack Catch
+
+| ID | Task | Status | Design Doc | Notes |
+|----|------|--------|------------|-------|
+| P8-SNACK-1 | Implement Snack Catch game | ⬜ | [GRUNDY_SNACK_CATCH_DESIGN.md](docs/minigames/GRUNDY_SNACK_CATCH_DESIGN.md) | 60s arcade |
+
+### P8-MEMORY: Memory Match
+
+| ID | Task | Status | Design Doc | Notes |
+|----|------|--------|------------|-------|
+| P8-MEMORY-1 | Implement Memory Match game | ⬜ | [GRUNDY_MEMORY_MATCH_DESIGN.md](docs/minigames/GRUNDY_MEMORY_MATCH_DESIGN.md) | Card matching |
+
+### P8-RHYTHM: Rhythm Tap
+
+| ID | Task | Status | Design Doc | Notes |
+|----|------|--------|------------|-------|
+| P8-RHYTHM-1 | Implement Rhythm Tap game | ⬜ | [GRUNDY_RHYTHM_TAP_DESIGN.md](docs/minigames/GRUNDY_RHYTHM_TAP_DESIGN.md) | Music/timing |
+
+### P8-POOP: Poop Scoop
+
+| ID | Task | Status | Design Doc | Notes |
+|----|------|--------|------------|-------|
+| P8-POOP-1 | Implement Poop Scoop game | ⬜ | [GRUNDY_POOP_SCOOP_DESIGN.md](docs/minigames/GRUNDY_POOP_SCOOP_DESIGN.md) | 60s action |
+
+### P8-TEST: Mini-Game Tests
+
+| ID | Task | Status | Files | Notes |
+|----|------|--------|-------|-------|
+| P8-TEST-1 | Energy system tests | ⬜ | __tests__/ | Deduction, regen, daily free |
+| P8-TEST-2 | Reward calculation tests | ⬜ | __tests__/ | Tier thresholds |
+| P8-TEST-3 | Game integration tests | ⬜ | __tests__/ | Start/complete flow |
+
+### Execution Order
+
+```
+P8-INFRA (must be first)
+    ↓
+P8-SNACK / P8-MEMORY (can be parallel)
+    ↓
+P8-RHYTHM / P8-POOP
+    ↓
+P8-TEST
+```
+
+### Mini-Game Rules (LOCKED)
+
+| Rule | Value |
+|------|-------|
+| Energy cost | 10 per game |
+| Daily cap | 3 rewarded plays per game |
+| First daily | FREE |
+| Gems from mini-games | **NEVER** |
+| Rewards | Small helpful gifts only |
 
 ---
 

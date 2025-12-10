@@ -1629,6 +1629,27 @@ These rules are **mandatory** during onboarding:
 
 # 8. MINI-GAMES
 
+## 8.0 Mini-Game Design Documents
+
+Detailed specifications for each mini-game are in `docs/minigames/`:
+
+| Game | Design Doc | Duration | Main Skill |
+|------|------------|----------|------------|
+| Snack Catch | [GRUNDY_SNACK_CATCH_DESIGN.md](minigames/GRUNDY_SNACK_CATCH_DESIGN.md) | 60s | Reflexes |
+| Memory Match | [GRUNDY_MEMORY_MATCH_DESIGN.md](minigames/GRUNDY_MEMORY_MATCH_DESIGN.md) | 60-120s | Memory |
+| Rhythm Tap | [GRUNDY_RHYTHM_TAP_DESIGN.md](minigames/GRUNDY_RHYTHM_TAP_DESIGN.md) | 45-60s | Timing |
+| Poop Scoop | [GRUNDY_POOP_SCOOP_DESIGN.md](minigames/GRUNDY_POOP_SCOOP_DESIGN.md) | 60s | Speed |
+
+Each design doc includes:
+- Complete gameplay rules
+- All 8 pet abilities
+- Reward tiers (Bronze/Silver/Gold/Rainbow)
+- Technical state interfaces
+- Animation & sound specs
+- Test cases
+
+**See individual design docs for implementation details.**
+
 ## 8.1 Overview
 
 | Game | Type | Duration | Main Skill |
@@ -1666,6 +1687,8 @@ These rules are **mandatory** during onboarding:
 
 ## 8.4 Snack Catch 🍎
 
+> For complete specification, see `docs/minigames/GRUNDY_SNACK_CATCH_DESIGN.md`
+
 **Concept:** Catch falling food, avoid bad items.
 
 ### Rules
@@ -1686,6 +1709,8 @@ These rules are **mandatory** during onboarding:
 | Bad item (bomb, etc.) | -25 |
 
 ## 8.5 Memory Match 🧠
+
+> For complete specification, see `docs/minigames/GRUNDY_MEMORY_MATCH_DESIGN.md`
 
 **Concept:** Flip cards to find matching food pairs.
 
@@ -1714,6 +1739,8 @@ These rules are **mandatory** during onboarding:
 | **Plompo** | Slow-Mo: Extra 30 seconds |
 
 ## 8.6 Rhythm Tap 🎵
+
+> For complete specification, see `docs/minigames/GRUNDY_RHYTHM_TAP_DESIGN.md`
 
 **Concept:** Tap notes in time with music.
 
@@ -1759,6 +1786,8 @@ These rules are **mandatory** during onboarding:
 | **Plompo** | Slow Mo: Notes fall 20% slower |
 
 ## 8.7 Poop Scoop 🧹
+
+> For complete specification, see `docs/minigames/GRUNDY_POOP_SCOOP_DESIGN.md`
 
 **Concept:** Clean up poop before it piles up!
 
