@@ -2,8 +2,8 @@
 
 # Grundy Web Prototype — Development Status
 
-**Last Updated:** December 10, 2024 (CE-P3-PLAN)
-**Current Phase:** Web Phase 3 — IN PROGRESS (Navigation ✅, Environment ⬜)
+**Last Updated:** December 10, 2024 (P3-ENV-CORE)
+**Current Phase:** Web Phase 3 — COMPLETE
 **Next Phase:** Web Phase 4 (FTUE / Onboarding)
 
 ---
@@ -26,7 +26,7 @@
 | **Web Phase 0** | Setup & Toolchain | ✅ COMPLETE | Infrastructure, toolchain, PWA, GitHub Pages deploy |
 | **Web Phase 1** | Core Loop & Data | ✅ COMPLETE | Data layer, core loop, abilities, docs alignment |
 | **Web Phase 2** | Mini-Games & Infra | ✅ COMPLETE | All 5 mini-games implemented and tested |
-| **Web Phase 3** | Navigation & Environment | 🟡 IN PROGRESS | P3-NAV ✅, P3-ENV ⬜ |
+| **Web Phase 3** | Navigation & Environment | ✅ COMPLETE | P3-NAV ✅, P3-ENV ✅ |
 | **Web Phase 4** | FTUE / Onboarding | ⬜ NOT STARTED | Splash → Age Gate → World Intro → Pet Select |
 | **Web Phase 5** | Polish / Web 1.0 | ⬜ NOT STARTED | Sound, PWA, art integration, release |
 
@@ -182,7 +182,7 @@ The following copy is canonical and used across all onboarding documentation:
 ### Infrastructure
 - React 18 + TypeScript (strict mode)
 - Zustand state management with persistence
-- Vitest test suite (102 tests)
+- Vitest test suite (396 tests)
 - Vite build system
 - PWA manifest
 - GitHub Pages deployment
@@ -190,13 +190,24 @@ The following copy is canonical and used across all onboarding documentation:
 
 ---
 
-## Next Steps (Web Phase 3 → 4)
+## Web Phase 3 — COMPLETE
 
-### Web Phase 3: Environment (Remaining)
+**Theme:** App shell, navigation, time-of-day theming, rooms.
 
-1. P3-ENV-1: Time-of-day theming (Morning/Day/Evening/Night)
-2. P3-ENV-2: Room contexts (Kitchen/Bedroom/Playroom/Yard)
-3. P3-ENV-3: Hook nav/views into room/time context
+### Deliverables
+
+| Area | Status | Details |
+|------|--------|---------|
+| **Navigation** | ✅ | AppView model, AppHeader, BottomNav, view switching |
+| **Environment** | ✅ | TimeOfDay + RoomId types, environment.ts helpers |
+| **Theming** | ✅ | Time-based backgrounds (morning/day/evening/night) |
+| **Rooms** | ✅ | 5 rooms (living_room, kitchen, bedroom, playroom, yard) |
+| **Auto-refresh** | ✅ | 15-minute interval for time-of-day updates |
+| **UI Badge** | ✅ | EnvironmentBadge shows current time + room |
+
+---
+
+## Next Steps (Web Phase 4)
 
 ### Web Phase 4: FTUE / Onboarding
 

@@ -17,8 +17,16 @@ import {
   MiniGameResult,
   CanPlayResult,
   EnergyState,
-  DailyMiniGameState
+  DailyMiniGameState,
+  AppView,
+  RoomId
 } from '../types';
+import {
+  DEFAULT_ENVIRONMENT,
+  getTimeOfDay,
+  getDefaultRoomForView,
+  EnvironmentState
+} from './environment';
 import { STARTING_INVENTORY, getFoodById } from '../data/foods';
 import { GAME_CONFIG, getXPForLevel } from '../data/config';
 import { STARTER_PETS, getPetUnlockRequirement } from '../data/pets';
@@ -65,6 +73,7 @@ function createInitialState() {
     unlockedPets: [...STARTER_PETS], // Start with munchlet, grib, plompo
     energy: createInitialEnergyState(),
     dailyMiniGames: createInitialDailyState(),
+    environment: { ...DEFAULT_ENVIRONMENT },
   };
 }
 
@@ -550,6 +559,40 @@ export const useGameStore = create<GameStore>()(
       },
 
       // ========================================
+      // ENVIRONMENT
+      // ========================================
+      setRoom: (room: RoomId) => {
+        set((state) => ({
+          environment: {
+            ...state.environment,
+            room,
+            lastUpdated: Date.now(),
+          },
+        }));
+      },
+
+      refreshTimeOfDay: () => {
+        set((state) => ({
+          environment: {
+            ...state.environment,
+            timeOfDay: getTimeOfDay(),
+            lastUpdated: Date.now(),
+          },
+        }));
+      },
+
+      syncEnvironmentWithView: (view: AppView) => {
+        set((state) => ({
+          environment: {
+            ...state.environment,
+            room: getDefaultRoomForView(view),
+            timeOfDay: getTimeOfDay(),
+            lastUpdated: Date.now(),
+          },
+        }));
+      },
+
+      // ========================================
       // RESET
       // ========================================
       resetGame: () => {
@@ -571,3 +614,4 @@ export const useStats = () => useGameStore((state) => state.stats);
 export const useUnlockedPets = () => useGameStore((state) => state.unlockedPets);
 export const useEnergy = () => useGameStore((state) => state.energy);
 export const useDailyMiniGames = () => useGameStore((state) => state.dailyMiniGames);
+export const useEnvironment = () => useGameStore((state) => state.environment);

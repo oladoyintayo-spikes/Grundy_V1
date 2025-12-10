@@ -7,6 +7,7 @@ import { getXPForLevel } from './data/config';
 import { DEFAULT_VIEW } from './game/navigation';
 import { AppHeader } from './components/layout/AppHeader';
 import { BottomNav } from './components/layout/BottomNav';
+import { getBackgroundClass, ENVIRONMENT_REFRESH_INTERVAL_MS } from './game/environment';
 import { MiniGameHub } from './components/MiniGameHub';
 import { MiniGameWrapper } from './components/MiniGameWrapper';
 import { SnackCatch } from './components/games/SnackCatch';
@@ -532,6 +533,38 @@ export default function GrundyPrototype() {
   const inventory = useGameStore((state) => state.inventory);
   const buyFood = useGameStore((state) => state.buyFood);
 
+  // Environment state
+  const environment = useGameStore((state) => state.environment);
+  const syncEnvironmentWithView = useGameStore((state) => state.syncEnvironmentWithView);
+  const refreshTimeOfDay = useGameStore((state) => state.refreshTimeOfDay);
+
+  // Sync environment on mount
+  useEffect(() => {
+    syncEnvironmentWithView(currentView);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Sync environment when view changes
+  useEffect(() => {
+    syncEnvironmentWithView(currentView);
+  }, [currentView, syncEnvironmentWithView]);
+
+  // Auto-refresh time-of-day every 15 minutes
+  useEffect(() => {
+    // Refresh once on mount
+    refreshTimeOfDay();
+
+    const interval = setInterval(() => {
+      // Use getState() to avoid stale closures
+      useGameStore.getState().refreshTimeOfDay();
+    }, ENVIRONMENT_REFRESH_INTERVAL_MS);
+
+    return () => clearInterval(interval);
+  }, [refreshTimeOfDay]);
+
+  // Get background class based on environment
+  const bgClass = getBackgroundClass(environment.timeOfDay, environment.room);
+
   // View change handler
   const handleChangeView = useCallback((view: AppView) => {
     setCurrentView(view);
@@ -545,7 +578,7 @@ export default function GrundyPrototype() {
   }, [buyFood]);
 
   return (
-    <div className="h-screen w-screen flex flex-col bg-gradient-to-b from-slate-900 via-slate-950 to-black overflow-hidden">
+    <div className={`h-screen w-screen flex flex-col bg-gradient-to-b ${bgClass} overflow-hidden`}>
       {/* App Header */}
       <AppHeader />
 

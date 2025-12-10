@@ -5,6 +5,17 @@
 // --- App View (Navigation) ---
 export type AppView = 'home' | 'games' | 'settings';
 
+// --- Time of Day (Environment) ---
+export type TimeOfDay = 'morning' | 'day' | 'evening' | 'night';
+
+// --- Room ID (Environment) ---
+export type RoomId =
+  | 'living_room'
+  | 'kitchen'
+  | 'bedroom'
+  | 'playroom'
+  | 'yard';
+
 // --- Currency ---
 // Per Bible: coins and gems (not bites/shinies)
 export type CurrencyType = 'coins' | 'gems' | 'eventTokens';
@@ -170,6 +181,13 @@ export interface GameConfig {
   coinRewards: Record<ReactionType, number>;
 }
 
+// --- Environment State ---
+export interface EnvironmentState {
+  timeOfDay: TimeOfDay;
+  room: RoomId;
+  lastUpdated: number; // timestamp (ms)
+}
+
 // --- Game Store (Zustand) ---
 export interface GameStore {
   // State
@@ -181,6 +199,7 @@ export interface GameStore {
   unlockedPets: string[];  // Pet IDs that the player has unlocked
   energy: EnergyState;     // Mini-game energy system
   dailyMiniGames: DailyMiniGameState; // Daily play tracking
+  environment: EnvironmentState; // Time-of-day + room context
 
   // Actions
   feed: (foodId: string) => FeedResult | null;
@@ -205,6 +224,11 @@ export interface GameStore {
   canPlay: (gameId: MiniGameId) => CanPlayResult;
   recordPlay: (gameId: MiniGameId, isFree: boolean) => void;
   completeGame: (result: MiniGameResult) => void;
+
+  // Environment actions
+  setRoom: (room: RoomId) => void;
+  refreshTimeOfDay: () => void;
+  syncEnvironmentWithView: (view: AppView) => void;
 }
 
 // --- Legacy Currencies interface (for compatibility) ---

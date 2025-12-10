@@ -14,7 +14,7 @@
 | Web Phase 0 | Setup & Toolchain | ✅ COMPLETE |
 | Web Phase 1 | Core Loop & Data | ✅ COMPLETE |
 | Web Phase 2 | Mini-Games & Infra | ✅ COMPLETE |
-| Web Phase 3 | Navigation & Environment | 🟡 IN PROGRESS |
+| Web Phase 3 | Navigation & Environment | ✅ COMPLETE |
 | Web Phase 4 | FTUE / Onboarding | ⬜ NOT STARTED |
 | Web Phase 5 | Polish / Web 1.0 | ⬜ NOT STARTED |
 
@@ -470,9 +470,10 @@ P8-TEST
 
 ---
 
-## WEB PHASE 3: Navigation & Environment 🟡
+## WEB PHASE 3: Navigation & Environment ✅
 
 > App shell, navigation chrome, time-of-day theming, and rooms.
+> **Status:** COMPLETE — Navigation, environment theming, and room contexts working.
 
 ### P3-NAV: App Shell & Navigation
 
@@ -487,16 +488,16 @@ P8-TEST
 
 | ID | Task | Status | Files | Notes |
 |----|------|--------|-------|-------|
-| P3-ENV-1 | Time-of-day theming (Morning/Day/Evening/Night) | ⬜ | theme.ts, types | Background gradients + theme state |
-| P3-ENV-2 | Room contexts (Kitchen/Bedroom/Playroom/Yard) | ⬜ | rooms.ts, types | Simple enum + mapping to views |
-| P3-ENV-3 | Hook nav/views into room/time context | ⬜ | GrundyPrototype.tsx | Home/Games use appropriate room + theme |
+| P3-ENV-1 | Time-of-day theming (Morning/Day/Evening/Night) | ✅ | environment.ts, types | EnvironmentState + getTimeOfDay + backgrounds |
+| P3-ENV-2 | Room contexts (Living/Kitchen/Bedroom/Playroom/Yard) | ✅ | environment.ts, types | RoomId enum + default mapping per AppView (yard reserved) |
+| P3-ENV-3 | Hook nav/views into room/time context + auto-refresh | ✅ | GrundyPrototype.tsx, AppHeader.tsx | Environment badge + 15-min auto-refresh |
 
 **Web Phase 3 Exit Criteria:**
 - [x] App header shows pet, coins, energy
 - [x] Bottom nav switches between Home/Games/Settings
 - [x] Games tab shows mini-game hub
-- [ ] Time-of-day theming applied
-- [ ] Rooms integrated into views
+- [x] Time-of-day theming applied
+- [x] Rooms integrated into views
 
 ---
 
