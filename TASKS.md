@@ -1,7 +1,7 @@
 # TASKS.md
 ## Grundy Development Task List
 
-**Last Updated:** December 10, 2024 (P5-RELEASE-1.0)
+**Last Updated:** December 10, 2024 (CE-P6-BACKLOG)
 **Design SoT:** `docs/GRUNDY_MASTER_BIBLE.md`
 **Pre-Flight Report:** December 9, 2024 ✅
 
@@ -613,15 +613,52 @@ P8-TEST
 ## WEB PHASE 6: Optimization & Enhancements (Future)
 
 > Optimization and enhancement tasks planned for after Web 1.0 release.
-> Items from QA_WEB1_ISSUES.md are included here.
+> Full backlog: `docs/PHASE6_BACKLOG.md`
+
+### P6-BRANDING: Branding & Visual Polish
 
 | ID | Task | Status | Scope | Notes |
 |----|------|--------|-------|-------|
-| P6-PWA-PRECACHE | Upgrade PWA to vite-plugin-pwa precache | ⬜ | vite.config.ts, SW | Install and configure `vite-plugin-pwa` to generate a precache manifest & SW; replace or refactor the manual service worker for stronger offline behavior. |
 | P6-BRANDING | Replace placeholder PWA icons | ⬜ | public/icons/ | Real branded icons for manifest & PWA (QA-001) |
-| P6-AUDIO-ASSETS | Add real audio files for configured sounds | ⬜ | public/audio/ | Hook actual SFX/BGM assets into audio manager (QA-002) |
-| P6-ENV-UI | Room selection UI & richer kitchen/bedroom UX | ⬜ | Environment system | Build on existing time-of-day theming (QA-003) |
-| P6-PWA-UI | "Install Grundy" UI button in Settings | ⬜ | Settings view | Uses existing install prompt infrastructure (QA-005) |
+| P6-ART-POSES | Additional pet poses | ⬜ | assets/pets/ | eating, excited, pooping poses (ART_NOTES) |
+| P6-ART-PROPS | Room-specific prop art | ⬜ | assets/rooms/ | Replace placeholder accent badges (ART_NOTES) |
+| P6-ABILITY-UI | Ability activation indicators | ⬜ | Components | Show "+25%" when ability activates (P1-ABILITY-4) |
+
+### P6-AUDIO: Audio Assets & Polish
+
+| ID | Task | Status | Scope | Notes |
+|----|------|--------|-------|-------|
+| P6-AUDIO-ASSETS | Add real audio files | ⬜ | public/audio/ | Hook actual SFX/BGM assets (QA-002) |
+| P6-AUDIO-ROOM | Room-specific music | ⬜ | Audio system | Different tracks per room (AUDIO_NOTES) |
+| P6-AUDIO-TOD | Time-of-day ambience | ⬜ | Audio system | Morning/evening/night variations (AUDIO_NOTES) |
+
+### P6-ENV: Environment & UX
+
+| ID | Task | Status | Scope | Notes |
+|----|------|--------|-------|-------|
+| P6-ENV-UI | Room selection UI | ⬜ | HomeView | Explicit room switcher (QA-003) |
+| P6-MOOD-SYSTEM | Full mood decay system | ⬜ | Store, pet logic | Enables Grib's Chill Vibes fully |
+
+### P6-PWA: PWA Enhancements
+
+| ID | Task | Status | Scope | Notes |
+|----|------|--------|-------|-------|
+| P6-PWA-PRECACHE | vite-plugin-pwa integration | ⬜ | vite.config.ts, SW | Richer precache manifest (PWA_NOTES) |
+| P6-PWA-UI | "Install Grundy" button | ⬜ | SettingsView | Uses existing promptInstall() (QA-005) |
+| P6-PWA-UPDATE | Update notification | ⬜ | App shell | "New version available" toast (PWA_NOTES) |
+
+### P6-FTUE: FTUE & Modes
+
+| ID | Task | Status | Scope | Notes |
+|----|------|--------|-------|-------|
+| P6-FTUE-MODES | Cozy vs Classic differentiation | ⬜ | Game logic | Actual gameplay differences per mode |
+
+### P6-DOC: Documentation
+
+| ID | Task | Status | Scope | Notes |
+|----|------|--------|-------|-------|
+| P6-DOC-BIBLE | Bible alignment audit | ⬜ | docs/ | Ensure all sections match Web 1.0 |
+| P6-DOC-ROADMAP | Roadmap update | ⬜ | docs/ | Phase 6+ roadmap from Web 1.0 baseline |
 
 ---
 
