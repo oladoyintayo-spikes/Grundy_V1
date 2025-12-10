@@ -73,7 +73,7 @@
 
 | System | Bible Section | Status | Gap Summary |
 |--------|---------------|--------|-------------|
-| **Toolchain** | — | 🔴 MISSING | vite.config, main.tsx, tailwind config all missing |
+| **Toolchain** | — | 🟢 ALIGNED | Phase 0 complete: build, tests, PWA, deploy, error boundary |
 | **FTUE / Onboarding** | 7 | 🔴 MISSING | No FTUE components exist |
 | **Core Loop (Feeding)** | 4, 5 | 🟡 PARTIAL | Basic feeding in GrundyPrototype.tsx only |
 | **Lore Journal** | 6.4 | 🔴 MISSING | Not implemented |
@@ -155,14 +155,16 @@ npm run build      # Must exit 0
 | P0-5 | Deploy to GitHub Pages | ✅ | — | Workflow created; URL: oladoyintayo-spikes.github.io/Grundy_V1/ |
 | P0-6 | Add loading state for initial render | ✅ | — | Spinner + paw emoji shown until React mounts |
 | P0-7 | Mobile viewport verification | ✅ | — | Viewport meta OK; safe-area padding + overflow-x guard added |
-| P0-8 | Add error boundary | ⬜ | — | Graceful crash recovery |
+| P0-8 | Add error boundary | ✅ | — | ErrorBoundary component wraps app; friendly fallback UI with reload |
 
 **Phase 0 Exit Criteria:**
-- [ ] `npm run build` exits 0
-- [ ] `npm test` passes
-- [ ] Game loads in browser at localhost
-- [ ] No TypeScript errors
-- [ ] No console errors on load
+- [x] `npm run build` exits 0
+- [x] `npm test` passes
+- [x] Game loads in browser at localhost
+- [x] No TypeScript errors
+- [x] No console errors on load
+
+**✅ PHASE 0 COMPLETE** — All infrastructure tasks done. Ready for Phase 1.
 
 ---
 
