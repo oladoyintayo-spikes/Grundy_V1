@@ -2,7 +2,7 @@
 
 # Grundy Web Prototype — Development Status
 
-**Last Updated:** December 10, 2024 (P5-RELEASE-1.0)
+**Last Updated:** December 10, 2024 (CE-P6-BACKLOG)
 **Current Phase:** Web Edition 1.0.0 — COMPLETE
 **Next Phase:** Phase 6 Optimizations & Enhancements
 
@@ -349,21 +349,55 @@ The following copy is canonical and used across all onboarding documentation:
 
 ---
 
-## Next Steps
+## Web Phase 6 – Optimization & Enhancements
 
-### Phase 6: Post-Release Enhancements
+**Goal:** Build on Web 1.0 baseline with branding, audio assets, richer environment UX, PWA upgrades, and deeper FTUE/mode behavior.
 
-1. P6-BRANDING: Replace placeholder PWA icons with branded artwork
-2. P6-AUDIO-ASSETS: Add actual audio files for configured SFX/BGM
-3. P6-ENV-UI: Explicit room selection UI (build on existing system)
-4. P6-PWA-UI: "Install Grundy" button in Settings
-5. P6-PWA-PRECACHE: Upgrade to vite-plugin-pwa for stronger offline support
-6. P9-7: Volume sliders (nice-to-have)
+**Backlog:** See `docs/PHASE6_BACKLOG.md` for full list of P6-* tasks and sources.
 
-### Future: Unity Edition
+**Status:** Planning complete; no P6 tasks implemented yet.
+
+### Themes
+
+| Theme | Key Tasks | Source |
+|-------|-----------|--------|
+| Branding & Visual | P6-BRANDING, P6-ART-POSES, P6-ART-PROPS | QA-001, ART_NOTES |
+| Audio Assets | P6-AUDIO-ASSETS, P6-AUDIO-ROOM, P6-AUDIO-TOD | QA-002, AUDIO_NOTES |
+| Environment UX | P6-ENV-UI, P6-MOOD-SYSTEM | QA-003 |
+| PWA Enhancements | P6-PWA-PRECACHE, P6-PWA-UI, P6-PWA-UPDATE | QA-005, PWA_NOTES |
+| FTUE & Modes | P6-FTUE-MODES | General |
+| Documentation | P6-DOC-BIBLE, P6-DOC-ROADMAP | General |
+
+### Priority Items
+
+1. **P6-BRANDING** — Visual impact, required for store submission
+2. **P6-AUDIO-ASSETS** — Noticeable polish, SFX/BGM config already wired
+3. **P6-PWA-UI** — Simple Settings button, infrastructure exists
+4. **P9-7** — Volume sliders for user control
+
+### QA Issue Mapping
+
+All QA S3/S4 issues from Web 1.0 are mapped to Phase 6 tasks:
+- QA-001 → P6-BRANDING
+- QA-002 → P6-AUDIO-ASSETS
+- QA-003 → P6-ENV-UI
+- QA-004 → P9-7
+- QA-005 → P6-PWA-UI
+
+---
+
+## Future Phases
+
+### Unity Edition
 
 - Port Web 1.0 design to Unity
 - Separate versioning track for Unity Edition
+
+### Later Web Phases
+
+- **Phase 10:** Lore Journal (fragment collection)
+- **Phase 11:** Cosmetics System
+- **Phase 12:** Season Pass, Ads, LiveOps
 
 ---
 
