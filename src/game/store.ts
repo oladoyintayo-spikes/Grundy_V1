@@ -16,13 +16,14 @@ import {
 } from '../types';
 import { STARTING_INVENTORY, getFoodById } from '../data/foods';
 import { GAME_CONFIG, getXPForLevel } from '../data/config';
-import { 
-  createInitialPet, 
-  processFeed, 
+import {
+  createInitialPet,
+  processFeed,
   getMoodAfterReaction,
   getEvolutionStage,
   decayHunger
 } from './systems';
+import { applyGemMultiplier } from './abilities';
 
 // Initial state factory
 function createInitialState() {
@@ -108,7 +109,10 @@ export const useGameStore = create<GameStore>()(
           if (result.leveledUp) {
             newCurrencies.coins += 20; // Level up coin bonus
             if (result.newLevel && result.newLevel % 5 === 0) {
-              newCurrencies.gems += 5; // Milestone gem bonus
+              // Apply Luxe's Golden Touch ability: +100% gem drops
+              const baseGems = 5;
+              const finalGems = applyGemMultiplier(state.pet.id, baseGems);
+              newCurrencies.gems += finalGems;
             }
           }
           
@@ -237,7 +241,8 @@ export const useGameStore = create<GameStore>()(
         set((state) => ({
           pet: {
             ...state.pet,
-            hunger: decayHunger(state.pet.hunger, deltaMinutes),
+            // Pass petId to apply Plompo's Slow Metabolism ability
+            hunger: decayHunger(state.pet.hunger, deltaMinutes, state.pet.id),
           },
         }));
       },
