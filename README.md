@@ -200,7 +200,7 @@ Each food has an affinity (loved/liked/neutral/disliked) for each of the 8 pets.
 ### Economy
 
 - **Starting Coins:** 100
-- **Starting Gems:** 0
+- **Starting Gems:** 10
 - **Level Up Reward:** +50 coins
 - **Daily Mini-game Limit:** 3 plays (for rewards)
 

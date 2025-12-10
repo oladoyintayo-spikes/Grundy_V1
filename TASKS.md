@@ -69,7 +69,7 @@
 | P0-0 | Scaffold missing toolchain | ✅ | — | vite.config.ts, main.tsx, App.tsx, index.css, tailwind/postcss configs exist |
 | P0-1 | Verify build compiles | ✅ | — | `npm run build` succeeds with no errors |
 | P0-2 | Verify tests pass | ✅ | — | `npm test` passes all existing tests |
-| P0-3 | Hide DevPanel in production | ⬜ | — | DevPanel only visible when `import.meta.env.DEV` |
+| P0-3 | Hide DevPanel in production | ✅ | — | N/A: No DevPanel exists yet; README gems fixed (0→10) |
 | P0-4 | Verify PWA manifest exists | ⬜ | 15.2 | `manifest.json` in public/, icons present |
 | P0-5 | Deploy to GitHub Pages | ⬜ | — | Live URL accessible, game playable |
 | P0-6 | Add loading state for initial render | ⬜ | — | Prevents flash of unstyled content |
