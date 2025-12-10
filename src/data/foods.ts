@@ -22,7 +22,16 @@ export const FOODS: Record<string, FoodDefinition> = {
     bond: 0.5,
     coinCost: 5,
     gemCost: 0,
-    affinity: { munchlet: 'liked', grib: 'neutral', plompo: 'neutral' },
+    affinity: {
+      munchlet: 'liked',    // Likes fruit
+      grib: 'neutral',
+      plompo: 'neutral',
+      fizz: 'neutral',
+      ember: 'neutral',
+      chomper: 'liked',     // Likes everything
+      whisp: 'disliked',    // Dislikes common foods
+      luxe: 'disliked'      // Dislikes common foods
+    },
     emoji: '🍎',
   },
   banana: {
@@ -36,7 +45,16 @@ export const FOODS: Record<string, FoodDefinition> = {
     bond: 0.5,
     coinCost: 5,
     gemCost: 0,
-    affinity: { munchlet: 'loved', grib: 'neutral', plompo: 'liked' },
+    affinity: {
+      munchlet: 'loved',    // Likes sweet AND fruit
+      grib: 'disliked',     // Dislikes sweet
+      plompo: 'liked',      // Likes sweet
+      fizz: 'neutral',
+      ember: 'disliked',    // Dislikes sweet
+      chomper: 'liked',     // Likes everything
+      whisp: 'disliked',    // Dislikes common foods
+      luxe: 'disliked'      // Dislikes common foods
+    },
     emoji: '🍌',
   },
   carrot: {
@@ -50,7 +68,16 @@ export const FOODS: Record<string, FoodDefinition> = {
     bond: 0.3,
     coinCost: 5,
     gemCost: 0,
-    affinity: { munchlet: 'neutral', grib: 'liked', plompo: 'neutral' },
+    affinity: {
+      munchlet: 'neutral',
+      grib: 'liked',        // Likes healthy variety
+      plompo: 'disliked',   // Dislikes crunchy foods
+      fizz: 'neutral',
+      ember: 'neutral',
+      chomper: 'liked',     // Likes everything
+      whisp: 'disliked',    // Dislikes common foods
+      luxe: 'disliked'      // Dislikes common foods
+    },
     emoji: '🥕',
   },
 
@@ -66,7 +93,16 @@ export const FOODS: Record<string, FoodDefinition> = {
     bond: 1.0,
     coinCost: 15,
     gemCost: 0,
-    affinity: { munchlet: 'loved', grib: 'disliked', plompo: 'loved' },
+    affinity: {
+      munchlet: 'loved',    // Likes sweet
+      grib: 'disliked',     // Dislikes sweet
+      plompo: 'loved',      // Likes sweet, gooey
+      fizz: 'neutral',
+      ember: 'disliked',    // Dislikes sweet
+      chomper: 'liked',     // Likes everything
+      whisp: 'neutral',     // Uncommon, not too basic
+      luxe: 'neutral'       // Uncommon, acceptable
+    },
     emoji: '🍪',
   },
   grapes: {
@@ -80,7 +116,16 @@ export const FOODS: Record<string, FoodDefinition> = {
     bond: 0.8,
     coinCost: 15,
     gemCost: 0,
-    affinity: { munchlet: 'liked', grib: 'liked', plompo: 'liked' },
+    affinity: {
+      munchlet: 'liked',    // Likes fruit
+      grib: 'liked',
+      plompo: 'liked',
+      fizz: 'liked',        // Juicy bursts, energetic feel
+      ember: 'neutral',
+      chomper: 'liked',     // Likes everything
+      whisp: 'neutral',
+      luxe: 'neutral'
+    },
     emoji: '🍇',
   },
 
@@ -96,7 +141,16 @@ export const FOODS: Record<string, FoodDefinition> = {
     bond: 1.5,
     coinCost: 25,
     gemCost: 0,
-    affinity: { munchlet: 'disliked', grib: 'loved', plompo: 'disliked' },
+    affinity: {
+      munchlet: 'disliked', // Dislikes spicy
+      grib: 'loved',        // Likes spicy, exotic
+      plompo: 'disliked',
+      fizz: 'liked',        // Energetic, zesty
+      ember: 'loved',       // Likes spicy, hot
+      chomper: 'liked',     // Likes everything
+      whisp: 'neutral',     // Rare rarity
+      luxe: 'liked'         // Rare, somewhat premium
+    },
     emoji: '🌮',
   },
   hot_pepper: {
@@ -110,7 +164,16 @@ export const FOODS: Record<string, FoodDefinition> = {
     bond: 1.2,
     coinCost: 25,
     gemCost: 0,
-    affinity: { munchlet: 'disliked', grib: 'loved', plompo: 'disliked' },
+    affinity: {
+      munchlet: 'disliked', // Dislikes spicy
+      grib: 'loved',        // Likes spicy
+      plompo: 'disliked',
+      fizz: 'neutral',
+      ember: 'loved',       // Likes spicy, hot
+      chomper: 'liked',     // Likes everything
+      whisp: 'neutral',
+      luxe: 'neutral'
+    },
     emoji: '🌶️',
   },
 
