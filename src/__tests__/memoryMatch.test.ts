@@ -304,8 +304,8 @@ describe('Memory Match - Win/Lose Conditions', () => {
   });
 
   it('should not be game over with time remaining and pairs left', () => {
-    const matchedPairs = 5;
-    const totalPairs = 8;
+    const matchedPairs: number = 5;
+    const totalPairs: number = 8;
     const timeRemaining = 30000;
     const isGameOver = timeRemaining <= 0 || matchedPairs === totalPairs;
     expect(isGameOver).toBe(false);
