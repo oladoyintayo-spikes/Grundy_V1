@@ -1,12 +1,27 @@
 // ============================================
 // GRUNDY — APP HEADER
 // Top navigation bar with pet info + currencies
-// P3-NAV-2
+// P3-NAV-2, P3-ENV-3
 // ============================================
 
 import React from 'react';
 import { useGameStore } from '../../game/store';
 import { getPetById } from '../../data/pets';
+import { TIME_LABELS, ROOM_LABELS } from '../../game/environment';
+
+// ============================================
+// ENVIRONMENT BADGE
+// Shows current time-of-day and room
+// ============================================
+function EnvironmentBadge() {
+  const environment = useGameStore((state) => state.environment);
+
+  return (
+    <div className="text-[10px] text-slate-400 mt-0.5">
+      {TIME_LABELS[environment.timeOfDay]} · {ROOM_LABELS[environment.room]}
+    </div>
+  );
+}
 
 export function AppHeader() {
   const pet = useGameStore((state) => state.pet);
@@ -30,6 +45,7 @@ export function AppHeader() {
           <span className="text-sm font-semibold text-white">
             {petName} · Lv {pet.level}
           </span>
+          <EnvironmentBadge />
         </div>
       </div>
 
