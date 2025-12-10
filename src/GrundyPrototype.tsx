@@ -17,6 +17,10 @@ import { Pips } from './components/games/Pips';
 import { PoopScoop } from './components/games/PoopScoop';
 import { FtueFlow } from './ftue/FtueFlow';
 import { playPetHappy, playLevelUp, startBackgroundMusic, stopBackgroundMusic, audioManager } from './audio/audioManager';
+// P5-ART-PETS + P5-ART-ROOMS imports
+import { PetDisplay } from './components/pet/PetAvatar';
+import { RoomScene } from './components/environment/RoomScene';
+import { getDefaultPoseForState, getPoseForReaction } from './game/petVisuals';
 
 // ============================================
 // SHARED COMPONENTS
@@ -181,8 +185,12 @@ function HomeView({ onOpenShop }: HomeViewProps) {
   // Get pet display data from canonical pets.ts
   const petData = getPetById(pet.id);
   const petName = petData?.name ?? pet.id;
-  const petEmoji = petData?.emoji ?? '🐾';
   const petColor = petData?.color ?? '#888888';
+
+  // P5-ART-PETS: Determine pet pose based on state and reaction
+  const currentPose = lastReaction
+    ? getPoseForReaction(lastReaction)
+    : getDefaultPoseForState({ mood: pet.mood, hunger: pet.hunger });
 
   // Get all foods from canonical foods.ts
   const allFoods = getAllFoods();
@@ -272,7 +280,7 @@ function HomeView({ onOpenShop }: HomeViewProps) {
           ))}
         </div>
 
-        {/* Pet Display */}
+        {/* Pet Display (P5-ART-PETS) */}
         <div
           className="relative rounded-3xl p-6 mb-4 text-center"
           style={{
@@ -290,12 +298,12 @@ function HomeView({ onOpenShop }: HomeViewProps) {
             {moodEmoji} {pet.mood}
           </div>
 
-          {/* Pet Emoji */}
+          {/* Pet Sprite (P5-ART-PETS) */}
           <div
-            className={`text-8xl my-6 transition-transform duration-300 ${isFeeding ? 'scale-110' : ''}`}
+            className={`my-6 transition-transform duration-300 ${isFeeding ? 'scale-110' : ''}`}
             style={{ filter: pet.hunger < 20 ? 'grayscale(50%)' : 'none' }}
           >
-            {petEmoji}
+            <PetDisplay petId={pet.id} pose={currentPose} breathing={!isFeeding} />
           </div>
 
           {/* Pet Name */}
@@ -640,13 +648,17 @@ function MainApp() {
       {/* App Header */}
       <AppHeader />
 
-      {/* Main Content */}
-      <main className="flex-1 overflow-hidden">
+      {/* Main Content (P5-ART-ROOMS: RoomScene wraps home view) */}
+      <main className="flex-1 overflow-hidden flex flex-col">
         {currentView === 'home' && (
-          <HomeView onOpenShop={handleOpenShop} />
+          <RoomScene showAccents={true}>
+            <HomeView onOpenShop={handleOpenShop} />
+          </RoomScene>
         )}
         {currentView === 'games' && (
-          <GamesView />
+          <RoomScene showAccents={false}>
+            <GamesView />
+          </RoomScene>
         )}
         {currentView === 'settings' && (
           <SettingsView />

@@ -555,21 +555,39 @@ P8-TEST
 | P5-PWA-SHELL | Shell-focused offline behavior | ✅ | service-worker.js | App shell loads offline from cache |
 | P5-PWA-DOC | PWA documentation | ✅ | docs/ | PWA_NOTES.md added |
 
+### P5-ART: Art Integration
+
+| ID | Task | Status | Scope | Notes |
+|----|------|--------|-------|-------|
+| P5-ART-PETS | Pet avatar visuals (real art) | ✅ | src/art, components | PetAvatar + petSprites using assets/pets/* |
+| P5-ART-ROOMS | Room foreground visuals | ✅ | src/art, components | RoomScene + roomScenes config for all rooms |
+| P5-ART-DOC | Art integration documentation | ✅ | docs/ | ART_NOTES.md created |
+
 ### P5-POLISH: Web 1.0 Readiness
 
 | ID | Task | Status | Scope | Notes |
 |----|------|--------|-------|-------|
 | P5-SOUND-1 | Add basic SFX/BGM + sound settings | ✅ | Audio, store | Replaced by P5-AUDIO tasks |
 | P5-PWA-1 | Add PWA manifest, icons, service worker | ✅ | public/, sw.js | Replaced by P5-PWA tasks |
-| P5-ART-1 | Integrate final pet + room art assets | ⬜ | assets/ | Replace emoji placeholders |
+| P5-ART-1 | Integrate final pet + room art assets | ✅ | assets/ | Replaced by P5-ART tasks |
 | P5-QA-1 | Full Web 1.0 test pass & release checklist | ⬜ | All | Tag Web Edition 1.0 |
 
 **Web Phase 5 Exit Criteria:**
 - [x] Sound system working with mute
 - [x] PWA installable on mobile
-- [ ] Final art integrated
+- [x] Final art integrated
 - [ ] All tests passing
 - [ ] Web 1.0 release tagged
+
+---
+
+## WEB PHASE 6: Optimization & Telemetry (Future)
+
+> Optimization tasks planned for after Web 1.0 release.
+
+| ID | Task | Status | Scope | Notes |
+|----|------|--------|-------|-------|
+| P6-PWA-PRECACHE | Upgrade PWA to vite-plugin-pwa precache | ⬜ | vite.config.ts, SW | Install and configure `vite-plugin-pwa` to generate a precache manifest & SW; replace or refactor the manual service worker for stronger offline behavior. |
 
 ---
 

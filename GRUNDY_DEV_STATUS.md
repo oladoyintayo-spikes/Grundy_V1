@@ -2,9 +2,9 @@
 
 # Grundy Web Prototype — Development Status
 
-**Last Updated:** December 10, 2024 (P5-PWA-CORE)
-**Current Phase:** Web Phase 5 — IN PROGRESS (Audio ✅, PWA ✅, Art ⬜)
-**Next Phase:** Web Phase 5 completion (Art, QA)
+**Last Updated:** December 10, 2024 (P5-ART-DOC)
+**Current Phase:** Web Phase 5 — IN PROGRESS (Audio ✅, PWA ✅, Art ✅)
+**Next Phase:** Web Phase 5 completion (QA)
 
 ---
 
@@ -273,11 +273,24 @@ The following copy is canonical and used across all onboarding documentation:
 | `src/pwa/installPrompt.ts` | Install prompt handler |
 | `docs/PWA_NOTES.md` | PWA documentation |
 
+### Art System (P5-ART-PETS/ROOMS/DOC)
+
+| Component | Status | Details |
+|-----------|--------|---------|
+| Pet Sprites Config | ✅ | `src/art/petSprites.ts` - Maps PetId + PetPose to assets/pets |
+| Room Scenes Config | ✅ | `src/art/roomScenes.ts` - Room foreground visuals |
+| PetAvatar Component | ✅ | `src/components/pet/PetAvatar.tsx` - Image-based pet display |
+| RoomScene Component | ✅ | `src/components/environment/RoomScene.tsx` - Room overlay wrapper |
+| Pet Visuals Helper | ✅ | `src/game/petVisuals.ts` - State-to-pose mapping |
+| AppHeader Integration | ✅ | Pet avatar with real sprites in header |
+| HomeView Integration | ✅ | PetDisplay using sprites instead of emoji |
+| Documentation | ✅ | `docs/ART_NOTES.md` |
+| Tests | ✅ | `src/__tests__/artConfig.test.ts` |
+
 ### Remaining for Web Phase 5
 
 | Task | Status | Notes |
 |------|--------|-------|
-| P5-ART-1 | ⬜ | Final pet + room art assets |
 | P5-QA-1 | ⬜ | Full Web 1.0 test pass & release checklist |
 
 ---
@@ -294,7 +307,7 @@ The following copy is canonical and used across all onboarding documentation:
 
 1. ✅ P5-SOUND-1: Add basic SFX/BGM + sound settings (P5-AUDIO-CORE)
 2. ✅ P5-PWA-1: Add PWA manifest, icons, service worker (P5-PWA-CORE)
-3. P5-ART-1: Integrate final pet + room art assets
+3. ✅ P5-ART: Pet sprites wired from assets/pets, room scene overlays, and ART_NOTES.md
 4. P5-QA-1: Full Web 1.0 test pass & release checklist
 
 ---
