@@ -180,9 +180,9 @@ npm run build      # Must exit 0
 
 | ID | Task | Status | Bible | Blocked By | Notes |
 |----|------|--------|-------|------------|-------|
-| P1-DATA-1 | Add 5 missing pets to `pets.ts` | ⬜ | §3.2 | — | Fizz, Ember, Chomper, Whisp, Luxe |
+| P1-DATA-1 | Add 5 missing pets to `pets.ts` | ✅ | §3.2 | — | Added Fizz, Ember, Chomper, Whisp, Luxe |
 | P1-DATA-2 | Add unlock requirements to pets | ⬜ | §3.2 | P1-DATA-1 | Level unlock + gem skip costs |
-| P1-DATA-3 | Add 2 missing foods to `foods.ts` | ⬜ | §5.4 | — | Dream Treat, Golden Feast |
+| P1-DATA-3 | Add 2 missing foods to `foods.ts` | ✅ | §5.4 | — | Added Dream Treat, Golden Feast with 8-pet affinities |
 | P1-DATA-4 | Complete affinity matrix (80 entries) | ⬜ | §5.5 | P1-DATA-1,3 | All 8 pets × 10 foods |
 | P1-DATA-5 | Add ability definitions to pets | ⬜ | §3.2 | P1-DATA-1 | `ability` field with type + modifier |
 

@@ -1,7 +1,6 @@
 // ============================================
 // GRUNDY — FOOD DEFINITIONS
-// DATA SOURCE: grundy_interactive_mockup.html (authoritative)
-// SPEC: grundy_complete_game_bible.md
+// DATA SOURCE: docs/GRUNDY_MASTER_BIBLE.md §5.4-5.5
 // ============================================
 
 import { FoodDefinition, Affinity } from '../types';
@@ -115,7 +114,7 @@ export const FOODS: Record<string, FoodDefinition> = {
     emoji: '🌶️',
   },
 
-  // === EPIC (10 XP) ===
+  // === EPIC (10-12 XP) ===
   birthday_cake: {
     id: 'birthday_cake',
     name: 'Birthday Cake',
@@ -127,8 +126,47 @@ export const FOODS: Record<string, FoodDefinition> = {
     bond: 2.5,
     coinCost: 50,
     gemCost: 0,
-    affinity: { munchlet: 'loved', grib: 'neutral', plompo: 'loved' },
+    affinity: {
+      munchlet: 'loved', grib: 'neutral', plompo: 'loved',
+      fizz: 'loved', ember: 'neutral', chomper: 'liked', whisp: 'loved', luxe: 'loved'
+    },
     emoji: '🎂',
+  },
+  dream_treat: {
+    id: 'dream_treat',
+    name: 'Dream Treat',
+    description: 'A magical snack that enhances mood without risk.',
+    rarity: 'epic',
+    hunger: 10,
+    mood: 30, // High mood boost per Bible §5.4
+    xp: 12,
+    bond: 2.0,
+    coinCost: 75,
+    gemCost: 0,
+    affinity: {
+      munchlet: 'loved', grib: 'liked', plompo: 'loved',
+      fizz: 'loved', ember: 'liked', chomper: 'liked', whisp: 'loved', luxe: 'loved'
+    },
+    emoji: '⭐',
+  },
+
+  // === LEGENDARY (20 XP) ===
+  golden_feast: {
+    id: 'golden_feast',
+    name: 'Golden Feast',
+    description: 'The ultimate meal. Every pet loves it.',
+    rarity: 'legendary',
+    hunger: 30,
+    mood: 5,
+    xp: 20,
+    bond: 5.0,
+    coinCost: 150,
+    gemCost: 0,
+    affinity: {
+      munchlet: 'loved', grib: 'loved', plompo: 'loved',
+      fizz: 'loved', ember: 'loved', chomper: 'loved', whisp: 'loved', luxe: 'loved'
+    },
+    emoji: '👑',
   },
 };
 
