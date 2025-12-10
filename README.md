@@ -4,6 +4,8 @@
 
 > **Elevator Pitch:** A cozy, ethical-monetization virtual pet game where you feed, nurture, and watch your creature evolve through meaningful interactions—built as a React/TypeScript prototype to validate core mechanics before Unity production.
 
+**Live Demo:** [https://oladoyintayo-spikes.github.io/Grundy_V1/](https://oladoyintayo-spikes.github.io/Grundy_V1/)
+
 ---
 
 ## Source of Truth
@@ -200,7 +202,7 @@ Each food has an affinity (loved/liked/neutral/disliked) for each of the 8 pets.
 ### Economy
 
 - **Starting Coins:** 100
-- **Starting Gems:** 0
+- **Starting Gems:** 10
 - **Level Up Reward:** +50 coins
 - **Daily Mini-game Limit:** 3 plays (for rewards)
 

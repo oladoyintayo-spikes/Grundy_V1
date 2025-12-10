@@ -66,39 +66,32 @@ export function getEvolutionEmoji(stage: EvolutionStage): string {
 // ============================================
 
 export function calculateReaction(petId: string, food: FoodDefinition): ReactionType {
-  const pet = getPetById(petId);
-  if (!pet) return 'neutral';
-  
-  // Check favorites first (highest priority)
-  if (food.favoriteFor.includes(petId)) {
-    return 'ecstatic';
+  // Use the affinity matrix from food definitions
+  // food.affinity maps petId -> 'loved' | 'liked' | 'neutral' | 'disliked'
+  const affinity = food.affinity[petId] || 'neutral';
+
+  // Map affinity to reaction type
+  switch (affinity) {
+    case 'loved':
+      return 'ecstatic';
+    case 'liked':
+      return 'positive';
+    case 'disliked':
+      return 'negative';
+    case 'neutral':
+    default:
+      // For neutral affinity, check food rarity for bonus
+      // Epic/Legendary foods give positive reaction even if neutral affinity
+      if (food.rarity === 'epic' || food.rarity === 'legendary') {
+        return 'positive';
+      }
+      // Rare foods have a chance to be positive
+      // TODO: P1-x - Add randomization per Bible spec
+      if (food.rarity === 'rare') {
+        return 'positive';
+      }
+      return 'neutral';
   }
-  
-  // Check hated
-  if (food.hatedBy.includes(petId)) {
-    return 'negative';
-  }
-  
-  // Check category preferences
-  if (food.tags.includes(pet.favoriteCategory)) {
-    return 'positive';
-  }
-  
-  if (food.tags.includes(pet.hatedCategory)) {
-    return 'negative';
-  }
-  
-  // Premium foods always positive
-  if (food.category === 'premium') {
-    return 'positive';
-  }
-  
-  // Rare foods usually positive
-  if (food.category === 'rare') {
-    return 'positive';
-  }
-  
-  return 'neutral';
 }
 
 export function calculateXPGain(

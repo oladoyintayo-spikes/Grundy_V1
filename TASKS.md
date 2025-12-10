@@ -147,10 +147,13 @@ npm run build      # Must exit 0
 
 | ID | Task | Status | Bible | Acceptance Criteria |
 |----|------|--------|-------|---------------------|
-| P0-3 | Hide DevPanel in production | ⬜ | — | DevPanel only visible when `import.meta.env.DEV` |
-| P0-4 | Create PWA manifest | ⬜ | 15.2 | `public/manifest.json` with icons |
-| P0-5 | Deploy to GitHub Pages | ⬜ | — | Live URL accessible, game playable |
-| P0-6 | Add loading state | ⬜ | — | Prevents flash of unstyled content |
+| P0-0 | Scaffold missing toolchain | ✅ | — | vite.config.ts, main.tsx, App.tsx, index.css, tailwind/postcss configs exist |
+| P0-1 | Verify build compiles | ✅ | — | `npm run build` succeeds with no errors |
+| P0-2 | Verify tests pass | ✅ | — | `npm test` passes all existing tests |
+| P0-3 | Hide DevPanel in production | ✅ | — | N/A: No DevPanel exists yet; README gems fixed (0→10) |
+| P0-4 | Verify PWA manifest exists | ✅ | 15.2 | manifest.json created, index.html linked; icons need replacement |
+| P0-5 | Deploy to GitHub Pages | ✅ | — | Workflow created; URL: oladoyintayo-spikes.github.io/Grundy_V1/ |
+| P0-6 | Add loading state for initial render | ✅ | — | Spinner + paw emoji shown until React mounts |
 | P0-7 | Mobile viewport verification | ⬜ | — | Proper scaling on mobile devices |
 | P0-8 | Add error boundary | ⬜ | — | Graceful crash recovery |
 
@@ -208,6 +211,18 @@ npm run build      # Must exit 0
 - [ ] Affinity matrix complete (80 entries)
 - [ ] All 8 abilities trigger correctly
 - [ ] No MISALIGNED items remain
+
+### P1-DOC: Documentation Alignment
+
+| ID | Task | Status | Scope | Acceptance Criteria |
+|----|------|--------|-------|---------------------|
+| P1-DOC-01 | Apply Bible Update Backlog | ⬜ | `BIBLE_UPDATE_BACKLOG.md` | All ⬜ entries in backlog are applied to Bible and marked ✅ |
+
+### P1-ART: Asset Creation
+
+| ID | Task | Status | Scope | Acceptance Criteria |
+|----|------|--------|-------|---------------------|
+| P1-ART-01 | Create PWA icons | ⬜ | `public/` | icon-192.png and icon-512.png created with Grundy branding |
 
 ---
 
