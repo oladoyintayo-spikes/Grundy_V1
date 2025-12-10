@@ -662,6 +662,35 @@ export const useGameStore = create<GameStore>()(
       },
 
       // ========================================
+      // AUDIO SETTINGS (P5-AUDIO)
+      // ========================================
+      setSoundEnabled: (enabled: boolean) => {
+        // Import dynamically to avoid circular dependency in tests
+        import('../audio/audioManager').then(({ audioManager }) => {
+          audioManager.setSoundEnabled(enabled);
+        });
+        set((state) => ({
+          settings: {
+            ...state.settings,
+            soundEnabled: enabled,
+          },
+        }));
+      },
+
+      setMusicEnabled: (enabled: boolean) => {
+        // Import dynamically to avoid circular dependency in tests
+        import('../audio/audioManager').then(({ audioManager }) => {
+          audioManager.setMusicEnabled(enabled);
+        });
+        set((state) => ({
+          settings: {
+            ...state.settings,
+            musicEnabled: enabled,
+          },
+        }));
+      },
+
+      // ========================================
       // RESET
       // ========================================
       resetGame: () => {
@@ -686,6 +715,7 @@ export const useDailyMiniGames = () => useGameStore((state) => state.dailyMiniGa
 export const useFtue = () => useGameStore((state) => state.ftue);
 export const usePlayMode = () => useGameStore((state) => state.playMode);
 export const useEnvironment = () => useGameStore((state) => state.environment);
+export const useSettings = () => useGameStore((state) => state.settings);
 
 // FTUE helper: Check if FTUE should be shown
 export function shouldShowFtue(state: { ftue: FtueState }): boolean {

@@ -1,10 +1,12 @@
 // ============================================
 // GRUNDY — RESULTS SCREEN
 // Post-game results and rewards display
+// P5-AUDIO-HOOKS
 // ============================================
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import type { MiniGameResult, RewardTier } from '../types';
+import { playMiniGameResult, playUiConfirm, playUiBack } from '../audio/audioManager';
 
 interface ResultsScreenProps {
   result: MiniGameResult;
@@ -35,6 +37,21 @@ const TIER_EMOJIS: Record<RewardTier, string> = {
 
 export function ResultsScreen({ result, onCollect, onBack }: ResultsScreenProps) {
   const { tier, score, rewards } = result;
+
+  // Play tier result sound on mount (P5-AUDIO-HOOKS)
+  useEffect(() => {
+    playMiniGameResult(tier);
+  }, [tier]);
+
+  const handleCollect = () => {
+    playUiConfirm();
+    onCollect();
+  };
+
+  const handleBack = () => {
+    playUiBack();
+    onBack();
+  };
 
   return (
     <div className="h-full bg-gradient-to-b from-indigo-900 to-purple-900 flex flex-col items-center justify-center p-6">
@@ -79,13 +96,13 @@ export function ResultsScreen({ result, onCollect, onBack }: ResultsScreenProps)
       {/* Buttons */}
       <div className="flex gap-4">
         <button
-          onClick={onBack}
+          onClick={handleBack}
           className="bg-white/10 backdrop-blur rounded-xl px-6 py-3 text-white hover:bg-white/20 transition"
         >
           Back to Hub
         </button>
         <button
-          onClick={onCollect}
+          onClick={handleCollect}
           className="bg-green-500 rounded-xl px-8 py-3 text-white font-bold hover:bg-green-600 transition active:scale-95"
         >
           Collect!

@@ -247,6 +247,10 @@ export interface GameStore {
   refreshTimeOfDay: () => void;
   setRoom: (room: RoomId) => void;
   syncEnvironmentWithView: (view: AppView) => void;
+
+  // Audio settings actions (P5-AUDIO)
+  setSoundEnabled: (enabled: boolean) => void;
+  setMusicEnabled: (enabled: boolean) => void;
 }
 
 // --- Legacy Currencies interface (for compatibility) ---

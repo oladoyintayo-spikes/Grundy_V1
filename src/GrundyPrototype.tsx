@@ -16,6 +16,7 @@ import { RhythmTap } from './components/games/RhythmTap';
 import { Pips } from './components/games/Pips';
 import { PoopScoop } from './components/games/PoopScoop';
 import { FtueFlow } from './ftue/FtueFlow';
+import { playPetHappy, playLevelUp, startBackgroundMusic, stopBackgroundMusic, audioManager } from './audio/audioManager';
 
 // ============================================
 // SHARED COMPONENTS
@@ -219,6 +220,9 @@ function HomeView({ onOpenShop }: HomeViewProps) {
     const result: FeedResult | null = feed(foodId);
 
     if (result && result.success) {
+      // Play pet happy sound (P5-AUDIO-HOOKS)
+      playPetHappy();
+
       // Show reaction
       setLastReaction(result.reaction);
       setReactionMessage(
@@ -228,8 +232,9 @@ function HomeView({ onOpenShop }: HomeViewProps) {
         `Nom nom! +${result.xpGained} XP`
       );
 
-      // Show level up modal
+      // Show level up modal and play level up sound
       if (result.leveledUp && result.newLevel) {
+        playLevelUp();
         setTimeout(() => setShowLevelUp(true), 500);
       }
     }
@@ -441,6 +446,8 @@ function GamesView() {
 // ============================================
 function SettingsView() {
   const settings = useGameStore((state) => state.settings);
+  const setSoundEnabled = useGameStore((state) => state.setSoundEnabled);
+  const setMusicEnabled = useGameStore((state) => state.setMusicEnabled);
   const resetGame = useGameStore((state) => state.resetGame);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
 
@@ -455,13 +462,16 @@ function SettingsView() {
         <div className="text-center mb-8">
           <h2 className="text-xl font-semibold mb-2">Settings</h2>
           <p className="text-sm text-slate-400">
-            More settings will be added in a later phase.
+            Customize your Grundy experience.
           </p>
         </div>
 
-        {/* Sound Settings (Visual only - stubs) */}
+        {/* Sound Settings (P5-AUDIO-CORE) */}
         <div className="bg-slate-800/50 rounded-xl p-4 space-y-4">
-          <div className="flex items-center justify-between">
+          <button
+            onClick={() => setSoundEnabled(!settings.soundEnabled)}
+            className="w-full flex items-center justify-between"
+          >
             <div className="flex items-center gap-3">
               <span className="text-xl">🔊</span>
               <span>Sound Effects</span>
@@ -469,8 +479,11 @@ function SettingsView() {
             <div className={`w-12 h-6 rounded-full relative transition-colors ${settings.soundEnabled ? 'bg-green-500' : 'bg-slate-600'}`}>
               <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${settings.soundEnabled ? 'right-1' : 'left-1'}`} />
             </div>
-          </div>
-          <div className="flex items-center justify-between">
+          </button>
+          <button
+            onClick={() => setMusicEnabled(!settings.musicEnabled)}
+            className="w-full flex items-center justify-between"
+          >
             <div className="flex items-center gap-3">
               <span className="text-xl">🎵</span>
               <span>Music</span>
@@ -478,7 +491,7 @@ function SettingsView() {
             <div className={`w-12 h-6 rounded-full relative transition-colors ${settings.musicEnabled ? 'bg-green-500' : 'bg-slate-600'}`}>
               <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${settings.musicEnabled ? 'right-1' : 'left-1'}`} />
             </div>
-          </div>
+          </button>
         </div>
 
         {/* Danger Zone */}
@@ -552,10 +565,36 @@ function MainApp() {
   const inventory = useGameStore((state) => state.inventory);
   const buyFood = useGameStore((state) => state.buyFood);
 
+  // Audio settings (P5-AUDIO)
+  const musicEnabled = useGameStore((state) => state.settings.musicEnabled);
+  const soundEnabled = useGameStore((state) => state.settings.soundEnabled);
+
   // Environment state
   const environment = useGameStore((state) => state.environment);
   const syncEnvironmentWithView = useGameStore((state) => state.syncEnvironmentWithView);
   const refreshTimeOfDay = useGameStore((state) => state.refreshTimeOfDay);
+
+  // Initialize audio manager with stored settings and start background music (P5-AUDIO)
+  useEffect(() => {
+    audioManager.setSoundEnabled(soundEnabled);
+    audioManager.setMusicEnabled(musicEnabled);
+    if (musicEnabled) {
+      startBackgroundMusic();
+    }
+    return () => {
+      stopBackgroundMusic();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Handle music setting changes (P5-AUDIO)
+  useEffect(() => {
+    if (musicEnabled) {
+      startBackgroundMusic();
+    } else {
+      stopBackgroundMusic();
+    }
+  }, [musicEnabled]);
 
   // Sync environment on mount
   useEffect(() => {

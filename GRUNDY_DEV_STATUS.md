@@ -2,9 +2,9 @@
 
 # Grundy Web Prototype — Development Status
 
-**Last Updated:** December 10, 2024 (P4-FTUE-CORE)
-**Current Phase:** Web Phase 4 — COMPLETE (FTUE / Onboarding)
-**Next Phase:** Web Phase 5 (Polish / Web 1.0)
+**Last Updated:** December 10, 2024 (P5-AUDIO-CORE)
+**Current Phase:** Web Phase 5 — IN PROGRESS (Audio ✅, PWA/Art ⬜)
+**Next Phase:** Web Phase 5 completion (PWA, Art, QA)
 
 ---
 
@@ -28,14 +28,14 @@
 | **Web Phase 2** | Mini-Games & Infra | ✅ COMPLETE | All 5 mini-games implemented and tested |
 | **Web Phase 3** | Navigation & Environment | 🟡 IN PROGRESS | P3-NAV ✅, P3-ENV ⬜ |
 | **Web Phase 4** | FTUE / Onboarding | ✅ COMPLETE | All FTUE screens, state, tests done |
-| **Web Phase 5** | Polish / Web 1.0 | ⬜ NOT STARTED | Sound, PWA, art integration, release |
+| **Web Phase 5** | Polish / Web 1.0 | 🟡 IN PROGRESS | Audio ✅, PWA ⬜, Art ⬜, QA ⬜ |
 
 ### Post-Web 1.0
 
 | System | Status | Summary |
 |--------|--------|---------|
 | Art / Sprite States | ⬜ DEFERRED | Connect stats to visual states (getDisplayState) |
-| Sound & Vibration | ⬜ DEFERRED | Audio feedback, vibration patterns |
+| Sound & Vibration | 🟡 PARTIAL | Core audio done (P5-AUDIO-CORE); vibration deferred |
 | Shop & Economy | ⬜ NOT STARTED | Shop tabs, gem confirm, milestones |
 | Inventory | ⬜ NOT STARTED | Capacity, expansion items |
 | Pet Slots | ⬜ NOT STARTED | Multi-pet care system |
@@ -182,11 +182,12 @@ The following copy is canonical and used across all onboarding documentation:
 ### Infrastructure
 - React 18 + TypeScript (strict mode)
 - Zustand state management with persistence
-- Vitest test suite (102 tests)
+- Vitest test suite
 - Vite build system
 - PWA manifest
 - GitHub Pages deployment
 - Error boundary
+- Audio system (SFX + BGM with settings)
 
 ---
 
@@ -228,6 +229,42 @@ The following copy is canonical and used across all onboarding documentation:
 
 ---
 
+## Web Phase 5 — IN PROGRESS (Audio)
+
+**Theme:** Bible Section 9 — Polish & Web 1.0 Release
+
+### Audio System (P5-AUDIO-CORE)
+
+| Component | Status | Details |
+|-----------|--------|---------|
+| Audio Manager | ✅ | Central singleton with SFX/BGM controls |
+| Sound Config | ✅ | 9 SFX configured (UI, mini-game tiers, pet events) |
+| Music Config | ✅ | Background music with loop support |
+| Store Integration | ✅ | setSoundEnabled/setMusicEnabled actions |
+| Settings UI | ✅ | Toggle buttons in Settings view |
+| Event Hooks | ✅ | UI taps, mini-game results, pet happy/level-up |
+| Documentation | ✅ | docs/AUDIO_NOTES.md |
+| Tests | ✅ | audioConfig.test.ts |
+
+### Files Implemented
+
+| File | Purpose |
+|------|---------|
+| `src/audio/types.ts` | Type definitions for SoundId, MusicTrackId |
+| `src/audio/config.ts` | Sound and music configuration registry |
+| `src/audio/audioManager.ts` | Central audio manager singleton |
+| `docs/AUDIO_NOTES.md` | Audio system documentation |
+
+### Remaining for Web Phase 5
+
+| Task | Status | Notes |
+|------|--------|-------|
+| P5-PWA-1 | ⬜ | PWA manifest, icons, service worker |
+| P5-ART-1 | ⬜ | Final pet + room art assets |
+| P5-QA-1 | ⬜ | Full Web 1.0 test pass & release checklist |
+
+---
+
 ## Next Steps (Web Phase 3 → 5)
 
 ### Web Phase 3: Environment (Remaining)
@@ -238,7 +275,7 @@ The following copy is canonical and used across all onboarding documentation:
 
 ### Web Phase 5: Polish / Web 1.0
 
-1. P5-SOUND-1: Add basic SFX/BGM + sound settings
+1. ✅ P5-SOUND-1: Add basic SFX/BGM + sound settings (P5-AUDIO-CORE)
 2. P5-PWA-1: Add PWA manifest, icons, service worker
 3. P5-ART-1: Integrate final pet + room art assets
 4. P5-QA-1: Full Web 1.0 test pass & release checklist
