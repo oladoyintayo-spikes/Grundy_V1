@@ -1,7 +1,7 @@
 # TASKS.md
 ## Grundy Development Task List
 
-**Last Updated:** December 9, 2024  
+**Last Updated:** December 10, 2024  
 **Design SoT:** `docs/GRUNDY_MASTER_BIBLE.md`  
 **Pre-Flight Report:** December 9, 2024 ✅
 
@@ -67,7 +67,7 @@
 
 ## GAP ANALYSIS: Code vs Bible
 
-> Last analyzed: December 9, 2024 (Post Pre-Flight)
+> Last analyzed: December 10, 2024 (Phase 1 Planning)
 
 ### System Status Overview
 
@@ -83,12 +83,12 @@
 | **Cozy vs Classic** | 9 | 🔴 MISSING | No mode system exists |
 | **Art / Sprite States** | 13.6 | 🟡 PARTIAL | 120 sprites exist, no state logic |
 | **Sound & Vibration** | 12 | 🔴 MISSING | Not implemented |
-| **Pet Abilities** | 3.7 | 🔴 MISSING | No abilities implemented |
+| **Pet Abilities** | 3.7 | 🔴 MISSING | Not implemented → P1-ABILITY |
 | **Progression** | 6 | 🟡 NEEDS AUDIT | XP formula present, evolution levels conflict |
-| **PWA / Deploy** | 15 | 🔴 MISSING | No manifest/public folder |
-| **Pet Data** | 3 | 🟠 MISALIGNED | Only 3 pets (need 8), deprecated names |
-| **Food Data** | 5 | 🟠 MISALIGNED | Only 8 foods (need 10) |
-| **Currency Types** | 11 | 🟠 MISALIGNED | Mixed bites/shinies vs coins/gems |
+| **PWA / Deploy** | 15 | 🟢 ALIGNED | P0-4,5 complete: manifest, GH Pages |
+| **Pet Data** | 3 | 🟠 MISALIGNED | Only 3 pets (need 8) → P1-DATA-1 |
+| **Food Data** | 5 | 🟠 MISALIGNED | Only 8 foods (need 10) → P1-DATA-3,4 |
+| **Currency Types** | 11 | 🟢 ALIGNED | Fixed in P0 (coins/gems) |
 
 ### Gap Legend
 
@@ -168,63 +168,106 @@ npm run build      # Must exit 0
 
 ---
 
-## PHASE 1: Core Systems Alignment
+## PHASE 1: Complete Data Layer & Core Loop Alignment
 
-> Ensure existing code matches Bible specs. Fix all MISALIGNED items.
+> **Theme:** Unify the data layer and align with Bible specs.
+>
+> **Primary Bottleneck:** store.ts uses `'sprout'` as default pet, but this ID doesn't exist in pets.ts. The affinity matrix only covers 3×8=24 entries; Bible requires 8×10=80.
 
-### P1-A: Fix Data Misalignments (from Pre-Flight)
+### P1-DATA: Complete Data Definitions
 
-| ID | Task | Status | Issue | Resolution |
-|----|------|--------|-------|------------|
-| P1-A1 | Update pet names | ⬜ | sprout→munchlet, ripple→fizz | Update `src/data/pets.ts` |
-| P1-A2 | Add missing 5 pets | ⬜ | Only 3 pets exist | Add plompo, chomper, whisp, luxe, fizz |
-| P1-A3 | Add missing 2 foods | ⬜ | Only 8 foods | Add Dream Treat, Golden Feast |
-| P1-A4 | Fix evolution levels | ⬜ | youth=10→7, adult=25→13 | Update `src/data/config.ts` |
-| P1-A5 | Fix starting inventory | ⬜ | Match Bible | 100 coins, 0 gems |
+> Make `src/data/` files the single source of truth, aligned with Bible §3 and §5.
 
-### P1-B: Audit Definitions
+| ID | Task | Status | Bible | Blocked By | Notes |
+|----|------|--------|-------|------------|-------|
+| P1-DATA-1 | Add 5 missing pets to `pets.ts` | ✅ | §3.2 | — | Added Fizz, Ember, Chomper, Whisp, Luxe |
+| P1-DATA-2 | Add unlock requirements to pets | ⬜ | §3.2 | P1-DATA-1 | Level unlock + gem skip costs |
+| P1-DATA-3 | Add 2 missing foods to `foods.ts` | ✅ | §5.4 | — | Added Dream Treat, Golden Feast with 8-pet affinities |
+| P1-DATA-4 | Complete affinity matrix (80 entries) | ⬜ | §5.5 | P1-DATA-1,3 | All 8 pets × 10 foods |
+| P1-DATA-5 | Add ability definitions to pets | ⬜ | §3.2 | P1-DATA-1 | `ability` field with type + modifier |
 
-| ID | Task | Status | Bible | Acceptance Criteria |
-|----|------|--------|-------|---------------------|
-| P1-B1 | Audit pet definitions | ⬜ | 3.x | All 8 pets have correct abilities, colors, unlock costs |
-| P1-B2 | Audit food definitions | ⬜ | 5.x | All 10 foods have correct stats, costs |
-| P1-B3 | Implement affinity matrix | ⬜ | 5.5 | All 8 pets × 10 foods (80 entries) |
-| P1-B4 | Verify XP formula | ⬜ | 6.2 | `XP(L) = 20 + (L² × 1.4)` |
-| P1-B5 | Verify mood tiers | ⬜ | 4.2 | 5 tiers with correct XP multipliers |
-| P1-B6 | Verify affinity multipliers | ⬜ | 5.3 | Loved=2×, Liked=1.5×, Neutral=1×, Disliked=0.5× |
+### P1-CORE: Fix Store & Core Loop
 
-### P1-C: Pet Abilities
+> Ensure store.ts works correctly with complete data.
 
-| ID | Task | Status | Bible | Acceptance Criteria |
-|----|------|--------|-------|---------------------|
-| P1-C1 | Implement Munchlet ability | ⬜ | 3.7 | +10% bond from feeding |
-| P1-C2 | Implement Grib ability | ⬜ | 3.7 | -20% mood penalty from disliked food |
-| P1-C3 | Implement Plompo ability | ⬜ | 3.7 | -20% stat decay rate |
-| P1-C4 | Implement Fizz ability | ⬜ | 3.7 | +25% minigame score bonus |
-| P1-C5 | Implement Ember ability | ⬜ | 3.7 | 2× coins from spicy foods |
-| P1-C6 | Implement Chomper ability | ⬜ | 3.7 | No dislikes (neutral minimum) |
-| P1-C7 | Implement Whisp ability | ⬜ | 3.7 | +50% XP from rare foods |
-| P1-C8 | Implement Luxe ability | ⬜ | 3.7 | +100% gem drops |
-| P1-C9 | Add ability indicators | ⬜ | 3.7 | Show "+25% 🎮" when ability triggers |
+| ID | Task | Status | Bible | Blocked By | Notes |
+|----|------|--------|-------|------------|-------|
+| P1-CORE-1 | Fix default pet ID to `'munchlet'` | ✅ | — | P1-DATA-1 | Fixed in store.ts:30 |
+| P1-CORE-2 | Add `selectPet(petId)` action | ⬜ | — | P1-CORE-1 | For switching active pet |
+| P1-CORE-3 | Add `unlockedPets: string[]` to state | ⬜ | §3.2 | P1-DATA-2 | Track which pets player has unlocked |
+| P1-CORE-4 | Audit XP/evolution formulas | ⬜ | §6.1-2 | — | Verify against Bible; document any code-wins decisions |
 
-**Phase 1 Exit Criteria:**
-- [ ] All 8 pets defined with correct data
-- [ ] All 10 foods defined
-- [ ] Affinity matrix complete (80 entries)
-- [ ] All 8 abilities trigger correctly
-- [ ] No MISALIGNED items remain
+### P1-ABILITY: Implement Pet Abilities
+
+> Each pet's special ability triggers correctly per Bible §3.7.
+
+| ID | Task | Status | Bible | Blocked By | Notes |
+|----|------|--------|-------|------------|-------|
+| P1-ABILITY-1 | Create ability effect system | ⬜ | §3.7 | P1-DATA-5 | `applyAbility(petId, context)` function |
+| P1-ABILITY-2 | Implement starter abilities | ⬜ | §3.7 | P1-ABILITY-1 | Munchlet +10% bond, Grib -20% dislike, Plompo -20% decay |
+| P1-ABILITY-3 | Implement unlock pet abilities | ⬜ | §3.7 | P1-ABILITY-1 | Fizz, Ember, Chomper, Whisp, Luxe |
+| P1-ABILITY-4 | Add ability trigger indicators | ⬜ | §3.7 | P1-ABILITY-2 | Show "+25% 🎮" when ability activates |
+
+### P1-TEST: Test Coverage for Data Layer
+
+> Prevent regressions as we expand data.
+
+| ID | Task | Status | Scope | Blocked By | Notes |
+|----|------|--------|-------|------------|-------|
+| P1-TEST-1 | Add pet data validation tests | ⬜ | `pets.ts` | P1-DATA-1 | Verify all 8 pets have required fields |
+| P1-TEST-2 | Add food data validation tests | ⬜ | `foods.ts` | P1-DATA-4 | Verify all 10 foods, all affinities |
+| P1-TEST-3 | Add ability unit tests | ⬜ | `systems.ts` | P1-ABILITY-2 | Test each ability's effect |
 
 ### P1-DOC: Documentation Alignment
 
-| ID | Task | Status | Scope | Acceptance Criteria |
-|----|------|--------|-------|---------------------|
-| P1-DOC-01 | Apply Bible Update Backlog | ⬜ | `BIBLE_UPDATE_BACKLOG.md` | All ⬜ entries in backlog are applied to Bible and marked ✅ |
+| ID | Task | Status | Scope | Notes |
+|----|------|--------|-------|-------|
+| P1-DOC-1 | Apply Bible Update Backlog | ⬜ | `BIBLE_UPDATE_BACKLOG.md` | Evolution levels: code wins (youth=10, adult=25) |
+| P1-DOC-2 | Update README starting gems | ⬜ | `README.md` | Line 203 says 0 gems, should be 10 |
 
-### P1-ART: Asset Creation
+### P1-ART: Asset Creation (Deferred)
 
-| ID | Task | Status | Scope | Acceptance Criteria |
-|----|------|--------|-------|---------------------|
-| P1-ART-01 | Create PWA icons | ⬜ | `public/` | icon-192.png and icon-512.png created with Grundy branding |
+| ID | Task | Status | Scope | Notes |
+|----|------|--------|-------|-------|
+| P1-ART-1 | Create PWA icons | ⏸️ | `public/` | Blocked until branding finalized |
+
+---
+
+### Phase 1 Execution Order
+
+```
+1. P1-DATA-1 (Add 5 pets) ──┬──▶ 2. P1-DATA-2 (Unlock requirements)
+                            │
+                            ├──▶ 3. P1-DATA-5 (Ability definitions)
+                            │
+                            └──▶ 5. P1-CORE-1 (Fix default pet)
+                                        │
+                                        └──▶ 6. P1-CORE-2,3 (Selection, unlock tracking)
+
+4. P1-DATA-3 (Add 2 foods) ──▶ 7. P1-DATA-4 (Affinity matrix)
+                                        │
+                                        └──▶ 9. P1-TEST-1,2 (Data tests)
+
+8. P1-ABILITY-1 (Effect system) ──▶ 10. P1-ABILITY-2,3 (Abilities)
+                                              │
+                                              └──▶ 11. P1-ABILITY-4, P1-TEST-3
+
+P1-CORE-4, P1-DOC-1,2 ── Can run in parallel
+```
+
+---
+
+### Phase 1 Exit Criteria
+
+| Check | Validation | Status |
+|-------|------------|--------|
+| All 8 pets defined | `getAllPets().length === 8` | ⬜ |
+| All 10 foods defined | `getAllFoods().length === 10` | ⬜ |
+| Affinity matrix complete | 80 entries, no `undefined` | ⬜ |
+| Default pet is `munchlet` | `resetGame()` → `pet.id === 'munchlet'` | ⬜ |
+| All 8 abilities implemented | Unit tests pass | ⬜ |
+| All tests pass | `npm test -- --run` exits 0 | ⬜ |
+| Build passes | `npm run build` exits 0 | ⬜ |
 
 ---
 
