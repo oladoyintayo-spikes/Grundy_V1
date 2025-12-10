@@ -2,9 +2,9 @@
 
 # Grundy Web Prototype — Development Status
 
-**Last Updated:** December 10, 2024 (P5-UX-A11Y)
-**Current Phase:** Web Phase 5 — IN PROGRESS (Audio ✅, PWA ✅, Art ✅, UX/A11Y ✅)
-**Next Phase:** Web Phase 5 completion (QA)
+**Last Updated:** December 10, 2024 (P5-QA-CORE)
+**Current Phase:** Web Phase 5 — QA COMPLETE, Release Ready
+**Next Phase:** Web 1.0 Release Tagging (P5-RELEASE-1.0)
 
 ---
 
@@ -28,7 +28,7 @@
 | **Web Phase 2** | Mini-Games & Infra | ✅ COMPLETE | All 5 mini-games implemented and tested |
 | **Web Phase 3** | Navigation & Environment | 🟡 IN PROGRESS | P3-NAV ✅, P3-ENV ⬜ |
 | **Web Phase 4** | FTUE / Onboarding | ✅ COMPLETE | All FTUE screens, state, tests done |
-| **Web Phase 5** | Polish / Web 1.0 | 🟡 IN PROGRESS | Audio ✅, PWA ✅, Art ✅, UX/A11Y ✅, QA ⬜ |
+| **Web Phase 5** | Polish / Web 1.0 | ✅ QA COMPLETE | Audio ✅, PWA ✅, Art ✅, UX/A11Y ✅, QA ✅ |
 
 ### Post-Web 1.0
 
@@ -229,7 +229,7 @@ The following copy is canonical and used across all onboarding documentation:
 
 ---
 
-## Web Phase 5 — IN PROGRESS (Audio + PWA)
+## Web Phase 5 — QA COMPLETE (Ready for Release)
 
 **Theme:** Bible Section 9 — Polish & Web 1.0 Release
 
@@ -313,29 +313,43 @@ The following copy is canonical and used across all onboarding documentation:
 | `src/components/ResultsScreen.tsx` | Focus ring, h1/h2, dl/dt/dd, aria-labels |
 | `src/ftue/screens/*.tsx` | Focus ring, roles, headings, keyboard handlers |
 
-### Remaining for Web Phase 5
+### QA System (P5-QA-CORE)
 
-| Task | Status | Notes |
-|------|--------|-------|
-| P5-QA-1 | ⬜ | Full Web 1.0 test pass & release checklist |
+| Component | Status | Details |
+|-----------|--------|---------|
+| QA Plan | ✅ | `docs/QA_PLAN_WEB1.md` - Scope, environments, test matrices |
+| Issues Log | ✅ | `docs/QA_WEB1_ISSUES.md` - All issues documented |
+| FTUE Validation | ✅ | New/returning player flows verified |
+| Mini-Game Validation | ✅ | All 5 games, daily caps, NO GEMS rule verified |
+| PWA Validation | ✅ | Manifest, SW, offline shell verified |
+| Smoke Testing | ✅ | Core loop, navigation, audio verified |
+| S1/S2 Issues | 0 | No blockers found |
+| S3/S4 Issues | 5 | All deferred to Phase 6 |
+
+### Web Phase 5 Summary
+
+- ✅ P5-AUDIO: Audio manager, SFX/BGM, settings, documentation
+- ✅ P5-PWA: Manifest, service worker, install prompt, documentation
+- ✅ P5-ART: Pet sprites, room scenes, integration, documentation
+- ✅ P5-UX-A11Y: Keyboard navigation, focus styles, ARIA labels, contrast
+- ✅ P5-QA: QA plan, execution, issues log, release recommendation
+- ⬜ Release: Web 1.0 tagging & release notes (next step)
 
 ---
 
-## Next Steps (Web Phase 3 → 5)
+## Next Steps
 
-### Web Phase 3: Environment (Remaining)
+### Immediate: Web 1.0 Release
 
-1. P3-ENV-1: Time-of-day theming (Morning/Day/Evening/Night)
-2. P3-ENV-2: Room contexts (Kitchen/Bedroom/Playroom/Yard)
-3. P3-ENV-3: Hook nav/views into room/time context
+1. P5-RELEASE-1.0: Tag and create release notes
 
-### Web Phase 5: Polish / Web 1.0
+### Post-Release: Phase 6
 
-1. ✅ P5-SOUND-1: Add basic SFX/BGM + sound settings (P5-AUDIO-CORE)
-2. ✅ P5-PWA-1: Add PWA manifest, icons, service worker (P5-PWA-CORE)
-3. ✅ P5-ART: Pet sprites wired from assets/pets, room scene overlays, and ART_NOTES.md
-4. ✅ P5-UX-A11Y: Keyboard navigation, focus styles, ARIA labels, contrast updates
-5. P5-QA-1: Full Web 1.0 test pass & release checklist
+1. P3-ENV (deferred): Explicit room selection UI
+2. P6-PWA-UI: Add "Install Grundy" button in Settings
+3. P6-AUDIO-ASSETS: Add actual audio files
+4. P6-BRANDING: Replace placeholder PWA icons
+5. P9-7: Volume sliders (nice-to-have)
 
 ---
 

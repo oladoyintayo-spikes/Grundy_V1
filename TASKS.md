@@ -1,7 +1,7 @@
 # TASKS.md
 ## Grundy Development Task List
 
-**Last Updated:** December 10, 2024 (P5-UX-A11Y)
+**Last Updated:** December 10, 2024 (P5-QA-CORE)
 **Design SoT:** `docs/GRUNDY_MASTER_BIBLE.md`
 **Pre-Flight Report:** December 9, 2024 ✅
 
@@ -572,6 +572,16 @@ P8-TEST
 | P5-A11Y-LABELS | ARIA labels and semantics | ✅ | All components | aria-current, aria-label, aria-pressed, roles |
 | P5-A11Y-DOC | UX/A11Y documentation | ✅ | docs/ | UX_A11Y_NOTES.md created |
 
+### P5-QA: Web 1.0 QA
+
+| ID | Task | Status | Scope | Notes |
+|----|------|--------|-------|-------|
+| P5-QA-SMOKE | Core smoke testing across app | ✅ | All views | Covered in QA_PLAN_WEB1 + QA_WEB1_ISSUES |
+| P5-QA-FTUE | FTUE end-to-end validation | ✅ | FTUE flow | New & returning player behavior validated |
+| P5-QA-MINIGAMES | Mini-game invariants & sanity checks | ✅ | Mini-games | Daily caps, energy rules, reward behavior, NO GEMS verified |
+| P5-QA-PWA | Basic PWA/offline sanity checks | ✅ | PWA | Manifest, SW, installability, offline shell verified |
+| P5-QA-REPORT | QA docs for Web 1.0 | ✅ | docs/ | QA_PLAN_WEB1.md + QA_WEB1_ISSUES.md created |
+
 ### P5-POLISH: Web 1.0 Readiness
 
 | ID | Task | Status | Scope | Notes |
@@ -579,13 +589,13 @@ P8-TEST
 | P5-SOUND-1 | Add basic SFX/BGM + sound settings | ✅ | Audio, store | Replaced by P5-AUDIO tasks |
 | P5-PWA-1 | Add PWA manifest, icons, service worker | ✅ | public/, sw.js | Replaced by P5-PWA tasks |
 | P5-ART-1 | Integrate final pet + room art assets | ✅ | assets/ | Replaced by P5-ART tasks |
-| P5-QA-1 | Full Web 1.0 test pass & release checklist | ⬜ | All | Tag Web Edition 1.0 |
+| P5-QA-1 | Full Web 1.0 test pass & release checklist | ✅ | All | QA complete; release tagging next |
 
 **Web Phase 5 Exit Criteria:**
 - [x] Sound system working with mute
 - [x] PWA installable on mobile
 - [x] Final art integrated
-- [ ] All tests passing
+- [x] All tests passing (417 tests)
 - [ ] Web 1.0 release tagged
 
 ---
