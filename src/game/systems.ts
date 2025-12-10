@@ -34,7 +34,7 @@ export function createInitialPet(petId: string, customName?: string): PetState {
 }
 
 export function getEvolutionStage(level: number): EvolutionStage {
-  if (level >= GAME_CONFIG.evolutionLevels.adult) return 'adult';
+  if (level >= GAME_CONFIG.evolutionLevels.evolved) return 'evolved';
   if (level >= GAME_CONFIG.evolutionLevels.youth) return 'youth';
   return 'baby';
 }
@@ -57,7 +57,7 @@ export function getEvolutionEmoji(stage: EvolutionStage): string {
   switch (stage) {
     case 'baby': return '🥒';
     case 'youth': return '🌿';
-    case 'adult': return '🌳';
+    case 'evolved': return '🌳';
   }
 }
 

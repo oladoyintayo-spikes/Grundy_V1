@@ -21,7 +21,7 @@ export const GAME_CONFIG: GameConfig = {
   // Evolution thresholds
   evolutionLevels: {
     youth: 10,
-    adult: 25,
+    evolved: 25,
   },
   
   // Mood XP modifiers
