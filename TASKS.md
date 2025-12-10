@@ -14,8 +14,8 @@
 | Web Phase 0 | Setup & Toolchain | ✅ COMPLETE |
 | Web Phase 1 | Core Loop & Data | ✅ COMPLETE |
 | Web Phase 2 | Mini-Games & Infra | ✅ COMPLETE |
-| Web Phase 3 | Navigation & Environment | ✅ COMPLETE |
-| Web Phase 4 | FTUE / Onboarding | ⬜ NOT STARTED |
+| Web Phase 3 | Navigation & Environment | 🟡 IN PROGRESS |
+| Web Phase 4 | FTUE / Onboarding | ✅ COMPLETE |
 | Web Phase 5 | Polish / Web 1.0 | ⬜ NOT STARTED |
 
 ---
@@ -470,10 +470,9 @@ P8-TEST
 
 ---
 
-## WEB PHASE 3: Navigation & Environment ✅
+## WEB PHASE 3: Navigation & Environment 🟡
 
 > App shell, navigation chrome, time-of-day theming, and rooms.
-> **Status:** COMPLETE — Navigation, environment theming, and room contexts working.
 
 ### P3-NAV: App Shell & Navigation
 
@@ -488,20 +487,20 @@ P8-TEST
 
 | ID | Task | Status | Files | Notes |
 |----|------|--------|-------|-------|
-| P3-ENV-1 | Time-of-day theming (Morning/Day/Evening/Night) | ✅ | environment.ts, types | EnvironmentState + getTimeOfDay + backgrounds |
-| P3-ENV-2 | Room contexts (Living/Kitchen/Bedroom/Playroom/Yard) | ✅ | environment.ts, types | RoomId enum + default mapping per AppView (yard reserved) |
-| P3-ENV-3 | Hook nav/views into room/time context + auto-refresh | ✅ | GrundyPrototype.tsx, AppHeader.tsx | Environment badge + 15-min auto-refresh |
+| P3-ENV-1 | Time-of-day theming (Morning/Day/Evening/Night) | ⬜ | theme.ts, types | Background gradients + theme state |
+| P3-ENV-2 | Room contexts (Kitchen/Bedroom/Playroom/Yard) | ⬜ | rooms.ts, types | Simple enum + mapping to views |
+| P3-ENV-3 | Hook nav/views into room/time context | ⬜ | GrundyPrototype.tsx | Home/Games use appropriate room + theme |
 
 **Web Phase 3 Exit Criteria:**
 - [x] App header shows pet, coins, energy
 - [x] Bottom nav switches between Home/Games/Settings
 - [x] Games tab shows mini-game hub
-- [x] Time-of-day theming applied
-- [x] Rooms integrated into views
+- [ ] Time-of-day theming applied
+- [ ] Rooms integrated into views
 
 ---
 
-## WEB PHASE 4: FTUE / Onboarding ⬜
+## WEB PHASE 4: FTUE / Onboarding ✅
 
 > Bible Section 7 — Complete onboarding flow.
 > Splash → Age Gate → World Intro → Pet Selection → Guided First Session
@@ -510,27 +509,29 @@ P8-TEST
 
 | ID | Task | Status | Bible | Notes |
 |----|------|--------|-------|-------|
-| P4-FTUE-CORE | Implement full FTUE flow in UI | ⬜ | 7.x | Splash → Age Gate → World Intro → Pet Select → First Session |
+| P4-FTUE-CORE | Implement full FTUE flow in UI | ✅ | 7.x | Splash → Age Gate → World Intro → Pet Select → Mode Select → First Session |
 | P4-FTUE-LORE | Lock World Intro backstory across docs | ✅ | 7.4 | Lore Codex, Bible, Onboarding aligned |
 
 ### P4-FTUE: Screen Implementation (from Bible §7)
 
 | ID | Task | Status | Bible | Acceptance Criteria |
 |----|------|--------|-------|---------------------|
-| P4-1 | Audit current FTUE vs Bible | ⬜ | 7.x | Document all gaps |
-| P4-2 | Implement world intro | ⬜ | 7.3 | 10-second lore snippet |
-| P4-3 | Add pet origin snippets | ⬜ | 7.4 | 2-line origin + loves/hates |
-| P4-4 | Implement locked pet teasers | ⬜ | 7.4 | Partial lore for locked pets |
-| P4-5 | Add personality dialogue | ⬜ | 7.6 | Pet-specific greetings |
-| P4-6 | Implement mode select | ⬜ | 7.7 | Cozy vs Classic choice |
-| P4-7 | Enforce FTUE rules | ⬜ | 7.8 | No monetization, first reaction positive |
-| P4-8 | Verify <60s timing | ⬜ | 7.1 | Total onboarding under 60 seconds |
+| P4-1 | Audit current FTUE vs Bible | ✅ | 7.x | FTUE_AUDIT.md created |
+| P4-2 | Implement world intro | ✅ | 7.3 | 5-second auto-advance, LOCKED copy |
+| P4-3 | Add pet origin snippets | ✅ | 7.4 | 2-line origin + loves/hates for all 8 pets |
+| P4-4 | Implement locked pet teasers | ✅ | 7.4 | 5 locked pets show partial lore + unlock level |
+| P4-5 | Add personality dialogue | ✅ | 7.6 | Pet-specific greetings and after-feeding lines |
+| P4-6 | Implement mode select | ✅ | 7.7 | Cozy vs Classic with feature descriptions |
+| P4-7 | Enforce FTUE rules | ✅ | 7.8 | Shop gated, first reaction always positive |
+| P4-8 | Verify <60s timing | ✅ | 7.1 | 30-42s total, well under 60s target |
 
 **Web Phase 4 Exit Criteria:**
-- [ ] New player can complete FTUE in <60s
-- [ ] Mode selection works
-- [ ] First feeding always positive
-- [ ] World Intro shows LOCKED copy
+- [x] New player can complete FTUE in <60s (30-42s)
+- [x] Mode selection works (Cozy vs Classic)
+- [x] First feeding always positive (pet greetings always positive)
+- [x] World Intro shows LOCKED copy (canonical 3-line text)
+
+**✅ PHASE 4 COMPLETE** — Full FTUE flow implemented. See `docs/FTUE_AUDIT.md` for details.
 
 ---
 

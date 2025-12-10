@@ -18,14 +18,16 @@ import {
   CanPlayResult,
   EnergyState,
   DailyMiniGameState,
+  FtueState,
+  FtueStep,
+  PlayMode,
   AppView,
-  RoomId
+  RoomId,
 } from '../types';
 import {
   DEFAULT_ENVIRONMENT,
   getTimeOfDay,
   getDefaultRoomForView,
-  EnvironmentState
 } from './environment';
 import { STARTING_INVENTORY, getFoodById } from '../data/foods';
 import { GAME_CONFIG, getXPForLevel } from '../data/config';
@@ -73,6 +75,13 @@ function createInitialState() {
     unlockedPets: [...STARTER_PETS], // Start with munchlet, grib, plompo
     energy: createInitialEnergyState(),
     dailyMiniGames: createInitialDailyState(),
+    ftue: {
+      activeStep: null,
+      hasCompletedFtue: false,
+      selectedPetId: null,
+      selectedMode: null,
+    } as FtueState,
+    playMode: 'cozy' as PlayMode, // Default to Cozy mode (Bible §9)
     environment: { ...DEFAULT_ENVIRONMENT },
   };
 }
@@ -559,8 +568,76 @@ export const useGameStore = create<GameStore>()(
       },
 
       // ========================================
-      // ENVIRONMENT
+      // FTUE (Bible §7)
       // ========================================
+      startFtue: () => {
+        set((state) => ({
+          ftue: {
+            ...state.ftue,
+            activeStep: 'splash',
+            hasCompletedFtue: false,
+          },
+        }));
+      },
+
+      setFtueStep: (step: FtueStep) => {
+        set((state) => ({
+          ftue: {
+            ...state.ftue,
+            activeStep: step,
+          },
+        }));
+      },
+
+      selectFtuePet: (petId: string) => {
+        set((state) => ({
+          ftue: {
+            ...state.ftue,
+            selectedPetId: petId,
+          },
+          // Also set as active pet
+          pet: {
+            ...state.pet,
+            id: petId,
+          },
+        }));
+      },
+
+      selectPlayMode: (mode: PlayMode) => {
+        set((state) => ({
+          ftue: {
+            ...state.ftue,
+            selectedMode: mode,
+          },
+          playMode: mode,
+        }));
+      },
+
+      completeFtue: () => {
+        set((state) => ({
+          ftue: {
+            ...state.ftue,
+            activeStep: 'complete',
+            hasCompletedFtue: true,
+          },
+        }));
+        console.log('[FTUE] Onboarding complete');
+      },
+
+      // ========================================
+      // ENVIRONMENT (P3-ENV)
+      // ========================================
+      refreshTimeOfDay: () => {
+        const newTimeOfDay = getTimeOfDay();
+        set((state) => ({
+          environment: {
+            ...state.environment,
+            timeOfDay: newTimeOfDay,
+            lastUpdated: Date.now(),
+          },
+        }));
+      },
+
       setRoom: (room: RoomId) => {
         set((state) => ({
           environment: {
@@ -571,22 +648,14 @@ export const useGameStore = create<GameStore>()(
         }));
       },
 
-      refreshTimeOfDay: () => {
-        set((state) => ({
-          environment: {
-            ...state.environment,
-            timeOfDay: getTimeOfDay(),
-            lastUpdated: Date.now(),
-          },
-        }));
-      },
-
       syncEnvironmentWithView: (view: AppView) => {
+        const newRoom = getDefaultRoomForView(view);
+        const newTimeOfDay = getTimeOfDay();
         set((state) => ({
           environment: {
             ...state.environment,
-            room: getDefaultRoomForView(view),
-            timeOfDay: getTimeOfDay(),
+            room: newRoom,
+            timeOfDay: newTimeOfDay,
             lastUpdated: Date.now(),
           },
         }));
@@ -614,4 +683,11 @@ export const useStats = () => useGameStore((state) => state.stats);
 export const useUnlockedPets = () => useGameStore((state) => state.unlockedPets);
 export const useEnergy = () => useGameStore((state) => state.energy);
 export const useDailyMiniGames = () => useGameStore((state) => state.dailyMiniGames);
+export const useFtue = () => useGameStore((state) => state.ftue);
+export const usePlayMode = () => useGameStore((state) => state.playMode);
 export const useEnvironment = () => useGameStore((state) => state.environment);
+
+// FTUE helper: Check if FTUE should be shown
+export function shouldShowFtue(state: { ftue: FtueState }): boolean {
+  return !state.ftue.hasCompletedFtue;
+}

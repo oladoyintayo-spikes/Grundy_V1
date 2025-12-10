@@ -5,16 +5,28 @@
 // --- App View (Navigation) ---
 export type AppView = 'home' | 'games' | 'settings';
 
-// --- Time of Day (Environment) ---
+// --- Environment Types (P3-ENV) ---
 export type TimeOfDay = 'morning' | 'day' | 'evening' | 'night';
+export type RoomId = 'living_room' | 'kitchen' | 'bedroom' | 'playroom' | 'yard';
 
-// --- Room ID (Environment) ---
-export type RoomId =
-  | 'living_room'
-  | 'kitchen'
-  | 'bedroom'
-  | 'playroom'
-  | 'yard';
+// --- FTUE Types (Bible §7) ---
+export type FtueStep =
+  | 'splash'
+  | 'age_gate'
+  | 'world_intro'
+  | 'pet_select'
+  | 'mode_select'
+  | 'first_session'
+  | 'complete';
+
+export type PlayMode = 'cozy' | 'classic';
+
+export interface FtueState {
+  activeStep: FtueStep | null;
+  hasCompletedFtue: boolean;
+  selectedPetId: string | null;
+  selectedMode: PlayMode | null;
+}
 
 // --- Currency ---
 // Per Bible: coins and gems (not bites/shinies)
@@ -181,13 +193,6 @@ export interface GameConfig {
   coinRewards: Record<ReactionType, number>;
 }
 
-// --- Environment State ---
-export interface EnvironmentState {
-  timeOfDay: TimeOfDay;
-  room: RoomId;
-  lastUpdated: number; // timestamp (ms)
-}
-
 // --- Game Store (Zustand) ---
 export interface GameStore {
   // State
@@ -199,7 +204,13 @@ export interface GameStore {
   unlockedPets: string[];  // Pet IDs that the player has unlocked
   energy: EnergyState;     // Mini-game energy system
   dailyMiniGames: DailyMiniGameState; // Daily play tracking
-  environment: EnvironmentState; // Time-of-day + room context
+  ftue: FtueState;         // FTUE / Onboarding state
+  playMode: PlayMode;      // Cozy vs Classic mode
+  environment: {           // Environment state (P3-ENV)
+    timeOfDay: TimeOfDay;
+    room: RoomId;
+    lastUpdated: number;
+  };
 
   // Actions
   feed: (foodId: string) => FeedResult | null;
@@ -225,9 +236,16 @@ export interface GameStore {
   recordPlay: (gameId: MiniGameId, isFree: boolean) => void;
   completeGame: (result: MiniGameResult) => void;
 
-  // Environment actions
-  setRoom: (room: RoomId) => void;
+  // FTUE actions
+  startFtue: () => void;
+  setFtueStep: (step: FtueStep) => void;
+  selectFtuePet: (petId: string) => void;
+  selectPlayMode: (mode: PlayMode) => void;
+  completeFtue: () => void;
+
+  // Environment actions (P3-ENV)
   refreshTimeOfDay: () => void;
+  setRoom: (room: RoomId) => void;
   syncEnvironmentWithView: (view: AppView) => void;
 }
 

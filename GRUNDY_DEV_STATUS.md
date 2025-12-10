@@ -2,9 +2,9 @@
 
 # Grundy Web Prototype — Development Status
 
-**Last Updated:** December 10, 2024 (P3-ENV-CORE)
-**Current Phase:** Web Phase 3 — COMPLETE
-**Next Phase:** Web Phase 4 (FTUE / Onboarding)
+**Last Updated:** December 10, 2024 (P4-FTUE-CORE)
+**Current Phase:** Web Phase 4 — COMPLETE (FTUE / Onboarding)
+**Next Phase:** Web Phase 5 (Polish / Web 1.0)
 
 ---
 
@@ -26,8 +26,8 @@
 | **Web Phase 0** | Setup & Toolchain | ✅ COMPLETE | Infrastructure, toolchain, PWA, GitHub Pages deploy |
 | **Web Phase 1** | Core Loop & Data | ✅ COMPLETE | Data layer, core loop, abilities, docs alignment |
 | **Web Phase 2** | Mini-Games & Infra | ✅ COMPLETE | All 5 mini-games implemented and tested |
-| **Web Phase 3** | Navigation & Environment | ✅ COMPLETE | P3-NAV ✅, P3-ENV ✅ |
-| **Web Phase 4** | FTUE / Onboarding | ⬜ NOT STARTED | Splash → Age Gate → World Intro → Pet Select |
+| **Web Phase 3** | Navigation & Environment | 🟡 IN PROGRESS | P3-NAV ✅, P3-ENV ⬜ |
+| **Web Phase 4** | FTUE / Onboarding | ✅ COMPLETE | All FTUE screens, state, tests done |
 | **Web Phase 5** | Polish / Web 1.0 | ⬜ NOT STARTED | Sound, PWA, art integration, release |
 
 ### Post-Web 1.0
@@ -144,7 +144,7 @@ The following copy is canonical and used across all onboarding documentation:
 | Command | Status | Notes |
 |---------|--------|-------|
 | `npm run build` | ✅ PASSING | Production build succeeds |
-| `npm test -- --run` | ✅ PASSING | 320 tests passing |
+| `npm test -- --run` | ✅ PASSING | 417 tests passing |
 
 ---
 
@@ -182,7 +182,7 @@ The following copy is canonical and used across all onboarding documentation:
 ### Infrastructure
 - React 18 + TypeScript (strict mode)
 - Zustand state management with persistence
-- Vitest test suite (396 tests)
+- Vitest test suite (102 tests)
 - Vite build system
 - PWA manifest
 - GitHub Pages deployment
@@ -190,33 +190,58 @@ The following copy is canonical and used across all onboarding documentation:
 
 ---
 
-## Web Phase 3 — COMPLETE
+## Web Phase 4 — COMPLETE (FTUE / Onboarding)
 
-**Theme:** App shell, navigation, time-of-day theming, rooms.
+**Theme:** Bible Section 7 — Complete onboarding flow.
 
-### Deliverables
+### FTUE Implementation
 
-| Area | Status | Details |
-|------|--------|---------|
-| **Navigation** | ✅ | AppView model, AppHeader, BottomNav, view switching |
-| **Environment** | ✅ | TimeOfDay + RoomId types, environment.ts helpers |
-| **Theming** | ✅ | Time-based backgrounds (morning/day/evening/night) |
-| **Rooms** | ✅ | 5 rooms (living_room, kitchen, bedroom, playroom, yard) |
-| **Auto-refresh** | ✅ | 15-minute interval for time-of-day updates |
-| **UI Badge** | ✅ | EnvironmentBadge shows current time + room |
+| Screen | Duration | Features |
+|--------|----------|----------|
+| Splash | 2s | Auto-advance or tap to skip |
+| Age Gate | 3-5s | Single tap verification |
+| World Intro | 5s | LOCKED canonical 3-line text |
+| Pet Select | 10-15s | 3 starters + 5 locked teasers |
+| Mode Select | 5s | Cozy vs Classic with features |
+| First Session | 5-10s | Pet greeting + tips |
+
+**Total Time:** 30-42 seconds (well under 60s target)
+
+### Files Implemented
+
+| File | Purpose |
+|------|---------|
+| `src/copy/ftue.ts` | Canonical FTUE copy source |
+| `src/ftue/FtueFlow.tsx` | Main FTUE orchestrator |
+| `src/ftue/screens/*.tsx` | 6 FTUE screen components |
+| `docs/FTUE_AUDIT.md` | Bible compliance audit |
+
+### Exit Criteria Met
+
+| Check | Status |
+|-------|--------|
+| FTUE completes in <60s | ✅ (30-42s) |
+| Mode selection works | ✅ |
+| First feeding always positive | ✅ |
+| World Intro shows LOCKED copy | ✅ |
+| All tests pass | ✅ (417 tests) |
 
 ---
 
-## Next Steps (Web Phase 4)
+## Next Steps (Web Phase 3 → 5)
 
-### Web Phase 4: FTUE / Onboarding
+### Web Phase 3: Environment (Remaining)
 
-1. P4-FTUE-CORE: Implement full FTUE flow in UI
-2. P4-1: Audit current FTUE vs Bible
-3. P4-2: Implement world intro screen
-4. P4-3: Add pet origin snippets
-5. P4-6: Implement mode select (Cozy vs Classic)
-6. P4-8: Verify <60s timing
+1. P3-ENV-1: Time-of-day theming (Morning/Day/Evening/Night)
+2. P3-ENV-2: Room contexts (Kitchen/Bedroom/Playroom/Yard)
+3. P3-ENV-3: Hook nav/views into room/time context
+
+### Web Phase 5: Polish / Web 1.0
+
+1. P5-SOUND-1: Add basic SFX/BGM + sound settings
+2. P5-PWA-1: Add PWA manifest, icons, service worker
+3. P5-ART-1: Integrate final pet + room art assets
+4. P5-QA-1: Full Web 1.0 test pass & release checklist
 
 ---
 

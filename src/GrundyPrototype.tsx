@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useGameStore } from './game/store';
+import { useGameStore, shouldShowFtue } from './game/store';
 import { PETS, getAllPets, getPetById } from './data/pets';
 import { getAllFoods, getShopFoods } from './data/foods';
 import { ReactionType, FoodDefinition, FeedResult, MiniGameId, MiniGameResult, AppView } from './types';
@@ -15,6 +15,7 @@ import { MemoryMatch } from './components/games/MemoryMatch';
 import { RhythmTap } from './components/games/RhythmTap';
 import { Pips } from './components/games/Pips';
 import { PoopScoop } from './components/games/PoopScoop';
+import { FtueFlow } from './ftue/FtueFlow';
 
 // ============================================
 // SHARED COMPONENTS
@@ -524,6 +525,24 @@ function SettingsView() {
 // MAIN APP
 // ============================================
 export default function GrundyPrototype() {
+  // FTUE check - show onboarding for new players (P4-7)
+  const ftue = useGameStore((state) => state.ftue);
+  const showFtue = shouldShowFtue({ ftue });
+
+  // If FTUE is not complete, show the FTUE flow
+  // P4-7: No monetization/shop during FTUE
+  if (showFtue) {
+    return <FtueFlow />;
+  }
+
+  // Normal app after FTUE completion
+  return <MainApp />;
+}
+
+// ============================================
+// MAIN APP (Post-FTUE)
+// ============================================
+function MainApp() {
   // Navigation state
   const [currentView, setCurrentView] = useState<AppView>(DEFAULT_VIEW);
 
