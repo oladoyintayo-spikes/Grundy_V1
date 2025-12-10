@@ -2,9 +2,9 @@
 
 # Grundy Web Prototype — Development Status
 
-**Last Updated:** December 10, 2024 (P5-QA-CORE)
-**Current Phase:** Web Phase 5 — QA COMPLETE, Release Ready
-**Next Phase:** Web 1.0 Release Tagging (P5-RELEASE-1.0)
+**Last Updated:** December 10, 2024 (P5-RELEASE-1.0)
+**Current Phase:** Web Edition 1.0.0 — COMPLETE
+**Next Phase:** Phase 6 Optimizations & Enhancements
 
 ---
 
@@ -28,7 +28,7 @@
 | **Web Phase 2** | Mini-Games & Infra | ✅ COMPLETE | All 5 mini-games implemented and tested |
 | **Web Phase 3** | Navigation & Environment | 🟡 IN PROGRESS | P3-NAV ✅, P3-ENV ⬜ |
 | **Web Phase 4** | FTUE / Onboarding | ✅ COMPLETE | All FTUE screens, state, tests done |
-| **Web Phase 5** | Polish / Web 1.0 | ✅ QA COMPLETE | Audio ✅, PWA ✅, Art ✅, UX/A11Y ✅, QA ✅ |
+| **Web Phase 5** | Polish / Web 1.0 | ✅ RELEASE COMPLETE | Audio ✅, PWA ✅, Art ✅, UX/A11Y ✅, QA ✅, Release ✅ |
 
 ### Post-Web 1.0
 
@@ -326,6 +326,16 @@ The following copy is canonical and used across all onboarding documentation:
 | S1/S2 Issues | 0 | No blockers found |
 | S3/S4 Issues | 5 | All deferred to Phase 6 |
 
+### Release (P5-RELEASE-1.0)
+
+| Component | Status | Details |
+|-----------|--------|---------|
+| Version Bump | ✅ | `src/version.ts` - GRUNDY_WEB_VERSION = '1.0.0' |
+| Package Version | ✅ | `package.json` - version: "1.0.0" |
+| Release Notes | ✅ | `docs/RELEASE_NOTES_WEB1.0.md` - Full feature summary |
+| Tag Instructions | ✅ | `docs/RELEASE_TAG_WEB1.0.md` - Git tagging guide |
+| Status Updates | ✅ | TASKS.md and GRUNDY_DEV_STATUS.md updated |
+
 ### Web Phase 5 Summary
 
 - ✅ P5-AUDIO: Audio manager, SFX/BGM, settings, documentation
@@ -333,23 +343,27 @@ The following copy is canonical and used across all onboarding documentation:
 - ✅ P5-ART: Pet sprites, room scenes, integration, documentation
 - ✅ P5-UX-A11Y: Keyboard navigation, focus styles, ARIA labels, contrast
 - ✅ P5-QA: QA plan, execution, issues log, release recommendation
-- ⬜ Release: Web 1.0 tagging & release notes (next step)
+- ✅ P5-RELEASE: Web Edition 1.0.0 versioned and documented
+
+**Web Edition 1.0.0 – COMPLETE** (next focus: Phase 6 optimizations and Unity Edition planning)
 
 ---
 
 ## Next Steps
 
-### Immediate: Web 1.0 Release
+### Phase 6: Post-Release Enhancements
 
-1. P5-RELEASE-1.0: Tag and create release notes
+1. P6-BRANDING: Replace placeholder PWA icons with branded artwork
+2. P6-AUDIO-ASSETS: Add actual audio files for configured SFX/BGM
+3. P6-ENV-UI: Explicit room selection UI (build on existing system)
+4. P6-PWA-UI: "Install Grundy" button in Settings
+5. P6-PWA-PRECACHE: Upgrade to vite-plugin-pwa for stronger offline support
+6. P9-7: Volume sliders (nice-to-have)
 
-### Post-Release: Phase 6
+### Future: Unity Edition
 
-1. P3-ENV (deferred): Explicit room selection UI
-2. P6-PWA-UI: Add "Install Grundy" button in Settings
-3. P6-AUDIO-ASSETS: Add actual audio files
-4. P6-BRANDING: Replace placeholder PWA icons
-5. P9-7: Volume sliders (nice-to-have)
+- Port Web 1.0 design to Unity
+- Separate versioning track for Unity Edition
 
 ---
 
