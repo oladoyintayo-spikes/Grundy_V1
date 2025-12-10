@@ -5,14 +5,19 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { 
-  GameStore, 
-  PetState, 
-  CurrencyType, 
+import {
+  GameStore,
+  PetState,
+  CurrencyType,
   MoodState,
   FeedResult,
   GameStats,
-  GameSettings
+  GameSettings,
+  MiniGameId,
+  MiniGameResult,
+  CanPlayResult,
+  EnergyState,
+  DailyMiniGameState
 } from '../types';
 import { STARTING_INVENTORY, getFoodById } from '../data/foods';
 import { GAME_CONFIG, getXPForLevel } from '../data/config';
@@ -25,6 +30,14 @@ import {
   decayHunger
 } from './systems';
 import { applyGemMultiplier } from './abilities';
+import {
+  ENERGY_MAX,
+  ENERGY_COST_PER_GAME,
+  DAILY_REWARDED_PLAYS_CAP,
+  getTodayString,
+  createInitialDailyState,
+  createInitialEnergyState
+} from './miniGameRewards';
 
 // Initial state factory
 function createInitialState() {
@@ -42,6 +55,7 @@ function createInitialState() {
       totalCoinsEarned: 0,
       sessionStartTime: Date.now(),
       lastFeedTime: 0,
+      minigamesCompleted: 0, // For Chomper unlock and analytics
     } as GameStats,
     settings: {
       soundEnabled: true,
@@ -49,6 +63,8 @@ function createInitialState() {
       autoSave: true,
     } as GameSettings,
     unlockedPets: [...STARTER_PETS], // Start with munchlet, grib, plompo
+    energy: createInitialEnergyState(),
+    dailyMiniGames: createInitialDailyState(),
   };
 }
 
@@ -334,6 +350,206 @@ export const useGameStore = create<GameStore>()(
       },
 
       // ========================================
+      // ENERGY SYSTEM
+      // ========================================
+      tickEnergyRegen: () => {
+        const state = get();
+        const now = Date.now();
+        const elapsed = now - state.energy.lastRegenTime;
+        const energyToAdd = Math.floor(elapsed / state.energy.regenRateMs);
+
+        if (energyToAdd > 0 && state.energy.current < ENERGY_MAX) {
+          const newEnergy = Math.min(
+            state.energy.current + energyToAdd,
+            ENERGY_MAX
+          );
+
+          set({
+            energy: {
+              ...state.energy,
+              current: newEnergy,
+              lastRegenTime: now - (elapsed % state.energy.regenRateMs),
+            },
+          });
+        }
+      },
+
+      useEnergy: (amount: number): boolean => {
+        const state = get();
+        if (state.energy.current < amount) {
+          return false;
+        }
+
+        set({
+          energy: {
+            ...state.energy,
+            current: state.energy.current - amount,
+          },
+        });
+        return true;
+      },
+
+      addEnergy: (amount: number) => {
+        const state = get();
+        const newEnergy = Math.min(state.energy.current + amount, ENERGY_MAX);
+
+        set({
+          energy: {
+            ...state.energy,
+            current: newEnergy,
+          },
+        });
+      },
+
+      getTimeToNextEnergy: (): number => {
+        const state = get();
+        if (state.energy.current >= ENERGY_MAX) {
+          return 0;
+        }
+
+        const now = Date.now();
+        const elapsed = now - state.energy.lastRegenTime;
+        return state.energy.regenRateMs - elapsed;
+      },
+
+      // ========================================
+      // DAILY PLAY TRACKING
+      // ========================================
+      resetDailyIfNeeded: () => {
+        const state = get();
+        const today = getTodayString();
+
+        if (state.dailyMiniGames.date !== today) {
+          set({
+            dailyMiniGames: createInitialDailyState(),
+          });
+        }
+      },
+
+      canPlay: (gameId: MiniGameId): CanPlayResult => {
+        const state = get();
+
+        // First, reset daily if needed
+        const today = getTodayString();
+        if (state.dailyMiniGames.date !== today) {
+          // Will be reset on next action, but use fresh state
+          return { allowed: true, isFree: true };
+        }
+
+        const plays = state.dailyMiniGames.plays[gameId] ?? 0;
+        const freeUsed = state.dailyMiniGames.freePlayUsed[gameId] ?? false;
+
+        // First play of day is free (no energy cost)
+        if (!freeUsed) {
+          return { allowed: true, isFree: true };
+        }
+
+        // Daily cap: 3 rewarded plays per game
+        if (plays >= DAILY_REWARDED_PLAYS_CAP) {
+          return { allowed: false, reason: 'Daily limit reached', isFree: false };
+        }
+
+        // Check energy for paid plays
+        if (state.energy.current < ENERGY_COST_PER_GAME) {
+          return { allowed: false, reason: 'Not enough energy', isFree: false };
+        }
+
+        return { allowed: true, isFree: false };
+      },
+
+      recordPlay: (gameId: MiniGameId, isFree: boolean) => {
+        const state = get();
+
+        // First ensure daily is reset
+        const today = getTodayString();
+        const dailyState = state.dailyMiniGames.date === today
+          ? state.dailyMiniGames
+          : createInitialDailyState();
+
+        set({
+          dailyMiniGames: {
+            ...dailyState,
+            date: today,
+            plays: {
+              ...dailyState.plays,
+              [gameId]: (dailyState.plays[gameId] ?? 0) + 1,
+            },
+            freePlayUsed: {
+              ...dailyState.freePlayUsed,
+              [gameId]: dailyState.freePlayUsed[gameId] || isFree,
+            },
+          },
+        });
+      },
+
+      // ========================================
+      // MINI-GAME COMPLETION
+      // ========================================
+      completeGame: (result: MiniGameResult) => {
+        const state = get();
+
+        // Award coins
+        if (result.rewards.coins > 0) {
+          set((s) => ({
+            currencies: {
+              ...s.currencies,
+              coins: s.currencies.coins + result.rewards.coins,
+            },
+          }));
+          console.log(`[MiniGame] +${result.rewards.coins} coins from ${result.gameId}`);
+        }
+
+        // Award XP to pet
+        if (result.rewards.xp > 0) {
+          const pet = state.pet;
+          let newXp = pet.xp + result.rewards.xp;
+          let newLevel = pet.level;
+          let newStage = pet.evolutionStage;
+
+          // Check for level up
+          const xpNeeded = getXPForLevel(pet.level + 1);
+          if (newXp >= xpNeeded) {
+            newLevel = pet.level + 1;
+            newXp = newXp - xpNeeded;
+            newStage = getEvolutionStage(newLevel);
+            console.log(`[MiniGame] Level up! Now level ${newLevel}`);
+          }
+
+          set((s) => ({
+            pet: {
+              ...s.pet,
+              xp: newXp,
+              level: newLevel,
+              evolutionStage: newStage,
+            },
+          }));
+        }
+
+        // Award food drop if any
+        if (result.rewards.foodDrop) {
+          set((s) => ({
+            inventory: {
+              ...s.inventory,
+              [result.rewards.foodDrop!]: (s.inventory[result.rewards.foodDrop!] || 0) + 1,
+            },
+          }));
+          console.log(`[MiniGame] +1 ${result.rewards.foodDrop} drop`);
+        }
+
+        // Update stats
+        set((s) => ({
+          stats: {
+            ...s.stats,
+            minigamesCompleted: s.stats.minigamesCompleted + 1,
+            totalXpEarned: s.stats.totalXpEarned + result.rewards.xp,
+            totalCoinsEarned: s.stats.totalCoinsEarned + result.rewards.coins,
+          },
+        }));
+
+        console.log(`[MiniGame] Completed ${result.gameId} with ${result.tier} tier (score: ${result.score})`);
+      },
+
+      // ========================================
       // RESET
       // ========================================
       resetGame: () => {
@@ -353,3 +569,5 @@ export const useCurrencies = () => useGameStore((state) => state.currencies);
 export const useInventory = () => useGameStore((state) => state.inventory);
 export const useStats = () => useGameStore((state) => state.stats);
 export const useUnlockedPets = () => useGameStore((state) => state.unlockedPets);
+export const useEnergy = () => useGameStore((state) => state.energy);
+export const useDailyMiniGames = () => useGameStore((state) => state.dailyMiniGames);

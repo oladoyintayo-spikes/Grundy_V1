@@ -138,6 +138,7 @@ export interface GameStats {
   totalCoinsEarned: number;
   sessionStartTime: number;
   lastFeedTime: number;
+  minigamesCompleted: number; // For Chomper unlock and analytics
 }
 
 // --- Game Settings ---
@@ -175,6 +176,8 @@ export interface GameStore {
   stats: GameStats;
   settings: GameSettings;
   unlockedPets: string[];  // Pet IDs that the player has unlocked
+  energy: EnergyState;     // Mini-game energy system
+  dailyMiniGames: DailyMiniGameState; // Daily play tracking
 
   // Actions
   feed: (foodId: string) => FeedResult | null;
@@ -189,6 +192,16 @@ export interface GameStore {
   unlockPetWithGems: (petId: string) => boolean; // Unlock by spending gems
   isPetUnlocked: (petId: string) => boolean;  // Check if pet is unlocked
   resetGame: () => void;
+
+  // Mini-game actions
+  tickEnergyRegen: () => void;
+  useEnergy: (amount: number) => boolean;
+  addEnergy: (amount: number) => void;
+  getTimeToNextEnergy: () => number;
+  resetDailyIfNeeded: () => void;
+  canPlay: (gameId: MiniGameId) => CanPlayResult;
+  recordPlay: (gameId: MiniGameId, isFree: boolean) => void;
+  completeGame: (result: MiniGameResult) => void;
 }
 
 // --- Legacy Currencies interface (for compatibility) ---
@@ -232,3 +245,46 @@ export const EVOLUTION_LEVELS = {
 };
 
 export const MAX_LEVEL = 20;
+
+// ============================================
+// MINI-GAME TYPES (Bible §8)
+// ============================================
+
+export type MiniGameId =
+  | 'snack_catch'
+  | 'memory_match'
+  | 'pips'
+  | 'rhythm_tap'
+  | 'poop_scoop';
+
+export type RewardTier = 'bronze' | 'silver' | 'gold' | 'rainbow';
+
+export interface MiniGameResult {
+  gameId: MiniGameId;
+  score: number;
+  tier: RewardTier;
+  rewards: {
+    coins: number;
+    xp: number;
+    foodDrop: string | null; // food ID or null
+  };
+}
+
+export interface EnergyState {
+  current: number;        // 0–50
+  max: number;            // 50 (constant)
+  lastRegenTime: number;  // Unix timestamp (ms)
+  regenRateMs: number;    // 1800000 (30 min in ms)
+}
+
+export interface DailyMiniGameState {
+  date: string;                             // 'YYYY-MM-DD'
+  plays: Record<MiniGameId, number>;        // gameId -> play count today
+  freePlayUsed: Record<MiniGameId, boolean>; // gameId -> free used?
+}
+
+export interface CanPlayResult {
+  allowed: boolean;
+  reason?: string;
+  isFree: boolean;
+}

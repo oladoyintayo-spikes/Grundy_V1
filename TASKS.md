@@ -408,11 +408,11 @@ P1-CORE-4, P1-DOC-1,2 ── Can run in parallel
 
 | ID | Task | Status | Files | Notes |
 |----|------|--------|-------|-------|
-| P8-INFRA-1 | Energy system (50 max, 10/game, regen) | ⬜ | store.ts, types | First daily free |
-| P8-INFRA-2 | Reward tier calculator | ⬜ | systems.ts | Bronze/Silver/Gold/Rainbow |
-| P8-INFRA-3 | Mini-game hub UI | ⬜ | components/ | Game selection screen |
-| P8-INFRA-4 | Game session wrapper | ⬜ | components/ | Start/end/rewards flow |
-| P8-INFRA-5 | Stats tracking (minigamesCompleted) | ⬜ | store.ts | For Chomper unlock |
+| P8-INFRA-1 | Energy system (50 max, 10/game, regen) | ✅ | store.ts, types, miniGameRewards.ts | First daily free, 30min regen |
+| P8-INFRA-2 | Reward tier calculator | ✅ | miniGameRewards.ts | Bronze/Silver/Gold/Rainbow, Fizz +25% |
+| P8-INFRA-3 | Mini-game hub UI | ✅ | components/MiniGameHub.tsx | Game selection, energy display |
+| P8-INFRA-4 | Game session wrapper | ✅ | components/MiniGameWrapper.tsx | Ready/Play/Results flow |
+| P8-INFRA-5 | Stats tracking (minigamesCompleted) | ✅ | store.ts | For Chomper unlock, completeGame action |
 
 ### P8-SNACK: Snack Catch
 
@@ -442,9 +442,9 @@ P1-CORE-4, P1-DOC-1,2 ── Can run in parallel
 
 | ID | Task | Status | Files | Notes |
 |----|------|--------|-------|-------|
-| P8-TEST-1 | Energy system tests | ⬜ | __tests__/ | Deduction, regen, daily free |
-| P8-TEST-2 | Reward calculation tests | ⬜ | __tests__/ | Tier thresholds |
-| P8-TEST-3 | Game integration tests | ⬜ | __tests__/ | Start/complete flow |
+| P8-TEST-1 | Energy system tests | ✅ | __tests__/miniGameInfra.test.ts | Deduction, regen, daily free, caps |
+| P8-TEST-2 | Reward calculation tests | ✅ | __tests__/miniGameInfra.test.ts | Tier thresholds, Fizz bonus, no gems |
+| P8-TEST-3 | Game integration tests | ⬜ | __tests__/ | Individual game tests (per game impl) |
 
 ### Execution Order
 
