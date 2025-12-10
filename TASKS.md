@@ -195,7 +195,7 @@ npm run build      # Must exit 0
 | P1-CORE-1 | Fix default pet ID to `'munchlet'` | ✅ | — | P1-DATA-1 | Fixed in store.ts:30 |
 | P1-CORE-2 | Add `selectPet(petId)` action | ✅ | — | P1-CORE-1 | Implemented in store.ts |
 | P1-CORE-3 | Add `unlockedPets: string[]` to state | ✅ | §3.2 | P1-DATA-2 | unlockedPets + unlockPet/unlockPetWithGems actions |
-| P1-CORE-4 | Audit XP/evolution formulas | ⬜ | §6.1-2 | — | Verify against Bible; document any code-wins decisions |
+| P1-CORE-4 | Audit XP/evolution formulas | ✅ | §6.1-2 | — | Audited; code wins for evolution (BIB-01/02 in backlog) |
 
 ### P1-ABILITY: Implement Pet Abilities
 
@@ -263,13 +263,15 @@ P1-CORE-4, P1-DOC-1,2 ── Can run in parallel
 
 | Check | Validation | Status |
 |-------|------------|--------|
-| All 8 pets defined | `getAllPets().length === 8` | ⬜ |
-| All 10 foods defined | `getAllFoods().length === 10` | ⬜ |
-| Affinity matrix complete | 80 entries, no `undefined` | ⬜ |
-| Default pet is `munchlet` | `resetGame()` → `pet.id === 'munchlet'` | ⬜ |
-| All 8 abilities implemented | Unit tests pass | ⬜ |
-| All tests pass | `npm test -- --run` exits 0 | ⬜ |
-| Build passes | `npm run build` exits 0 | ⬜ |
+| All 8 pets defined | `getAllPets().length === 8` | ✅ |
+| All 10 foods defined | `getAllFoods().length === 10` | ✅ |
+| Affinity matrix complete | 80 entries, no `undefined` | ✅ |
+| Default pet is `munchlet` | `resetGame()` → `pet.id === 'munchlet'` | ✅ |
+| All 8 abilities implemented | Unit tests pass | ✅ |
+| All tests pass | `npm test -- --run` exits 0 | ✅ |
+| Build passes | `npm run build` exits 0 | ✅ |
+
+**✅ PHASE 1 COMPLETE** — Data layer, core loop, abilities, and documentation all aligned.
 
 ### P1-CORE: Core System Naming Alignment
 
