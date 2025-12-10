@@ -3,11 +3,12 @@
 // DATA SOURCE: docs/GRUNDY_MASTER_BIBLE.md §3
 // ============================================
 
-import { PetDefinition, PetCaptions, PetAbility } from '../types';
+import { PetDefinition, PetCaptions, PetAbility, UnlockRequirement } from '../types';
 
 export interface FullPetDefinition extends PetDefinition {
   captions: PetCaptions;
   ability: PetAbility;
+  unlockRequirement: UnlockRequirement;
 }
 
 // All 8 pets per Bible §3.1-3.2
@@ -34,6 +35,7 @@ export const PETS: Record<string, FullPetDefinition> = {
       description: '+10% bond from feeding',
       effect: { type: 'bond_bonus', value: 0.10 },
     },
+    unlockRequirement: { type: 'free' },
   },
   grib: {
     id: 'grib',
@@ -56,6 +58,7 @@ export const PETS: Record<string, FullPetDefinition> = {
       description: '-20% mood penalty from neglect',
       effect: { type: 'mood_penalty_reduction', value: 0.20 },
     },
+    unlockRequirement: { type: 'free' },
   },
   plompo: {
     id: 'plompo',
@@ -78,6 +81,7 @@ export const PETS: Record<string, FullPetDefinition> = {
       description: '-20% hunger/energy decay rate',
       effect: { type: 'decay_reduction', value: 0.20 },
     },
+    unlockRequirement: { type: 'free' },
   },
 
   // === UNLOCK PETS ===
@@ -102,6 +106,7 @@ export const PETS: Record<string, FullPetDefinition> = {
       description: '+25% minigame score bonus',
       effect: { type: 'minigame_bonus', value: 0.25 },
     },
+    unlockRequirement: { type: 'bond_level', value: 25, gemSkipCost: 50 },
   },
   ember: {
     id: 'ember',
@@ -124,6 +129,7 @@ export const PETS: Record<string, FullPetDefinition> = {
       description: '2× coins from spicy foods',
       effect: { type: 'spicy_coin_bonus', value: 2.0 },
     },
+    unlockRequirement: { type: 'bond_level', value: 50, gemSkipCost: 75 },
   },
   chomper: {
     id: 'chomper',
@@ -146,6 +152,7 @@ export const PETS: Record<string, FullPetDefinition> = {
       description: 'No food dislikes (all foods neutral or better)',
       effect: { type: 'no_dislikes', value: 1.0 },
     },
+    unlockRequirement: { type: 'minigames_completed', value: 10, gemSkipCost: 100 },
   },
   whisp: {
     id: 'whisp',
@@ -168,6 +175,7 @@ export const PETS: Record<string, FullPetDefinition> = {
       description: '+50% chance of rare XP drops',
       effect: { type: 'rare_xp_chance', value: 0.50 },
     },
+    unlockRequirement: { type: 'bond_level', value: 75, gemSkipCost: 125 },
   },
   luxe: {
     id: 'luxe',
@@ -190,6 +198,7 @@ export const PETS: Record<string, FullPetDefinition> = {
       description: '+100% gem drops from all sources',
       effect: { type: 'gem_multiplier', value: 2.0 },
     },
+    unlockRequirement: { type: 'premium', gemSkipCost: 150 },
   },
 };
 
@@ -206,4 +215,8 @@ export function getAllPets(): FullPetDefinition[] {
 
 export function getPetAbility(petId: string): PetAbility | undefined {
   return PETS[petId]?.ability;
+}
+
+export function getPetUnlockRequirement(petId: string): UnlockRequirement | undefined {
+  return PETS[petId]?.unlockRequirement;
 }
