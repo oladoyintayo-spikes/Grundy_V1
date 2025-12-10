@@ -99,6 +99,7 @@
 | Evolution threshold drift (Bible 7/13 vs Code 10/25) | Bible updated to match code (P1-DOC-1) | 2024-12-10 |
 | Evolution stage naming (`adult` vs `evolved`) | Code renamed to `evolved` (P1-CORE-2) | 2024-12-10 |
 | README starting gems (showed 0, should be 10) | README updated | 2024-12-10 |
+| Mini-game gem reward discrepancy | Bible §8 updated: mini-games never award gems; Rainbow tier = coins/XP/food only (P2-DOC-2) | 2024-12-10 |
 
 ---
 

@@ -234,6 +234,12 @@ npm run build      # Must exit 0
 |----|------|--------|-------|-------|
 | CE-P2-01 | Create Phase 8 mini-game implementation prompts | ✅ | prompts/phase2/ | 6 prompts: INFRA, SNACK, MEMORY, PIPS, RHYTHM, POOP |
 
+### P2-DOC: Phase 2 Documentation Alignment
+
+| ID | Task | Status | Scope | Notes |
+|----|------|--------|-------|-------|
+| P2-DOC-2 | Align Bible & mini-game docs to NO-GEMS rule | ✅ | Bible §8, DEV_STATUS | Mini-games never award gems; Rainbow = coins/XP/food only |
+
 ### P1-ART: Asset Creation (Deferred)
 
 | ID | Task | Status | Scope | Notes |

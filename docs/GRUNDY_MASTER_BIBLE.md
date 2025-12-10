@@ -1631,7 +1631,7 @@ These rules are **mandatory** during onboarding:
 
 ## 8.0 Mini-Game Design Documents
 
-Detailed specifications for each mini-game are in `docs/minigames/`:
+Detailed specifications for each mini-game are in `docs/Minigames/`:
 
 | Game | Design Doc | Duration | Main Skill |
 |------|------------|----------|------------|
@@ -1678,16 +1678,18 @@ Each design doc includes:
 
 ## 8.3 Reward Tiers
 
-| Tier | Coins | Gem | Food |
+| Tier | Coins | XP | Food |
 |------|-------|-----|------|
-| Bronze | 3 | — | — |
-| Silver | 7 | — | 40% common |
-| Gold | 15 | — | 75% any |
-| Rainbow | 22 | 1 | Rare |
+| Bronze | 2-3 | 3 | — |
+| Silver | 5-7 | 5 | 40% common |
+| Gold | 8-15 | 8 | 75% any |
+| Rainbow | 12-22 | 12 | Rare guaranteed |
+
+> **Note:** Mini-games never award gems. Gems come from other sources (achievements, daily login, shop bundles, etc.). Rainbow tier provides the highest coin/XP rewards plus guaranteed rare food drops.
 
 ## 8.4 Snack Catch 🍎
 
-> For complete specification, see `docs/minigames/GRUNDY_SNACK_CATCH_DESIGN.md`
+> For complete specification, see `docs/Minigames/GRUNDY_SNACK_CATCH_DESIGN.md`
 
 **Concept:** Catch falling food, avoid bad items.
 
@@ -1710,7 +1712,7 @@ Each design doc includes:
 
 ## 8.5 Memory Match 🧠
 
-> For complete specification, see `docs/minigames/GRUNDY_MEMORY_MATCH_DESIGN.md`
+> For complete specification, see `docs/Minigames/GRUNDY_MEMORY_MATCH_DESIGN.md`
 
 **Concept:** Flip cards to find matching food pairs.
 
@@ -1740,7 +1742,7 @@ Each design doc includes:
 
 ## 8.6 Rhythm Tap 🎵
 
-> For complete specification, see `docs/minigames/GRUNDY_RHYTHM_TAP_DESIGN.md`
+> For complete specification, see `docs/Minigames/GRUNDY_RHYTHM_TAP_DESIGN.md`
 
 **Concept:** Tap notes in time with music.
 
@@ -1770,12 +1772,14 @@ Each design doc includes:
 
 ### Scoring Tiers
 
-| Performance | Score | Reward |
-|-------------|-------|--------|
-| S Rank | 90%+ perfect | 100 coins + 3 gems |
-| A Rank | 75%+ perfect | 75 coins + 2 gems |
-| B Rank | 50%+ perfect | 50 coins + 1 gem |
-| C Rank | Complete | 25 coins |
+| Performance | Accuracy | Tier |
+|-------------|----------|------|
+| S Rank | 90%+ perfect | Rainbow |
+| A Rank | 75%+ perfect | Gold |
+| B Rank | 50%+ perfect | Silver |
+| C Rank | Complete | Bronze |
+
+Rewards are determined by tier (see §8.3). No gems from mini-games.
 
 ### Pet Abilities
 
@@ -1787,7 +1791,7 @@ Each design doc includes:
 
 ## 8.7 Poop Scoop 🧹
 
-> For complete specification, see `docs/minigames/GRUNDY_POOP_SCOOP_DESIGN.md`
+> For complete specification, see `docs/Minigames/GRUNDY_POOP_SCOOP_DESIGN.md`
 
 **Concept:** Clean up poop before it piles up!
 
@@ -1813,12 +1817,14 @@ Each design doc includes:
 
 ### Scoring Tiers
 
-| Performance | Score | Reward |
-|-------------|-------|--------|
-| Spotless | 500+ | 100 coins + 3 gems |
-| Clean | 350-499 | 75 coins + 2 gems |
-| Tidy | 200-349 | 50 coins + 1 gem |
-| Messy | <200 | 25 coins |
+| Performance | Score | Tier |
+|-------------|-------|------|
+| Spotless | 600+ | Rainbow |
+| Clean | 400-599 | Gold |
+| Tidy | 200-399 | Silver |
+| Messy | <200 | Bronze |
+
+Rewards are determined by tier (see §8.3). No gems from mini-games.
 
 ### Pet Abilities
 
