@@ -203,10 +203,10 @@ npm run build      # Must exit 0
 
 | ID | Task | Status | Bible | Blocked By | Notes |
 |----|------|--------|-------|------------|-------|
-| P1-ABILITY-1 | Create ability effect system | ⬜ | §3.7 | P1-DATA-5 | `applyAbility(petId, context)` function |
-| P1-ABILITY-2 | Implement starter abilities | ⬜ | §3.7 | P1-ABILITY-1 | Munchlet +10% bond, Grib -20% dislike, Plompo -20% decay |
-| P1-ABILITY-3 | Implement unlock pet abilities | ⬜ | §3.7 | P1-ABILITY-1 | Fizz, Ember, Chomper, Whisp, Luxe |
-| P1-ABILITY-4 | Add ability trigger indicators | ⬜ | §3.7 | P1-ABILITY-2 | Show "+25% 🎮" when ability activates |
+| P1-ABILITY-1 | Create ability effect system | ✅ | §3.7 | P1-DATA-5 | `abilities.ts` with helper functions |
+| P1-ABILITY-2 | Implement starter abilities | ✅ | §3.7 | P1-ABILITY-1 | Munchlet +10% bond, Grib -20% mood, Plompo -20% decay |
+| P1-ABILITY-3 | Implement unlock pet abilities | ✅ | §3.7 | P1-ABILITY-1 | Fizz, Ember, Chomper, Whisp, Luxe all implemented |
+| P1-ABILITY-4 | Add ability trigger indicators | ⬜ | §3.7 | P1-ABILITY-2 | Show "+25% 🎮" when ability activates (UI work) |
 
 ### P1-TEST: Test Coverage for Data Layer
 

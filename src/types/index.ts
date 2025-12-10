@@ -52,6 +52,27 @@ export interface PetDefinition {
   dislikes: string[];
 }
 
+// --- Pet Ability (Bible §3.7) ---
+export type AbilityEffectType =
+  | 'bond_bonus'           // Munchlet: +10% bond from feeding
+  | 'mood_penalty_reduction' // Grib: -20% mood penalty from neglect
+  | 'decay_reduction'      // Plompo: -20% hunger/energy decay rate
+  | 'minigame_bonus'       // Fizz: +25% minigame score bonus
+  | 'spicy_coin_bonus'     // Ember: 2× coins from spicy foods
+  | 'no_dislikes'          // Chomper: No food dislikes (all neutral or better)
+  | 'rare_xp_chance'       // Whisp: +50% chance of rare XP drops
+  | 'gem_multiplier';      // Luxe: +100% gem drops from all sources
+
+export interface PetAbility {
+  id: string;
+  name: string;
+  description: string;
+  effect: {
+    type: AbilityEffectType;
+    value: number;
+  };
+}
+
 // --- Pet State (runtime state for store.ts) ---
 export interface PetState {
   id: string;

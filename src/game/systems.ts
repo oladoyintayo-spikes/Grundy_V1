@@ -3,18 +3,25 @@
 // Pure functions for game logic
 // ============================================
 
-import { 
-  PetState, 
-  MoodState, 
-  EvolutionStage, 
+import {
+  PetState,
+  MoodState,
+  EvolutionStage,
   ReactionType,
   FoodDefinition,
   FeedResult,
-  CurrencyType
+  Affinity
 } from '../types';
 import { GAME_CONFIG, getXPForLevel } from '../data/config';
 import { getPetById } from '../data/pets';
 import { getFoodById } from '../data/foods';
+import {
+  applyNoDislikesAbility,
+  applyBondBonus,
+  applySpicyCoinBonus,
+  applyRareXPChance,
+  applyDecayReduction
+} from './abilities';
 
 // ============================================
 // PET SYSTEM
@@ -39,8 +46,14 @@ export function getEvolutionStage(level: number): EvolutionStage {
   return 'baby';
 }
 
-export function decayHunger(current: number, minutesElapsed: number): number {
-  const decay = minutesElapsed * GAME_CONFIG.hungerDecayPerMinute;
+export function decayHunger(current: number, minutesElapsed: number, petId?: string): number {
+  let decay = minutesElapsed * GAME_CONFIG.hungerDecayPerMinute;
+
+  // Apply Plompo's Slow Metabolism ability: -20% decay rate
+  if (petId) {
+    decay = applyDecayReduction(petId, decay);
+  }
+
   return Math.max(0, current - decay);
 }
 
@@ -68,7 +81,10 @@ export function getEvolutionEmoji(stage: EvolutionStage): string {
 export function calculateReaction(petId: string, food: FoodDefinition): ReactionType {
   // Use the affinity matrix from food definitions
   // food.affinity maps petId -> 'loved' | 'liked' | 'neutral' | 'disliked'
-  const affinity = food.affinity[petId] || 'neutral';
+  let affinity: Affinity = food.affinity[petId] || 'neutral';
+
+  // Apply Chomper's Iron Stomach ability: No food dislikes
+  affinity = applyNoDislikesAbility(petId, affinity);
 
   // Map affinity to reaction type
   switch (affinity) {
@@ -95,36 +111,49 @@ export function calculateReaction(petId: string, food: FoodDefinition): Reaction
 }
 
 export function calculateXPGain(
-  food: FoodDefinition, 
-  reaction: ReactionType, 
+  food: FoodDefinition,
+  reaction: ReactionType,
   mood: MoodState,
-  hunger: number
+  hunger: number,
+  petId?: string
 ): number {
   let xp = food.xp;
-  
+
   // Apply reaction modifier
   xp *= GAME_CONFIG.reactionModifiers[reaction];
-  
+
   // Apply mood modifier
   xp *= GAME_CONFIG.moodModifiers[mood];
-  
+
   // Apply hunger penalty if very hungry
   if (hunger < 20) {
     xp *= 0.5;
   }
-  
-  return Math.round(xp);
+
+  xp = Math.round(xp);
+
+  // Apply Whisp's Lucky Nibbles ability: +50% chance of rare XP drops
+  if (petId) {
+    xp = applyRareXPChance(petId, xp);
+  }
+
+  return xp;
 }
 
-export function calculateBondChange(food: FoodDefinition, reaction: ReactionType): number {
+export function calculateBondChange(food: FoodDefinition, reaction: ReactionType, petId?: string): number {
   let bond = food.bond;
-  
+
   if (reaction === 'ecstatic') {
     bond *= 1.5;
   } else if (reaction === 'negative') {
     bond = -Math.abs(bond) * 0.5;
   }
-  
+
+  // Apply Munchlet's Comfort Food ability: +10% bond from feeding
+  if (petId) {
+    bond = applyBondBonus(petId, bond);
+  }
+
   return bond;
 }
 
@@ -137,8 +166,15 @@ export function calculateHungerRestore(reaction: ReactionType): number {
   }
 }
 
-export function calculateCoinReward(reaction: ReactionType): number {
-  return GAME_CONFIG.coinRewards[reaction];
+export function calculateCoinReward(reaction: ReactionType, petId?: string, food?: FoodDefinition): number {
+  let coins = GAME_CONFIG.coinRewards[reaction];
+
+  // Apply Ember's Spicy Lover ability: 2× coins from spicy foods
+  if (petId && food) {
+    coins = applySpicyCoinBonus(petId, food, coins);
+  }
+
+  return coins;
 }
 
 export function processFeed(
@@ -150,29 +186,29 @@ export function processFeed(
   if (!inventory[foodId] || inventory[foodId] <= 0) {
     return null;
   }
-  
+
   const food = getFoodById(foodId);
   if (!food) return null;
-  
-  // Calculate reaction
+
+  // Calculate reaction (includes Chomper's Iron Stomach ability)
   const reaction = calculateReaction(pet.id, food);
-  
-  // Calculate gains
-  const xpGained = calculateXPGain(food, reaction, pet.mood, pet.hunger);
-  const bondGained = calculateBondChange(food, reaction);
-  const coinsGained = calculateCoinReward(reaction);
-  
+
+  // Calculate gains (with ability effects)
+  const xpGained = calculateXPGain(food, reaction, pet.mood, pet.hunger, pet.id);
+  const bondGained = calculateBondChange(food, reaction, pet.id);
+  const coinsGained = calculateCoinReward(reaction, pet.id, food);
+
   // Check level up
   const newXP = pet.xp + xpGained;
   const xpNeeded = getXPForLevel(pet.level + 1);
   const leveledUp = newXP >= xpNeeded && pet.level < GAME_CONFIG.maxLevel;
   const newLevel = leveledUp ? pet.level + 1 : pet.level;
-  
+
   // Check evolution
   const currentStage = pet.evolutionStage;
   const newStage = getEvolutionStage(newLevel);
   const evolved = newStage !== currentStage;
-  
+
   return {
     success: true,
     foodId,

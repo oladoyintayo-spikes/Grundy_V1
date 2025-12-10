@@ -3,10 +3,11 @@
 // DATA SOURCE: docs/GRUNDY_MASTER_BIBLE.md §3
 // ============================================
 
-import { PetDefinition, PetCaptions } from '../types';
+import { PetDefinition, PetCaptions, PetAbility } from '../types';
 
 export interface FullPetDefinition extends PetDefinition {
   captions: PetCaptions;
+  ability: PetAbility;
 }
 
 // All 8 pets per Bible §3.1-3.2
@@ -27,6 +28,12 @@ export const PETS: Record<string, FullPetDefinition> = {
       neutral: ['Munchlet munches thoughtfully.', 'Not bad!', 'Munchlet accepts the offering.'],
       negative: ['Munchlet makes a face...', 'Too spicy!', 'Munchlet pushes it away.'],
     },
+    ability: {
+      id: 'comfort_food',
+      name: 'Comfort Food',
+      description: '+10% bond from feeding',
+      effect: { type: 'bond_bonus', value: 0.10 },
+    },
   },
   grib: {
     id: 'grib',
@@ -43,6 +50,12 @@ export const PETS: Record<string, FullPetDefinition> = {
       neutral: ['Grib shrugs.', "It'll do.", 'Acceptable.'],
       negative: ['Grib cringes!', 'Way too sweet!', 'Grib is not impressed.'],
     },
+    ability: {
+      id: 'chill_vibes',
+      name: 'Chill Vibes',
+      description: '-20% mood penalty from neglect',
+      effect: { type: 'mood_penalty_reduction', value: 0.20 },
+    },
   },
   plompo: {
     id: 'plompo',
@@ -58,6 +71,12 @@ export const PETS: Record<string, FullPetDefinition> = {
       positive: ["Plompo's eyes light up!", 'Mmmmm...', 'Plompo wants a nap now.'],
       neutral: ['Plompo slowly chews.', "Plompo doesn't mind.", 'Okay~'],
       negative: ['Plompo shakes slowly.', 'Too crunchy...', 'Plompo is sad.'],
+    },
+    ability: {
+      id: 'slow_metabolism',
+      name: 'Slow Metabolism',
+      description: '-20% hunger/energy decay rate',
+      effect: { type: 'decay_reduction', value: 0.20 },
     },
   },
 
@@ -77,6 +96,12 @@ export const PETS: Record<string, FullPetDefinition> = {
       neutral: ['Fizz buzzes.', 'Okay okay okay!', 'Fizz keeps moving.'],
       negative: ['Fizz deflates...', 'Too boring!', 'Fizz fizzles out...'],
     },
+    ability: {
+      id: 'hyperactive',
+      name: 'Hyperactive',
+      description: '+25% minigame score bonus',
+      effect: { type: 'minigame_bonus', value: 0.25 },
+    },
   },
   ember: {
     id: 'ember',
@@ -92,6 +117,12 @@ export const PETS: Record<string, FullPetDefinition> = {
       positive: ['Ember ROARS approval!', "NOW we're cooking!", 'FIRE! 🔥'],
       neutral: ['Ember considers it.', 'Hmm.', 'Ember nods.'],
       negative: ['Ember scoffs.', 'Pathetic.', 'Ember turns away in disgust.'],
+    },
+    ability: {
+      id: 'spicy_lover',
+      name: 'Spicy Lover',
+      description: '2× coins from spicy foods',
+      effect: { type: 'spicy_coin_bonus', value: 2.0 },
     },
   },
   chomper: {
@@ -109,6 +140,12 @@ export const PETS: Record<string, FullPetDefinition> = {
       neutral: ['Chomper eats it anyway.', 'Food is food!', 'More?'],
       negative: ['Chomper eats it anyway.', 'Still food!', 'More?'], // Never truly negative
     },
+    ability: {
+      id: 'iron_stomach',
+      name: 'Iron Stomach',
+      description: 'No food dislikes (all foods neutral or better)',
+      effect: { type: 'no_dislikes', value: 1.0 },
+    },
   },
   whisp: {
     id: 'whisp',
@@ -124,6 +161,12 @@ export const PETS: Record<string, FullPetDefinition> = {
       positive: ['Whisp glows brighter!', '✨', 'Whisp hums softly...'],
       neutral: ['Whisp observes.', '...', 'Whisp drifts.'],
       negative: ['Whisp fades slightly.', '...', 'Whisp looks through you.'],
+    },
+    ability: {
+      id: 'lucky_nibbles',
+      name: 'Lucky Nibbles',
+      description: '+50% chance of rare XP drops',
+      effect: { type: 'rare_xp_chance', value: 0.50 },
     },
   },
   luxe: {
@@ -141,6 +184,12 @@ export const PETS: Record<string, FullPetDefinition> = {
       neutral: ['Luxe considers it.', 'Hmm.', 'Luxe shrugs elegantly.'],
       negative: ['Luxe is NOT amused.', 'How pedestrian.', 'Luxe looks away.'],
     },
+    ability: {
+      id: 'golden_touch',
+      name: 'Golden Touch',
+      description: '+100% gem drops from all sources',
+      effect: { type: 'gem_multiplier', value: 2.0 },
+    },
   },
 };
 
@@ -153,4 +202,8 @@ export function getPetById(id: string): FullPetDefinition | undefined {
 
 export function getAllPets(): FullPetDefinition[] {
   return Object.values(PETS);
+}
+
+export function getPetAbility(petId: string): PetAbility | undefined {
+  return PETS[petId]?.ability;
 }
