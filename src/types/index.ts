@@ -149,6 +149,7 @@ export interface GameStore {
   addFood: (foodId: string, quantity: number) => void;
   updateMood: (mood: MoodState) => void;
   tick: (deltaMinutes: number) => void;
+  selectPet: (petId: string) => void;
   resetGame: () => void;
 }
 

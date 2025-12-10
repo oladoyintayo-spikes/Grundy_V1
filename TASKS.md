@@ -279,7 +279,7 @@ P1-CORE-4, P1-DOC-1,2 ── Can run in parallel
 
 | ID | Task | Status | Scope | Acceptance Criteria |
 |----|------|--------|-------|---------------------|
-| P1-UI-01 | Connect GrundyPrototype.tsx to Zustand store | ⬜ | GrundyPrototype.tsx, store.ts | Currently uses local useState with legacy pet data; needs to use canonical pets.ts + store |
+| P1-UI-01 | Connect GrundyPrototype.tsx to Zustand store | ✅ | GrundyPrototype.tsx, store.ts | Uses Zustand store + canonical pets.ts + foods.ts |
 
 ---
 

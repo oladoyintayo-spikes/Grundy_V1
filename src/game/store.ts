@@ -243,6 +243,18 @@ export const useGameStore = create<GameStore>()(
       },
       
       // ========================================
+      // PET SELECTION
+      // ========================================
+      selectPet: (petId: string) => {
+        set((state) => ({
+          pet: {
+            ...state.pet,
+            id: petId,
+          },
+        }));
+      },
+
+      // ========================================
       // RESET
       // ========================================
       resetGame: () => {
