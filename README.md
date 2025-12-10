@@ -4,6 +4,8 @@
 
 > **Elevator Pitch:** A cozy, ethical-monetization virtual pet game where you feed, nurture, and watch your creature evolve through meaningful interactions—built as a React/TypeScript prototype to validate core mechanics before Unity production.
 
+**Live Demo:** [https://oladoyintayo-spikes.github.io/Grundy_V1/](https://oladoyintayo-spikes.github.io/Grundy_V1/)
+
 ---
 
 ## Source of Truth
