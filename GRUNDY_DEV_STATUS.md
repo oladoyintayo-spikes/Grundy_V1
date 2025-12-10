@@ -2,9 +2,9 @@
 
 # Grundy Web Prototype — Development Status
 
-**Last Updated:** December 10, 2024 (P5-AUDIO-CORE)
-**Current Phase:** Web Phase 5 — IN PROGRESS (Audio ✅, PWA/Art ⬜)
-**Next Phase:** Web Phase 5 completion (PWA, Art, QA)
+**Last Updated:** December 10, 2024 (P5-PWA-CORE)
+**Current Phase:** Web Phase 5 — IN PROGRESS (Audio ✅, PWA ✅, Art ⬜)
+**Next Phase:** Web Phase 5 completion (Art, QA)
 
 ---
 
@@ -28,7 +28,7 @@
 | **Web Phase 2** | Mini-Games & Infra | ✅ COMPLETE | All 5 mini-games implemented and tested |
 | **Web Phase 3** | Navigation & Environment | 🟡 IN PROGRESS | P3-NAV ✅, P3-ENV ⬜ |
 | **Web Phase 4** | FTUE / Onboarding | ✅ COMPLETE | All FTUE screens, state, tests done |
-| **Web Phase 5** | Polish / Web 1.0 | 🟡 IN PROGRESS | Audio ✅, PWA ⬜, Art ⬜, QA ⬜ |
+| **Web Phase 5** | Polish / Web 1.0 | 🟡 IN PROGRESS | Audio ✅, PWA ✅, Art ⬜, QA ⬜ |
 
 ### Post-Web 1.0
 
@@ -184,7 +184,7 @@ The following copy is canonical and used across all onboarding documentation:
 - Zustand state management with persistence
 - Vitest test suite
 - Vite build system
-- PWA manifest
+- PWA (manifest + service worker + install prompt)
 - GitHub Pages deployment
 - Error boundary
 - Audio system (SFX + BGM with settings)
@@ -229,7 +229,7 @@ The following copy is canonical and used across all onboarding documentation:
 
 ---
 
-## Web Phase 5 — IN PROGRESS (Audio)
+## Web Phase 5 — IN PROGRESS (Audio + PWA)
 
 **Theme:** Bible Section 9 — Polish & Web 1.0 Release
 
@@ -246,6 +246,18 @@ The following copy is canonical and used across all onboarding documentation:
 | Documentation | ✅ | docs/AUDIO_NOTES.md |
 | Tests | ✅ | audioConfig.test.ts |
 
+### PWA System (P5-PWA-CORE)
+
+| Component | Status | Details |
+|-----------|--------|---------|
+| Web Manifest | ✅ | manifest.webmanifest with icons, colors |
+| Service Worker | ✅ | Shell-focused caching, network-first strategy |
+| SW Registration | ✅ | Progressive enhancement in main.tsx |
+| Install Prompt | ✅ | beforeinstallprompt captured for future UI |
+| Apple PWA | ✅ | Apple-specific meta tags in index.html |
+| Documentation | ✅ | docs/PWA_NOTES.md |
+| Tests | ✅ | pwaConfig.test.ts |
+
 ### Files Implemented
 
 | File | Purpose |
@@ -254,12 +266,17 @@ The following copy is canonical and used across all onboarding documentation:
 | `src/audio/config.ts` | Sound and music configuration registry |
 | `src/audio/audioManager.ts` | Central audio manager singleton |
 | `docs/AUDIO_NOTES.md` | Audio system documentation |
+| `public/manifest.webmanifest` | PWA manifest |
+| `public/service-worker.js` | Service worker for shell caching |
+| `src/pwa/index.ts` | PWA module exports |
+| `src/pwa/serviceWorker.ts` | SW registration logic |
+| `src/pwa/installPrompt.ts` | Install prompt handler |
+| `docs/PWA_NOTES.md` | PWA documentation |
 
 ### Remaining for Web Phase 5
 
 | Task | Status | Notes |
 |------|--------|-------|
-| P5-PWA-1 | ⬜ | PWA manifest, icons, service worker |
 | P5-ART-1 | ⬜ | Final pet + room art assets |
 | P5-QA-1 | ⬜ | Full Web 1.0 test pass & release checklist |
 
@@ -276,7 +293,7 @@ The following copy is canonical and used across all onboarding documentation:
 ### Web Phase 5: Polish / Web 1.0
 
 1. ✅ P5-SOUND-1: Add basic SFX/BGM + sound settings (P5-AUDIO-CORE)
-2. P5-PWA-1: Add PWA manifest, icons, service worker
+2. ✅ P5-PWA-1: Add PWA manifest, icons, service worker (P5-PWA-CORE)
 3. P5-ART-1: Integrate final pet + room art assets
 4. P5-QA-1: Full Web 1.0 test pass & release checklist
 

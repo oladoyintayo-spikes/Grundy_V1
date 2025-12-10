@@ -1,7 +1,7 @@
 # TASKS.md
 ## Grundy Development Task List
 
-**Last Updated:** December 10, 2024 (P5-AUDIO-CORE)
+**Last Updated:** December 10, 2024 (P5-PWA-CORE)
 **Design SoT:** `docs/GRUNDY_MASTER_BIBLE.md`
 **Pre-Flight Report:** December 9, 2024 ✅
 
@@ -547,18 +547,26 @@ P8-TEST
 | P5-AUDIO-HOOKS | Hook core events to SFX/BGM | ✅ | Components | UI taps, mini-game results, pet SFX, BGM |
 | P5-AUDIO-DOC | Audio notes documentation | ✅ | docs/ | AUDIO_NOTES.md created |
 
+### P5-PWA: PWA Support
+
+| ID | Task | Status | Scope | Notes |
+|----|------|--------|-------|-------|
+| P5-PWA-CORE | Manifest + SW + registration | ✅ | public/, src/pwa | manifest.webmanifest + service-worker.js wired |
+| P5-PWA-SHELL | Shell-focused offline behavior | ✅ | service-worker.js | App shell loads offline from cache |
+| P5-PWA-DOC | PWA documentation | ✅ | docs/ | PWA_NOTES.md added |
+
 ### P5-POLISH: Web 1.0 Readiness
 
 | ID | Task | Status | Scope | Notes |
 |----|------|--------|-------|-------|
 | P5-SOUND-1 | Add basic SFX/BGM + sound settings | ✅ | Audio, store | Replaced by P5-AUDIO tasks |
-| P5-PWA-1 | Add PWA manifest, icons, service worker | ⬜ | public/, sw.js | Installable on mobile |
+| P5-PWA-1 | Add PWA manifest, icons, service worker | ✅ | public/, sw.js | Replaced by P5-PWA tasks |
 | P5-ART-1 | Integrate final pet + room art assets | ⬜ | assets/ | Replace emoji placeholders |
 | P5-QA-1 | Full Web 1.0 test pass & release checklist | ⬜ | All | Tag Web Edition 1.0 |
 
 **Web Phase 5 Exit Criteria:**
 - [x] Sound system working with mute
-- [ ] PWA installable on mobile
+- [x] PWA installable on mobile
 - [ ] Final art integrated
 - [ ] All tests passing
 - [ ] Web 1.0 release tagged
