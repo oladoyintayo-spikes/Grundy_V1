@@ -8,7 +8,8 @@ import { DEFAULT_VIEW } from './game/navigation';
 import { AppHeader } from './components/layout/AppHeader';
 import { BottomNav } from './components/layout/BottomNav';
 import { DebugHud } from './components/layout/DebugHud';
-import { getBackgroundClass, ENVIRONMENT_REFRESH_INTERVAL_MS } from './game/environment';
+import { getBackgroundClass, ENVIRONMENT_REFRESH_INTERVAL_MS, ROOM_LABELS } from './game/environment';
+import type { RoomId } from './types';
 import { MiniGameHub } from './components/MiniGameHub';
 import { MiniGameWrapper } from './components/MiniGameWrapper';
 import { SnackCatch } from './components/games/SnackCatch';
@@ -124,6 +125,61 @@ const ReactionDisplay = ({ reaction, message }: { reaction: ReactionType | null;
   );
 };
 
+// Room Selector Component (P6-ENV-UI)
+// Bible §14.4: Explicit room switcher for exploring rooms
+// Note: Activities (feeding, playing) override manual room selection per Bible precedence rule
+const RoomSelector = ({ currentRoom, onSelectRoom }: {
+  currentRoom: RoomId;
+  onSelectRoom: (room: RoomId) => void;
+}) => {
+  // Available rooms for manual selection (yard excluded - reserved for future outdoor features)
+  const rooms: { id: RoomId; icon: string; label: string }[] = [
+    { id: 'living_room', icon: '🏠', label: ROOM_LABELS.living_room },
+    { id: 'kitchen', icon: '🍳', label: ROOM_LABELS.kitchen },
+    { id: 'bedroom', icon: '🛏️', label: ROOM_LABELS.bedroom },
+    { id: 'playroom', icon: '🎮', label: ROOM_LABELS.playroom },
+  ];
+
+  return (
+    <div
+      className="flex justify-center gap-1 shrink-0"
+      data-testid="room-selector"
+      role="tablist"
+      aria-label="Room selection"
+    >
+      {rooms.map((room) => {
+        const isActive = currentRoom === room.id;
+        const testIdMap: Record<RoomId, string> = {
+          living_room: 'room-tab-living',
+          kitchen: 'room-tab-kitchen',
+          bedroom: 'room-tab-bedroom',
+          playroom: 'room-tab-playroom',
+          yard: 'room-tab-yard',
+        };
+        return (
+          <button
+            key={room.id}
+            onClick={() => onSelectRoom(room.id)}
+            className={`
+              px-2 py-1 rounded-lg text-xs transition-all flex items-center gap-1
+              ${isActive
+                ? 'bg-amber-500/30 text-amber-200 border border-amber-500/50'
+                : 'bg-slate-800/50 text-slate-400 hover:bg-slate-700/50 hover:text-slate-200 border border-transparent'}
+            `}
+            data-testid={testIdMap[room.id]}
+            role="tab"
+            aria-selected={isActive}
+            aria-label={`Switch to ${room.label}`}
+          >
+            <span aria-hidden="true">{room.icon}</span>
+            <span className="hidden sm:inline">{room.label}</span>
+          </button>
+        );
+      })}
+    </div>
+  );
+};
+
 // Shop Modal
 const ShopModal = ({ isOpen, onClose, coins, onBuy, inventory }: {
   isOpen: boolean;
@@ -211,6 +267,9 @@ function HomeView({ onOpenShop }: HomeViewProps) {
   const buyFood = useGameStore((state) => state.buyFood);
   const tick = useGameStore((state) => state.tick);
   const selectPet = useGameStore((state) => state.selectPet);
+  // P6-ENV-UI: Room selector state and action
+  const environment = useGameStore((state) => state.environment);
+  const setRoom = useGameStore((state) => state.setRoom);
 
   // UI State (local)
   const [lastReaction, setLastReaction] = useState<ReactionType | null>(null);
@@ -327,6 +386,12 @@ function HomeView({ onOpenShop }: HomeViewProps) {
           </div>
         )}
 
+        {/* P6-ENV-UI: Room Selector - Bible §14.4 explicit room switcher */}
+        {/* Note: Activities (feed→kitchen, play→playroom) override manual selection per Bible precedence */}
+        <div className="mb-2">
+          <RoomSelector currentRoom={environment.room} onSelectRoom={setRoom} />
+        </div>
+
         {/* Pet Display Area - Bible §14.6: Pet visible, 40-50% of viewport height */}
         <div
           className="relative rounded-2xl p-3 sm:p-4 text-center flex-1 min-h-0 flex flex-col justify-center"
@@ -437,6 +502,7 @@ function HomeView({ onOpenShop }: HomeViewProps) {
 
 // ============================================
 // VIEW: GAMES (Mini-Game Hub)
+// P6-NAV-GROUNDWORK: Added data-testid="games-view" for BCT coverage
 // ============================================
 function GamesView() {
   const [selectedGame, setSelectedGame] = useState<MiniGameId | null>(null);
@@ -490,7 +556,7 @@ function GamesView() {
     };
 
     return (
-      <div className="h-full">
+      <div className="h-full" data-testid="games-view">
         <MiniGameWrapper
           gameId={selectedGame}
           onComplete={handleGameComplete}
@@ -504,7 +570,7 @@ function GamesView() {
 
   // Show the hub
   return (
-    <div className="h-full">
+    <div className="h-full" data-testid="games-view">
       <MiniGameHub onSelectGame={handleSelectGame} onBack={handleBackToHub} />
     </div>
   );
@@ -513,6 +579,7 @@ function GamesView() {
 // ============================================
 // VIEW: SETTINGS
 // Bible §14.5: Pet switching via Settings with confirmation
+// P6-NAV-GROUNDWORK: Added data-testid="settings-view" for BCT coverage
 // ============================================
 function SettingsView() {
   const settings = useGameStore((state) => state.settings);
@@ -561,7 +628,7 @@ function SettingsView() {
   };
 
   return (
-    <div className="h-full flex flex-col items-center justify-center text-slate-200 p-4">
+    <div className="h-full flex flex-col items-center justify-center text-slate-200 p-4" data-testid="settings-view">
       <div className="max-w-sm w-full space-y-6">
         <div className="text-center mb-8">
           <h2 className="text-xl font-semibold mb-2">Settings</h2>

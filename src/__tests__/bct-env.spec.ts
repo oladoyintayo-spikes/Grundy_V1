@@ -100,30 +100,53 @@ describe('BCT-ENV-001: Activity-to-Room Mapping', () => {
 describe('BCT-ENV-002: Time-of-Day', () => {
   /**
    * Bible §14.4: Background reflects time of day
+   * Per bible.constants.ts TIME_OF_DAY:
+   * - MORNING: 6-12 (6:00-11:59)
+   * - AFTERNOON/DAY: 12-17 (12:00-16:59)
+   * - EVENING: 17-21 (17:00-20:59)
+   * - NIGHT: 21-6 (21:00-05:59)
+   *
+   * P6-ENV-TOD: Aligned implementation to Bible v1.4
    */
 
-  it('getTimeOfDay returns correct period for morning hours (5-10)', () => {
-    expect(getTimeOfDay(new Date('2024-01-01T05:00:00'))).toBe('morning');
+  it('getTimeOfDay returns correct period for morning hours (6-11)', () => {
+    // Bible: Morning is 6:00-11:59
+    expect(getTimeOfDay(new Date('2024-01-01T06:00:00'))).toBe('morning');
     expect(getTimeOfDay(new Date('2024-01-01T08:00:00'))).toBe('morning');
-    expect(getTimeOfDay(new Date('2024-01-01T10:59:00'))).toBe('morning');
+    expect(getTimeOfDay(new Date('2024-01-01T11:59:00'))).toBe('morning');
   });
 
-  it('getTimeOfDay returns correct period for day hours (11-16)', () => {
-    expect(getTimeOfDay(new Date('2024-01-01T11:00:00'))).toBe('day');
+  it('getTimeOfDay returns correct period for day hours (12-16)', () => {
+    // Bible: Day/Afternoon is 12:00-16:59
+    expect(getTimeOfDay(new Date('2024-01-01T12:00:00'))).toBe('day');
     expect(getTimeOfDay(new Date('2024-01-01T14:00:00'))).toBe('day');
     expect(getTimeOfDay(new Date('2024-01-01T16:59:00'))).toBe('day');
   });
 
   it('getTimeOfDay returns correct period for evening hours (17-20)', () => {
+    // Bible: Evening is 17:00-20:59
     expect(getTimeOfDay(new Date('2024-01-01T17:00:00'))).toBe('evening');
     expect(getTimeOfDay(new Date('2024-01-01T19:00:00'))).toBe('evening');
     expect(getTimeOfDay(new Date('2024-01-01T20:59:00'))).toBe('evening');
   });
 
-  it('getTimeOfDay returns correct period for night hours (21-4)', () => {
+  it('getTimeOfDay returns correct period for night hours (21-5)', () => {
+    // Bible: Night is 21:00-05:59
     expect(getTimeOfDay(new Date('2024-01-01T21:00:00'))).toBe('night');
     expect(getTimeOfDay(new Date('2024-01-01T00:00:00'))).toBe('night');
-    expect(getTimeOfDay(new Date('2024-01-01T04:59:00'))).toBe('night');
+    expect(getTimeOfDay(new Date('2024-01-01T05:59:00'))).toBe('night');
+  });
+
+  it('getTimeOfDay boundary: 5:59 is night, 6:00 is morning (P6-ENV-TOD)', () => {
+    // Bible boundary: night ends at 6:00, morning starts at 6:00
+    expect(getTimeOfDay(new Date('2024-01-01T05:59:00'))).toBe('night');
+    expect(getTimeOfDay(new Date('2024-01-01T06:00:00'))).toBe('morning');
+  });
+
+  it('getTimeOfDay boundary: 11:59 is morning, 12:00 is day (P6-ENV-TOD)', () => {
+    // Bible boundary: morning ends at 12:00, day starts at 12:00
+    expect(getTimeOfDay(new Date('2024-01-01T11:59:00'))).toBe('morning');
+    expect(getTimeOfDay(new Date('2024-01-01T12:00:00'))).toBe('day');
   });
 
   it('refreshTimeOfDay updates the environment time', () => {
@@ -197,5 +220,79 @@ describe('BCT-ENV: Environment State Persistence', () => {
 
     // Room should still be kitchen
     expect(useGameStore.getState().environment.room).toBe('kitchen');
+  });
+});
+
+describe('BCT-ENV-UI: Room Selector (P6-ENV-UI)', () => {
+  /**
+   * Bible §14.4: Explicit room switcher
+   * User can manually select rooms via the Room Selector UI.
+   * Activities (feeding, playing) override manual selection per Bible precedence rule.
+   */
+
+  it('manual room selection works via setRoom', () => {
+    // Start in living room
+    useGameStore.getState().resetGame();
+    expect(useGameStore.getState().environment.room).toBe('living_room');
+
+    // User manually selects kitchen
+    useGameStore.getState().setRoom('kitchen');
+    expect(useGameStore.getState().environment.room).toBe('kitchen');
+
+    // User manually selects bedroom
+    useGameStore.getState().setRoom('bedroom');
+    expect(useGameStore.getState().environment.room).toBe('bedroom');
+
+    // User manually selects playroom
+    useGameStore.getState().setRoom('playroom');
+    expect(useGameStore.getState().environment.room).toBe('playroom');
+  });
+
+  it('activity overrides manual room selection (feed → kitchen)', () => {
+    // P6-ENV-UI: Activities take precedence over manual room selection
+    useGameStore.getState().resetGame();
+
+    // User manually selects bedroom
+    useGameStore.getState().setRoom('bedroom');
+    expect(useGameStore.getState().environment.room).toBe('bedroom');
+
+    // Give pet some food
+    useGameStore.setState(state => ({
+      ...state,
+      inventory: { apple: 5 }
+    }));
+
+    // Feed the pet - should override manual selection to kitchen
+    useGameStore.getState().feed('apple');
+
+    // Room should now be kitchen per Bible §14.4 activity-to-room mapping
+    expect(useGameStore.getState().environment.room).toBe('kitchen');
+  });
+
+  it('user can manually switch after activity', () => {
+    // After activity completes, user can switch rooms again
+    useGameStore.getState().resetGame();
+
+    // Give pet food and feed (room → kitchen)
+    useGameStore.setState(state => ({
+      ...state,
+      inventory: { apple: 5 }
+    }));
+    useGameStore.getState().feed('apple');
+    expect(useGameStore.getState().environment.room).toBe('kitchen');
+
+    // User manually switches to living room after feeding
+    useGameStore.getState().setRoom('living_room');
+    expect(useGameStore.getState().environment.room).toBe('living_room');
+  });
+
+  it('ROOM_ACTIVITY_MAP defines all activity-to-room mappings', () => {
+    // Verify all mappings are defined per Bible §14.4
+    expect(ROOM_ACTIVITY_MAP).toEqual({
+      feeding: 'kitchen',
+      sleeping: 'bedroom',
+      playing: 'playroom',
+      default: 'living_room',
+    });
   });
 });
