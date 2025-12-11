@@ -33,8 +33,10 @@ import {
   moodValueToState,
   moodStateToValue,
   getMoodTier,
+  MODE_CONFIG,
   type FullnessState,
-  type MoodTier
+  type MoodTier,
+  type GameMode
 } from '../constants/bible.constants';
 
 // ============================================
@@ -360,11 +362,13 @@ export function getMoodAfterReaction(currentMood: MoodState, reaction: ReactionT
 /**
  * Calculate mood change from feeding based on reaction type.
  * Applies Grib's ability: -20% mood penalty from dislikes.
+ * P6-FTUE-MODES: Applies mode penalty severity multiplier.
  * @param reaction - The feeding reaction
  * @param petId - Pet ID for ability application
+ * @param gameMode - Game mode for penalty severity multiplier
  * @returns Mood change amount (can be negative)
  */
-export function getMoodChangeFromReaction(reaction: ReactionType, petId?: string): number {
+export function getMoodChangeFromReaction(reaction: ReactionType, petId?: string, gameMode?: GameMode): number {
   let change: number;
 
   switch (reaction) {
@@ -383,6 +387,12 @@ export function getMoodChangeFromReaction(reaction: ReactionType, petId?: string
       if (petId) {
         change = applyMoodPenaltyReduction(petId, change);
       }
+      // P6-FTUE-MODES: Apply mode penalty severity multiplier (Cozy = gentler penalties)
+      if (gameMode) {
+        const modeConfig = MODE_CONFIG[gameMode];
+        // Since change is negative, multiplying by <1 makes it less severe
+        change = change * modeConfig.penaltySeverityMultiplier;
+      }
       break;
   }
 
@@ -392,13 +402,21 @@ export function getMoodChangeFromReaction(reaction: ReactionType, petId?: string
 /**
  * Calculate mood decay over time.
  * Applies Plompo's ability: -20% mood decay rate.
+ * P6-FTUE-MODES: Applies mode decay multiplier.
  * @param currentMood - Current mood value (0-100)
  * @param minutesElapsed - Minutes since last update
  * @param petId - Pet ID for ability application
+ * @param gameMode - Game mode for decay multiplier
  * @returns New mood value
  */
-export function decayMood(currentMood: number, minutesElapsed: number, petId?: string): number {
+export function decayMood(currentMood: number, minutesElapsed: number, petId?: string, gameMode?: GameMode): number {
   let decay = minutesElapsed * MOOD_MODIFIERS.DECAY_PER_MINUTE;
+
+  // P6-FTUE-MODES: Apply mode decay multiplier (Cozy = slower decay)
+  if (gameMode) {
+    const modeConfig = MODE_CONFIG[gameMode];
+    decay = decay * modeConfig.moodDecayMultiplier;
+  }
 
   // Apply Plompo's ability: -20% mood decay rate
   if (petId) {
@@ -410,13 +428,15 @@ export function decayMood(currentMood: number, minutesElapsed: number, petId?: s
 
 /**
  * Update mood value after a reaction.
+ * P6-FTUE-MODES: Passes mode through to penalty calculation.
  * @param currentMood - Current mood value (0-100)
  * @param reaction - The feeding reaction
  * @param petId - Pet ID for ability application
+ * @param gameMode - Game mode for penalty severity
  * @returns New mood value
  */
-export function updateMoodValue(currentMood: number, reaction: ReactionType, petId?: string): number {
-  const change = getMoodChangeFromReaction(reaction, petId);
+export function updateMoodValue(currentMood: number, reaction: ReactionType, petId?: string, gameMode?: GameMode): number {
+  const change = getMoodChangeFromReaction(reaction, petId, gameMode);
   return Math.max(0, Math.min(100, currentMood + change));
 }
 

@@ -199,7 +199,8 @@ export const useGameStore = create<GameStore>()(
           }
 
           // P6-MOOD-SYSTEM: Update mood value using Bible §4.5 system
-          const newMoodValue = updateMoodValue(state.pet.moodValue ?? 50, result.reaction, state.pet.id);
+          // P6-FTUE-MODES: Pass playMode for penalty severity adjustment
+          const newMoodValue = updateMoodValue(state.pet.moodValue ?? 50, result.reaction, state.pet.id, state.playMode);
 
           // Update pet with adjusted gains
           const newPet: PetState = {
@@ -850,7 +851,8 @@ export const useGameStore = create<GameStore>()(
       // ========================================
       tickMoodDecay: (deltaMinutes: number) => {
         set((state) => {
-          const newMoodValue = decayMood(state.pet.moodValue ?? 50, deltaMinutes, state.pet.id);
+          // P6-FTUE-MODES: Pass playMode for decay multiplier
+          const newMoodValue = decayMood(state.pet.moodValue ?? 50, deltaMinutes, state.pet.id, state.playMode);
           return {
             pet: {
               ...state.pet,

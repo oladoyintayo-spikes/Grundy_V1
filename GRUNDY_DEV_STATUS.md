@@ -382,6 +382,7 @@ Dev: Phase 6 Bible v1.5 compliance tasks implemented:
 - **Tier 1:** P6-CORE-LOOP, P6-ECON-WEB, P6-HUD-CLEANUP, P6-PET-HOME, P6-ENV-ROOMS, P6-ENV-UI, P6-ENV-TOD, P6-NAV-GROUNDWORK, P6-FTUE-INTRO, P6-MOBILE-LAYOUT, P6-QA-BCT
 - **Tier 2 Polish:** P6-ART-POSES, P6-MOOD-SYSTEM, P6-ABILITY-UI, P6-T2-PET-BEHAVIORS, P6-ART-PRODUCTION, P6-ART-TEST
 - **Audio & PWA:** P6-AUDIO-ASSETS, P6-AUDIO-ROOM, P6-AUDIO-TOD, P6-PWA-PRECACHE, P6-PWA-UI, P6-PWA-UPDATE
+- **FTUE Modes:** P6-FTUE-MODES — Cozy vs Classic divergence with MODE_CONFIG, decay/penalty multipliers, 38 BCT-MODE tests
 
 Mood system (§4.5) with numeric moodValue 0-100, decay, and Grib/Plompo abilities. Pet behavior polish with transient eating poses and mood-based expressions. Ability indicators added (P1-ABILITY-4). **Art system: Pet sprites wired per pet/stage/pose with fallback chain; Home active pet uses PNG sprites when assets exist; emoji/orb fallbacks limited to DEV or true missing assets.** BCT suite passing (1224 tests, 598 BCT-specific incl. 401 BCT-ART tests, 23 BCT-NEGLECT specs).
 
@@ -391,6 +392,15 @@ Mood system (§4.5) with numeric moodValue 0-100, decay, and Grib/Plompo abiliti
 - PWA: Service worker precaches shell assets (index.html, manifest, icons, splash)
 - PWA: Install CTA in Settings (shows when beforeinstallprompt available, hidden after install)
 - PWA: "New version available" toast with user-controlled refresh (no auto-skipWaiting)
+
+**P6-FTUE-MODES Implementation (December 2024):**
+- Central MODE_CONFIG in bible.constants.ts with decay/penalty multipliers
+- Cozy: 50% slower mood decay, 50% penalty reduction, no neglect/sickness
+- Classic: Baseline decay/penalties, neglect/sickness/care-mistakes enabled
+- decayMood() and updateMoodValue() now accept optional gameMode parameter
+- Store passes playMode to mood functions for mode-aware behavior
+- FTUE copy updated to accurately describe mode differences
+- 38 BCT-MODE tests verify config values, decay differences, penalty scaling
 
 **P6-MOOD-SYSTEM / P6-ABILITY-UI Verification (December 2024):**
 - Mood tiers (ECSTATIC/HAPPY/CONTENT/LOW/UNHAPPY) match Bible §4.5
@@ -435,6 +445,7 @@ Mood system (§4.5) with numeric moodValue 0-100, decay, and Grib/Plompo abiliti
 | **P6-PWA-PRECACHE** | Core asset precaching | ✅ | — |
 | **P6-PWA-UI** | Install CTA in Settings | ✅ | — |
 | **P6-PWA-UPDATE** | New version toast | ✅ | — |
+| **P6-FTUE-MODES** | Cozy vs Classic mode divergence | ✅ | §9 |
 
 ---
 
@@ -511,7 +522,7 @@ Mood system (§4.5) with numeric moodValue 0-100, decay, and Grib/Plompo abiliti
 | Branding & Visual | P6-BRANDING, P6-ART-POSES, P6-ART-PROPS | QA-001, ART_NOTES | 🟡 P6-BRANDING deferred |
 | Audio Assets | P6-AUDIO-ASSETS, P6-AUDIO-ROOM, P6-AUDIO-TOD | QA-002, AUDIO_NOTES | ✅ COMPLETE |
 | PWA Enhancements | P6-PWA-PRECACHE, P6-PWA-UI, P6-PWA-UPDATE | QA-005, PWA_NOTES | ✅ COMPLETE |
-| FTUE & Modes | P6-FTUE-MODES | General | ⬜ Deferred |
+| FTUE & Modes | P6-FTUE-MODES | Bible §9, General | ✅ COMPLETE |
 
 ### QA Issue Mapping
 

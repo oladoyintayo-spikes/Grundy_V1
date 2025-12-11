@@ -146,6 +146,80 @@ export function containsAllFtueLore(renderedText: string): boolean {
 }
 
 // ============================================================================
+// §9 Cozy vs Classic Mode Configuration (P6-FTUE-MODES)
+// ============================================================================
+
+export type GameMode = 'cozy' | 'classic';
+
+/**
+ * Mode configuration parameters.
+ * Bible §9.1-9.4: Cozy is gentler, Classic has consequences.
+ */
+export interface ModeConfig {
+  id: GameMode;
+  label: string;
+  description: string;
+  /** Multiplier for mood decay rate. Bible §9.3: Cozy is gentler. */
+  moodDecayMultiplier: number;
+  /** Multiplier for negative mood penalties (e.g., disliked food). */
+  penaltySeverityMultiplier: number;
+  /** Whether neglect system is enabled. Bible §9.4.3: Classic only. */
+  neglectEnabled: boolean;
+  /** Whether sickness system is enabled. Bible §9.4: Classic only. */
+  sicknessEnabled: boolean;
+  /** Whether care mistakes are tracked. Bible §9.4: Classic only. */
+  careMistakesEnabled: boolean;
+  /** Whether Welcome Back bonus is given. Bible §9.3: Cozy only. */
+  welcomeBackBonusEnabled: boolean;
+}
+
+/**
+ * Central mode configuration.
+ * Bible §9.1-9.4: Mode-specific gameplay parameters.
+ */
+export const MODE_CONFIG: Record<GameMode, ModeConfig> = {
+  cozy: {
+    id: 'cozy',
+    label: 'Cozy Mode',
+    description: 'Gentler mood decay, no neglect. Perfect for relaxed play.',
+    moodDecayMultiplier: 0.5, // 50% slower decay than classic
+    penaltySeverityMultiplier: 0.5, // Halved negative mood penalties
+    neglectEnabled: false,
+    sicknessEnabled: false,
+    careMistakesEnabled: false,
+    welcomeBackBonusEnabled: true,
+  },
+  classic: {
+    id: 'classic',
+    label: 'Classic Mode',
+    description: 'Normal decay, full challenge with neglect and sickness.',
+    moodDecayMultiplier: 1.0, // Baseline decay
+    penaltySeverityMultiplier: 1.0, // Full penalties
+    neglectEnabled: true,
+    sicknessEnabled: true,
+    careMistakesEnabled: true,
+    welcomeBackBonusEnabled: false,
+  },
+};
+
+/**
+ * Helper: Check if mode is Cozy.
+ */
+export const isCozyMode = (mode: GameMode): boolean => mode === 'cozy';
+
+/**
+ * Helper: Check if mode is Classic.
+ */
+export const isClassicMode = (mode: GameMode): boolean => mode === 'classic';
+
+/**
+ * Get mode config for a given mode.
+ */
+export function getModeConfig(mode: GameMode): ModeConfig {
+  return MODE_CONFIG[mode];
+}
+
+// ============================================================================
 // §4.5 Mood System (LOCKED)
 // ============================================================================
 

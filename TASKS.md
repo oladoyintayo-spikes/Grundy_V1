@@ -745,7 +745,7 @@ P8-TEST
 | ID | Task | Status | Scope | Notes |
 |----|------|--------|-------|-------|
 | P6-FTUE-INTRO | FTUE lore & intro from Bible | ✅ | FTUE, bible.constants.ts | Lore lines pulled from bible.constants.ts; "*you*" emphasis preserved |
-| P6-FTUE-MODES | Cozy vs Classic differentiation | ⬜ | Game logic | Actual gameplay differences per mode |
+| P6-FTUE-MODES | Cozy vs Classic differentiation | ✅ | Game logic, bible.constants.ts | MODE_CONFIG with decay/penalty multipliers; mood/penalty wiring; FTUE copy updated; 38 BCT-MODE tests |
 
 ### P6-DOC: Documentation
 

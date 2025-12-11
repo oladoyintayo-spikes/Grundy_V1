@@ -169,18 +169,19 @@ export interface ModeDescription {
   features: string[];
 }
 
+// P6-FTUE-MODES: Updated copy to accurately reflect MODE_CONFIG behavior
 export const MODE_DESCRIPTIONS: ModeDescription[] = [
   {
     id: 'cozy',
     name: 'Cozy Mode',
     emoji: '☁️',
-    tagline: 'No consequences. Just fun.',
-    description: 'Your Grundy is always happy to see you.',
+    tagline: 'Relax and enjoy.',
+    description: 'Slower mood decay, gentler penalties. Your Grundy stays happy longer!',
     features: [
-      'Pet never leaves',
-      'No penalties',
-      'Gentle reminders',
-      'Pure relaxation',
+      '50% slower mood decay',
+      'Gentler food penalties',
+      'No neglect or sickness',
+      'Welcome Back bonuses',
     ],
   },
   {
@@ -188,12 +189,12 @@ export const MODE_DESCRIPTIONS: ModeDescription[] = [
     name: 'Classic Mode',
     emoji: '🔥',
     tagline: 'Your care matters.',
-    description: 'Neglect has consequences... but bonds run deeper.',
+    description: 'Full challenge with normal decay. Neglect has consequences.',
     features: [
-      'Your care matters',
-      'Neglect → sadness → runaway',
-      'Evolution branches',
-      'Higher stakes, more reward',
+      'Normal mood decay',
+      'Full food penalties',
+      'Neglect & sickness systems',
+      'Care mistakes tracked',
     ],
   },
 ];
