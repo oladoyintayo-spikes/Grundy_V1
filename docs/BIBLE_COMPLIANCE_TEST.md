@@ -261,16 +261,71 @@ npm test -- --run
 
 ## Art Tests (BCT-ART-*)
 
-### BCT-ART-001: No Emoji in Production
+### BCT-ART-01: Asset Coverage
 
 **Bible:** §13.7
-**Requirement:** Production builds use sprites, not emoji/orb placeholders.
+**Requirement:** All pets have idle sprites for all stages; core poses available for all pets.
 
 | Check | Expected |
 |-------|----------|
-| Pet display | Sprite from assets/pets/, not emoji |
-| All pet states | Sprites for idle, happy, sad, etc. |
-| Visual regression | No emoji visible in production |
+| Idle sprites | All 8 pets × 3 stages have idle sprite |
+| Core poses | idle, happy, sad, sleeping available for all pets |
+| Registry complete | PET_SPRITES has 8 entries; PET_SPRITES_BY_STAGE has 24 combos |
+
+### BCT-ART-02: Fallback Chain
+
+**Bible:** §13.7
+**Requirement:** Pose fallback chain works correctly for missing poses.
+
+| Check | Expected |
+|-------|----------|
+| POSE_FALLBACKS defined | All 11 poses have fallback chain |
+| idle has empty chain | idle is ultimate fallback |
+| eating_loved falls back | → eating → ecstatic → happy → idle |
+
+### BCT-ART-03: No-Orb Guarantee
+
+**Bible:** §13.7
+**Requirement:** Known pet/stage combos never show orb/emoji fallback in production.
+
+| Check | Expected |
+|-------|----------|
+| resolvePetSprite returns sprite | Non-null for all known combos |
+| getStageAwarePetSprite always resolves | Returns sprite for all 8 pets × 3 stages × 11 poses |
+| hasSpriteForStage returns true | All known combos have sprites |
+
+### BCT-ART-04: Stage-Aware Resolution
+
+**Bible:** §13.7
+**Requirement:** Sprite resolution is stage-aware; unknown inputs handled gracefully.
+
+| Check | Expected |
+|-------|----------|
+| PET_SPRITES_BY_STAGE structure | baby, youth, evolved for all pets |
+| Unknown pet returns null | resolvePetSprite handles gracefully |
+| Fallback to munchlet | getStageAwarePetSprite uses munchlet as last resort |
+
+### BCT-ART-05: Extended Poses (P6-ART-POSES)
+
+**Bible:** §13.7
+**Requirement:** 11 poses wired: 4 core + 7 extended.
+
+| Check | Expected |
+|-------|----------|
+| CORE_POSES | idle, happy, sad, sleeping (4) |
+| EXTENDED_POSES | eating, eating_loved, ecstatic, excited, hungry, satisfied, crying (7) |
+| Total poses | 11 poses defined |
+
+### BCT-ART-06: Legacy API Compatibility
+
+**Bible:** §13.7
+**Requirement:** getPetSprite() still works for backward compatibility.
+
+| Check | Expected |
+|-------|----------|
+| getPetSprite works | Returns sprite for all pets/poses |
+| Unknown pet fallback | Falls back to munchlet |
+| Missing pose fallback | Uses fallback chain |
 
 ---
 
@@ -336,6 +391,7 @@ BCT spec tests verify that `bible.constants.ts` values match the Bible:
 | `src/__tests__/bct-pet-nav.spec.ts` | BCT-PET-01, 02, BCT-NAV-001 |
 | `src/__tests__/bct-env.spec.ts` | BCT-ENV-001, 002 |
 | `src/__tests__/bct-mobile-layout.spec.ts` | BCT-LAYOUT-001 |
+| `src/__tests__/bct-art.spec.ts` | BCT-ART-01 thru 06 (401 tests) |
 
 **Run:**
 

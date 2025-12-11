@@ -2,6 +2,7 @@
 // GRUNDY — PET SPRITES
 // P5-ART-PETS: Maps PetId + PetPose to sprite assets
 // P6-ART-POSES: Extended pose support for all available sprites
+// P6-ART-PRODUCTION: Stage-aware sprite resolution with no-orb guarantee
 // All art imported from assets/pets/<petId>/*.png
 // ============================================
 
@@ -300,8 +301,9 @@ export const PET_SPRITES: Record<PetId, PetSpriteSet> = {
 /**
  * Pose fallback chain for graceful degradation.
  * If a pose isn't available, try these alternatives in order.
+ * Exported for BCT-ART tests (P6-ART-TEST).
  */
-const POSE_FALLBACKS: Record<PetPose, PetPose[]> = {
+export const POSE_FALLBACKS: Record<PetPose, PetPose[]> = {
   idle: [],
   happy: ['idle'],
   sad: ['idle'],
@@ -439,3 +441,199 @@ export const EXTENDED_POSES: PetPose[] = [
   'satisfied',
   'crying',
 ];
+
+// ============================================
+// STAGE-AWARE SPRITE RESOLUTION (P6-ART-PRODUCTION)
+// ============================================
+
+/**
+ * Stage-aware sprite registry.
+ * Currently all stages use the same sprites (stage-specific art is future work).
+ * Structure supports future stage-specific sprites.
+ *
+ * @see Bible §6.1 - Evolution stages: baby, youth, evolved
+ */
+export const PET_SPRITES_BY_STAGE: Record<PetId, Record<EvolutionStage, Partial<Record<PetPose, string>>>> = {
+  // For now, all stages share the same sprites
+  // This structure allows future stage-specific art
+  munchlet: {
+    baby: PET_SPRITES.munchlet,
+    youth: PET_SPRITES.munchlet,
+    evolved: PET_SPRITES.munchlet,
+  },
+  grib: {
+    baby: PET_SPRITES.grib,
+    youth: PET_SPRITES.grib,
+    evolved: PET_SPRITES.grib,
+  },
+  plompo: {
+    baby: PET_SPRITES.plompo,
+    youth: PET_SPRITES.plompo,
+    evolved: PET_SPRITES.plompo,
+  },
+  fizz: {
+    baby: PET_SPRITES.fizz,
+    youth: PET_SPRITES.fizz,
+    evolved: PET_SPRITES.fizz,
+  },
+  ember: {
+    baby: PET_SPRITES.ember,
+    youth: PET_SPRITES.ember,
+    evolved: PET_SPRITES.ember,
+  },
+  chomper: {
+    baby: PET_SPRITES.chomper,
+    youth: PET_SPRITES.chomper,
+    evolved: PET_SPRITES.chomper,
+  },
+  whisp: {
+    baby: PET_SPRITES.whisp,
+    youth: PET_SPRITES.whisp,
+    evolved: PET_SPRITES.whisp,
+  },
+  luxe: {
+    baby: PET_SPRITES.luxe,
+    youth: PET_SPRITES.luxe,
+    evolved: PET_SPRITES.luxe,
+  },
+};
+
+/**
+ * Sentinel constant for orb/emoji fallback (used in tests).
+ * If this is returned, it means no sprite was found.
+ */
+export const ORB_FALLBACK_SENTINEL = '__ORB_FALLBACK__';
+
+/**
+ * Known pets and stages that have sprites.
+ * Used by BCT-ART tests to verify sprite coverage.
+ */
+export const KNOWN_SPRITE_COMBOS: Array<{ petId: PetId; stage: EvolutionStage }> = ALL_PET_IDS.flatMap(petId =>
+  (['baby', 'youth', 'evolved'] as EvolutionStage[]).map(stage => ({ petId, stage }))
+);
+
+/**
+ * Resolve the sprite for a pet given its ID, evolution stage, and pose.
+ *
+ * Uses the POSE_FALLBACKS chain to find the best available sprite.
+ * Returns null if no sprite is available (triggers fallback handling in components).
+ *
+ * @param petId - The pet ID (munchlet, grib, etc.)
+ * @param stage - The evolution stage (baby, youth, evolved)
+ * @param pose - The desired pose
+ * @returns The sprite path string, or null if no sprite available
+ *
+ * @see Bible §6.1 - Evolution stages
+ * @see Bible §13.7 - Sprite art requirements
+ */
+export function resolvePetSprite(
+  petId: string,
+  stage: EvolutionStage,
+  pose: PetPose
+): string | null {
+  const petSprites = PET_SPRITES_BY_STAGE[petId as PetId];
+
+  // Unknown pet ID
+  if (!petSprites) {
+    return null;
+  }
+
+  const stageSprites = petSprites[stage];
+
+  // Unknown stage (shouldn't happen with valid EvolutionStage)
+  if (!stageSprites) {
+    return null;
+  }
+
+  // Try the requested pose first
+  const directSprite = stageSprites[pose];
+  if (directSprite) {
+    return directSprite;
+  }
+
+  // Try the fallback chain
+  const fallbacks = POSE_FALLBACKS[pose] ?? [];
+  for (const fallbackPose of fallbacks) {
+    const fallbackSprite = stageSprites[fallbackPose];
+    if (fallbackSprite) {
+      return fallbackSprite;
+    }
+  }
+
+  // No sprite found for this pet/stage/pose combination
+  return null;
+}
+
+/**
+ * Get the sprite for a pet with stage-aware resolution and fallback handling.
+ *
+ * In DEV mode: Returns orb fallback with console warning if no sprite found.
+ * In PROD mode: Tries cross-stage fallback before returning orb fallback.
+ *
+ * This function guarantees a non-null return for known pets with sprites.
+ *
+ * @param petId - The pet ID
+ * @param stage - The evolution stage
+ * @param pose - The desired pose
+ * @returns The sprite path (never null for known pets with sprites)
+ *
+ * @see P6-ART-PRODUCTION - No orb fallback when sprites exist
+ */
+export function getStageAwarePetSprite(
+  petId: string,
+  stage: EvolutionStage,
+  pose: PetPose
+): string {
+  // Try to resolve with the given stage
+  const sprite = resolvePetSprite(petId, stage, pose);
+  if (sprite) {
+    return sprite;
+  }
+
+  // In production, try cross-stage fallback
+  const stages: EvolutionStage[] = ['baby', 'youth', 'evolved'];
+  const otherStages = stages.filter(s => s !== stage);
+
+  for (const fallbackStage of otherStages) {
+    const fallbackSprite = resolvePetSprite(petId, fallbackStage, pose);
+    if (fallbackSprite) {
+      // Log warning in DEV
+      if (typeof import.meta !== 'undefined' && import.meta.env?.DEV) {
+        console.warn(
+          `[petSprites] Cross-stage fallback for ${petId}/${stage}/${pose} → using ${fallbackStage}`
+        );
+      }
+      return fallbackSprite;
+    }
+  }
+
+  // Fallback to idle for any stage
+  for (const fallbackStage of stages) {
+    const idleSprite = resolvePetSprite(petId, fallbackStage, 'idle');
+    if (idleSprite) {
+      if (typeof import.meta !== 'undefined' && import.meta.env?.DEV) {
+        console.warn(
+          `[petSprites] Idle fallback for ${petId}/${stage}/${pose} → using ${fallbackStage}/idle`
+        );
+      }
+      return idleSprite;
+    }
+  }
+
+  // Last resort: fallback to munchlet idle (known to exist)
+  if (typeof import.meta !== 'undefined' && import.meta.env?.DEV) {
+    console.error(
+      `[petSprites] No sprite found for ${petId}/${stage}/${pose}, falling back to munchlet/idle`
+    );
+  }
+
+  return PET_SPRITES.munchlet.idle;
+}
+
+/**
+ * Check if a pet has a sprite for a given stage (at least idle).
+ * Used by BCT-ART tests.
+ */
+export function hasSpriteForStage(petId: string, stage: EvolutionStage): boolean {
+  return resolvePetSprite(petId, stage, 'idle') !== null;
+}

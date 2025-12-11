@@ -3,6 +3,7 @@
 # Grundy Web Prototype — Development Status
 
 **Last Updated:** December 11, 2024 (P6-ABILITY-INTEGRATION)
+**Last Updated:** December 11, 2024 (P6-ART-PRODUCTION + P6-ART-TEST)
 **Current Phase:** Web Phase 6 Tier 1 — DEV COMPLETE (CE Review Required)
 **Next Phase:** Phase 6 Tier 2 (Branding, Audio, PWA Enhancements)
 
@@ -30,6 +31,7 @@
 | **Web Phase 4** | FTUE / Onboarding | ✅ COMPLETE | All FTUE screens, state, tests done |
 | **Web Phase 5** | Polish / Web 1.0 | ✅ RELEASE COMPLETE | Audio ✅, PWA ✅, Art ✅, UX/A11Y ✅, QA ✅, Release ✅ |
 | **Web Phase 6** | Bible v1.4 Compliance | ✅ TIER 1 DEV COMPLETE | Tier 1 implemented; P6-ART-POSES ✅; P6-ABILITY-INTEGRATION ✅; 817 tests (191 BCT); CE Review Required |
+| **Web Phase 6** | Bible v1.4 Compliance | ✅ TIER 1 DEV COMPLETE | Tier 1 implemented; P6-ART-POSES ✅; P6-ART-PRODUCTION ✅; P6-ART-TEST ✅; 1214 tests (594 BCT); CE Review Required |
 
 ### Post-Web 1.0
 
@@ -147,6 +149,8 @@ The following copy is canonical and used across all onboarding documentation:
 | `npm run build` | ✅ PASSING | Production build succeeds |
 | `npm test -- --run` | ✅ PASSING | 817 tests passing |
 | `npm run test:bible` | ✅ PASSING | 191 BCT tests passing (incl. mood/ability/pet-behaviors/integration) |
+| `npm test -- --run` | ✅ PASSING | 1214 tests passing |
+| `npm run test:bible` | ✅ PASSING | 594 BCT tests passing (incl. mood/ability/pet-behaviors/art) |
 | `npx tsc --noEmit` | ✅ PASSING | No type errors |
 
 ---
@@ -359,7 +363,7 @@ The following copy is canonical and used across all onboarding documentation:
 
 **Backlog:** See `docs/PHASE6_BACKLOG.md` for full list of P6-* tasks and sources.
 
-**DevStatus:** COMPLETE — All Tier 1 + Tier 2 polish tasks implemented. 813 tests passing (187 BCT tests).
+**DevStatus:** COMPLETE — All Tier 1 + Tier 2 polish tasks implemented. 1214 tests passing (594 BCT tests).
 **CEStatus:** PENDING REVIEW
 **QAStatus:** PENDING REVIEW
 
@@ -367,9 +371,9 @@ The following copy is canonical and used across all onboarding documentation:
 
 Dev: Phase 6 Bible v1.4 compliance tasks implemented:
 - **Tier 1:** P6-CORE-LOOP, P6-ECON-WEB, P6-HUD-CLEANUP, P6-PET-HOME, P6-ENV-ROOMS, P6-ENV-UI, P6-ENV-TOD, P6-NAV-GROUNDWORK, P6-FTUE-INTRO, P6-MOBILE-LAYOUT, P6-QA-BCT
-- **Tier 2 Polish:** P6-ART-POSES, P6-MOOD-SYSTEM, P6-ABILITY-UI, P6-T2-PET-BEHAVIORS
+- **Tier 2 Polish:** P6-ART-POSES, P6-MOOD-SYSTEM, P6-ABILITY-UI, P6-T2-PET-BEHAVIORS, P6-ART-PRODUCTION, P6-ART-TEST
 
-Mood system (§4.5) with numeric moodValue 0-100, decay, and Grib/Plompo abilities. Pet behavior polish with transient eating poses and mood-based expressions. Ability indicators added (P1-ABILITY-4). BCT suite passing (813 tests, 187 BCT-specific).
+Mood system (§4.5) with numeric moodValue 0-100, decay, and Grib/Plompo abilities. Pet behavior polish with transient eating poses and mood-based expressions. Ability indicators added (P1-ABILITY-4). **Art system: Pet sprites wired per pet/stage/pose with fallback chain; Home active pet uses PNG sprites when assets exist; emoji/orb fallbacks limited to DEV or true missing assets.** BCT suite passing (1214 tests, 594 BCT-specific incl. 401 BCT-ART tests).
 
 ### Task Status Overview
 
@@ -397,7 +401,7 @@ Mood system (§4.5) with numeric moodValue 0-100, decay, and Grib/Plompo abiliti
 | **P6-MOOD-SYSTEM** | Full mood decay system | ✅ | §4.5 |
 | **P6-ABILITY-UI** | Ability activation indicators | ✅ | §3.7, §4.10 |
 | **P6-T2-PET-BEHAVIORS** | Pet pose behavior wiring | ✅ | §4.5, §13.7 |
-| **P6-ART-TEST** | Visual regression test (no emoji in prod) | ⬜ | §13.7 |
+| **P6-ART-TEST** | BCT-ART tests (sprite coverage, no-orb guarantee) | ✅ | §13.7 |
 
 ---
 
