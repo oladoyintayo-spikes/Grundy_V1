@@ -1,8 +1,53 @@
 // ============================================
 // GRUNDY — SERVICE WORKER REGISTRATION
 // Registers service worker for PWA functionality
-// P5-PWA-CORE
+// P5-PWA-CORE, P6-PWA-UPDATE
 // ============================================
+
+// P6-PWA-UPDATE: Store the waiting service worker for later activation
+let waitingServiceWorker: ServiceWorker | null = null;
+let updateCallbacks: Array<() => void> = [];
+
+/**
+ * P6-PWA-UPDATE: Subscribe to update notifications.
+ * Returns an unsubscribe function.
+ */
+export function onServiceWorkerUpdate(callback: () => void): () => void {
+  updateCallbacks.push(callback);
+
+  // If we already have a waiting worker, notify immediately
+  if (waitingServiceWorker) {
+    callback();
+  }
+
+  // Return unsubscribe function
+  return () => {
+    updateCallbacks = updateCallbacks.filter(cb => cb !== callback);
+  };
+}
+
+/**
+ * P6-PWA-UPDATE: Check if an update is available.
+ */
+export function hasServiceWorkerUpdate(): boolean {
+  return waitingServiceWorker !== null;
+}
+
+/**
+ * P6-PWA-UPDATE: Apply the waiting update and reload the page.
+ */
+export function applyServiceWorkerUpdate(): void {
+  if (!waitingServiceWorker) {
+    console.log('[SW] No update to apply');
+    return;
+  }
+
+  // Tell the waiting SW to skip waiting and become active
+  waitingServiceWorker.postMessage({ type: 'SKIP_WAITING' });
+
+  // Reload the page to use the new SW
+  // The controllerchange event will trigger the reload
+}
 
 /**
  * Registers the service worker if supported
@@ -27,6 +72,13 @@ export function registerServiceWorker(): void {
       .then((registration) => {
         console.log('[SW] Registered successfully:', registration.scope);
 
+        // P6-PWA-UPDATE: Check if there's already a waiting worker
+        if (registration.waiting) {
+          waitingServiceWorker = registration.waiting;
+          console.log('[SW] Update already waiting');
+          updateCallbacks.forEach(cb => cb());
+        }
+
         // Check for updates periodically
         registration.addEventListener('updatefound', () => {
           const newWorker = registration.installing;
@@ -36,7 +88,9 @@ export function registerServiceWorker(): void {
               if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
                 // New service worker is installed, but waiting
                 console.log('[SW] New version available');
-                // Could dispatch event here for UI notification
+                waitingServiceWorker = newWorker;
+                // P6-PWA-UPDATE: Notify all subscribers
+                updateCallbacks.forEach(cb => cb());
               }
             });
           }
@@ -46,6 +100,12 @@ export function registerServiceWorker(): void {
         // Fail silently - PWA is optional enhancement
         console.warn('[SW] Registration failed (non-blocking):', error);
       });
+  });
+
+  // P6-PWA-UPDATE: Reload when the new SW takes control
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    console.log('[SW] Controller changed, reloading...');
+    window.location.reload();
   });
 }
 

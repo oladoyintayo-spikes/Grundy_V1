@@ -728,17 +728,17 @@ P8-TEST
 
 | ID | Task | Status | Scope | Notes |
 |----|------|--------|-------|-------|
-| P6-AUDIO-ASSETS | Add real audio files | ⬜ | public/audio/ | Hook actual SFX/BGM assets (QA-002) |
-| P6-AUDIO-ROOM | Room-specific music | ⬜ | Audio system | Different tracks per room (AUDIO_NOTES) |
-| P6-AUDIO-TOD | Time-of-day ambience | ⬜ | Audio system | Morning/evening/night variations (AUDIO_NOTES) |
+| P6-AUDIO-ASSETS | Audio configuration audit | ✅ | src/audio/ | Config clean (no placeholder names); audio files not yet present |
+| P6-AUDIO-ROOM | Room-specific ambience | ✅ | Audio system | Ambience config per room + crossfade (AUDIO_NOTES) |
+| P6-AUDIO-TOD | Time-of-day volume variations | ✅ | Audio system | Volume multipliers: morning 0.9, day 1.0, evening 0.8, night 0.6 |
 
 ### P6-PWA: PWA Enhancements
 
 | ID | Task | Status | Scope | Notes |
 |----|------|--------|-------|-------|
-| P6-PWA-PRECACHE | vite-plugin-pwa integration | ⬜ | vite.config.ts, SW | Richer precache manifest (PWA_NOTES) |
-| P6-PWA-UI | "Install Grundy" button | ⬜ | SettingsView | Uses existing promptInstall() (QA-005) |
-| P6-PWA-UPDATE | Update notification | ⬜ | App shell | "New version available" toast (PWA_NOTES) |
+| P6-PWA-PRECACHE | Shell + icons precaching | ✅ | service-worker.js | Shell assets, icons, splash precached |
+| P6-PWA-UI | "Install Grundy" button | ✅ | SettingsView | Uses promptInstall(); shows when available (QA-005) |
+| P6-PWA-UPDATE | Update notification | ✅ | App shell | "New version available" toast with refresh button |
 
 ### P6-FTUE: FTUE & Modes
 

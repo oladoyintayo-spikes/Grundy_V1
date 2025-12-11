@@ -1,7 +1,7 @@
 // ============================================
 // GRUNDY — PWA CONFIG TESTS
 // Tests for PWA manifest, service worker, and install prompt
-// P5-PWA-CORE, P5-PWA-SHELL, P5-PWA-DOC
+// P5-PWA-CORE, P5-PWA-SHELL, P5-PWA-DOC, P6-PWA-UPDATE
 // ============================================
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
@@ -21,6 +21,9 @@ import {
   registerServiceWorker,
   unregisterServiceWorker,
   isServiceWorkerActive,
+  onServiceWorkerUpdate,
+  hasServiceWorkerUpdate,
+  applyServiceWorkerUpdate,
 } from '../pwa/serviceWorker';
 
 describe('PWA Manifest', () => {
@@ -171,6 +174,19 @@ describe('PWA Module Exports', () => {
     it('exports isServiceWorkerActive function', () => {
       expect(typeof isServiceWorkerActive).toBe('function');
     });
+
+    // P6-PWA-UPDATE: New exports for SW update handling
+    it('exports onServiceWorkerUpdate function', () => {
+      expect(typeof onServiceWorkerUpdate).toBe('function');
+    });
+
+    it('exports hasServiceWorkerUpdate function', () => {
+      expect(typeof hasServiceWorkerUpdate).toBe('function');
+    });
+
+    it('exports applyServiceWorkerUpdate function', () => {
+      expect(typeof applyServiceWorkerUpdate).toBe('function');
+    });
   });
 });
 
@@ -217,6 +233,24 @@ describe('Service Worker Registration', () => {
     const result = await unregisterServiceWorker();
     expect(result).toBe(false);
   });
+
+  // P6-PWA-UPDATE: Tests for SW update handling
+  it('hasServiceWorkerUpdate returns false initially', () => {
+    // No update available initially
+    expect(hasServiceWorkerUpdate()).toBe(false);
+  });
+
+  it('onServiceWorkerUpdate returns unsubscribe function', () => {
+    const callback = vi.fn();
+    const unsubscribe = onServiceWorkerUpdate(callback);
+    expect(typeof unsubscribe).toBe('function');
+    // Clean up
+    unsubscribe();
+  });
+
+  it('applyServiceWorkerUpdate does not throw when no update available', () => {
+    expect(() => applyServiceWorkerUpdate()).not.toThrow();
+  });
 });
 
 describe('Icon Files', () => {
@@ -227,12 +261,12 @@ describe('Icon Files', () => {
   });
 
   it('192x192 icon file exists', () => {
-    const iconPath = path.join(iconsDir, 'grundy-192.png');
+    const iconPath = path.join(iconsDir, 'icon-192.png');
     expect(fs.existsSync(iconPath)).toBe(true);
   });
 
   it('512x512 icon file exists', () => {
-    const iconPath = path.join(iconsDir, 'grundy-512.png');
+    const iconPath = path.join(iconsDir, 'icon-512.png');
     expect(fs.existsSync(iconPath)).toBe(true);
   });
 });

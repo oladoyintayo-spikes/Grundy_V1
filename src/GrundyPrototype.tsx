@@ -18,7 +18,16 @@ import { RhythmTap } from './components/games/RhythmTap';
 import { Pips } from './components/games/Pips';
 import { PoopScoop } from './components/games/PoopScoop';
 import { FtueFlow } from './ftue/FtueFlow';
-import { playPetHappy, playLevelUp, startBackgroundMusic, stopBackgroundMusic, audioManager } from './audio/audioManager';
+import {
+  playPetHappy,
+  playLevelUp,
+  startBackgroundMusic,
+  stopBackgroundMusic,
+  audioManager,
+  startRoomAmbience,
+  stopRoomAmbience,
+  updateTimeOfDay,
+} from './audio/audioManager';
 // P5-ART-PETS + P5-ART-ROOMS imports
 import { PetDisplay } from './components/pet/PetAvatar';
 import { RoomScene } from './components/environment/RoomScene';
@@ -27,6 +36,9 @@ import { getDefaultPoseForState, getPoseForReaction } from './game/petVisuals';
 import { isStuffed, isOnCooldown, getFullnessState, getCooldownRemaining } from './game/systems';
 // P1-ABILITY-4: Ability indicator component
 import { AbilityIndicator } from './components/abilities/AbilityIndicator';
+// P6-PWA-UI, P6-PWA-UPDATE imports
+import { canInstall, promptInstall, isInstalled } from './pwa/installPrompt';
+import { onServiceWorkerUpdate, hasServiceWorkerUpdate, applyServiceWorkerUpdate } from './pwa/serviceWorker';
 
 // ============================================
 // SHARED COMPONENTS
@@ -582,6 +594,7 @@ function GamesView() {
 // VIEW: SETTINGS
 // Bible §14.5: Pet switching via Settings with confirmation
 // P6-NAV-GROUNDWORK: Added data-testid="settings-view" for BCT coverage
+// P6-PWA-UI: Added Install CTA section
 // ============================================
 function SettingsView() {
   const settings = useGameStore((state) => state.settings);
@@ -594,6 +607,29 @@ function SettingsView() {
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [showPetSelector, setShowPetSelector] = useState(false);
   const [pendingPetSwitch, setPendingPetSwitch] = useState<string | null>(null);
+
+  // P6-PWA-UI: Install state
+  const [installAvailable, setInstallAvailable] = useState(canInstall());
+  const [appInstalled, setAppInstalled] = useState(isInstalled());
+
+  // P6-PWA-UI: Check install availability periodically (beforeinstallprompt may fire late)
+  useEffect(() => {
+    const checkInterval = setInterval(() => {
+      setInstallAvailable(canInstall());
+      setAppInstalled(isInstalled());
+    }, 1000);
+
+    return () => clearInterval(checkInterval);
+  }, []);
+
+  // P6-PWA-UI: Handle install button click
+  const handleInstall = async () => {
+    const result = await promptInstall();
+    if (result === 'accepted') {
+      setAppInstalled(true);
+      setInstallAvailable(false);
+    }
+  };
 
   // Get current pet data
   const currentPetData = getPetById(pet.id);
@@ -751,6 +787,32 @@ function SettingsView() {
           </div>
         )}
 
+        {/* P6-PWA-UI: Install Grundy Section */}
+        {(installAvailable || appInstalled) && (
+          <div className="bg-slate-800/50 rounded-xl p-4" data-testid="install-section">
+            <h3 className="text-sm font-medium text-slate-300 mb-3">Install Grundy</h3>
+            {appInstalled ? (
+              <div className="flex items-center gap-3 text-green-400">
+                <span className="text-xl">✓</span>
+                <span className="text-sm">Grundy is installed on this device</span>
+              </div>
+            ) : (
+              <div>
+                <p className="text-xs text-slate-400 mb-3">
+                  Install Grundy on your device for quick access and offline play.
+                </p>
+                <button
+                  onClick={handleInstall}
+                  className="w-full py-2 px-4 bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition-colors font-medium"
+                  data-testid="install-button"
+                >
+                  Install on this device
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Danger Zone */}
         <div className="bg-red-900/20 border border-red-500/30 rounded-xl p-4">
           <h3 className="text-sm font-medium text-red-400 mb-3">Danger Zone</h3>
@@ -811,6 +873,7 @@ export default function GrundyPrototype() {
 
 // ============================================
 // MAIN APP (Post-FTUE)
+// P6-PWA-UPDATE: Added SW update toast
 // ============================================
 function MainApp() {
   // Navigation state
@@ -830,6 +893,28 @@ function MainApp() {
   const environment = useGameStore((state) => state.environment);
   const syncEnvironmentWithView = useGameStore((state) => state.syncEnvironmentWithView);
   const refreshTimeOfDay = useGameStore((state) => state.refreshTimeOfDay);
+
+  // P6-PWA-UPDATE: SW update state
+  const [showUpdateToast, setShowUpdateToast] = useState(hasServiceWorkerUpdate());
+
+  // P6-PWA-UPDATE: Subscribe to SW update notifications
+  useEffect(() => {
+    const unsubscribe = onServiceWorkerUpdate(() => {
+      setShowUpdateToast(true);
+    });
+    return unsubscribe;
+  }, []);
+
+  // P6-PWA-UPDATE: Handle update button click
+  const handleApplyUpdate = useCallback(() => {
+    applyServiceWorkerUpdate();
+    // The page will reload automatically when the new SW takes control
+  }, []);
+
+  // P6-PWA-UPDATE: Handle dismiss toast
+  const handleDismissUpdate = useCallback(() => {
+    setShowUpdateToast(false);
+  }, []);
 
   // Initialize audio manager with stored settings and start background music (P5-AUDIO)
   useEffect(() => {
@@ -876,6 +961,32 @@ function MainApp() {
 
     return () => clearInterval(interval);
   }, [refreshTimeOfDay]);
+
+  // P6-AUDIO-ROOM: Start room ambience when room changes
+  useEffect(() => {
+    if (musicEnabled) {
+      startRoomAmbience(environment.room);
+    }
+    // Cleanup: stop ambience when component unmounts
+    return () => {
+      stopRoomAmbience();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [environment.room]);
+
+  // P6-AUDIO-ROOM: Handle music enabled/disabled for ambience
+  useEffect(() => {
+    if (musicEnabled) {
+      startRoomAmbience(environment.room);
+    } else {
+      stopRoomAmbience();
+    }
+  }, [musicEnabled, environment.room]);
+
+  // P6-AUDIO-TOD: Update audio manager when time-of-day changes
+  useEffect(() => {
+    updateTimeOfDay(environment.timeOfDay);
+  }, [environment.timeOfDay]);
 
   // Get background class based on environment
   const bgClass = getBackgroundClass(environment.timeOfDay, environment.room);
@@ -932,6 +1043,46 @@ function MainApp() {
 
       {/* P1-ABILITY-4: Ability trigger indicators (global overlay) */}
       <AbilityIndicator />
+
+      {/* P6-PWA-UPDATE: New version available toast */}
+      {showUpdateToast && (
+        <div
+          className="fixed bottom-20 left-4 right-4 bg-slate-800 border border-purple-500/50 rounded-xl p-4 shadow-lg z-50 animate-slide-up"
+          data-testid="update-toast"
+        >
+          <div className="flex items-start gap-3">
+            <span className="text-xl">✨</span>
+            <div className="flex-1">
+              <p className="font-medium text-slate-100">New version available</p>
+              <p className="text-xs text-slate-400 mt-1">
+                A new version of Grundy is ready. Refresh to get the latest features.
+              </p>
+            </div>
+            <button
+              onClick={handleDismissUpdate}
+              className="text-slate-400 hover:text-slate-200 p-1"
+              aria-label="Dismiss"
+            >
+              ✕
+            </button>
+          </div>
+          <div className="flex gap-2 mt-3">
+            <button
+              onClick={handleDismissUpdate}
+              className="flex-1 py-2 px-3 text-sm bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors"
+            >
+              Later
+            </button>
+            <button
+              onClick={handleApplyUpdate}
+              className="flex-1 py-2 px-3 text-sm bg-purple-500 hover:bg-purple-600 font-medium rounded-lg transition-colors"
+              data-testid="update-refresh-button"
+            >
+              Refresh now
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
