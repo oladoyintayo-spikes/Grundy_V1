@@ -249,14 +249,14 @@ describe('pet visuals helpers', () => {
       expect(pose).toBe('sleeping');
     });
 
-    it('returns sad when very hungry (hunger < 20)', () => {
+    it('returns hungry when very hungry (hunger < 21, HUNGRY state)', () => {
       const pose = getDefaultPoseForState({ mood: 'happy', hunger: 15 });
-      expect(pose).toBe('sad');
+      expect(pose).toBe('hungry');
     });
 
-    it('returns happy when mood is ecstatic', () => {
+    it('returns ecstatic when mood is ecstatic (P6-ART-POSES)', () => {
       const pose = getDefaultPoseForState({ mood: 'ecstatic', hunger: 50 });
-      expect(pose).toBe('happy');
+      expect(pose).toBe('ecstatic');
     });
 
     it('returns happy when mood is happy and hunger > 50', () => {
@@ -294,8 +294,12 @@ describe('pet visuals helpers', () => {
   });
 
   describe('getPoseForReaction', () => {
-    it('returns happy for ecstatic reaction', () => {
-      expect(getPoseForReaction('ecstatic')).toBe('happy');
+    it('returns ecstatic for ecstatic reaction (P6-ART-POSES)', () => {
+      expect(getPoseForReaction('ecstatic')).toBe('ecstatic');
+    });
+
+    it('returns eating_loved for ecstatic reaction when isLoved=true', () => {
+      expect(getPoseForReaction('ecstatic', true)).toBe('eating_loved');
     });
 
     it('returns happy for positive reaction', () => {
@@ -312,12 +316,16 @@ describe('pet visuals helpers', () => {
   });
 
   describe('getHeaderPose', () => {
-    it('returns sad when very hungry', () => {
-      expect(getHeaderPose('happy', 20)).toBe('sad');
+    it('returns hungry when very hungry (< 21, HUNGRY state)', () => {
+      expect(getHeaderPose('happy', 20)).toBe('hungry');
     });
 
-    it('returns happy for ecstatic mood', () => {
-      expect(getHeaderPose('ecstatic', 50)).toBe('happy');
+    it('returns satisfied when stuffed (>= 91)', () => {
+      expect(getHeaderPose('neutral', 95)).toBe('satisfied');
+    });
+
+    it('returns ecstatic for ecstatic mood (P6-ART-POSES)', () => {
+      expect(getHeaderPose('ecstatic', 50)).toBe('ecstatic');
     });
 
     it('returns happy for happy mood', () => {

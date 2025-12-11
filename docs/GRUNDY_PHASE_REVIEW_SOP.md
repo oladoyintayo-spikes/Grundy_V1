@@ -137,12 +137,13 @@ Each phase/patch has three status fields:
 - [ ] Build succeeds (`npm run build`)
 - [ ] No TypeScript errors
 - [ ] Code matches Bible specification
-- [ ] Relevant BCT tests pass locally
+- [ ] Relevant BCT tests pass locally (`npm run test:bible`)
 
 #### CE Checklist (Before APPROVED)
 
 - [ ] Dev work matches Bible v1.4 requirements
-- [ ] Run `docs/BIBLE_COMPLIANCE_TEST.md` tests for this phase
+- [ ] BCT spec tests pass (`npm run test:bible`)
+- [ ] BCT E2E tests pass (`npm run test:bible:e2e`)
 - [ ] No regressions from previous phases
 - [ ] Code quality acceptable
 - [ ] Documentation updated (if applicable)
@@ -150,7 +151,7 @@ Each phase/patch has three status fields:
 #### QA Checklist (Before APPROVED)
 
 - [ ] Functional testing complete
-- [ ] All BCT tests pass in test environment
+- [ ] All BCT tests pass in test environment (`npm run test:bible` + `npm run test:bible:e2e`)
 - [ ] No S1/S2 issues found
 - [ ] User experience acceptable
 - [ ] Edge cases tested
