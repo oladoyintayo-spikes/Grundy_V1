@@ -94,7 +94,7 @@ Web Edition 1.0.0 is locked and released. This backlog consolidates all non-bloc
 
 | ID | Task | Status | Source | Notes |
 |----|------|--------|--------|-------|
-| P6-DOC-BIBLE | Bible alignment audit | ⬜ | General | Ensure all sections match Web 1.0 reality |
+| P6-DOC-BIBLE | Bible v1.4 merge | ✅ | General | Merged v1.4 amendments: cooldown/fullness rules, no-gems-from-mini-games, HUD rules, nav/mobile constraints, Rooms Lite notes, FTUE/art clarifications |
 | P6-DOC-ROADMAP | Roadmap update | ⬜ | General | Phase 6+ roadmap with Web 1.0 as baseline |
 
 ---

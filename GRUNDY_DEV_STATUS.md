@@ -2,7 +2,7 @@
 
 # Grundy Web Prototype — Development Status
 
-**Last Updated:** December 10, 2024 (CE-P6-BACKLOG)
+**Last Updated:** December 11, 2024 (P6-DOC-BIBLE)
 **Current Phase:** Web Edition 1.0.0 — COMPLETE
 **Next Phase:** Phase 6 Optimizations & Enhancements
 
@@ -355,7 +355,22 @@ The following copy is canonical and used across all onboarding documentation:
 
 **Backlog:** See `docs/PHASE6_BACKLOG.md` for full list of P6-* tasks and sources.
 
-**Status:** Planning complete; no P6 tasks implemented yet.
+**Status:** In progress — Bible v1.4 merged, planning complete.
+
+### Documentation Complete (P6-DOC-BIBLE)
+
+**Bible v1.4 merged (December 2024):**
+- Platform & Phase Tags (§1.6) — [Web 1.0], [Web Phase 6+], [Unity Later], [Future]
+- Cooldown/Fullness rules (§4.3-4.4) — 30-min cooldown spec, STUFFED blocks feeding
+- Dev HUD exception (§4.4) — Debug stats only in dev builds
+- Evolution thresholds locked (§6.1) — Youth=10, Evolved=25 final
+- NO GEMS from mini-games (§8.3) — Locked invariant
+- Navigation structure (§14.5) — Menu-based pet selection design
+- Mobile layout constraints (§14.6) — Viewport rules for one-handed play
+- Rooms Lite platform note (§14.4) — Web 1.0 = time-of-day only
+- FTUE fallback (§7.4) — Minimum acceptable behavior spec
+- Production art rule (§13.7) — Emoji/orb are placeholders only
+- Updated prototype gaps (§15.6) — Web 1.0 status + Phase 6 priorities
 
 ### Themes
 
@@ -366,7 +381,7 @@ The following copy is canonical and used across all onboarding documentation:
 | Environment UX | P6-ENV-UI, P6-MOOD-SYSTEM | QA-003 |
 | PWA Enhancements | P6-PWA-PRECACHE, P6-PWA-UI, P6-PWA-UPDATE | QA-005, PWA_NOTES |
 | FTUE & Modes | P6-FTUE-MODES | General |
-| Documentation | P6-DOC-BIBLE, P6-DOC-ROADMAP | General |
+| Documentation | ~~P6-DOC-BIBLE~~ ✅, P6-DOC-ROADMAP | General |
 
 ### Priority Items
 
