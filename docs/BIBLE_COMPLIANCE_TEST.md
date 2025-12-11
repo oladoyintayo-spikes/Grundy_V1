@@ -1,7 +1,7 @@
 # Grundy — Bible Compliance Test (BCT)
 
-**Version:** 1.0
-**Last Updated:** December 11, 2024 (CE-SOP-REFINE)
+**Version:** 2.0
+**Last Updated:** December 11, 2024 (P6-BCT-INTEGRATE)
 **Bible Reference:** `docs/GRUNDY_MASTER_BIBLE.md` v1.4
 
 ---
@@ -281,6 +281,70 @@ All tests reference specific Bible sections. Passing these tests means the imple
 | Silver | 5-7 | 5 | 40% common | NEVER |
 | Gold | 8-15 | 8 | 75% any | NEVER |
 | Rainbow | 12-22 | 12 | Rare guaranteed | NEVER |
+
+---
+
+## Automated Test Implementation
+
+### Constants (Single Source of Truth)
+
+All Bible-locked values are defined in a single constants file:
+
+```
+src/constants/bible.constants.ts
+```
+
+This file exports:
+- Evolution thresholds (§6.1)
+- Fullness states and cooldown values (§4.3-4.4)
+- Mini-game rules and reward tiers (§8.2-8.3)
+- Gem source definitions with platform flags
+- FTUE locked copy (§7.4)
+- Room activity mappings (§14.4)
+- UI test IDs for E2E testing
+
+**Both runtime code and tests import from this file.**
+
+### Spec Tests (Unit/Integration)
+
+BCT spec tests verify that `bible.constants.ts` values match the Bible:
+
+| File | Tests |
+|------|-------|
+| `src/__tests__/bct-evolution.spec.ts` | BCT-EVO-01 |
+| `src/__tests__/bct-core-loop.spec.ts` | BCT-FEED-01, 02, 03 |
+| `src/__tests__/bct-economy.spec.ts` | BCT-ECON-01, 02, BCT-GAME-01, 02, 03 |
+| `src/__tests__/bct-environments.spec.ts` | BCT-ROOMS-01, 02, 03, BCT-FTUE-01, 02 |
+
+**Run:** `npm test -- run src/__tests__/bct-*.spec.ts`
+
+### E2E Tests (Playwright)
+
+E2E tests verify the running application matches Bible spec:
+
+```
+e2e/bible-compliance.e2e.ts
+```
+
+Tests verify:
+- BCT-HUD-01: Bond visible, debug hidden
+- BCT-NAV-01: Navigation accessible
+- BCT-PET-01: Single active pet
+- BCT-MOBILE-01: No scroll required
+- BCT-CURRENCY-01: Currency display
+
+**Run:** `npx playwright test e2e/bible-compliance.e2e.ts`
+
+### Test Coverage by Bible Section
+
+| Bible Section | Spec Tests | E2E Tests |
+|--------------|------------|-----------|
+| §4.3-4.4 (Feeding/Cooldown) | ✅ bct-core-loop.spec.ts | — |
+| §6.1 (Evolution) | ✅ bct-evolution.spec.ts | — |
+| §7.4 (FTUE) | ✅ bct-environments.spec.ts | ⏳ (skipped) |
+| §8.2-8.3 (Mini-games) | ✅ bct-economy.spec.ts | — |
+| §14.4 (Rooms) | ✅ bct-environments.spec.ts | — |
+| §14.5-14.6 (Navigation/Layout) | — | ✅ bible-compliance.e2e.ts |
 
 ---
 
