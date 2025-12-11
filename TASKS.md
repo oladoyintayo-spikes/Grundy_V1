@@ -374,16 +374,32 @@ P1-CORE-4, P1-DOC-1,2 ── Can run in parallel
 
 > Bible Section 9 — Full neglect system.
 
+### P7-NEGLECT-SYSTEM ✅
+
+> Bible §9.4.3 — Neglect & Withdrawal System (Classic Mode Only)
+>
+> **Status:** COMPLETE — Per-pet neglect tracking, 5-stage ladder, calendar-day semantics, offline cap, recovery paths, and UI indicators implemented.
+
+| ID | Task | Status | Bible | Notes |
+|----|------|--------|-------|-------|
+| P7-NEGLECT-1 | NEGLECT_CONFIG | ✅ | §9.4.3 | Stage thresholds, recovery costs, offline cap |
+| P7-NEGLECT-2 | NeglectState type | ✅ | §9.4.3 | Per-pet tracking with all fields |
+| P7-NEGLECT-3 | Store slice | ✅ | §9.4.3 | updateNeglectOnLogin, registerCareEvent, recovery actions |
+| P7-NEGLECT-4 | BCT-NEGLECT tests | ✅ | BCT | 49 tests covering all 23 BCT specs |
+| P7-NEGLECT-5 | UI indicators | ✅ | §9.4.3 | NeglectBadge, RunawayScreen, WithdrawalRecoveryPanel |
+
+### P7 Remaining Tasks
+
 | ID | Task | Status | Bible | Acceptance Criteria |
 |----|------|--------|-------|---------------------|
-| P7-1 | Implement sickness trigger | ⬜ | 9.4 | Hunger=0 4h OR overweight/dirty |
-| P7-2 | Implement sick state | ⬜ | 9.4 | 2× decay, can't play games |
-| P7-3 | Implement medicine | ⬜ | 9.4 | Instant cure |
+| P7-1 | Implement sickness trigger | ⬜ | 9.4.2 | Hunger=0 4h OR overweight/dirty |
+| P7-2 | Implement sick state | ⬜ | 9.4.2 | 2× decay, can't play games |
+| P7-3 | Implement medicine | ⬜ | 9.4.2 | Instant cure |
 | P7-4 | Implement weight system | ⬜ | 5.7 | Hidden 0-100, visual stages |
-| P7-5 | Implement neglect warnings | ⬜ | 9.4 | 4-stage warning |
-| P7-6 | Implement runaway | ⬜ | 9.4 | Pet leaves after neglect |
-| P7-7 | Implement return options | ⬜ | 9.4 | 48h wait OR 25 gems, bond -50% |
-| P7-8 | Hide care items in Cozy | ⬜ | 9.4 | Medicine not visible |
+| P7-5 | Implement neglect warnings | ✅ | 9.4.3 | 5-stage warning (P7-NEGLECT-SYSTEM) |
+| P7-6 | Implement runaway | ✅ | 9.4.3 | Pet leaves after Day 14 neglect |
+| P7-7 | Implement return options | ✅ | 9.4.3 | 72h wait OR 24h+25 gems, bond -50% |
+| P7-8 | Hide care items in Cozy | ⬜ | 9.4 | Medicine not visible in Cozy mode |
 
 ---
 

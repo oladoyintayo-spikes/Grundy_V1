@@ -2,9 +2,9 @@
 
 # Grundy Web Prototype — Development Status
 
-**Last Updated:** December 11, 2024 (Phase 6 Audio & PWA Enhancements)
-**Current Phase:** Web Phase 6 Tier 2 — DEV COMPLETE (CE Review Required)
-**Next Phase:** Phase 7 (Classic Mode / Neglect System Runtime)
+**Last Updated:** December 11, 2024 (Phase 7 Neglect System)
+**Current Phase:** Web Phase 7 — P7-NEGLECT-SYSTEM DEV COMPLETE
+**Next Phase:** Phase 7 continued (Sickness System / Weight System)
 
 ---
 
@@ -33,6 +33,7 @@
 | **Web Phase 6** | Bible v1.4 Compliance | ✅ TIER 1 DEV COMPLETE | Tier 1 implemented; P6-ART-POSES ✅; P6-ABILITY-INTEGRATION ✅; 817 tests (191 BCT); CE Review Required |
 | **Web Phase 6** | Bible v1.4 Compliance | ✅ TIER 1 DEV COMPLETE | Tier 1 implemented; P6-ART-POSES ✅; P6-ART-PRODUCTION ✅; P6-ART-TEST ✅; 1214 tests (594 BCT); CE Review Required |
 | **Web Phase 6** | Tier 2 Polish | ✅ TIER 2 DEV COMPLETE | P6-AUDIO-ROOM ✅; P6-AUDIO-TOD ✅; P6-PWA-PRECACHE ✅; P6-PWA-UI ✅; P6-PWA-UPDATE ✅; 1224 tests; CE Review Required |
+| **Web Phase 7** | Classic Mode | 🟡 P7-NEGLECT ✅ | Neglect & Withdrawal runtime ✅; 49 BCT-NEGLECT tests; Sickness ⬜; Weight ⬜ |
 
 ### Post-Web 1.0
 
@@ -43,7 +44,7 @@
 | Shop & Economy | ⬜ NOT STARTED | Shop tabs, gem confirm, milestones |
 | Inventory | ⬜ NOT STARTED | Capacity, expansion items |
 | Pet Slots | ⬜ NOT STARTED | Multi-pet care system |
-| Classic Mode | 📋 SPEC COMPLETE | Bible v1.5 §9.4.3 Neglect & Withdrawal System defined; runtime implementation Phase 7 |
+| Classic Mode | 🟡 PARTIAL | Neglect & Withdrawal ✅ (P7-NEGLECT-SYSTEM); Sickness ⬜; Weight ⬜ |
 
 ---
 
@@ -384,7 +385,7 @@ Dev: Phase 6 Bible v1.5 compliance tasks implemented:
 - **Audio & PWA:** P6-AUDIO-ASSETS, P6-AUDIO-ROOM, P6-AUDIO-TOD, P6-PWA-PRECACHE, P6-PWA-UI, P6-PWA-UPDATE
 - **FTUE Modes:** P6-FTUE-MODES — Cozy vs Classic divergence with MODE_CONFIG, decay/penalty multipliers, 38 BCT-MODE tests
 
-Mood system (§4.5) with numeric moodValue 0-100, decay, and Grib/Plompo abilities. Pet behavior polish with transient eating poses and mood-based expressions. Ability indicators added (P1-ABILITY-4). **Art system: Pet sprites wired per pet/stage/pose with fallback chain; Home active pet uses PNG sprites when assets exist; emoji/orb fallbacks limited to DEV or true missing assets.** BCT suite passing (1224 tests, 598 BCT-specific incl. 401 BCT-ART tests, 23 BCT-NEGLECT specs).
+Mood system (§4.5) with numeric moodValue 0-100, decay, and Grib/Plompo abilities. Pet behavior polish with transient eating poses and mood-based expressions. Ability indicators added (P1-ABILITY-4). **Art system: Pet sprites wired per pet/stage/pose with fallback chain; Home active pet uses PNG sprites when assets exist; emoji/orb fallbacks limited to DEV or true missing assets.** BCT suite passing (1311 tests, 685 BCT-specific incl. 401 BCT-ART tests, 49 BCT-NEGLECT tests). **Phase 7 started:** P7-NEGLECT-SYSTEM complete with full Neglect & Withdrawal runtime.
 
 **P6-AUDIO / P6-PWA Implementation (December 2024):**
 - Audio: Room-specific ambience with crossfade transitions (Living Room, Kitchen, Bedroom, Playroom, Yard)
@@ -446,6 +447,46 @@ Mood system (§4.5) with numeric moodValue 0-100, decay, and Grib/Plompo abiliti
 | **P6-PWA-UI** | Install CTA in Settings | ✅ | — |
 | **P6-PWA-UPDATE** | New version toast | ✅ | — |
 | **P6-FTUE-MODES** | Cozy vs Classic mode divergence | ✅ | §9 |
+
+---
+
+## Web Phase 7 — Classic Mode Runtime
+
+**Goal:** Implement the runtime systems for Classic Mode per Bible v1.5 §9.4.
+
+### P7-NEGLECT-SYSTEM ✅ (December 2024)
+
+Implemented the Neglect & Withdrawal System per Bible §9.4.3:
+
+**Files Added/Modified:**
+- `src/constants/bible.constants.ts` — Added `NEGLECT_CONFIG`, `NEGLECT_STAGES`, `NEGLECT_UI_COPY`, helper functions
+- `src/types/index.ts` — Added `NeglectState` interface, `DEFAULT_NEGLECT_STATE`
+- `src/game/store.ts` — Added neglect slice with actions: `initNeglectForPet`, `updateNeglectOnLogin`, `registerCareEvent`, `recoverFromWithdrawnWithGems`, `recoverFromRunawayWithGems`, `callBackRunawayPet`, `canInteractWithPet`, `getNeglectState`
+- `src/components/pet/NeglectIndicator.tsx` — Added UI components: `NeglectBadge`, `NeglectMessage`, `RunawayScreen`, `WithdrawalRecoveryPanel`, `NeglectPetWrapper`, `useNeglectForPet` hook
+- `src/__tests__/bct-neglect.spec.ts` — 49 BCT-NEGLECT tests covering all 23 BCT specs
+
+**Features:**
+- 5-stage neglect ladder: Normal → Worried (Day 2) → Sad (Day 4) → Withdrawn (Day 7) → Critical (Day 10) → Runaway (Day 14)
+- Per-pet neglect tracking (each pet has independent state)
+- Calendar-day semantics (midnight to midnight)
+- Offline cap (max 14 days accrued)
+- FTUE protection (neglect disabled during onboarding)
+- Grace period (first 48h after account creation)
+- Free recovery paths: 7 consecutive care days (withdrawn) / 72h wait (runaway)
+- Paid recovery paths: 15💎 instant (withdrawn) / 25💎 after 24h (runaway)
+- Bond penalties: -25% instant (withdrawn), -50% on return (runaway)
+- Cozy mode fully disables neglect (MODE_CONFIG.neglectEnabled = false)
+- Classic mode enables neglect (MODE_CONFIG.neglectEnabled = true)
+
+**Tests:** 49 BCT-NEGLECT tests + 1311 total tests passing
+
+### P7 Remaining Tasks
+
+| ID | Task | Status | Bible | Notes |
+|----|------|--------|-------|-------|
+| P7-SICKNESS | Sickness system | ⬜ | §9.4.2 | Hunger=0 4h trigger, 2× decay, medicine cure |
+| P7-WEIGHT | Weight system | ⬜ | §5.7 | Hidden 0-100 scale, visual stages |
+| P7-HIDE-COZY | Hide care items in Cozy | ⬜ | §9.4 | Medicine not visible in Cozy mode |
 
 ---
 

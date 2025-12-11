@@ -220,6 +220,117 @@ export function getModeConfig(mode: GameMode): ModeConfig {
 }
 
 // ============================================================================
+// §9.4.3 Neglect & Withdrawal System (Classic Mode Only)
+// ============================================================================
+
+/**
+ * Neglect stage identifiers.
+ * Bible §9.4.3: 5-stage ladder from Normal to Runaway.
+ */
+export type NeglectStageId =
+  | 'normal'
+  | 'worried'
+  | 'sad'
+  | 'withdrawn'
+  | 'critical'
+  | 'runaway';
+
+/**
+ * Configuration for a single neglect stage.
+ */
+export interface NeglectStageConfig {
+  id: NeglectStageId;
+  /** Days without care to reach this stage (inclusive) */
+  minDays: number;
+  /** Immediate bond penalty when entering this stage (fraction, e.g., 0.25 = -25%) */
+  bondPenalty: number;
+  /** Ongoing bond gain multiplier while in this stage */
+  bondGainMultiplier: number;
+  /** Ongoing mood gain multiplier while in this stage */
+  moodGainMultiplier: number;
+  /** Whether pet is locked out of interaction */
+  isLockedOut: boolean;
+}
+
+/**
+ * Neglect stage ladder per Bible §9.4.3.
+ * Ordered by minDays ascending.
+ */
+export const NEGLECT_STAGES: NeglectStageConfig[] = [
+  { id: 'normal', minDays: 0, bondPenalty: 0, bondGainMultiplier: 1.0, moodGainMultiplier: 1.0, isLockedOut: false },
+  { id: 'worried', minDays: 2, bondPenalty: 0, bondGainMultiplier: 1.0, moodGainMultiplier: 1.0, isLockedOut: false },
+  { id: 'sad', minDays: 4, bondPenalty: 0, bondGainMultiplier: 1.0, moodGainMultiplier: 1.0, isLockedOut: false },
+  { id: 'withdrawn', minDays: 7, bondPenalty: 0.25, bondGainMultiplier: 0.5, moodGainMultiplier: 0.75, isLockedOut: false },
+  { id: 'critical', minDays: 10, bondPenalty: 0, bondGainMultiplier: 0.5, moodGainMultiplier: 0.75, isLockedOut: false },
+  { id: 'runaway', minDays: 14, bondPenalty: 0.50, bondGainMultiplier: 0, moodGainMultiplier: 0, isLockedOut: true },
+];
+
+/**
+ * Neglect system constants per Bible §9.4.3.
+ */
+export const NEGLECT_CONFIG = {
+  /** Maximum days capped for offline absence. Bible: "Capped at 14 days" */
+  MAX_DAYS: 14,
+  /** Grace period for new players (hours). Bible: "First 48 hours" */
+  GRACE_PERIOD_HOURS: 48,
+  /** Consecutive care days for free withdrawal recovery. Bible: "7 consecutive care days" */
+  FREE_RECOVERY_CARE_DAYS: 7,
+  /** Hours to wait before free runaway return. Bible: "72 hours" */
+  RUNAWAY_FREE_WAIT_HOURS: 72,
+  /** Hours to wait before paid runaway return. Bible: "24 hours" */
+  RUNAWAY_PAID_WAIT_HOURS: 24,
+  /** Gem cost to recover from withdrawn state. Bible: "15 💎" */
+  WITHDRAWN_RECOVERY_GEMS: 15,
+  /** Gem cost to speed up runaway return. Bible: "25 💎" */
+  RUNAWAY_RECOVERY_GEMS: 25,
+} as const;
+
+/**
+ * Get the neglect stage for a given number of neglect days.
+ * Returns the highest stage where neglectDays >= minDays.
+ */
+export function getNeglectStage(neglectDays: number): NeglectStageConfig {
+  // Iterate in reverse to find highest matching stage
+  for (let i = NEGLECT_STAGES.length - 1; i >= 0; i--) {
+    if (neglectDays >= NEGLECT_STAGES[i].minDays) {
+      return NEGLECT_STAGES[i];
+    }
+  }
+  return NEGLECT_STAGES[0]; // Default to normal
+}
+
+/**
+ * Get neglect stage by ID.
+ */
+export function getNeglectStageById(stageId: NeglectStageId): NeglectStageConfig {
+  return NEGLECT_STAGES.find(s => s.id === stageId) ?? NEGLECT_STAGES[0];
+}
+
+/**
+ * Check if a stage is considered "penalized" (Withdrawn or worse).
+ */
+export function isNeglectPenaltyStage(stageId: NeglectStageId): boolean {
+  return stageId === 'withdrawn' || stageId === 'critical' || stageId === 'runaway';
+}
+
+/**
+ * Canonical UI copy for neglect states per Bible §9.4.3.
+ */
+export const NEGLECT_UI_COPY: Record<NeglectStageId, string> = {
+  normal: '',
+  worried: 'Your Grundy is starting to worry you won\'t come back.',
+  sad: 'Your Grundy feels forgotten. It\'s trying not to, but it hurts.',
+  withdrawn: 'Your Grundy is here, but it\'s pulled away. It needs time and gentle care to trust again.',
+  critical: 'Your Grundy has gone quiet and distant. It\'s protecting itself from getting hurt again.',
+  runaway: 'Your Grundy has gone into hiding. It still remembers you. It just doesn\'t feel safe yet.',
+};
+
+/**
+ * Return message when pet comes back from runaway.
+ */
+export const NEGLECT_RETURN_MESSAGE = 'Your Grundy came back! They remember, but they\'re willing to try again. 💕';
+
+// ============================================================================
 // §4.5 Mood System (LOCKED)
 // ============================================================================
 

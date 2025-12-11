@@ -25,6 +25,8 @@ import {
   RoomId,
   AbilityTrigger,
   PetPose,
+  NeglectState,
+  DEFAULT_NEGLECT_STATE,
 } from '../types';
 import {
   DEFAULT_ENVIRONMENT,
@@ -60,7 +62,15 @@ import {
   createInitialEnergyState
 } from './miniGameRewards';
 // Bible §14.4: Activity-to-room mapping
-import { ROOM_ACTIVITY_MAP } from '../constants/bible.constants';
+// Bible §9.4.3: Neglect system constants
+import {
+  ROOM_ACTIVITY_MAP,
+  MODE_CONFIG,
+  NEGLECT_CONFIG,
+  NEGLECT_STAGES,
+  getNeglectStage,
+  type NeglectStageId,
+} from '../constants/bible.constants';
 
 // ============================================
 // ABILITY TRIGGER MESSAGES (P1-ABILITY-4)
@@ -89,6 +99,47 @@ function createAbilityTrigger(effectType: string): AbilityTrigger | null {
     abilityName: template.message.split(':')[0] || template.id,
     message: template.message,
     triggeredAt: Date.now(),
+  };
+}
+
+// ============================================
+// NEGLECT SYSTEM HELPERS (P7-NEGLECT-SYSTEM)
+// ============================================
+
+/**
+ * Calculate calendar days between two ISO date strings.
+ * Bible §9.4.3: Calendar-day semantics (midnight to midnight).
+ */
+function calculateCalendarDays(startDateISO: string, endDateISO: string): number {
+  // Parse dates (YYYY-MM-DD format)
+  const start = new Date(startDateISO + 'T00:00:00');
+  const end = new Date(endDateISO + 'T00:00:00');
+
+  // Calculate difference in days
+  const msPerDay = 24 * 60 * 60 * 1000;
+  const diffMs = end.getTime() - start.getTime();
+  return Math.max(0, Math.floor(diffMs / msPerDay));
+}
+
+/**
+ * Reset neglect state to healthy defaults.
+ * Used when pet recovers from withdrawn/runaway.
+ */
+function resetNeglectState(current: NeglectState, now: Date): NeglectState {
+  const todayISO = now.toISOString().split('T')[0];
+  return {
+    ...current,
+    neglectDays: 0,
+    currentStage: 'normal',
+    isWithdrawn: false,
+    withdrawnAt: null,
+    recoveryDaysCompleted: 0,
+    isRunaway: false,
+    runawayAt: null,
+    canReturnFreeAt: null,
+    canReturnPaidAt: null,
+    lastCareDate: todayISO,
+    lastSeenDate: todayISO,
   };
 }
 
@@ -128,6 +179,9 @@ function createInitialState() {
     playMode: 'cozy' as PlayMode, // Default to Cozy mode (Bible §9)
     environment: { ...DEFAULT_ENVIRONMENT },
     abilityTriggers: [] as AbilityTrigger[], // P1-ABILITY-4
+    // P7-NEGLECT-SYSTEM: Per-pet neglect tracking (Classic Mode only)
+    neglectByPetId: {} as Record<string, NeglectState>,
+    accountCreatedAt: null as string | null,
   };
 }
 
@@ -916,6 +970,395 @@ export const useGameStore = create<GameStore>()(
             transientPose: undefined,
           },
         }));
+      },
+
+      // ========================================
+      // NEGLECT SYSTEM (P7-NEGLECT-SYSTEM)
+      // Bible §9.4.3: Classic Mode Only
+      // ========================================
+
+      /**
+       * Initialize neglect state for a pet.
+       * Called when a pet is first adopted or the system initializes.
+       */
+      initNeglectForPet: (petId: string, now: Date = new Date()) => {
+        const state = get();
+
+        // Skip if already initialized
+        if (state.neglectByPetId[petId]) {
+          return;
+        }
+
+        const nowISO = now.toISOString();
+        const todayISO = now.toISOString().split('T')[0];
+
+        // Set account created timestamp if not set
+        const accountCreatedAt = state.accountCreatedAt ?? nowISO;
+
+        const newNeglectState: NeglectState = {
+          ...DEFAULT_NEGLECT_STATE,
+          lastCareDate: todayISO,
+          lastSeenDate: todayISO,
+          isInGracePeriod: true,
+          accountCreatedAt,
+        };
+
+        set({
+          neglectByPetId: {
+            ...state.neglectByPetId,
+            [petId]: newNeglectState,
+          },
+          accountCreatedAt,
+        });
+
+        console.log(`[Neglect] Initialized state for pet ${petId}`);
+      },
+
+      /**
+       * Update neglect state on app login/restore.
+       * Calculates neglect days based on time since last seen.
+       * Bible §9.4.3: Classic Mode only, calendar-day semantics, offline cap.
+       */
+      updateNeglectOnLogin: (now: Date = new Date()) => {
+        const state = get();
+
+        // Mode gate: Skip if neglect disabled (Cozy mode)
+        if (!MODE_CONFIG[state.playMode].neglectEnabled) {
+          return;
+        }
+
+        // FTUE Protection: Skip if FTUE not completed
+        if (!state.ftue.hasCompletedFtue) {
+          return;
+        }
+
+        const todayISO = now.toISOString().split('T')[0];
+        const nowTimestamp = now.getTime();
+        const updatedNeglect: Record<string, NeglectState> = {};
+
+        for (const [petId, neglectState] of Object.entries(state.neglectByPetId)) {
+          let newState = { ...neglectState };
+
+          // Update last seen to today
+          const lastSeenDate = newState.lastSeenDate ?? todayISO;
+
+          // Check grace period (first 48 hours after account creation)
+          if (newState.isInGracePeriod && newState.accountCreatedAt) {
+            const accountCreatedMs = new Date(newState.accountCreatedAt).getTime();
+            const gracePeriodMs = NEGLECT_CONFIG.GRACE_PERIOD_HOURS * 60 * 60 * 1000;
+            if (nowTimestamp - accountCreatedMs >= gracePeriodMs) {
+              newState.isInGracePeriod = false;
+              console.log(`[Neglect] Grace period ended for pet ${petId}`);
+            }
+          }
+
+          // Skip neglect calculation if still in grace period
+          if (newState.isInGracePeriod) {
+            newState.lastSeenDate = todayISO;
+            updatedNeglect[petId] = newState;
+            continue;
+          }
+
+          // Calculate calendar days since last care
+          const lastCareDate = newState.lastCareDate ?? todayISO;
+          const daysSinceLastCare = calculateCalendarDays(lastCareDate, todayISO);
+
+          // Apply offline cap (Bible §9.4.3: max 14 days)
+          const cappedDays = Math.min(daysSinceLastCare, NEGLECT_CONFIG.MAX_DAYS);
+
+          // Only update if days have increased
+          if (cappedDays > newState.neglectDays) {
+            const oldStage = newState.currentStage;
+            newState.neglectDays = cappedDays;
+
+            // Determine new stage
+            const stageConfig = getNeglectStage(cappedDays);
+            newState.currentStage = stageConfig.id;
+
+            // Handle stage transitions
+            if (stageConfig.id !== oldStage) {
+              console.log(`[Neglect] Pet ${petId} stage: ${oldStage} -> ${stageConfig.id} (${cappedDays} days)`);
+
+              // Withdrawn state entry (Day 7+)
+              if (stageConfig.id === 'withdrawn' && !newState.isWithdrawn) {
+                newState.isWithdrawn = true;
+                newState.withdrawnAt = now.toISOString();
+                newState.recoveryDaysCompleted = 0;
+
+                // Apply immediate bond penalty (-25%)
+                // Note: Bond penalty applied via canInteractWithPet checks
+                console.log(`[Neglect] Pet ${petId} is now WITHDRAWN`);
+              }
+
+              // Runaway state entry (Day 14)
+              if (stageConfig.id === 'runaway' && !newState.isRunaway) {
+                newState.isRunaway = true;
+                newState.runawayAt = now.toISOString();
+
+                // Set return availability timestamps
+                const paidReturnMs = nowTimestamp + (NEGLECT_CONFIG.RUNAWAY_PAID_WAIT_HOURS * 60 * 60 * 1000);
+                const freeReturnMs = nowTimestamp + (NEGLECT_CONFIG.RUNAWAY_FREE_WAIT_HOURS * 60 * 60 * 1000);
+                newState.canReturnPaidAt = new Date(paidReturnMs).toISOString();
+                newState.canReturnFreeAt = new Date(freeReturnMs).toISOString();
+
+                console.log(`[Neglect] Pet ${petId} has RUN AWAY! Free return at ${newState.canReturnFreeAt}`);
+              }
+            }
+          }
+
+          newState.lastSeenDate = todayISO;
+          updatedNeglect[petId] = newState;
+        }
+
+        set({ neglectByPetId: updatedNeglect });
+      },
+
+      /**
+       * Register a qualifying care action (feed or play).
+       * Bible §9.4.3: Only feed and play count as care.
+       */
+      registerCareEvent: (petId: string, now: Date = new Date()) => {
+        const state = get();
+
+        // Mode gate: Skip if neglect disabled (Cozy mode)
+        if (!MODE_CONFIG[state.playMode].neglectEnabled) {
+          return;
+        }
+
+        // Initialize if needed
+        if (!state.neglectByPetId[petId]) {
+          get().initNeglectForPet(petId, now);
+        }
+
+        const neglectState = state.neglectByPetId[petId];
+        if (!neglectState) return;
+
+        // Can't care for a runaway pet
+        if (neglectState.isRunaway) {
+          console.log(`[Neglect] Cannot care for runaway pet ${petId}`);
+          return;
+        }
+
+        const todayISO = now.toISOString().split('T')[0];
+        const lastCareDate = neglectState.lastCareDate;
+
+        // Check if this is a new care day (different calendar day)
+        const isNewCareDay = lastCareDate !== todayISO;
+
+        let newState = { ...neglectState };
+        newState.lastCareDate = todayISO;
+
+        // Handle recovery from withdrawn state
+        if (newState.isWithdrawn) {
+          if (isNewCareDay) {
+            newState.recoveryDaysCompleted++;
+            console.log(`[Neglect] Pet ${petId} recovery progress: ${newState.recoveryDaysCompleted}/${NEGLECT_CONFIG.FREE_RECOVERY_CARE_DAYS} days`);
+
+            // Check if free recovery complete
+            if (newState.recoveryDaysCompleted >= NEGLECT_CONFIG.FREE_RECOVERY_CARE_DAYS) {
+              newState = resetNeglectState(newState, now);
+              console.log(`[Neglect] Pet ${petId} recovered from withdrawn state (free path)`);
+            }
+          }
+        } else {
+          // Not withdrawn: reset neglect counter on care
+          newState.neglectDays = 0;
+          newState.currentStage = 'normal';
+        }
+
+        set({
+          neglectByPetId: {
+            ...state.neglectByPetId,
+            [petId]: newState,
+          },
+        });
+      },
+
+      /**
+       * Get current neglect state for a pet.
+       */
+      getNeglectState: (petId: string): NeglectState | null => {
+        const state = get();
+        return state.neglectByPetId[petId] ?? null;
+      },
+
+      /**
+       * Spend gems to recover from withdrawn state.
+       * Bible §9.4.3: 15 gems for instant withdrawal recovery.
+       */
+      recoverFromWithdrawnWithGems: (petId: string): boolean => {
+        const state = get();
+
+        // Mode gate
+        if (!MODE_CONFIG[state.playMode].neglectEnabled) {
+          return false;
+        }
+
+        const neglectState = state.neglectByPetId[petId];
+        if (!neglectState || !neglectState.isWithdrawn || neglectState.isRunaway) {
+          return false;
+        }
+
+        // Check gems
+        const gemCost = NEGLECT_CONFIG.WITHDRAWN_RECOVERY_GEMS;
+        if (state.currencies.gems < gemCost) {
+          console.log(`[Neglect] Not enough gems for withdrawal recovery (need ${gemCost}, have ${state.currencies.gems})`);
+          return false;
+        }
+
+        // Spend gems
+        const newCurrencies = {
+          ...state.currencies,
+          gems: state.currencies.gems - gemCost,
+        };
+
+        // Reset neglect state
+        const newNeglectState = resetNeglectState(neglectState, new Date());
+
+        set({
+          currencies: newCurrencies,
+          neglectByPetId: {
+            ...state.neglectByPetId,
+            [petId]: newNeglectState,
+          },
+        });
+
+        console.log(`[Neglect] Pet ${petId} recovered from withdrawn with ${gemCost} gems`);
+        return true;
+      },
+
+      /**
+       * Spend gems to speed up runaway return.
+       * Bible §9.4.3: 25 gems after 24h wait.
+       */
+      recoverFromRunawayWithGems: (petId: string): boolean => {
+        const state = get();
+        const now = new Date();
+
+        // Mode gate
+        if (!MODE_CONFIG[state.playMode].neglectEnabled) {
+          return false;
+        }
+
+        const neglectState = state.neglectByPetId[petId];
+        if (!neglectState || !neglectState.isRunaway) {
+          return false;
+        }
+
+        // Check if paid return is available (24h wait)
+        if (neglectState.canReturnPaidAt) {
+          const paidReturnTime = new Date(neglectState.canReturnPaidAt).getTime();
+          if (now.getTime() < paidReturnTime) {
+            console.log(`[Neglect] Paid return not yet available for pet ${petId}`);
+            return false;
+          }
+        }
+
+        // Check gems
+        const gemCost = NEGLECT_CONFIG.RUNAWAY_RECOVERY_GEMS;
+        if (state.currencies.gems < gemCost) {
+          console.log(`[Neglect] Not enough gems for runaway recovery (need ${gemCost}, have ${state.currencies.gems})`);
+          return false;
+        }
+
+        // Spend gems
+        const newCurrencies = {
+          ...state.currencies,
+          gems: state.currencies.gems - gemCost,
+        };
+
+        // Apply bond penalty and reset state
+        const newNeglectState = resetNeglectState(neglectState, now);
+
+        // Apply -50% bond penalty
+        const currentBond = state.pet.bond;
+        const bondPenalty = Math.floor(currentBond * 0.5);
+        const newBond = Math.max(0, currentBond - bondPenalty);
+
+        set({
+          currencies: newCurrencies,
+          neglectByPetId: {
+            ...state.neglectByPetId,
+            [petId]: newNeglectState,
+          },
+          pet: {
+            ...state.pet,
+            bond: newBond,
+          },
+        });
+
+        console.log(`[Neglect] Pet ${petId} returned from runaway with ${gemCost} gems (bond: ${currentBond} -> ${newBond})`);
+        return true;
+      },
+
+      /**
+       * Call back a runaway pet (free path after 72h).
+       * Bible §9.4.3: Free return after 72h wait.
+       */
+      callBackRunawayPet: (petId: string, now: Date = new Date()): boolean => {
+        const state = get();
+
+        // Mode gate
+        if (!MODE_CONFIG[state.playMode].neglectEnabled) {
+          return false;
+        }
+
+        const neglectState = state.neglectByPetId[petId];
+        if (!neglectState || !neglectState.isRunaway) {
+          return false;
+        }
+
+        // Check if free return is available (72h wait)
+        if (neglectState.canReturnFreeAt) {
+          const freeReturnTime = new Date(neglectState.canReturnFreeAt).getTime();
+          if (now.getTime() < freeReturnTime) {
+            console.log(`[Neglect] Free return not yet available for pet ${petId}`);
+            return false;
+          }
+        }
+
+        // Reset neglect state
+        const newNeglectState = resetNeglectState(neglectState, now);
+
+        // Apply -50% bond penalty
+        const currentBond = state.pet.bond;
+        const bondPenalty = Math.floor(currentBond * 0.5);
+        const newBond = Math.max(0, currentBond - bondPenalty);
+
+        set({
+          neglectByPetId: {
+            ...state.neglectByPetId,
+            [petId]: newNeglectState,
+          },
+          pet: {
+            ...state.pet,
+            bond: newBond,
+          },
+        });
+
+        console.log(`[Neglect] Pet ${petId} returned from runaway (free path) (bond: ${currentBond} -> ${newBond})`);
+        return true;
+      },
+
+      /**
+       * Check if pet can be interacted with (not locked out).
+       * Bible §9.4.3: Runaway pets are locked out.
+       */
+      canInteractWithPet: (petId: string): boolean => {
+        const state = get();
+
+        // Mode gate: In Cozy mode, always can interact
+        if (!MODE_CONFIG[state.playMode].neglectEnabled) {
+          return true;
+        }
+
+        const neglectState = state.neglectByPetId[petId];
+        if (!neglectState) {
+          return true;
+        }
+
+        // Runaway pets are locked out
+        return !neglectState.isRunaway;
       },
 
       // ========================================
