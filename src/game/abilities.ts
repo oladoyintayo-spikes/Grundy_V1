@@ -75,6 +75,18 @@ export function applyDecayReduction(petId: string, baseDecay: number): number {
 }
 
 /**
+ * Apply Plompo's Slow Metabolism ability to mood decay: -20% mood decay rate
+ * Bible §4.10: Plompo - "-20% mood decay rate"
+ */
+export function applyMoodDecayReduction(petId: string, baseMoodDecay: number): number {
+  if (hasAbilityEffect(petId, 'decay_reduction')) {
+    const reduction = getAbilityValue(petId, 'decay_reduction');
+    return baseMoodDecay * (1 - reduction);
+  }
+  return baseMoodDecay;
+}
+
+/**
  * Apply Fizz's Hyperactive ability: +25% minigame score bonus
  */
 export function applyMinigameBonus(petId: string, baseScore: number): number {

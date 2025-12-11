@@ -5,8 +5,8 @@
 // ============================================
 
 import type { PetPose } from '../art/petSprites';
-import type { MoodState, ReactionType } from '../types';
-import { FULLNESS_STATES, type FullnessState } from '../constants/bible.constants';
+import type { MoodState, ReactionType, TransientPose } from '../types';
+import { FULLNESS_STATES, MOOD_TIERS, getMoodTier, type FullnessState } from '../constants/bible.constants';
 
 // ============================================
 // STATE TO POSE MAPPING
@@ -15,6 +15,8 @@ import { FULLNESS_STATES, type FullnessState } from '../constants/bible.constant
 export interface PetStateForPose {
   /** Current mood (happy, neutral, sad, ecstatic) */
   mood: MoodState;
+  /** Numeric mood value 0-100 (Bible §4.5) */
+  moodValue?: number;
   /** Hunger/Fullness level 0-100 (higher = more full) */
   hunger: number;
   /** Whether pet is explicitly sleeping (future feature) */
@@ -23,6 +25,8 @@ export interface PetStateForPose {
   isEating?: boolean;
   /** Whether the food being eaten is loved (for eating_loved pose) */
   isEatingLoved?: boolean;
+  /** Transient pose override (P6-T2-PET-BEHAVIORS) */
+  transientPose?: TransientPose;
 }
 
 /**
@@ -40,32 +44,41 @@ export function getFullnessStateFromHunger(hunger: number): FullnessState {
 /**
  * Determine the appropriate pose based on pet state.
  *
- * Priority order (P6-ART-POSES extended):
+ * Priority order (P6-ART-POSES + P6-T2-PET-BEHAVIORS):
+ * 0. Transient pose (if not expired) → use transient pose
  * 1. Sleeping → sleeping pose
  * 2. Eating (loved) → eating_loved pose
  * 3. Eating → eating pose
  * 4. Very hungry (HUNGRY state, <21) → hungry pose
  * 5. Stuffed/Satisfied (>70) → satisfied pose
- * 6. Ecstatic mood → ecstatic pose
- * 7. Happy mood (hunger > 50) → happy pose
- * 8. Sad mood → sad pose
- * 9. Default → idle pose
+ * 6. Ecstatic mood (moodValue >= 85 or mood='ecstatic') → ecstatic pose
+ * 7. Happy mood (moodValue >= 60 or mood='happy', hunger > 50) → happy pose
+ * 8. Unhappy mood (moodValue < 20 or mood='sad') → crying pose
+ * 9. Low mood (moodValue < 40) → sad pose
+ * 10. Default → idle pose
  *
  * @param state - Current pet state
  * @returns The appropriate PetPose
  */
 export function getDefaultPoseForState(state: PetStateForPose): PetPose {
+  const now = Date.now();
+
+  // Priority 0: Transient pose (P6-T2-PET-BEHAVIORS)
+  if (state.transientPose && state.transientPose.expiresAt > now) {
+    return state.transientPose.pose;
+  }
+
   // Priority 1: Sleeping state
   if (state.isSleeping) {
     return 'sleeping';
   }
 
-  // Priority 2: Eating loved food (transient)
+  // Priority 2: Eating loved food (transient - legacy support)
   if (state.isEating && state.isEatingLoved) {
     return 'eating_loved';
   }
 
-  // Priority 3: Eating (transient)
+  // Priority 3: Eating (transient - legacy support)
   if (state.isEating) {
     return 'eating';
   }
@@ -80,18 +93,26 @@ export function getDefaultPoseForState(state: PetStateForPose): PetPose {
     return 'satisfied';
   }
 
-  // Priority 6: Ecstatic mood shows maximum joy
-  if (state.mood === 'ecstatic') {
+  // Use moodValue if available for more granular mood-based poses (Bible §4.5)
+  const moodValue = state.moodValue ?? (state.mood === 'ecstatic' ? 90 : state.mood === 'happy' ? 70 : state.mood === 'sad' ? 15 : 50);
+
+  // Priority 6: Ecstatic mood shows maximum joy (moodValue >= 85)
+  if (moodValue >= MOOD_TIERS.ECSTATIC.min) {
     return 'ecstatic';
   }
 
-  // Priority 7: Happy mood with decent hunger
-  if (state.mood === 'happy' && state.hunger > 50) {
+  // Priority 7: Happy mood with decent hunger (moodValue >= 60)
+  if (moodValue >= MOOD_TIERS.HAPPY.min && state.hunger > 50) {
     return 'happy';
   }
 
-  // Priority 8: Sad mood
-  if (state.mood === 'sad') {
+  // Priority 8: Very unhappy shows crying (moodValue < 10 - extreme distress)
+  if (moodValue < 10) {
+    return 'crying';
+  }
+
+  // Priority 9: Unhappy/Low mood shows sadness (moodValue < 40)
+  if (moodValue < MOOD_TIERS.CONTENT.min) {
     return 'sad';
   }
 

@@ -145,8 +145,8 @@ The following copy is canonical and used across all onboarding documentation:
 | Command | Status | Notes |
 |---------|--------|-------|
 | `npm run build` | ✅ PASSING | Production build succeeds |
-| `npm test -- --run` | ✅ PASSING | 759 tests passing |
-| `npm run test:bible` | ✅ PASSING | 133 BCT tests passing (56 matched by BCT-ENV/NAV/LAYOUT) |
+| `npm test -- --run` | ✅ PASSING | 813 tests passing |
+| `npm run test:bible` | ✅ PASSING | 187 BCT tests passing (incl. mood/ability/pet-behaviors) |
 | `npx tsc --noEmit` | ✅ PASSING | No type errors |
 
 ---
@@ -358,13 +358,17 @@ The following copy is canonical and used across all onboarding documentation:
 
 **Backlog:** See `docs/PHASE6_BACKLOG.md` for full list of P6-* tasks and sources.
 
-**DevStatus:** COMPLETE — All Tier 1 tasks implemented. 751 tests passing (133 BCT tests).
+**DevStatus:** COMPLETE — All Tier 1 + Tier 2 polish tasks implemented. 813 tests passing (187 BCT tests).
 **CEStatus:** PENDING REVIEW
 **QAStatus:** PENDING REVIEW
 
 ### Summary
 
-Dev: Phase 6 Tier 1 Bible v1.4 compliance tasks implemented (P6-CORE-LOOP, P6-ECON-WEB, P6-HUD-CLEANUP, P6-PET-HOME, P6-ENV-ROOMS, P6-ENV-UI, P6-ENV-TOD, P6-NAV-GROUNDWORK, P6-FTUE-INTRO, P6-MOBILE-LAYOUT, P6-QA-BCT). P6-ART-POSES complete; BCT suite passing (759 tests, 133 BCT-specific).
+Dev: Phase 6 Bible v1.4 compliance tasks implemented:
+- **Tier 1:** P6-CORE-LOOP, P6-ECON-WEB, P6-HUD-CLEANUP, P6-PET-HOME, P6-ENV-ROOMS, P6-ENV-UI, P6-ENV-TOD, P6-NAV-GROUNDWORK, P6-FTUE-INTRO, P6-MOBILE-LAYOUT, P6-QA-BCT
+- **Tier 2 Polish:** P6-ART-POSES, P6-MOOD-SYSTEM, P6-ABILITY-UI, P6-T2-PET-BEHAVIORS
+
+Mood system (§4.5) with numeric moodValue 0-100, decay, and Grib/Plompo abilities. Pet behavior polish with transient eating poses and mood-based expressions. Ability indicators added (P1-ABILITY-4). BCT suite passing (813 tests, 187 BCT-specific).
 
 ### Task Status Overview
 
@@ -389,6 +393,9 @@ Dev: Phase 6 Tier 1 Bible v1.4 compliance tasks implemented (P6-CORE-LOOP, P6-EC
 | **P6-MOBILE-LAYOUT** | Mobile viewport constraints | ✅ | §14.6 |
 | **P6-QA-BCT** | Bible Compliance Test suite | ✅ | — |
 | **P6-ART-POSES** | Extended pet sprite poses (11 poses) | ✅ | §13.7 |
+| **P6-MOOD-SYSTEM** | Full mood decay system | ✅ | §4.5 |
+| **P6-ABILITY-UI** | Ability activation indicators | ✅ | §3.7, §4.10 |
+| **P6-T2-PET-BEHAVIORS** | Pet pose behavior wiring | ✅ | §4.5, §13.7 |
 | **P6-ART-TEST** | Visual regression test (no emoji in prod) | ⬜ | §13.7 |
 
 ---
@@ -399,11 +406,11 @@ Dev: Phase 6 Tier 1 Bible v1.4 compliance tasks implemented (P6-CORE-LOOP, P6-EC
 
 **Build & Types:**
 - [ ] `npx tsc --noEmit` passes (no type errors)
-- [ ] `npm test` passes (full unit/spec suite — 751 tests)
+- [ ] `npm test` passes (full unit/spec suite — 813 tests)
 
 **Bible Compliance Tests (P6-QA-BCT):**
-- [ ] `npm run test:bible` runs and passes all BCT spec tests (133 BCT tests)
-- [ ] BCT test files exist in `src/__tests__/bct-*.spec.ts` (8 files)
+- [ ] `npm run test:bible` runs and passes all BCT spec tests (187 BCT tests)
+- [ ] BCT test files exist in `src/__tests__/bct-*.spec.ts` (11 files incl. mood, ability, pet-behaviors)
 - [ ] Bible E2E file exists: `e2e/bible-compliance.e2e.ts`
 
 **Core Loop & Economy (Player-side sanity check):**
@@ -433,6 +440,23 @@ Dev: Phase 6 Tier 1 Bible v1.4 compliance tasks implemented (P6-CORE-LOOP, P6-EC
 - [ ] Pets use sprite poses (not generic blobs) in production builds
 - [ ] 11 poses wired: idle, happy, sad, sleeping, eating, eating_loved, ecstatic, excited, hungry, satisfied, crying
 - [ ] Fullness/mood/eating states visibly change poses as expected
+
+**Mood System (P6-MOOD-SYSTEM):**
+- [ ] Mood tiers match Bible §4.5: Ecstatic 85-100, Happy 60-84, Content 40-59, Low 20-39, Unhappy 0-19
+- [ ] Feeding affects mood: loved +15, liked +8, neutral +3, disliked -10
+- [ ] Grib ability reduces mood penalty from dislikes by 20%
+- [ ] Plompo ability reduces mood decay by 20%
+- [ ] Mood value syncs with mood state string
+
+**Ability Indicators (P1-ABILITY-4):**
+- [ ] AbilityIndicator component shows toast when ability triggers
+- [ ] Triggers auto-expire after 3 seconds
+- [ ] Each pet's ability is correctly wired per Bible §3.2
+
+**Pet Behaviors (P6-T2-PET-BEHAVIORS):**
+- [ ] Feeding sets transient eating pose (~2 seconds)
+- [ ] Transient pose takes priority over mood-based pose
+- [ ] Pose transitions reflect mood value changes
 
 ### Economy Rules (Already Enforced)
 
