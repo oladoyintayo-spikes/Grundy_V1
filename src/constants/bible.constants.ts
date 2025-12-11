@@ -1,7 +1,7 @@
 /**
  * GRUNDY BIBLE CONSTANTS
  *
- * These values are LOCKED per GRUNDY_MASTER_BIBLE v1.4.
+ * These values are LOCKED per GRUNDY_MASTER_BIBLE v1.5.
  * Do not modify without explicit Bible version bump.
  *
  * This is the SINGLE SOURCE OF TRUTH for Bible-locked values.
