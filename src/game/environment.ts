@@ -13,17 +13,19 @@ import type { TimeOfDay, RoomId, AppView } from '../types';
 /**
  * Returns the time of day based on the current hour.
  *
- * Time ranges (documented):
- * - 05:00–10:59 → morning
- * - 11:00–16:59 → day
- * - 17:00–20:59 → evening
- * - 21:00–04:59 → night
+ * Time ranges per Bible §14.4 / bible.constants.ts:
+ * - 06:00–11:59 → morning (hour >= 6 && hour < 12)
+ * - 12:00–16:59 → day/afternoon (hour >= 12 && hour < 17)
+ * - 17:00–20:59 → evening (hour >= 17 && hour < 21)
+ * - 21:00–05:59 → night (hour >= 21 || hour < 6)
+ *
+ * P6-ENV-TOD: Aligned to Bible v1.4 / bible.constants.ts TIME_OF_DAY
  */
 export function getTimeOfDay(date: Date = new Date()): TimeOfDay {
   const hour = date.getHours();
 
-  if (hour >= 5 && hour < 11) return 'morning';
-  if (hour >= 11 && hour < 17) return 'day';
+  if (hour >= 6 && hour < 12) return 'morning';
+  if (hour >= 12 && hour < 17) return 'day';
   if (hour >= 17 && hour < 21) return 'evening';
   return 'night';
 }

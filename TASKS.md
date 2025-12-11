@@ -690,7 +690,7 @@ P8-TEST
 | ID | Task | Status | Scope | Notes |
 |----|------|--------|-------|-------|
 | P6-MOBILE-LAYOUT | Enforce mobile viewport constraints | ✅ | Layout, CSS | Bible §14.6 — Pet, actions, nav, currencies without scroll |
-| P6-NAV-GROUNDWORK | Navigation structure groundwork | ⬜ | BottomNav, App | Bible §14.5 — Prepare for future menu-based nav |
+| P6-NAV-GROUNDWORK | Navigation structure groundwork | ✅ | BottomNav, App | Bible §14.5 — View test IDs (home-view, games-view, settings-view) |
 | P6-NAV-CONFIRM | Add pet switch confirmation | ✅ | PetSelector | Bible §14.5 — "Switch to Grib?" modal with reassurance message |
 
 ### P6-ENV: Rooms Lite & Environment (Bible §14.4)
@@ -700,8 +700,8 @@ P8-TEST
 | ID | Task | Status | Scope | Notes |
 |----|------|--------|-------|-------|
 | P6-ENV-ROOMS | Implement activity→room mapping | ✅ | Environment system | Bible §14.4 — Feeding=Kitchen, Sleeping=Bedroom, Playing=Playroom |
-| P6-ENV-UI | Room selection UI | ⬜ | HomeView | Bible §14.4 — Explicit room switcher (QA-003) |
-| P6-ENV-TOD | Time-of-day consistency | ✅ | Environment | Bible §14.4 — ToD backgrounds aligned with Bible |
+| P6-ENV-UI | Room selection UI | ✅ | HomeView | Bible §14.4 — Explicit room switcher with precedence rule |
+| P6-ENV-TOD | Time-of-day consistency | ✅ | Environment | Bible §14.4 — ToD ranges aligned: Morning 6-12, Day 12-17, Evening 17-21, Night 21-6 |
 | P6-MOOD-SYSTEM | Full mood decay system | ⬜ | Store, pet logic | Enables Grib's Chill Vibes fully |
 
 ### P6-ART: Art Integration (Bible §13.7)

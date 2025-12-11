@@ -145,8 +145,8 @@ The following copy is canonical and used across all onboarding documentation:
 | Command | Status | Notes |
 |---------|--------|-------|
 | `npm run build` | ✅ PASSING | Production build succeeds |
-| `npm test -- --run` | ✅ PASSING | 751 tests passing |
-| `npm run test:bible` | ✅ PASSING | 133 BCT tests passing |
+| `npm test -- --run` | ✅ PASSING | 759 tests passing |
+| `npm run test:bible` | ✅ PASSING | 133 BCT tests passing (56 matched by BCT-ENV/NAV/LAYOUT) |
 | `npx tsc --noEmit` | ✅ PASSING | No type errors |
 
 ---
@@ -364,7 +364,7 @@ The following copy is canonical and used across all onboarding documentation:
 
 ### Summary
 
-Dev: Phase 6 Tier 1 Bible v1.4 compliance tasks implemented (P6-CORE-LOOP, P6-ECON-WEB, P6-HUD-CLEANUP, P6-PET-HOME, P6-ENV-ROOMS, P6-FTUE-INTRO, P6-MOBILE-LAYOUT, P6-QA-BCT). P6-ART-POSES complete; BCT suite passing (751 tests, 133 BCT-specific).
+Dev: Phase 6 Tier 1 Bible v1.4 compliance tasks implemented (P6-CORE-LOOP, P6-ECON-WEB, P6-HUD-CLEANUP, P6-PET-HOME, P6-ENV-ROOMS, P6-ENV-UI, P6-ENV-TOD, P6-NAV-GROUNDWORK, P6-FTUE-INTRO, P6-MOBILE-LAYOUT, P6-QA-BCT). P6-ART-POSES complete; BCT suite passing (759 tests, 133 BCT-specific).
 
 ### Task Status Overview
 
@@ -382,7 +382,9 @@ Dev: Phase 6 Tier 1 Bible v1.4 compliance tasks implemented (P6-CORE-LOOP, P6-EC
 | **P6-PET-HOME** | Active pet & Home behavior | ✅ | §14.5 |
 | **P6-NAV-CONFIRM** | Pet switch confirmation | ✅ | §14.5 |
 | **P6-ENV-ROOMS** | Activity→room mapping | ✅ | §14.4 |
+| **P6-ENV-UI** | Room selection UI | ✅ | §14.4 |
 | **P6-ENV-TOD** | Time-of-day consistency | ✅ | §14.4 |
+| **P6-NAV-GROUNDWORK** | Navigation structure groundwork | ✅ | §14.5 |
 | **P6-FTUE-INTRO** | FTUE lore from bible.constants.ts | ✅ | §7.4 |
 | **P6-MOBILE-LAYOUT** | Mobile viewport constraints | ✅ | §14.6 |
 | **P6-QA-BCT** | Bible Compliance Test suite | ✅ | — |
@@ -419,7 +421,8 @@ Dev: Phase 6 Tier 1 Bible v1.4 compliance tasks implemented (P6-CORE-LOOP, P6-EC
 
 **Environment & Mobile Layout:**
 - [ ] Feeding → Kitchen, play → Playroom, default → Living Room
-- [ ] Time-of-day backgrounds align with Bible
+- [ ] Time-of-day ranges match Bible v1.4: Morning 6-12, Day 12-17, Evening 17-21, Night 21-6
+- [ ] Room selector UI allows manual room selection; activities override manual selection
 - [ ] On a typical phone viewport (390×844), pet + actions + currencies + bottom nav are visible without scroll
 
 **FTUE (P6-FTUE-INTRO):**

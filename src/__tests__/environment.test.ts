@@ -18,26 +18,44 @@ import type { AppView, TimeOfDay, RoomId } from '../types';
 
 // ============================================
 // TIME OF DAY TESTS
+// P6-ENV-TOD: Updated to match Bible v1.4 / bible.constants.ts
+// - Morning: 6:00-11:59
+// - Day: 12:00-16:59
+// - Evening: 17:00-20:59
+// - Night: 21:00-05:59
 // ============================================
 
 describe('getTimeOfDay', () => {
-  it('returns morning for 05:00', () => {
+  // Night: 21:00-05:59
+  it('returns night for 05:00 (per Bible v1.4 - night is 21:00-05:59)', () => {
     const date = new Date('2025-01-01T05:00:00');
-    expect(getTimeOfDay(date)).toBe('morning');
+    expect(getTimeOfDay(date)).toBe('night');
   });
 
+  it('returns night for 05:59', () => {
+    const date = new Date('2025-01-01T05:59:00');
+    expect(getTimeOfDay(date)).toBe('night');
+  });
+
+  // Morning: 6:00-11:59
   it('returns morning for 06:00', () => {
     const date = new Date('2025-01-01T06:00:00');
     expect(getTimeOfDay(date)).toBe('morning');
   });
 
-  it('returns morning for 10:59', () => {
-    const date = new Date('2025-01-01T10:59:00');
+  it('returns morning for 11:00', () => {
+    const date = new Date('2025-01-01T11:00:00');
     expect(getTimeOfDay(date)).toBe('morning');
   });
 
-  it('returns day for 11:00', () => {
-    const date = new Date('2025-01-01T11:00:00');
+  it('returns morning for 11:59', () => {
+    const date = new Date('2025-01-01T11:59:00');
+    expect(getTimeOfDay(date)).toBe('morning');
+  });
+
+  // Day: 12:00-16:59
+  it('returns day for 12:00', () => {
+    const date = new Date('2025-01-01T12:00:00');
     expect(getTimeOfDay(date)).toBe('day');
   });
 
@@ -51,6 +69,7 @@ describe('getTimeOfDay', () => {
     expect(getTimeOfDay(date)).toBe('day');
   });
 
+  // Evening: 17:00-20:59
   it('returns evening for 17:00', () => {
     const date = new Date('2025-01-01T17:00:00');
     expect(getTimeOfDay(date)).toBe('evening');
@@ -66,6 +85,7 @@ describe('getTimeOfDay', () => {
     expect(getTimeOfDay(date)).toBe('evening');
   });
 
+  // Night: 21:00-05:59
   it('returns night for 21:00', () => {
     const date = new Date('2025-01-01T21:00:00');
     expect(getTimeOfDay(date)).toBe('night');

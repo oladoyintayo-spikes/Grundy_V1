@@ -193,10 +193,22 @@ export const MOBILE_VIEWPORT = {
 } as const;
 
 export const TEST_IDS = {
+  // Navigation - P6-NAV-GROUNDWORK
   GLOBAL_NAV: 'global-nav',
   NAV_HOME: 'nav-home',
   NAV_GAMES: 'nav-games',
   NAV_SETTINGS: 'nav-settings',
+  // View containers - P6-NAV-GROUNDWORK
+  HOME_VIEW: 'home-view',
+  GAMES_VIEW: 'games-view',
+  SETTINGS_VIEW: 'settings-view',
+  // Room selector - P6-ENV-UI
+  ROOM_SELECTOR: 'room-selector',
+  ROOM_TAB_LIVING: 'room-tab-living',
+  ROOM_TAB_KITCHEN: 'room-tab-kitchen',
+  ROOM_TAB_BEDROOM: 'room-tab-bedroom',
+  ROOM_TAB_PLAYROOM: 'room-tab-playroom',
+  // HUD
   HUD_BOND: 'hud-bond',
   HUD_COINS: 'hud-coins',
   HUD_GEMS: 'hud-gems',
