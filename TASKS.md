@@ -619,11 +619,11 @@ P8-TEST
 
 | ID | Title | Phase | Status | Owner | Notes |
 |----|-------|-------|--------|-------|-------|
-| P6-CORE-LOOP | Feeding, fullness, cooldown, evolution thresholds | 6 | Planned | Unassigned | Bible §4.3–4.4, §6.1; BCT-FEED-*, BCT-EVOL-001 |
+| P6-CORE-LOOP | Feeding, fullness, cooldown, evolution thresholds | 6 | Complete | Unassigned | Bible §4.3–4.4, §6.1; BCT-FEED-*, BCT-EVOL-001 ✅ |
 | P6-ECON-WEB | Mini-game caps & Web gem rules | 6 | Complete | Unassigned | Bible §8.2–8.3; BCT-ECON-*, BCT-GAME-*; Already verified ✅ |
-| P6-HUD-CLEANUP | Production HUD vs debug HUD | 6 | Planned | Unassigned | Bible §4.4; BCT-HUD-* |
-| P6-PET-HOME | Active pet & Home behavior | 6 | Planned | Unassigned | Bible §14.5; BCT-NAV-*, BCT-PET-* |
-| P6-ENV-ROOMS | Rooms Lite & time-of-day behavior | 6 | Planned | Unassigned | Bible §14.4; BCT-ROOMS-*, BCT-ENV-* |
+| P6-HUD-CLEANUP | Production HUD vs debug HUD | 6 | Complete | Unassigned | Bible §4.4; BCT-HUD-* ✅ |
+| P6-PET-HOME | Active pet & Home behavior | 6 | Complete | Unassigned | Bible §14.5; BCT-NAV-*, BCT-PET-* ✅ |
+| P6-ENV-ROOMS | Rooms Lite & time-of-day behavior | 6 | Complete | Unassigned | Bible §14.4; BCT-ROOMS-*, BCT-ENV-* ✅ |
 | P6-FTUE-INTRO | FTUE lore & intro performance | 6 | Planned | Unassigned | Bible §7.4; BCT-FTUE-* |
 | P6-MOBILE-LAYOUT | Mobile core loop & nav | 6 | Planned | Unassigned | Bible §14.5–14.6; BCT-LAYOUT-*, BCT-NAV-* |
 | P6-QA-BCT | Bible Compliance tests (spec + E2E integration) | 6 | In Progress | Unassigned | Spec layer (64 BCT tests) integrated; E2E/CI wiring still to finalize |
