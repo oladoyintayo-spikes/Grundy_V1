@@ -194,9 +194,11 @@ const LevelUpModal = ({ level, onClose }: { level: number; onClose: () => void }
 
 // ============================================
 // VIEW: HOME (Pet Care Screen)
+// Bible §14.6: Mobile-first layout - no scrolling required for core loop
 // ============================================
 interface HomeViewProps {
-  onOpenShop: () => void;
+  /** @deprecated Shop is now in AppHeader per Bible §14.6 */
+  onOpenShop?: () => void;
 }
 
 function HomeView({ onOpenShop }: HomeViewProps) {
@@ -294,19 +296,27 @@ function HomeView({ onOpenShop }: HomeViewProps) {
     selectPet(petId);
   };
 
+  // Compute fullness/cooldown states once
+  const petStuffed = isStuffed(pet.hunger);
+  const petOnCooldown = isOnCooldown(stats.lastFeedCooldownStart);
+
   return (
-    <div className="h-full overflow-y-auto text-white p-4">
-      <div className="max-w-md mx-auto">
+    <div
+      className="h-full flex flex-col text-white p-2 sm:p-4 overflow-hidden"
+      data-testid="home-view"
+    >
+      {/* Bible §14.6: Mobile-first layout - all core loop elements visible without scroll */}
+      <div className="flex-1 flex flex-col max-w-md mx-auto w-full min-h-0">
 
         {/* Pet Selection - Debug only per BCT-PET-01: Single active pet on Home */}
         {/* Bible §14.5: "Only active pet visible on home screen. No pet bar showing all 8 pets simultaneously." */}
         {import.meta.env.DEV && (
-          <div className="flex justify-center gap-2 mb-4 flex-wrap" data-testid="debug-pet-selector">
+          <div className="flex justify-center gap-1 mb-2 flex-wrap shrink-0" data-testid="debug-pet-selector">
             {allPets.map((p) => (
               <button
                 key={p.id}
                 onClick={() => changePet(p.id)}
-                className={`px-3 py-1 rounded-full text-sm transition-all
+                className={`px-2 py-0.5 rounded-full text-xs transition-all
                   ${pet.id === p.id
                     ? 'bg-white text-gray-900 font-bold'
                     : 'bg-gray-700 hover:bg-gray-600'}`}
@@ -317,121 +327,104 @@ function HomeView({ onOpenShop }: HomeViewProps) {
           </div>
         )}
 
-        {/* Pet Display (P5-ART-PETS) - BCT-PET-01: Single active pet on Home */}
+        {/* Pet Display Area - Bible §14.6: Pet visible, 40-50% of viewport height */}
         <div
-          className="relative rounded-3xl p-6 mb-4 text-center"
+          className="relative rounded-2xl p-3 sm:p-4 text-center flex-1 min-h-0 flex flex-col justify-center"
           style={{
             background: `linear-gradient(135deg, ${petColor}22, ${petColor}11)`,
-            border: `2px solid ${petColor}44`
+            border: `2px solid ${petColor}44`,
+            maxHeight: '50vh'
           }}
           data-testid="active-pet-display"
         >
           {/* Your Grundy Label - Bible §14.5 context */}
-          <div className="text-xs text-slate-400 mb-2">Your Grundy</div>
+          <div className="text-[10px] text-slate-400 mb-1 shrink-0">Your Grundy</div>
 
           {/* Level Badge */}
-          <div className="absolute top-3 left-3 bg-black/50 px-3 py-1 rounded-full text-sm">
+          <div className="absolute top-2 left-2 bg-black/50 px-2 py-0.5 rounded-full text-xs">
             {evolutionEmoji} Lv.{pet.level}
           </div>
 
           {/* Mood Badge - Debug only per BCT-HUD-001: Mood hidden in production */}
           {import.meta.env.DEV && (
-            <div className="absolute top-3 right-3 bg-black/50 px-3 py-1 rounded-full text-sm">
+            <div className="absolute top-2 right-2 bg-black/50 px-2 py-0.5 rounded-full text-xs">
               {moodEmoji} {pet.mood}
             </div>
           )}
 
-          {/* Pet Sprite (P5-ART-PETS) */}
+          {/* Pet Sprite (P5-ART-PETS) - Constrained for mobile */}
           <div
-            className={`my-6 transition-transform duration-300 ${isFeeding ? 'scale-110' : ''}`}
+            className={`flex-1 flex items-center justify-center min-h-0 transition-transform duration-300 ${isFeeding ? 'scale-110' : ''}`}
             style={{ filter: pet.hunger < 20 ? 'grayscale(50%)' : 'none' }}
           >
             <PetDisplay petId={pet.id} pose={currentPose} breathing={!isFeeding} />
           </div>
 
           {/* Pet Name */}
-          <h2 className="text-2xl font-bold mb-4">{petName}</h2>
+          <h2 className="text-lg sm:text-xl font-bold shrink-0">{petName}</h2>
 
           {/* Reaction Display */}
-          <div className="h-12 mb-4">
+          <div className="h-8 sm:h-10 shrink-0">
             <ReactionDisplay reaction={lastReaction} message={reactionMessage} />
           </div>
 
-          {/* Stats - Bond only in production per BCT-HUD-001 */}
-          <div className="space-y-3">
-            {/* XP and Hunger: Debug only per Bible §4.4 */}
-            {import.meta.env.DEV && (
-              <>
-                <ProgressBar value={pet.xp} max={xpForNextLevel} color="#a855f7" label="XP" />
-                <ProgressBar value={pet.hunger} max={100} color="#fb923c" label="Hunger" />
-              </>
-            )}
-            {/* Bond: Always visible per Bible §4.4 "Bond is visible" */}
-            <ProgressBar value={pet.bond} max={100} color="#ec4899" label="Bond" />
+          {/* Bond bar - Always visible per Bible §4.4 */}
+          <div className="shrink-0 mt-1">
+            <ProgressBar value={pet.bond} max={100} color="#ec4899" label="Bond" showText={false} />
           </div>
+
+          {/* Debug stats - XP and Hunger: Debug only per Bible §4.4 */}
+          {import.meta.env.DEV && (
+            <div className="shrink-0 mt-1 space-y-1">
+              <ProgressBar value={pet.xp} max={xpForNextLevel} color="#a855f7" label="XP" showText={false} />
+              <ProgressBar value={pet.hunger} max={100} color="#fb923c" label="Hunger" showText={false} />
+            </div>
+          )}
         </div>
 
-        {/* Food Bag - P6-HUD-CLEANUP: Fullness/cooldown feedback */}
-        {(() => {
-          const petStuffed = isStuffed(pet.hunger);
-          const petOnCooldown = isOnCooldown(stats.lastFeedCooldownStart);
+        {/* Hungry Hint - Compact inline */}
+        {pet.hunger < 30 && (
+          <div className="text-center text-orange-400 text-xs py-1 shrink-0 animate-pulse">
+            {petName} is getting hungry!
+          </div>
+        )}
 
-          return (
-            <div className="bg-gray-800/50 rounded-2xl p-4 mb-4" data-testid="food-bag">
-              <h3 className="text-sm text-gray-400 mb-3 flex items-center gap-2">
-                <span>🎒</span> Food Bag
-                {/* Bible §4.4: Contextual UI cues for fullness state */}
-                {petStuffed ? (
-                  <span className="ml-auto text-xs text-red-400">Too full to eat! 🚫</span>
-                ) : petOnCooldown ? (
-                  <span className="ml-auto text-xs text-orange-400">Cooldown active ⏱</span>
-                ) : (
-                  <span className="ml-auto text-xs">Tap to feed!</span>
-                )}
-              </h3>
+        {/* Food Bag - Primary Action Area (Bible §14.6: Feed button visible without scroll) */}
+        <div className="bg-gray-800/50 rounded-xl p-2 sm:p-3 mt-2 shrink-0" data-testid="food-bag">
+          <h3 className="text-xs text-gray-400 mb-2 flex items-center gap-1">
+            <span>🎒</span> Food Bag
+            {/* Bible §4.4: Contextual UI cues for fullness state */}
+            {petStuffed ? (
+              <span className="ml-auto text-[10px] text-red-400">Too full! 🚫</span>
+            ) : petOnCooldown ? (
+              <span className="ml-auto text-[10px] text-orange-400">Cooldown ⏱</span>
+            ) : (
+              <span className="ml-auto text-[10px]">Tap to feed!</span>
+            )}
+          </h3>
 
-              <div className="flex gap-2 overflow-x-auto pb-2">
-                {allFoods.map((food, index) => (
-                  <FoodItem
-                    key={food.id}
-                    food={food}
-                    count={inventory[food.id] || 0}
-                    onFeed={() => handleFeed(food.id)}
-                    disabled={isFeeding}
-                    isFirst={index === 0}
-                    stuffed={petStuffed}
-                    onCooldown={petOnCooldown}
-                  />
-                ))}
-              </div>
-            </div>
-          );
-        })()}
-
-        {/* Shop Button */}
-        <div className="text-center mb-4">
-          <button
-            onClick={onOpenShop}
-            className="px-6 py-3 bg-green-500 hover:bg-green-600 rounded-full font-bold text-sm transition-colors"
-          >
-            🏪 Open Shop
-          </button>
+          <div className="flex gap-1.5 overflow-x-auto pb-1" data-testid="feed-actions">
+            {allFoods.map((food, index) => (
+              <FoodItem
+                key={food.id}
+                food={food}
+                count={inventory[food.id] || 0}
+                onFeed={() => handleFeed(food.id)}
+                disabled={isFeeding}
+                isFirst={index === 0}
+                stuffed={petStuffed}
+                onCooldown={petOnCooldown}
+              />
+            ))}
+          </div>
         </div>
 
         {/* Stats Footer - Debug only per Bible §4.4 */}
         {import.meta.env.DEV && (
-          <div className="text-center text-gray-500 text-sm">
-            Total feeds: {stats.totalFeeds} | Session started: {new Date(stats.sessionStartTime).toLocaleTimeString()}
+          <div className="text-center text-gray-500 text-[10px] mt-1 shrink-0">
+            Total feeds: {stats.totalFeeds} | Session: {new Date(stats.sessionStartTime).toLocaleTimeString()}
           </div>
         )}
-
-        {/* Hint */}
-        {pet.hunger < 30 && (
-          <div className="mt-4 text-center text-orange-400 text-sm animate-pulse">
-            {petName} is getting hungry! Feed them soon!
-          </div>
-        )}
-
       </div>
 
       {/* Level Up Modal */}
@@ -832,14 +825,15 @@ function MainApp() {
 
   return (
     <div className={`h-screen w-screen flex flex-col bg-gradient-to-b ${bgClass} overflow-hidden`}>
-      {/* App Header */}
-      <AppHeader />
+      {/* App Header (Bible §14.6: Shop button in top-corner) */}
+      <AppHeader onOpenShop={handleOpenShop} />
 
       {/* Main Content (P5-ART-ROOMS: RoomScene wraps home view) */}
       <main className="flex-1 overflow-hidden flex flex-col">
         {currentView === 'home' && (
           <RoomScene showAccents={true}>
-            <HomeView onOpenShop={handleOpenShop} />
+            {/* Bible §14.6: Shop moved to header - HomeView focuses on core loop */}
+            <HomeView />
           </RoomScene>
         )}
         {currentView === 'games' && (
