@@ -710,8 +710,8 @@ P8-TEST
 
 | ID | Task | Status | Scope | Notes |
 |----|------|--------|-------|-------|
-| P6-ART-PRODUCTION | Verify sprites in production builds | 🟡 | PetAvatar | Bible §13.7 — Verify no emoji fallback in prod |
-| P6-ART-TEST | Add visual regression test | ⬜ | Tests | Bible §13.7 — Test no emoji where sprites should be |
+| P6-ART-PRODUCTION | Stage-aware sprite resolution | ✅ | petSprites.ts, PetAvatar | Bible §13.7 — No orb fallback when sprites exist; resolvePetSprite + getStageAwarePetSprite |
+| P6-ART-TEST | BCT-ART tests for sprite coverage | ✅ | bct-art.spec.ts | Bible §13.7 — 401 tests: BCT-ART-01 thru BCT-ART-06 for coverage, fallback, no-orb guarantee |
 
 ### P6-BRANDING: Branding & Visual Polish (QA Deferrals)
 

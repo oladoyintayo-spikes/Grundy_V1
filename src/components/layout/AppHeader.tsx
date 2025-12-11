@@ -1,7 +1,7 @@
 // ============================================
 // GRUNDY — APP HEADER
 // Top navigation bar with pet info + currencies
-// P3-NAV-2, P3-ENV-3, P5-ART-PETS, P5-A11Y-LABELS
+// P3-NAV-2, P3-ENV-3, P5-ART-PETS, P5-A11Y-LABELS, P6-ART-PRODUCTION
 // ============================================
 
 import React from 'react';
@@ -51,10 +51,11 @@ export function AppHeader({ onOpenShop }: AppHeaderProps) {
     >
       {/* Pet info */}
       <div className="flex items-center gap-3">
-        {/* Pet avatar using real sprites (P5-ART-PETS, P5-A11Y-LABELS) */}
+        {/* Pet avatar using real sprites (P5-ART-PETS, P5-A11Y-LABELS, P6-ART-PRODUCTION) */}
         <PetAvatar
           petId={pet.id}
           pose={headerPose}
+          stage={pet.evolutionStage}
           size="sm"
           petDisplayName={petName}
         />
