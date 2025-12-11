@@ -2,10 +2,12 @@
 // GRUNDY — PET AVATAR COMPONENT
 // P5-ART-PETS: Image-based pet avatar using sprite assets
 // P5-A11Y-LABELS: Accessible alt text for pet images
+// P6-ART-PRODUCTION: Stage-aware sprite resolution with no-orb guarantee
 // ============================================
 
 import React from 'react';
-import { getPetSprite, PetPose } from '../../art/petSprites';
+import { getPetSprite, getStageAwarePetSprite, PetPose } from '../../art/petSprites';
+import type { EvolutionStage } from '../../types';
 
 // ============================================
 // POSE LABELS FOR ALT TEXT (P5-A11Y-LABELS)
@@ -35,6 +37,8 @@ export interface PetAvatarProps {
   petId: string;
   /** Pose to display (P6-ART-POSES: idle, happy, sad, sleeping, eating, eating_loved, ecstatic, excited, hungry, satisfied, crying) */
   pose: PetPose;
+  /** Evolution stage for stage-aware sprite resolution (P6-ART-PRODUCTION) */
+  stage?: EvolutionStage;
   /** Size variant */
   size?: 'sm' | 'md' | 'lg' | 'xl';
   /** Additional CSS classes */
@@ -82,12 +86,16 @@ const imageSizeMap = {
 export function PetAvatar({
   petId,
   pose,
+  stage,
   size = 'md',
   className = '',
   animated = false,
   petDisplayName,
 }: PetAvatarProps) {
-  const src = getPetSprite(petId, pose);
+  // Use stage-aware resolution when stage is provided (P6-ART-PRODUCTION)
+  const src = stage
+    ? getStageAwarePetSprite(petId, stage, pose)
+    : getPetSprite(petId, pose);
   const containerClass = sizeClassMap[size];
   const imageClass = imageSizeMap[size];
 
@@ -127,6 +135,8 @@ export interface PetDisplayProps {
   petId: string;
   /** Pose to display (P6-ART-POSES: idle, happy, sad, sleeping, eating, eating_loved, ecstatic, excited, hungry, satisfied, crying) */
   pose: PetPose;
+  /** Evolution stage for stage-aware sprite resolution (P6-ART-PRODUCTION) */
+  stage?: EvolutionStage;
   /** Additional CSS classes for the container */
   className?: string;
   /** Whether to apply a subtle breathing animation */
@@ -149,11 +159,15 @@ export interface PetDisplayProps {
 export function PetDisplay({
   petId,
   pose,
+  stage,
   className = '',
   breathing = false,
   petDisplayName,
 }: PetDisplayProps) {
-  const src = getPetSprite(petId, pose);
+  // Use stage-aware resolution when stage is provided (P6-ART-PRODUCTION)
+  const src = stage
+    ? getStageAwarePetSprite(petId, stage, pose)
+    : getPetSprite(petId, pose);
 
   // Generate accessible alt text (P5-A11Y-LABELS)
   const displayName = petDisplayName || petId;

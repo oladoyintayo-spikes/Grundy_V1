@@ -417,12 +417,12 @@ function HomeView({ onOpenShop }: HomeViewProps) {
             </div>
           )}
 
-          {/* Pet Sprite (P5-ART-PETS) - Constrained for mobile */}
+          {/* Pet Sprite (P5-ART-PETS, P6-ART-PRODUCTION) - Constrained for mobile */}
           <div
             className={`flex-1 flex items-center justify-center min-h-0 transition-transform duration-300 ${isFeeding ? 'scale-110' : ''}`}
             style={{ filter: pet.hunger < 20 ? 'grayscale(50%)' : 'none' }}
           >
-            <PetDisplay petId={pet.id} pose={currentPose} breathing={!isFeeding} />
+            <PetDisplay petId={pet.id} pose={currentPose} stage={pet.evolutionStage} breathing={!isFeeding} />
           </div>
 
           {/* Pet Name */}
