@@ -25,6 +25,8 @@ import { RoomScene } from './components/environment/RoomScene';
 import { getDefaultPoseForState, getPoseForReaction } from './game/petVisuals';
 // P6-HUD-CLEANUP: Import fullness/cooldown systems for feedback
 import { isStuffed, isOnCooldown, getFullnessState, getCooldownRemaining } from './game/systems';
+// P1-ABILITY-4: Ability indicator component
+import { AbilityIndicator } from './components/abilities/AbilityIndicator';
 
 // ============================================
 // SHARED COMPONENTS
@@ -927,6 +929,9 @@ function MainApp() {
 
       {/* Debug HUD - only visible in dev builds (BCT-HUD-002) */}
       <DebugHud />
+
+      {/* P1-ABILITY-4: Ability trigger indicators (global overlay) */}
+      <AbilityIndicator />
     </div>
   );
 }

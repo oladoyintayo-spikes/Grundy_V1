@@ -178,4 +178,77 @@ describe('BCT-ABILITY: Pet Abilities (P1-ABILITY-4)', () => {
       expect(applyGemMultiplier('munchlet', baseGems)).toBe(5); // No effect
     });
   });
+
+  describe('BCT-ABILITY-05: Ability trigger integration (P6-ABILITY-INTEGRATION)', () => {
+    beforeEach(() => {
+      useGameStore.getState().resetGame();
+      // Clear any existing triggers
+      while (useGameStore.getState().abilityTriggers.length > 0) {
+        useGameStore.getState().clearExpiredAbilityTriggers();
+      }
+    });
+
+    it('Munchlet feed emits bond_bonus trigger', () => {
+      const store = useGameStore.getState();
+      store.selectPet('munchlet');
+      store.addFood('cookie', 1);
+
+      // Clear triggers before feed
+      store.resetGame();
+      store.selectPet('munchlet');
+      store.addFood('cookie', 1);
+
+      store.feed('cookie');
+
+      const triggers = useGameStore.getState().abilityTriggers;
+      const bondTrigger = triggers.find(t => t.id === 'bond_bonus');
+      expect(bondTrigger).toBeDefined();
+      expect(bondTrigger?.message).toContain('Comfort Food');
+    });
+
+    it('Fizz minigame completion emits minigame_bonus trigger', () => {
+      const store = useGameStore.getState();
+      store.selectPet('fizz');
+
+      store.completeGame({
+        gameId: 'memory_match',
+        score: 100,
+        tier: 'gold',
+        rewards: { xp: 50, coins: 100, foodDrop: null },
+      });
+
+      const triggers = useGameStore.getState().abilityTriggers;
+      const minigameTrigger = triggers.find(t => t.id === 'minigame_bonus');
+      expect(minigameTrigger).toBeDefined();
+      expect(minigameTrigger?.message).toContain('Hyperactive');
+    });
+
+    it('Non-ability pet does not emit bond_bonus trigger', () => {
+      const store = useGameStore.getState();
+      store.selectPet('grib'); // Grib has mood_penalty_reduction, not bond_bonus
+      store.addFood('cookie', 1);
+
+      store.feed('cookie');
+
+      const triggers = useGameStore.getState().abilityTriggers;
+      const bondTrigger = triggers.find(t => t.id === 'bond_bonus');
+      expect(bondTrigger).toBeUndefined();
+    });
+
+    it('Non-Fizz pet minigame does not emit minigame_bonus trigger', () => {
+      const store = useGameStore.getState();
+      store.selectPet('munchlet');
+
+      store.completeGame({
+        gameId: 'memory_match',
+        score: 100,
+        tier: 'gold',
+        rewards: { xp: 50, coins: 100, foodDrop: null },
+      });
+
+      const triggers = useGameStore.getState().abilityTriggers;
+      const minigameTrigger = triggers.find(t => t.id === 'minigame_bonus');
+      expect(minigameTrigger).toBeUndefined();
+    });
+  });
 });
