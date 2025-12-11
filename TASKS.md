@@ -657,7 +657,7 @@ P8-TEST
 
 | ID | Task | Status | Scope | Notes |
 |----|------|--------|-------|-------|
-| P6-DOC-BIBLE | Bible alignment audit | ⬜ | docs/ | Ensure all sections match Web 1.0 |
+| P6-DOC-BIBLE | Bible v1.4 merge | ✅ | docs/ | Merged v1.4 amendments: platform tags, cooldown/fullness, HUD rules, nav/mobile, Rooms Lite, FTUE fallback, art rule |
 | P6-DOC-ROADMAP | Roadmap update | ⬜ | docs/ | Phase 6+ roadmap from Web 1.0 baseline |
 
 ---
