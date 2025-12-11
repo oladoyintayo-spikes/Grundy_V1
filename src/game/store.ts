@@ -23,6 +23,8 @@ import {
   PlayMode,
   AppView,
   RoomId,
+  AbilityTrigger,
+  PetPose,
 } from '../types';
 import {
   DEFAULT_ENVIRONMENT,
@@ -41,8 +43,14 @@ import {
   isStuffed,
   isOnCooldown,
   getCombinedFeedValue,
-  getFullnessState
+  getFullnessState,
+  updateMoodValue,
+  decayMood,
+  syncMoodState,
+  getMoodXPMultiplier,
 } from './systems';
+import { getEatingPoseForReaction } from './petVisuals';
+import { getAbility } from './abilities';
 import { applyGemMultiplier } from './abilities';
 import {
   ENERGY_MAX,
@@ -90,6 +98,7 @@ function createInitialState() {
     } as FtueState,
     playMode: 'cozy' as PlayMode, // Default to Cozy mode (Bible §9)
     environment: { ...DEFAULT_ENVIRONMENT },
+    abilityTriggers: [] as AbilityTrigger[], // P1-ABILITY-4
   };
 }
 
@@ -147,6 +156,11 @@ export const useGameStore = create<GameStore>()(
         }
 
         // Apply all changes
+        // P6-T2-PET-BEHAVIORS: Set transient eating pose
+        const eatingPose = getEatingPoseForReaction(result.reaction);
+        const transientPoseDurationMs = 2000; // 2 seconds
+        const feedTime = Date.now(); // Use separate var to avoid shadowing 'now'
+
         set((state) => {
           // Update inventory
           const newInventory = { ...state.inventory };
@@ -154,6 +168,9 @@ export const useGameStore = create<GameStore>()(
           if (newInventory[foodId] <= 0) {
             delete newInventory[foodId];
           }
+
+          // P6-MOOD-SYSTEM: Update mood value using Bible §4.5 system
+          const newMoodValue = updateMoodValue(state.pet.moodValue ?? 50, result.reaction, state.pet.id);
 
           // Update pet with adjusted gains
           const newPet: PetState = {
@@ -164,7 +181,14 @@ export const useGameStore = create<GameStore>()(
               (result.reaction === 'ecstatic' ? 20 :
                result.reaction === 'positive' ? 15 :
                result.reaction === 'negative' ? 5 : 10)),
-            mood: getMoodAfterReaction(state.pet.mood, result.reaction),
+            mood: syncMoodState(newMoodValue),
+            moodValue: newMoodValue,
+            lastMoodUpdate: feedTime,
+            // P6-T2-PET-BEHAVIORS: Set transient pose for eating animation
+            transientPose: {
+              pose: eatingPose,
+              expiresAt: feedTime + transientPoseDurationMs,
+            },
           };
 
           // Handle level up (with adjusted XP)
@@ -748,6 +772,77 @@ export const useGameStore = create<GameStore>()(
       },
 
       // ========================================
+      // MOOD SYSTEM (P6-MOOD-SYSTEM)
+      // ========================================
+      tickMoodDecay: (deltaMinutes: number) => {
+        set((state) => {
+          const newMoodValue = decayMood(state.pet.moodValue ?? 50, deltaMinutes, state.pet.id);
+          return {
+            pet: {
+              ...state.pet,
+              moodValue: newMoodValue,
+              mood: syncMoodState(newMoodValue),
+              lastMoodUpdate: Date.now(),
+            },
+          };
+        });
+      },
+
+      setMoodValue: (value: number) => {
+        set((state) => ({
+          pet: {
+            ...state.pet,
+            moodValue: Math.max(0, Math.min(100, value)),
+            mood: syncMoodState(value),
+          },
+        }));
+      },
+
+      // ========================================
+      // ABILITY TRIGGERS (P1-ABILITY-4)
+      // ========================================
+      addAbilityTrigger: (trigger: AbilityTrigger) => {
+        set((state) => ({
+          abilityTriggers: [...state.abilityTriggers, trigger],
+        }));
+        console.log(`[Ability] ${trigger.abilityName}: ${trigger.message}`);
+      },
+
+      clearExpiredAbilityTriggers: () => {
+        const now = Date.now();
+        const TRIGGER_DURATION_MS = 3000; // Triggers show for 3 seconds
+        set((state) => ({
+          abilityTriggers: state.abilityTriggers.filter(
+            (trigger) => now - trigger.triggeredAt < TRIGGER_DURATION_MS
+          ),
+        }));
+      },
+
+      // ========================================
+      // PET BEHAVIOR (P6-T2-PET-BEHAVIORS)
+      // ========================================
+      setTransientPose: (pose: PetPose, durationMs: number) => {
+        set((state) => ({
+          pet: {
+            ...state.pet,
+            transientPose: {
+              pose,
+              expiresAt: Date.now() + durationMs,
+            },
+          },
+        }));
+      },
+
+      clearTransientPose: () => {
+        set((state) => ({
+          pet: {
+            ...state.pet,
+            transientPose: undefined,
+          },
+        }));
+      },
+
+      // ========================================
       // RESET
       // ========================================
       resetGame: () => {
@@ -773,6 +868,7 @@ export const useFtue = () => useGameStore((state) => state.ftue);
 export const usePlayMode = () => useGameStore((state) => state.playMode);
 export const useEnvironment = () => useGameStore((state) => state.environment);
 export const useSettings = () => useGameStore((state) => state.settings);
+export const useAbilityTriggers = () => useGameStore((state) => state.abilityTriggers);
 
 // FTUE helper: Check if FTUE should be shown
 export function shouldShowFtue(state: { ftue: FtueState }): boolean {

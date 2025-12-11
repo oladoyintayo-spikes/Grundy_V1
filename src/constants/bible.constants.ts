@@ -146,6 +146,72 @@ export function containsAllFtueLore(renderedText: string): boolean {
 }
 
 // ============================================================================
+// §4.5 Mood System (LOCKED)
+// ============================================================================
+
+export const MOOD_TIERS = {
+  ECSTATIC: { min: 85, max: 100, label: 'Ecstatic', positiveOdds: 0.8 },
+  HAPPY: { min: 60, max: 84, label: 'Happy', positiveOdds: 0.6 },
+  CONTENT: { min: 40, max: 59, label: 'Content', positiveOdds: 0.5 },
+  LOW: { min: 20, max: 39, label: 'Low', positiveOdds: 0.4 },
+  UNHAPPY: { min: 0, max: 19, label: 'Unhappy', positiveOdds: 0.4 },
+} as const;
+
+export const MOOD_MODIFIERS = {
+  /** XP bonus when feeding while happy (mood >= 60) */
+  HAPPY_FEED_XP_BONUS: 0.10,
+  /** Mood boost from feeding a loved food */
+  LOVED_FOOD_MOOD_BOOST: 15,
+  /** Mood boost from feeding a liked food */
+  LIKED_FOOD_MOOD_BOOST: 8,
+  /** Mood change from feeding a neutral food */
+  NEUTRAL_FOOD_MOOD_CHANGE: 3,
+  /** Mood penalty from feeding a disliked food */
+  DISLIKED_FOOD_MOOD_PENALTY: -10,
+  /** Base mood decay per minute when neglected */
+  DECAY_PER_MINUTE: 0.5,
+} as const;
+
+export type MoodTier = keyof typeof MOOD_TIERS;
+
+/**
+ * Get mood tier from numeric value
+ */
+export function getMoodTier(moodValue: number): MoodTier {
+  if (moodValue >= MOOD_TIERS.ECSTATIC.min) return 'ECSTATIC';
+  if (moodValue >= MOOD_TIERS.HAPPY.min) return 'HAPPY';
+  if (moodValue >= MOOD_TIERS.CONTENT.min) return 'CONTENT';
+  if (moodValue >= MOOD_TIERS.LOW.min) return 'LOW';
+  return 'UNHAPPY';
+}
+
+/**
+ * Convert numeric mood (0-100) to MoodState string for backward compatibility
+ */
+export function moodValueToState(moodValue: number): 'ecstatic' | 'happy' | 'neutral' | 'sad' {
+  const tier = getMoodTier(moodValue);
+  switch (tier) {
+    case 'ECSTATIC': return 'ecstatic';
+    case 'HAPPY': return 'happy';
+    case 'CONTENT': return 'neutral';
+    case 'LOW': return 'neutral';
+    case 'UNHAPPY': return 'sad';
+  }
+}
+
+/**
+ * Convert MoodState string to approximate numeric mood
+ */
+export function moodStateToValue(mood: 'ecstatic' | 'happy' | 'neutral' | 'sad'): number {
+  switch (mood) {
+    case 'ecstatic': return 90;
+    case 'happy': return 70;
+    case 'neutral': return 50;
+    case 'sad': return 15;
+  }
+}
+
+// ============================================================================
 // §14.4 Rooms Lite
 // ============================================================================
 

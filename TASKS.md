@@ -220,7 +220,7 @@ npm run build      # Must exit 0
 | P1-ABILITY-1 | Create ability effect system | ✅ | §3.7 | P1-DATA-5 | `abilities.ts` with helper functions |
 | P1-ABILITY-2 | Implement starter abilities | ✅ | §3.7 | P1-ABILITY-1 | Munchlet +10% bond, Grib -20% mood, Plompo -20% decay |
 | P1-ABILITY-3 | Implement unlock pet abilities | ✅ | §3.7 | P1-ABILITY-1 | Fizz, Ember, Chomper, Whisp, Luxe all implemented |
-| P1-ABILITY-4 | Add ability trigger indicators | ⬜ | §3.7 | P1-ABILITY-2 | Show "+25% 🎮" when ability activates (UI work) |
+| P1-ABILITY-4 | Add ability trigger indicators | ✅ | §3.7 | P1-ABILITY-2 | AbilityIndicator component, toast-style triggers with auto-expire |
 
 ### P1-TEST: Test Coverage for Data Layer
 
@@ -702,7 +702,7 @@ P8-TEST
 | P6-ENV-ROOMS | Implement activity→room mapping | ✅ | Environment system | Bible §14.4 — Feeding=Kitchen, Sleeping=Bedroom, Playing=Playroom |
 | P6-ENV-UI | Room selection UI | ✅ | HomeView | Bible §14.4 — Explicit room switcher with precedence rule |
 | P6-ENV-TOD | Time-of-day consistency | ✅ | Environment | Bible §14.4 — ToD ranges aligned: Morning 6-12, Day 12-17, Evening 17-21, Night 21-6 |
-| P6-MOOD-SYSTEM | Full mood decay system | ⬜ | Store, pet logic | Enables Grib's Chill Vibes fully |
+| P6-MOOD-SYSTEM | Full mood decay system | ✅ | Store, pet logic | Bible §4.5 — moodValue 0-100, decay, Grib/Plompo abilities |
 
 ### P6-ART: Art Integration (Bible §13.7)
 
@@ -719,8 +719,9 @@ P8-TEST
 |----|------|--------|-------|-------|
 | P6-BRANDING | Replace placeholder PWA icons | ⬜ | public/icons/ | Real branded icons for manifest & PWA (QA-001) |
 | P6-ART-POSES | Extended pet sprite poses | ✅ | assets/pets/ | 11 poses wired: idle, happy, sad, sleeping, eating, eating_loved, ecstatic, excited, hungry, satisfied, crying |
+| P6-T2-PET-BEHAVIORS | Pet pose behavior wiring | ✅ | PetAvatar, Store | Transient eating poses, mood-based expressions, pose priority system |
 | P6-ART-PROPS | Room-specific prop art | ⬜ | assets/rooms/ | Replace placeholder accent badges (ART_NOTES) |
-| P6-ABILITY-UI | Ability activation indicators | ⬜ | Components | Show "+25%" when ability activates (P1-ABILITY-4) |
+| P6-ABILITY-UI | Ability activation indicators | ✅ | Components | P1-ABILITY-4 — AbilityIndicator component, toast-style triggers |
 
 ### P6-AUDIO: Audio Assets & Polish
 

@@ -112,6 +112,22 @@ export interface UnlockRequirement {
   gemSkipCost?: number;   // Cost to unlock with gems instead
 }
 
+// --- Pet Pose for transient animations (P6-T2-PET-BEHAVIORS) ---
+export type PetPose = 'idle' | 'happy' | 'sad' | 'sleeping' | 'eating' | 'eating_loved' | 'ecstatic' | 'excited' | 'hungry' | 'satisfied' | 'crying';
+
+export interface TransientPose {
+  pose: PetPose;
+  expiresAt: number; // Unix timestamp (ms)
+}
+
+// --- Ability Trigger (P1-ABILITY-4) ---
+export interface AbilityTrigger {
+  id: string;
+  abilityName: string;
+  message: string;
+  triggeredAt: number; // Unix timestamp (ms)
+}
+
 // --- Pet State (runtime state for store.ts) ---
 export interface PetState {
   id: string;
@@ -120,8 +136,14 @@ export interface PetState {
   xp: number;
   bond: number;
   mood: MoodState;
+  /** Numeric mood value 0-100, per Bible §4.5 */
+  moodValue: number;
   hunger: number;
   evolutionStage: EvolutionStage;
+  /** Transient pose for feeding animation (P6-T2-PET-BEHAVIORS) */
+  transientPose?: TransientPose;
+  /** Timestamp of last mood update for decay calculation */
+  lastMoodUpdate?: number;
 }
 
 // --- Food Definition ---
@@ -219,6 +241,8 @@ export interface GameStore {
     room: RoomId;
     lastUpdated: number;
   };
+  /** Active ability triggers for UI display (P1-ABILITY-4) */
+  abilityTriggers: AbilityTrigger[];
 
   // Actions
   feed: (foodId: string) => FeedResult | null;
@@ -259,6 +283,18 @@ export interface GameStore {
   // Audio settings actions (P5-AUDIO)
   setSoundEnabled: (enabled: boolean) => void;
   setMusicEnabled: (enabled: boolean) => void;
+
+  // Mood system actions (P6-MOOD-SYSTEM)
+  tickMoodDecay: (deltaMinutes: number) => void;
+  setMoodValue: (value: number) => void;
+
+  // Ability trigger actions (P1-ABILITY-4)
+  addAbilityTrigger: (trigger: AbilityTrigger) => void;
+  clearExpiredAbilityTriggers: () => void;
+
+  // Pet behavior actions (P6-T2-PET-BEHAVIORS)
+  setTransientPose: (pose: PetPose, durationMs: number) => void;
+  clearTransientPose: () => void;
 }
 
 // --- Legacy Currencies interface (for compatibility) ---

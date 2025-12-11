@@ -20,13 +20,21 @@ import {
   applyBondBonus,
   applySpicyCoinBonus,
   applyRareXPChance,
-  applyDecayReduction
+  applyDecayReduction,
+  applyMoodPenaltyReduction,
+  applyMoodDecayReduction
 } from './abilities';
 import {
   EVOLUTION_THRESHOLDS,
   FULLNESS_STATES,
   COOLDOWN,
-  type FullnessState
+  MOOD_MODIFIERS,
+  MOOD_TIERS,
+  moodValueToState,
+  moodStateToValue,
+  getMoodTier,
+  type FullnessState,
+  type MoodTier
 } from '../constants/bible.constants';
 
 // ============================================
@@ -41,8 +49,10 @@ export function createInitialPet(petId: string, customName?: string): PetState {
     xp: 0,
     bond: 0,
     mood: 'neutral',
+    moodValue: 50, // Start at CONTENT tier (Bible §4.5)
     hunger: 50,
     evolutionStage: 'baby',
+    lastMoodUpdate: Date.now(),
   };
 }
 
@@ -339,8 +349,107 @@ export function getMoodAfterReaction(currentMood: MoodState, reaction: ReactionT
       default: return currentMood;
     }
   }
-  
+
   return currentMood;
+}
+
+// ============================================
+// MOOD VALUE SYSTEM (Bible §4.5)
+// ============================================
+
+/**
+ * Calculate mood change from feeding based on reaction type.
+ * Applies Grib's ability: -20% mood penalty from dislikes.
+ * @param reaction - The feeding reaction
+ * @param petId - Pet ID for ability application
+ * @returns Mood change amount (can be negative)
+ */
+export function getMoodChangeFromReaction(reaction: ReactionType, petId?: string): number {
+  let change: number;
+
+  switch (reaction) {
+    case 'ecstatic':
+      change = MOOD_MODIFIERS.LOVED_FOOD_MOOD_BOOST;
+      break;
+    case 'positive':
+      change = MOOD_MODIFIERS.LIKED_FOOD_MOOD_BOOST;
+      break;
+    case 'neutral':
+      change = MOOD_MODIFIERS.NEUTRAL_FOOD_MOOD_CHANGE;
+      break;
+    case 'negative':
+      change = MOOD_MODIFIERS.DISLIKED_FOOD_MOOD_PENALTY;
+      // Apply Grib's ability: -20% mood penalty from dislikes
+      if (petId) {
+        change = applyMoodPenaltyReduction(petId, change);
+      }
+      break;
+  }
+
+  return change;
+}
+
+/**
+ * Calculate mood decay over time.
+ * Applies Plompo's ability: -20% mood decay rate.
+ * @param currentMood - Current mood value (0-100)
+ * @param minutesElapsed - Minutes since last update
+ * @param petId - Pet ID for ability application
+ * @returns New mood value
+ */
+export function decayMood(currentMood: number, minutesElapsed: number, petId?: string): number {
+  let decay = minutesElapsed * MOOD_MODIFIERS.DECAY_PER_MINUTE;
+
+  // Apply Plompo's ability: -20% mood decay rate
+  if (petId) {
+    decay = applyMoodDecayReduction(petId, decay);
+  }
+
+  return Math.max(0, Math.min(100, currentMood - decay));
+}
+
+/**
+ * Update mood value after a reaction.
+ * @param currentMood - Current mood value (0-100)
+ * @param reaction - The feeding reaction
+ * @param petId - Pet ID for ability application
+ * @returns New mood value
+ */
+export function updateMoodValue(currentMood: number, reaction: ReactionType, petId?: string): number {
+  const change = getMoodChangeFromReaction(reaction, petId);
+  return Math.max(0, Math.min(100, currentMood + change));
+}
+
+/**
+ * Sync mood state string with mood value.
+ * @param moodValue - Numeric mood value (0-100)
+ * @returns MoodState string
+ */
+export function syncMoodState(moodValue: number): MoodState {
+  return moodValueToState(moodValue);
+}
+
+/**
+ * Check if mood is in the "happy" range for XP bonus.
+ * Bible §4.5: "Feeding while Mood = Happy → +10% XP"
+ * @param moodValue - Numeric mood value (0-100)
+ * @returns True if mood qualifies for happy XP bonus
+ */
+export function isHappyMood(moodValue: number): boolean {
+  return moodValue >= MOOD_TIERS.HAPPY.min;
+}
+
+/**
+ * Get the XP multiplier based on mood.
+ * Bible §4.5: "Feeding while Mood = Happy → +10% XP"
+ * @param moodValue - Numeric mood value (0-100)
+ * @returns XP multiplier (1.0 or 1.1)
+ */
+export function getMoodXPMultiplier(moodValue: number): number {
+  if (isHappyMood(moodValue)) {
+    return 1 + MOOD_MODIFIERS.HAPPY_FEED_XP_BONUS;
+  }
+  return 1.0;
 }
 
 // ============================================
