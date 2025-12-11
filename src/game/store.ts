@@ -52,6 +52,8 @@ import {
   createInitialDailyState,
   createInitialEnergyState
 } from './miniGameRewards';
+// Bible §14.4: Activity-to-room mapping
+import { ROOM_ACTIVITY_MAP } from '../constants/bible.constants';
 
 // Initial state factory
 function createInitialState() {
@@ -211,6 +213,9 @@ export const useGameStore = create<GameStore>()(
             stats: newStats,
           };
         });
+
+        // Bible §14.4: Switch to kitchen when feeding
+        get().setRoom(ROOM_ACTIVITY_MAP.feeding as RoomId);
 
         // Return result with adjusted values and cooldown info
         return {
