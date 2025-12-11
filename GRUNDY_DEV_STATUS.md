@@ -2,8 +2,7 @@
 
 # Grundy Web Prototype — Development Status
 
-**Last Updated:** December 11, 2024 (P6-ABILITY-INTEGRATION)
-**Last Updated:** December 11, 2024 (P6-ART-PRODUCTION + P6-ART-TEST)
+**Last Updated:** December 11, 2024 (Bible v1.5 Update — Neglect & Withdrawal System)
 **Current Phase:** Web Phase 6 Tier 1 — DEV COMPLETE (CE Review Required)
 **Next Phase:** Phase 6 Tier 2 (Branding, Audio, PWA Enhancements)
 
@@ -13,10 +12,11 @@
 
 | Resource | Location |
 |----------|----------|
-| **Design SoT** | `docs/GRUNDY_MASTER_BIBLE.md` |
+| **Design SoT** | `docs/GRUNDY_MASTER_BIBLE.md` v1.5 |
 | **Task List** | `TASKS.md` |
 | **Agent Workflow** | `ORCHESTRATOR.md` |
 | **Bible Update Log** | `BIBLE_UPDATE_BACKLOG.md` |
+| **BCT Specs** | `docs/BIBLE_COMPLIANCE_TEST.md` v2.1 |
 
 ---
 
@@ -42,7 +42,7 @@
 | Shop & Economy | ⬜ NOT STARTED | Shop tabs, gem confirm, milestones |
 | Inventory | ⬜ NOT STARTED | Capacity, expansion items |
 | Pet Slots | ⬜ NOT STARTED | Multi-pet care system |
-| Classic Mode | ⬜ NOT STARTED | Sickness, neglect, runaway |
+| Classic Mode | 📋 SPEC COMPLETE | Bible v1.5 §9.4.3 Neglect & Withdrawal System defined; runtime implementation Phase 7 |
 
 ---
 
@@ -357,9 +357,17 @@ The following copy is canonical and used across all onboarding documentation:
 
 ---
 
-## Web Phase 6 – Bible v1.4 Compliance
+## Web Phase 6 – Bible v1.4 → v1.5 Compliance
 
-**Goal:** Bring Web 1.0 up to Bible v1.4 specification.
+**Goal:** Bring Web 1.0 up to Bible v1.4 specification. Bible updated to v1.5 with Neglect & Withdrawal System (§9.4.3).
+
+**Bible v1.5 Update (December 2024):**
+- §9.4.3 Neglect & Withdrawal System (Classic Mode Only) — Full spec added
+- 5-stage neglect timeline: Normal → Worried (Day 2) → Sad (Day 4) → Withdrawn (Day 7) → Critical (Day 10) → Runaway (Day 14)
+- Protection rules: FTUE protection + 48h new player grace period
+- Recovery paths: Free (7 care days / 72h wait) and Paid (15💎 / 25💎)
+- 23 BCT-NEGLECT test specifications added to BIBLE_COMPLIANCE_TEST.md
+- Runtime implementation planned for Phase 7
 
 **Backlog:** See `docs/PHASE6_BACKLOG.md` for full list of P6-* tasks and sources.
 
