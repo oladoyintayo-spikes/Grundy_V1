@@ -1,7 +1,7 @@
 # TASKS.md
 ## Grundy Development Task List
 
-**Last Updated:** December 10, 2024 (CE-P6-BACKLOG)
+**Last Updated:** December 11, 2024 (P6-TASKS-ALIGN)
 **Design SoT:** `docs/GRUNDY_MASTER_BIBLE.md`
 **Pre-Flight Report:** December 9, 2024 ✅
 
@@ -16,7 +16,8 @@
 | Web Phase 2 | Mini-Games & Infra | ✅ COMPLETE |
 | Web Phase 3 | Navigation & Environment | 🟡 IN PROGRESS |
 | Web Phase 4 | FTUE / Onboarding | ✅ COMPLETE |
-| Web Phase 5 | Polish / Web 1.0 | 🟡 IN PROGRESS |
+| Web Phase 5 | Polish / Web 1.0 | ✅ COMPLETE |
+| Web Phase 6 | Bible v1.4 Compliance | 🟡 IN PROGRESS |
 
 ---
 
@@ -614,6 +615,39 @@ P8-TEST
 
 > **Phase 6 = Bring Web 1.0 up to Bible v1.4 specification.**
 > Full backlog: `docs/PHASE6_BACKLOG.md`
+> Review process: `docs/GRUNDY_PHASE_REVIEW_SOP.md`
+> Test contract: `docs/BIBLE_COMPLIANCE_TEST.md`
+
+### Phase 6 Tier 1 Summary
+
+> **Tier 1** = Core compliance work that must ship for Phase 6.
+> See detailed subtask tables below for implementation specifics.
+
+| ID | Task | Phase | Status | Bible | Notes |
+|----|------|-------|--------|-------|-------|
+| P6-CORE-LOOP | Feeding, fullness, cooldown, evolution thresholds | 6 | ⬜ Planned | §4.3–4.4, §6.1 | BCT-FEED-*, BCT-EVOL-001 |
+| P6-ECON-WEB | Mini-game caps & Web gem rules | 6 | ✅ Done | §8.2–8.3 | BCT-ECON-*, BCT-GAME-*; already verified in code+tests |
+| P6-HUD-CLEANUP | Production HUD vs debug HUD | 6 | ⬜ Planned | §4.4 | BCT-HUD-001, BCT-HUD-002 |
+| P6-PET-HOME | Active pet & Home behavior | 6 | ⬜ Planned | §14.5 | BCT-NAV-001; pet switch confirmation |
+| P6-ENV-ROOMS | Rooms Lite & time-of-day behavior | 6 | ⬜ Planned | §14.4 | BCT-ENV-*, BCT-ROOMS-* |
+| P6-FTUE-INTRO | FTUE lore & intro performance | 6 | ⬜ Planned | §7.4 | BCT-FTUE-001, BCT-FTUE-002 |
+| P6-MOBILE-LAYOUT | Mobile core loop & nav | 6 | ⬜ Planned | §14.5–14.6 | BCT-LAYOUT-001, BCT-NAV-* |
+| P6-QA-BCT | Bible Compliance tests (spec + E2E integration) | 6 | 🔄 In Progress | — | Spec layer (64 BCT tests) integrated; E2E/CI wiring still to finalize |
+
+### Tier 1 ↔ Subtask Mapping
+
+| Tier 1 ID | Subtasks |
+|-----------|----------|
+| P6-CORE-LOOP | P6-CORE-COOLDOWN, P6-CORE-STUFFED, P6-CORE-SPAM |
+| P6-ECON-WEB | P6-ECON-GEMS ✅, P6-ECON-CAP ✅, P6-ECON-FREE ✅ |
+| P6-HUD-CLEANUP | P6-HUD-PRODUCTION, P6-HUD-DEBUG |
+| P6-PET-HOME | P6-NAV-CONFIRM |
+| P6-ENV-ROOMS | P6-ENV-ROOMS, P6-ENV-UI, P6-ENV-TOD, P6-MOOD-SYSTEM |
+| P6-FTUE-INTRO | P6-FTUE-MODES |
+| P6-MOBILE-LAYOUT | P6-MOBILE-LAYOUT, P6-NAV-GROUNDWORK |
+| P6-QA-BCT | BCT spec tests, E2E tests, CI integration |
+
+---
 
 ### P6-CORE: Core Loop Hardening (Bible §4.3–4.4)
 
