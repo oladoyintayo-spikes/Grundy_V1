@@ -28,7 +28,7 @@ function EnvironmentBadge() {
 export function AppHeader() {
   const pet = useGameStore((state) => state.pet);
   const currencies = useGameStore((state) => state.currencies);
-  const energy = useGameStore((state) => state.energy);
+  // Energy removed from main HUD per BCT-HUD-001
 
   // Get pet display data from canonical pets.ts
   const petData = getPetById(pet.id);
@@ -90,15 +90,7 @@ export function AppHeader() {
           <span aria-hidden="true">💎</span>
           <span className="text-purple-400 font-medium">{currencies.gems ?? 0}</span>
         </div>
-        {energy && (
-          <div
-            className="px-2 py-1 rounded-full bg-blue-500/20 flex items-center gap-1"
-            aria-label={`${energy.current} of ${energy.max} energy`}
-          >
-            <span aria-hidden="true">⚡</span>
-            <span className="text-blue-400 font-medium">{energy.current}/{energy.max}</span>
-          </div>
-        )}
+        {/* Energy removed from main HUD per BCT-HUD-001: "Energy may show in mini-game context only" */}
       </div>
     </header>
   );
