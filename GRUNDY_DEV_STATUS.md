@@ -2,9 +2,9 @@
 
 # Grundy Web Prototype — Development Status
 
-**Last Updated:** December 11, 2024 (P6-DOC-STATUS-ALIGN)
-**Current Phase:** Web Edition 1.0.0 — COMPLETE
-**Next Phase:** Phase 6 Optimizations & Enhancements
+**Last Updated:** December 11, 2024 (P6-TIER1-COMPLETE)
+**Current Phase:** Web Phase 6 Tier 1 — DEV COMPLETE (CE Review Required)
+**Next Phase:** Phase 6 Tier 2 (Branding, Audio, PWA Enhancements)
 
 ---
 
@@ -29,6 +29,7 @@
 | **Web Phase 3** | Navigation & Environment | 🟡 IN PROGRESS | P3-NAV ✅, P3-ENV ⬜ |
 | **Web Phase 4** | FTUE / Onboarding | ✅ COMPLETE | All FTUE screens, state, tests done |
 | **Web Phase 5** | Polish / Web 1.0 | ✅ RELEASE COMPLETE | Audio ✅, PWA ✅, Art ✅, UX/A11Y ✅, QA ✅, Release ✅ |
+| **Web Phase 6** | Bible v1.4 Compliance | ✅ TIER 1 DEV COMPLETE | Tier 1 implemented; P6-ART-POSES ✅; 751 tests (133 BCT); CE Review Required |
 
 ### Post-Web 1.0
 
@@ -144,7 +145,9 @@ The following copy is canonical and used across all onboarding documentation:
 | Command | Status | Notes |
 |---------|--------|-------|
 | `npm run build` | ✅ PASSING | Production build succeeds |
-| `npm test -- --run` | ✅ PASSING | 417 tests passing |
+| `npm test -- --run` | ✅ PASSING | 751 tests passing |
+| `npm run test:bible` | ✅ PASSING | 133 BCT tests passing |
+| `npx tsc --noEmit` | ✅ PASSING | No type errors |
 
 ---
 
@@ -355,18 +358,13 @@ The following copy is canonical and used across all onboarding documentation:
 
 **Backlog:** See `docs/PHASE6_BACKLOG.md` for full list of P6-* tasks and sources.
 
-**Status:** In progress — Bible v1.4 merged. Tier 1 tasks (P6-CORE-LOOP, P6-HUD-CLEANUP, P6-PET-HOME, P6-ENV-ROOMS) complete. 723 BCT tests passing.
+**DevStatus:** COMPLETE — All Tier 1 tasks implemented. 751 tests passing (133 BCT tests).
+**CEStatus:** PENDING REVIEW
+**QAStatus:** PENDING REVIEW
 
 ### Summary
 
-Bible v1.4 merged (December 2024). Phase 6 = implement the Bible's locked rules that Web 1.0 doesn't yet enforce.
-
-**Key gaps to close:**
-- Feeding cooldown + STUFFED block (§4.3-4.4)
-- Production HUD: Bond-only; debug stats gated (§4.4)
-- Mobile layout constraints (§14.6)
-- Activity→room mapping (§14.4)
-- Pet switch confirmations (§14.5)
+Dev: Phase 6 Tier 1 Bible v1.4 compliance tasks implemented (P6-CORE-LOOP, P6-ECON-WEB, P6-HUD-CLEANUP, P6-PET-HOME, P6-ENV-ROOMS, P6-FTUE-INTRO, P6-MOBILE-LAYOUT, P6-QA-BCT). P6-ART-POSES complete; BCT suite passing (751 tests, 133 BCT-specific).
 
 ### Task Status Overview
 
@@ -374,14 +372,64 @@ Bible v1.4 merged (December 2024). Phase 6 = implement the Bible's locked rules 
 |----|------|--------|-------|
 | **P6-DOC-BIBLE** | Bible v1.4 merge | ✅ | — |
 | **P6-DOC-ALIGN** | Docs alignment to v1.4 | ✅ | — |
+| **P6-CORE-LOOP** | Feeding, cooldown, evolution thresholds | ✅ | §4.3-4.4, §6.1 |
 | **P6-CORE-COOLDOWN** | 30-min feeding cooldown | ✅ | §4.3 |
 | **P6-CORE-STUFFED** | STUFFED blocks feeding | ✅ | §4.4 |
+| **P6-ECON-WEB** | Mini-game caps & Web gem rules | ✅ | §8.2-8.3 |
+| **P6-HUD-CLEANUP** | Production HUD vs debug HUD | ✅ | §4.4 |
 | **P6-HUD-PRODUCTION** | Bond-only production HUD | ✅ | §4.4 |
 | **P6-HUD-DEBUG** | Gate debug HUD behind dev flag | ✅ | §4.4 |
-| **P6-MOBILE-LAYOUT** | Mobile viewport constraints | ⬜ | §14.6 |
+| **P6-PET-HOME** | Active pet & Home behavior | ✅ | §14.5 |
 | **P6-NAV-CONFIRM** | Pet switch confirmation | ✅ | §14.5 |
 | **P6-ENV-ROOMS** | Activity→room mapping | ✅ | §14.4 |
+| **P6-ENV-TOD** | Time-of-day consistency | ✅ | §14.4 |
+| **P6-FTUE-INTRO** | FTUE lore from bible.constants.ts | ✅ | §7.4 |
+| **P6-MOBILE-LAYOUT** | Mobile viewport constraints | ✅ | §14.6 |
+| **P6-QA-BCT** | Bible Compliance Test suite | ✅ | — |
+| **P6-ART-POSES** | Extended pet sprite poses (11 poses) | ✅ | §13.7 |
 | **P6-ART-TEST** | Visual regression test (no emoji in prod) | ⬜ | §13.7 |
+
+---
+
+### Chief Engineer Verification Checklist – Phase 6
+
+> Use this checklist to verify Phase 6 Tier 1 implementation before signing off.
+
+**Build & Types:**
+- [ ] `npx tsc --noEmit` passes (no type errors)
+- [ ] `npm test` passes (full unit/spec suite — 751 tests)
+
+**Bible Compliance Tests (P6-QA-BCT):**
+- [ ] `npm run test:bible` runs and passes all BCT spec tests (133 BCT tests)
+- [ ] BCT test files exist in `src/__tests__/bct-*.spec.ts` (8 files)
+- [ ] Bible E2E file exists: `e2e/bible-compliance.e2e.ts`
+
+**Core Loop & Economy (Player-side sanity check):**
+- [ ] Feeding when STUFFED (91–100 fullness) is blocked as expected
+- [ ] Cooldown behavior matches Bible (visible "digesting" state; 25% value during cooldown)
+- [ ] Mini-game daily cap (3 plays) works as described in the Bible
+- [ ] First daily mini-game is free (no energy cost)
+- [ ] No gems are awarded from mini-games on Web
+
+**HUD & Navigation:**
+- [ ] Production HUD shows Bond and currencies only; debug stats are hidden in non-dev builds
+- [ ] DebugHud component is gated behind `import.meta.env.DEV`
+- [ ] Only the active pet appears on Home; pet-switch flow requires explicit confirmation
+- [ ] Pet switch confirmation modal shows pet name and reassurance message
+
+**Environment & Mobile Layout:**
+- [ ] Feeding → Kitchen, play → Playroom, default → Living Room
+- [ ] Time-of-day backgrounds align with Bible
+- [ ] On a typical phone viewport (390×844), pet + actions + currencies + bottom nav are visible without scroll
+
+**FTUE (P6-FTUE-INTRO):**
+- [ ] FTUE lore lines come from `src/constants/bible.constants.ts`
+- [ ] Line 3 preserves the "*you*" emphasis exactly as in Bible v1.4
+
+**Art / Poses (P6-ART-POSES):**
+- [ ] Pets use sprite poses (not generic blobs) in production builds
+- [ ] 11 poses wired: idle, happy, sad, sleeping, eating, eating_loved, ecstatic, excited, hungry, satisfied, crying
+- [ ] Fullness/mood/eating states visibly change poses as expected
 
 ### Economy Rules (Already Enforced)
 
