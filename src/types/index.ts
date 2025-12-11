@@ -155,6 +155,12 @@ export interface FeedResult {
   newLevel?: number;
   evolved?: boolean;
   newStage?: EvolutionStage;
+  /** Feed value multiplier applied (fullness × cooldown). Bible §4.3-4.4 */
+  feedValueMultiplier?: number;
+  /** True if pet was on cooldown during this feed. Bible §4.3 */
+  wasOnCooldown?: boolean;
+  /** True if feeding was blocked (STUFFED state). Bible §4.4 */
+  wasBlocked?: boolean;
 }
 
 // --- Game Stats ---
@@ -165,6 +171,8 @@ export interface GameStats {
   sessionStartTime: number;
   lastFeedTime: number;
   minigamesCompleted: number; // For Chomper unlock and analytics
+  /** Timestamp when feeding cooldown started (ms). 0 = no cooldown. Bible §4.3 */
+  lastFeedCooldownStart: number;
 }
 
 // --- Game Settings ---
@@ -287,13 +295,16 @@ export const AFFINITY_MULTIPLIERS: Record<Affinity, number> = {
 };
 
 // --- Config Constants ---
-// TODO: P1-x - Align with Bible (youth=7, evolved=13)
+// Import from bible.constants.ts for single source of truth
+import { EVOLUTION_THRESHOLDS } from '../constants/bible.constants';
+
+// Re-export for backward compatibility - values are locked per Bible §6.1
 export const EVOLUTION_LEVELS = {
-  youth: 7,
-  evolved: 13,
+  youth: EVOLUTION_THRESHOLDS.YOUTH,
+  evolved: EVOLUTION_THRESHOLDS.EVOLVED,
 };
 
-export const MAX_LEVEL = 20;
+export const MAX_LEVEL = 50; // Bible §6.2
 
 // ============================================
 // MINI-GAME TYPES (Bible §8)

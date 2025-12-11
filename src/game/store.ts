@@ -37,7 +37,11 @@ import {
   processFeed,
   getMoodAfterReaction,
   getEvolutionStage,
-  decayHunger
+  decayHunger,
+  isStuffed,
+  isOnCooldown,
+  getCombinedFeedValue,
+  getFullnessState
 } from './systems';
 import { applyGemMultiplier } from './abilities';
 import {
@@ -66,6 +70,7 @@ function createInitialState() {
       sessionStartTime: Date.now(),
       lastFeedTime: 0,
       minigamesCompleted: 0, // For Chomper unlock and analytics
+      lastFeedCooldownStart: 0, // Bible §4.3 - Cooldown persists across refresh
     } as GameStats,
     settings: {
       soundEnabled: true,
@@ -93,18 +98,52 @@ export const useGameStore = create<GameStore>()(
       ...createInitialState(),
       
       // ========================================
-      // FEEDING
+      // FEEDING (Bible §4.3-4.4)
       // ========================================
       feed: (foodId: string): FeedResult | null => {
         const state = get();
-        
-        // Process the feed
+        const now = Date.now();
+
+        // Bible §4.4: STUFFED pets cannot be fed (91-100 fullness blocks feeding entirely)
+        if (isStuffed(state.pet.hunger)) {
+          console.log(`[Feeding] Blocked: Pet is STUFFED (fullness=${state.pet.hunger})`);
+          return {
+            success: false,
+            foodId,
+            reaction: 'neutral',
+            xpGained: 0,
+            bondGained: 0,
+            coinsGained: 0,
+            leveledUp: false,
+            wasBlocked: true,
+            feedValueMultiplier: 0,
+          };
+        }
+
+        // Calculate feed value multiplier (fullness × cooldown)
+        const feedValueMultiplier = getCombinedFeedValue(
+          state.pet.hunger,
+          state.stats.lastFeedCooldownStart,
+          now
+        );
+        const wasOnCooldown = isOnCooldown(state.stats.lastFeedCooldownStart, now);
+
+        // Process the base feed
         const result = processFeed(state.pet, foodId, state.inventory);
-        
+
         if (!result || !result.success) {
           return null;
         }
-        
+
+        // Apply fullness/cooldown multiplier to gains (Bible §4.3-4.4)
+        const adjustedXP = Math.round(result.xpGained * feedValueMultiplier);
+        const adjustedBond = result.bondGained * feedValueMultiplier;
+        const adjustedCoins = Math.round(result.coinsGained * feedValueMultiplier);
+
+        if (wasOnCooldown) {
+          console.log(`[Feeding] On cooldown: applying ${feedValueMultiplier}x multiplier`);
+        }
+
         // Apply all changes
         set((state) => {
           // Update inventory
@@ -113,54 +152,58 @@ export const useGameStore = create<GameStore>()(
           if (newInventory[foodId] <= 0) {
             delete newInventory[foodId];
           }
-          
-          // Update pet
+
+          // Update pet with adjusted gains
           const newPet: PetState = {
             ...state.pet,
-            xp: state.pet.xp + result.xpGained,
-            bond: Math.min(GAME_CONFIG.maxBond, state.pet.bond + result.bondGained),
-            hunger: Math.min(GAME_CONFIG.maxHunger, state.pet.hunger + 
-              (result.reaction === 'ecstatic' ? 20 : 
-               result.reaction === 'positive' ? 15 : 
+            xp: state.pet.xp + adjustedXP,
+            bond: Math.min(GAME_CONFIG.maxBond, state.pet.bond + adjustedBond),
+            hunger: Math.min(GAME_CONFIG.maxHunger, state.pet.hunger +
+              (result.reaction === 'ecstatic' ? 20 :
+               result.reaction === 'positive' ? 15 :
                result.reaction === 'negative' ? 5 : 10)),
             mood: getMoodAfterReaction(state.pet.mood, result.reaction),
           };
-          
-          // Handle level up
-          if (result.leveledUp && result.newLevel) {
-            newPet.level = result.newLevel;
+
+          // Handle level up (with adjusted XP)
+          let leveledUp = false;
+          let newLevel = state.pet.level;
+          const xpNeeded = getXPForLevel(state.pet.level + 1);
+          if (newPet.xp >= xpNeeded && state.pet.level < GAME_CONFIG.maxLevel) {
+            leveledUp = true;
+            newLevel = state.pet.level + 1;
+            newPet.level = newLevel;
             // Reset XP to overflow amount
-            const xpNeeded = getXPForLevel(result.newLevel);
             newPet.xp = newPet.xp - xpNeeded;
-            
             // Check evolution
-            newPet.evolutionStage = getEvolutionStage(result.newLevel);
+            newPet.evolutionStage = getEvolutionStage(newLevel);
           }
-          
-          // Update currencies
+
+          // Update currencies with adjusted coins
           const newCurrencies = { ...state.currencies };
-          newCurrencies.coins += result.coinsGained;
-          
+          newCurrencies.coins += adjustedCoins;
+
           // Level up bonus
-          if (result.leveledUp) {
+          if (leveledUp) {
             newCurrencies.coins += 20; // Level up coin bonus
-            if (result.newLevel && result.newLevel % 5 === 0) {
+            if (newLevel % 5 === 0) {
               // Apply Luxe's Golden Touch ability: +100% gem drops
               const baseGems = 5;
               const finalGems = applyGemMultiplier(state.pet.id, baseGems);
               newCurrencies.gems += finalGems;
             }
           }
-          
-          // Update stats
+
+          // Update stats - Bible §4.3: Each feeding restarts the cooldown timer
           const newStats: GameStats = {
             ...state.stats,
             totalFeeds: state.stats.totalFeeds + 1,
-            totalXpEarned: state.stats.totalXpEarned + result.xpGained,
-            totalCoinsEarned: state.stats.totalCoinsEarned + result.coinsGained,
-            lastFeedTime: Date.now(),
+            totalXpEarned: state.stats.totalXpEarned + adjustedXP,
+            totalCoinsEarned: state.stats.totalCoinsEarned + adjustedCoins,
+            lastFeedTime: now,
+            lastFeedCooldownStart: now, // Reset cooldown on each feed
           };
-          
+
           return {
             pet: newPet,
             currencies: newCurrencies,
@@ -168,8 +211,17 @@ export const useGameStore = create<GameStore>()(
             stats: newStats,
           };
         });
-        
-        return result;
+
+        // Return result with adjusted values and cooldown info
+        return {
+          ...result,
+          xpGained: adjustedXP,
+          bondGained: adjustedBond,
+          coinsGained: adjustedCoins,
+          feedValueMultiplier,
+          wasOnCooldown,
+          wasBlocked: false,
+        };
       },
       
       // ========================================
