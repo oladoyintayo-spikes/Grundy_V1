@@ -379,7 +379,7 @@ The following copy is canonical and used across all onboarding documentation:
 
 Dev: Phase 6 Bible v1.5 compliance tasks implemented:
 - **Tier 1:** P6-CORE-LOOP, P6-ECON-WEB, P6-HUD-CLEANUP, P6-PET-HOME, P6-ENV-ROOMS, P6-ENV-UI, P6-ENV-TOD, P6-NAV-GROUNDWORK, P6-FTUE-INTRO, P6-MOBILE-LAYOUT, P6-QA-BCT
-- **Tier 2 Polish:** P6-ART-POSES, P6-MOOD-SYSTEM, P6-ABILITY-UI, P6-T2-PET-BEHAVIORS, P6-ART-PRODUCTION, P6-ART-TEST
+- **Tier 2 Polish:** P6-ART-POSES, P6-MOOD-SYSTEM, P6-ABILITY-UI, P6-T2-PET-BEHAVIORS, P6-ART-PRODUCTION, P6-ART-TEST, P6-BRANDING, P6-ART-PROPS
 
 Mood system (§4.5) with numeric moodValue 0-100, decay, and Grib/Plompo abilities. Pet behavior polish with transient eating poses and mood-based expressions. Ability indicators added (P1-ABILITY-4). **Art system: Pet sprites wired per pet/stage/pose with fallback chain; Home active pet uses PNG sprites when assets exist; emoji/orb fallbacks limited to DEV or true missing assets.** BCT suite passing (1218 tests, 598 BCT-specific incl. 401 BCT-ART tests, 23 BCT-NEGLECT specs).
 
@@ -392,6 +392,14 @@ Mood system (§4.5) with numeric moodValue 0-100, decay, and Grib/Plompo abiliti
 - BCT-MOOD-01 through BCT-MOOD-07 passing (42 mood/ability tests)
 
 **Bible v1.5 + BCT v2.1 Audit (P6-QA-BCT-AUDIT):** Verified alignment of core loop, mini-games, Rooms Lite, FTUE, HUD. Nav/env groundwork validated; room selector UI confirmed implemented (P6-ENV-UI). `bible.constants.ts` header updated to v1.5.
+
+**P6-BRANDING & P6-ART-PROPS (December 2024):**
+- Branding finalized: favicon, apple-touch-icon, 192/512 PWA icons (grundy-192.png, grundy-512.png) wired
+- Manifest aligned: name="Grundy", theme_color=#0f172a, background_color=#020617
+- Loading screen uses Grundy icon instead of emoji
+- Room props added for Kitchen (counter), Bedroom (bed), Playroom (shelf), Living Room (sofa), Yard (tree)
+- Ability indicators visually aligned with final HUD/brand; bounce-in animation defined in index.css
+- 1219 tests passing (BCT-PROPS-01 added)
 
 ### Task Status Overview
 
@@ -420,6 +428,8 @@ Mood system (§4.5) with numeric moodValue 0-100, decay, and Grib/Plompo abiliti
 | **P6-ABILITY-UI** | Ability activation indicators | ✅ | §3.7, §4.10 |
 | **P6-T2-PET-BEHAVIORS** | Pet pose behavior wiring | ✅ | §4.5, §13.7 |
 | **P6-ART-TEST** | BCT-ART tests (sprite coverage, no-orb guarantee) | ✅ | §13.7 |
+| **P6-BRANDING** | PWA icons, manifest, favicon wiring | ✅ | — |
+| **P6-ART-PROPS** | Room visual props (Kitchen/Bedroom/Playroom/Living Room/Yard) | ✅ | §14.4 |
 
 ---
 
