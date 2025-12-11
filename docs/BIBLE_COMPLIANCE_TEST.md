@@ -1,8 +1,8 @@
 # Grundy — Bible Compliance Test (BCT)
 
-**Version:** 2.0
-**Last Updated:** December 11, 2024 (P6-BCT-INTEGRATE)
-**Bible Reference:** `docs/GRUNDY_MASTER_BIBLE.md` v1.4
+**Version:** 2.1
+**Last Updated:** December 11, 2024 (Bible v1.5 Update)
+**Bible Reference:** `docs/GRUNDY_MASTER_BIBLE.md` v1.5
 
 ---
 
@@ -45,6 +45,7 @@ npm test -- --run
 | FTUE | BCT-FTUE-* | §7.4 | World Intro, onboarding |
 | Art | BCT-ART-* | §13.7 | Sprite art, no emoji in prod |
 | Mini-Games | BCT-GAME-* | §8 | Energy, rewards, daily caps |
+| Neglect | BCT-NEGLECT-* | §9.4.3 | Neglect & Withdrawal (Classic) |
 
 ---
 
@@ -353,6 +354,261 @@ npm test -- --run
 | Silver | 5-7 | 5 | 40% common | NEVER |
 | Gold | 8-15 | 8 | 75% any | NEVER |
 | Rainbow | 12-22 | 12 | Rare guaranteed | NEVER |
+
+---
+
+## Neglect & Withdrawal Tests (BCT-NEGLECT-*)
+
+### BCT-NEGLECT-001: Worried State Trigger
+
+**Bible:** §9.4.3
+**Requirement:** Day 2 of neglect triggers Worried state.
+
+| Check | Expected |
+|-------|----------|
+| 2 neglect days | Worried state triggered |
+| Visual | Worried pose, "..." thought bubble |
+| Penalty | None |
+
+### BCT-NEGLECT-002: Sad State Trigger
+
+**Bible:** §9.4.3
+**Requirement:** Day 4 of neglect triggers Sad state.
+
+| Check | Expected |
+|-------|----------|
+| 4 neglect days | Sad state triggered |
+| Visual | Sad pose, thought bubble |
+| Penalty | None |
+
+### BCT-NEGLECT-003: Withdrawn State Trigger
+
+**Bible:** §9.4.3
+**Requirement:** Day 7 of neglect triggers Withdrawn state.
+
+| Check | Expected |
+|-------|----------|
+| 7 neglect days | Withdrawn state triggered |
+| Visual | Desaturated appearance, 💔 badge |
+| Immediate effect | Bond -25% |
+
+### BCT-NEGLECT-004: Withdrawal Bond Penalty
+
+**Bible:** §9.4.3
+**Requirement:** Day 7 applies -25% bond instantly.
+
+| Check | Expected |
+|-------|----------|
+| Bond before withdrawal | 100% |
+| Bond after withdrawal triggers | 75% |
+| Instant application | No delay |
+
+### BCT-NEGLECT-005: Withdrawn Ongoing Penalties
+
+**Bible:** §9.4.3
+**Requirement:** Withdrawn state reduces bond gains by 50%, mood gains by 25%.
+
+| Check | Expected |
+|-------|----------|
+| Bond gain modifier | 50% reduction |
+| Mood gain modifier | 25% reduction |
+| Until recovered | Penalties persist |
+
+### BCT-NEGLECT-006: Critical State Trigger
+
+**Bible:** §9.4.3
+**Requirement:** Day 10 triggers Critical warning.
+
+| Check | Expected |
+|-------|----------|
+| 10 neglect days | Critical state triggered |
+| Visual | Withdrawn + pulsing "!" indicator |
+| Penalty | Same as Withdrawn |
+
+### BCT-NEGLECT-007: Runaway State Trigger
+
+**Bible:** §9.4.3
+**Requirement:** Day 14 triggers Runaway.
+
+| Check | Expected |
+|-------|----------|
+| 14 neglect days | Runaway state triggered |
+| Visual | Pet disappears |
+| Effect | Pet locked out |
+
+### BCT-NEGLECT-008: Free Withdrawal Recovery
+
+**Bible:** §9.4.3
+**Requirement:** 7 consecutive care days clears withdrawal.
+
+| Check | Expected |
+|-------|----------|
+| 7 care days | Withdrawal cleared |
+| Visual restored | Desaturation removed |
+| Bond gains | Return to 100% |
+| Neglect counter | Resets to 0 |
+
+### BCT-NEGLECT-009: Paid Withdrawal Recovery
+
+**Bible:** §9.4.3
+**Requirement:** 15 gems clears withdrawal instantly.
+
+| Check | Expected |
+|-------|----------|
+| Gem cost | 15 💎 |
+| Effect | Instant recovery |
+| Result | Same as free recovery |
+
+### BCT-NEGLECT-010: Free Runaway Return
+
+**Bible:** §9.4.3
+**Requirement:** 72h wait enables free return from runaway.
+
+| Check | Expected |
+|-------|----------|
+| Wait time | 72 hours |
+| Action | Tap "Call Back" |
+| Bond penalty | -50% on return |
+
+### BCT-NEGLECT-011: Paid Runaway Return
+
+**Bible:** §9.4.3
+**Requirement:** 24h + 25 gems enables paid return.
+
+| Check | Expected |
+|-------|----------|
+| Wait time | 24 hours |
+| Gem cost | 25 💎 |
+| Bond penalty | -50% on return |
+
+### BCT-NEGLECT-012: Runaway Bond Penalty
+
+**Bible:** §9.4.3
+**Requirement:** Runaway return applies -50% bond.
+
+| Check | Expected |
+|-------|----------|
+| Bond on return | Reduced by 50% |
+| Applied | On return, not during lockout |
+
+### BCT-NEGLECT-013: Offline Neglect Cap
+
+**Bible:** §9.4.3
+**Requirement:** Offline neglect capped at 14 days.
+
+| Check | Expected |
+|-------|----------|
+| 20 days offline | 14 neglect days (capped) |
+| 30 days offline | 14 neglect days (capped) |
+| Max consequence | Runaway (not worse) |
+
+### BCT-NEGLECT-014: Cozy Mode Exempt
+
+**Bible:** §9.4.3
+**Requirement:** Cozy mode disables all neglect mechanics.
+
+| Check | Expected |
+|-------|----------|
+| Neglect Days | Never increase |
+| Worried/Sad/Withdrawn | Never trigger |
+| Recovery costs | Not applicable |
+| Fields | Remain zero/default |
+
+### BCT-NEGLECT-015: Feed Resets Counter
+
+**Bible:** §9.4.3
+**Requirement:** Feed action resets neglect counter.
+
+| Check | Expected |
+|-------|----------|
+| Feed action | Neglect counter = 0 |
+| lastCareDate | Updated |
+
+### BCT-NEGLECT-016: Play Resets Counter
+
+**Bible:** §9.4.3
+**Requirement:** Play action resets neglect counter.
+
+| Check | Expected |
+|-------|----------|
+| Play action | Neglect counter = 0 |
+| lastCareDate | Updated |
+
+### BCT-NEGLECT-017: Passive Actions No Reset
+
+**Bible:** §9.4.3
+**Requirement:** Passive actions (view, clean, switch pet) do NOT reset counter.
+
+| Check | Expected |
+|-------|----------|
+| View pet | No counter reset |
+| Clean poop | No counter reset |
+| Switch pet | No counter reset |
+| Open app | No counter reset |
+
+### BCT-NEGLECT-018: Sickness Independence
+
+**Bible:** §9.4.3
+**Requirement:** Sickness and Withdrawal are independent systems.
+
+| Check | Expected |
+|-------|----------|
+| Sickness trigger | Does not affect neglect |
+| Withdrawal trigger | Does not affect sickness |
+| Cannot coexist | Sickness = present, Withdrawal = absent |
+
+### BCT-NEGLECT-019: Care Mistakes Independence
+
+**Bible:** §9.4.3
+**Requirement:** Care Mistakes and Neglect are independent systems.
+
+| Check | Expected |
+|-------|----------|
+| Care mistakes | Track quality when present |
+| Neglect | Tracks absence |
+| Independent counters | Both can be zero or non-zero |
+
+### BCT-NEGLECT-020: FTUE Protection
+
+**Bible:** §9.4.3
+**Requirement:** Neglect disabled during onboarding.
+
+| Check | Expected |
+|-------|----------|
+| During FTUE | Neglect counter frozen |
+| No states trigger | Worried/Sad/Withdrawn/Runaway blocked |
+| After FTUE | Neglect system activates |
+
+### BCT-NEGLECT-021: Grace Period
+
+**Bible:** §9.4.3
+**Requirement:** No neglect for first 48h after account creation.
+
+| Check | Expected |
+|-------|----------|
+| First 48 hours | No Neglect Days accrue |
+| After 48 hours | Neglect system activates |
+
+### BCT-NEGLECT-022: Per-Pet Tracking
+
+**Bible:** §9.4.3
+**Requirement:** Each pet has independent neglect counter.
+
+| Check | Expected |
+|-------|----------|
+| Pet A neglected | Only Pet A counter increases |
+| Pet B cared for | Pet B counter stays 0 |
+| Independent | No transfer between pets |
+
+### BCT-NEGLECT-023: Active Pet No Care
+
+**Bible:** §9.4.3
+**Requirement:** Active pet status does not count as care.
+
+| Check | Expected |
+|-------|----------|
+| Set as active | Not a care action |
+| Still needs feed/play | Counter not reset by selection |
 
 ---
 
