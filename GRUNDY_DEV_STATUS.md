@@ -90,7 +90,7 @@
 
 | Task | Status | Notes |
 |------|--------|-------|
-| P1-ABILITY-4 | ⬜ | UI indicators for ability triggers (nice-to-have) |
+| P1-ABILITY-4 | ✅ | UI indicators for ability triggers (done in P6-ABILITY-UI) |
 | P1-ART-1 | ⏸️ | PWA icons (blocked on branding) |
 
 ---
@@ -382,6 +382,14 @@ Dev: Phase 6 Bible v1.5 compliance tasks implemented:
 - **Tier 2 Polish:** P6-ART-POSES, P6-MOOD-SYSTEM, P6-ABILITY-UI, P6-T2-PET-BEHAVIORS, P6-ART-PRODUCTION, P6-ART-TEST
 
 Mood system (§4.5) with numeric moodValue 0-100, decay, and Grib/Plompo abilities. Pet behavior polish with transient eating poses and mood-based expressions. Ability indicators added (P1-ABILITY-4). **Art system: Pet sprites wired per pet/stage/pose with fallback chain; Home active pet uses PNG sprites when assets exist; emoji/orb fallbacks limited to DEV or true missing assets.** BCT suite passing (1218 tests, 598 BCT-specific incl. 401 BCT-ART tests, 23 BCT-NEGLECT specs).
+
+**P6-MOOD-SYSTEM / P6-ABILITY-UI Verification (December 2024):**
+- Mood tiers (ECSTATIC/HAPPY/CONTENT/LOW/UNHAPPY) match Bible §4.5
+- Mood modifiers (+15 loved, +8 liked, +3 neutral, -10 disliked) aligned
+- 6 wired abilities emit UI triggers: Munchlet, Grib, Fizz, Ember, Chomper, Luxe
+- 2 passive abilities (no UI triggers): Plompo (decay_reduction), Whisp (rare_xp_chance) — intentionally deferred
+- AbilityIndicator component added with bounce-in animation for HUD-clean feedback
+- BCT-MOOD-01 through BCT-MOOD-07 passing (42 mood/ability tests)
 
 **Bible v1.5 + BCT v2.1 Audit (P6-QA-BCT-AUDIT):** Verified alignment of core loop, mini-games, Rooms Lite, FTUE, HUD. Nav/env groundwork validated; room selector UI confirmed implemented (P6-ENV-UI). `bible.constants.ts` header updated to v1.5.
 
