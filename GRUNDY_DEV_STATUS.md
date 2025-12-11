@@ -2,7 +2,7 @@
 
 # Grundy Web Prototype — Development Status
 
-**Last Updated:** December 11, 2024 (P6-TIER1-COMPLETE)
+**Last Updated:** December 11, 2024 (P6-ABILITY-INTEGRATION)
 **Current Phase:** Web Phase 6 Tier 1 — DEV COMPLETE (CE Review Required)
 **Next Phase:** Phase 6 Tier 2 (Branding, Audio, PWA Enhancements)
 
@@ -29,7 +29,7 @@
 | **Web Phase 3** | Navigation & Environment | 🟡 IN PROGRESS | P3-NAV ✅, P3-ENV ⬜ |
 | **Web Phase 4** | FTUE / Onboarding | ✅ COMPLETE | All FTUE screens, state, tests done |
 | **Web Phase 5** | Polish / Web 1.0 | ✅ RELEASE COMPLETE | Audio ✅, PWA ✅, Art ✅, UX/A11Y ✅, QA ✅, Release ✅ |
-| **Web Phase 6** | Bible v1.4 Compliance | ✅ TIER 1 DEV COMPLETE | Tier 1 implemented; P6-ART-POSES ✅; 751 tests (133 BCT); CE Review Required |
+| **Web Phase 6** | Bible v1.4 Compliance | ✅ TIER 1 DEV COMPLETE | Tier 1 implemented; P6-ART-POSES ✅; P6-ABILITY-INTEGRATION ✅; 817 tests (191 BCT); CE Review Required |
 
 ### Post-Web 1.0
 
@@ -145,8 +145,8 @@ The following copy is canonical and used across all onboarding documentation:
 | Command | Status | Notes |
 |---------|--------|-------|
 | `npm run build` | ✅ PASSING | Production build succeeds |
-| `npm test -- --run` | ✅ PASSING | 813 tests passing |
-| `npm run test:bible` | ✅ PASSING | 187 BCT tests passing (incl. mood/ability/pet-behaviors) |
+| `npm test -- --run` | ✅ PASSING | 817 tests passing |
+| `npm run test:bible` | ✅ PASSING | 191 BCT tests passing (incl. mood/ability/pet-behaviors/integration) |
 | `npx tsc --noEmit` | ✅ PASSING | No type errors |
 
 ---
@@ -175,6 +175,7 @@ The following copy is canonical and used across all onboarding documentation:
 - Currency system (coins/gems)
 - Pet selection and switching
 - Pet unlock via gems
+- Ability trigger indicators (toast notifications when abilities fire)
 
 ### Data Layer
 - 8 pets with abilities and unlock requirements

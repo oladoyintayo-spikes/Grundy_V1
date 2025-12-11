@@ -50,8 +50,7 @@ import {
   getMoodXPMultiplier,
 } from './systems';
 import { getEatingPoseForReaction } from './petVisuals';
-import { getAbility } from './abilities';
-import { applyGemMultiplier } from './abilities';
+import { hasAbilityEffect, applyGemMultiplier, isSpicyFood } from './abilities';
 import {
   ENERGY_MAX,
   ENERGY_COST_PER_GAME,
@@ -62,6 +61,36 @@ import {
 } from './miniGameRewards';
 // Bible §14.4: Activity-to-room mapping
 import { ROOM_ACTIVITY_MAP } from '../constants/bible.constants';
+
+// ============================================
+// ABILITY TRIGGER MESSAGES (P1-ABILITY-4)
+// ============================================
+
+const ABILITY_TRIGGER_MESSAGES: Record<string, { id: string; message: string }> = {
+  bond_bonus: { id: 'bond_bonus', message: 'Comfort Food: +10% bond!' },
+  mood_penalty_reduction: { id: 'mood_penalty_reduction', message: 'Chill Vibes: mood penalty reduced!' },
+  decay_reduction: { id: 'decay_reduction', message: 'Slow Metabolism active' },
+  minigame_bonus: { id: 'minigame_bonus', message: 'Hyperactive: +25% rewards!' },
+  spicy_coin_bonus: { id: 'spicy_coin_bonus', message: 'Spicy Lover: 2× coins!' },
+  no_dislikes: { id: 'no_dislikes', message: 'Iron Stomach: no dislikes!' },
+  rare_xp_chance: { id: 'rare_xp_chance', message: 'Lucky Nibbles: rare XP bonus!' },
+  gem_multiplier: { id: 'gem_multiplier', message: 'Golden Touch: 2× gems!' },
+};
+
+/**
+ * Create an ability trigger with current timestamp
+ */
+function createAbilityTrigger(effectType: string): AbilityTrigger | null {
+  const template = ABILITY_TRIGGER_MESSAGES[effectType];
+  if (!template) return null;
+
+  return {
+    id: template.id,
+    abilityName: template.message.split(':')[0] || template.id,
+    message: template.message,
+    triggeredAt: Date.now(),
+  };
+}
 
 // Initial state factory
 function createInitialState() {
@@ -240,6 +269,45 @@ export const useGameStore = create<GameStore>()(
 
         // Bible §14.4: Switch to kitchen when feeding
         get().setRoom(ROOM_ACTIVITY_MAP.feeding as RoomId);
+
+        // P1-ABILITY-4: Emit ability triggers based on what abilities were applied
+        const food = getFoodById(foodId);
+        const petId = state.pet.id;
+
+        // Munchlet: bond_bonus - always triggers on feed
+        if (hasAbilityEffect(petId, 'bond_bonus')) {
+          const trigger = createAbilityTrigger('bond_bonus');
+          if (trigger) get().addAbilityTrigger(trigger);
+        }
+
+        // Grib: mood_penalty_reduction - triggers on negative reaction
+        if (hasAbilityEffect(petId, 'mood_penalty_reduction') && result.reaction === 'negative') {
+          const trigger = createAbilityTrigger('mood_penalty_reduction');
+          if (trigger) get().addAbilityTrigger(trigger);
+        }
+
+        // Ember: spicy_coin_bonus - triggers on spicy food
+        if (food && hasAbilityEffect(petId, 'spicy_coin_bonus') && isSpicyFood(food)) {
+          const trigger = createAbilityTrigger('spicy_coin_bonus');
+          if (trigger) get().addAbilityTrigger(trigger);
+        }
+
+        // Chomper: no_dislikes - triggers when original affinity was 'disliked'
+        if (food && hasAbilityEffect(petId, 'no_dislikes') && food.affinity[petId] === 'disliked') {
+          const trigger = createAbilityTrigger('no_dislikes');
+          if (trigger) get().addAbilityTrigger(trigger);
+        }
+
+        // Luxe: gem_multiplier - triggers when level milestone (5, 10, 15...) gives gems
+        const newPetState = get().pet;
+        if (
+          hasAbilityEffect(petId, 'gem_multiplier') &&
+          newPetState.level !== state.pet.level &&
+          newPetState.level % 5 === 0
+        ) {
+          const trigger = createAbilityTrigger('gem_multiplier');
+          if (trigger) get().addAbilityTrigger(trigger);
+        }
 
         // Return result with adjusted values and cooldown info
         return {
@@ -644,6 +712,12 @@ export const useGameStore = create<GameStore>()(
             totalCoinsEarned: s.stats.totalCoinsEarned + result.rewards.coins,
           },
         }));
+
+        // P1-ABILITY-4: Fizz minigame_bonus trigger
+        if (hasAbilityEffect(state.pet.id, 'minigame_bonus')) {
+          const trigger = createAbilityTrigger('minigame_bonus');
+          if (trigger) get().addAbilityTrigger(trigger);
+        }
 
         console.log(`[MiniGame] Completed ${result.gameId} with ${result.tier} tier (score: ${result.score})`);
       },

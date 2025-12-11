@@ -722,6 +722,7 @@ P8-TEST
 | P6-T2-PET-BEHAVIORS | Pet pose behavior wiring | ✅ | PetAvatar, Store | Transient eating poses, mood-based expressions, pose priority system |
 | P6-ART-PROPS | Room-specific prop art | ⬜ | assets/rooms/ | Replace placeholder accent badges (ART_NOTES) |
 | P6-ABILITY-UI | Ability activation indicators | ✅ | Components | P1-ABILITY-4 — AbilityIndicator component, toast-style triggers |
+| P6-ABILITY-INTEGRATION | Wire ability triggers to store actions | ✅ | Store, GrundyPrototype | Munchlet/Grib/Ember/Chomper feed triggers + Fizz minigame trigger + Luxe gem trigger |
 
 ### P6-AUDIO: Audio Assets & Polish
 
