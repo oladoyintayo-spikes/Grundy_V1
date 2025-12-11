@@ -9,6 +9,7 @@ import { getPetSprite, PetPose } from '../../art/petSprites';
 
 // ============================================
 // POSE LABELS FOR ALT TEXT (P5-A11Y-LABELS)
+// Extended for P6-ART-POSES
 // ============================================
 
 const POSE_LABELS: Record<PetPose, string> = {
@@ -16,6 +17,13 @@ const POSE_LABELS: Record<PetPose, string> = {
   happy: 'happy',
   sad: 'sad',
   sleeping: 'sleeping',
+  eating: 'eating',
+  eating_loved: 'enjoying favorite food',
+  ecstatic: 'ecstatic',
+  excited: 'excited',
+  hungry: 'hungry',
+  satisfied: 'satisfied',
+  crying: 'crying',
 };
 
 // ============================================
@@ -25,7 +33,7 @@ const POSE_LABELS: Record<PetPose, string> = {
 export interface PetAvatarProps {
   /** Pet ID from the game store */
   petId: string;
-  /** Pose to display (idle, happy, sad, sleeping) */
+  /** Pose to display (P6-ART-POSES: idle, happy, sad, sleeping, eating, eating_loved, ecstatic, excited, hungry, satisfied, crying) */
   pose: PetPose;
   /** Size variant */
   size?: 'sm' | 'md' | 'lg' | 'xl';
@@ -117,7 +125,7 @@ export function PetAvatar({
 export interface PetDisplayProps {
   /** Pet ID from the game store */
   petId: string;
-  /** Pose to display (idle, happy, sad, sleeping) */
+  /** Pose to display (P6-ART-POSES: idle, happy, sad, sleeping, eating, eating_loved, ecstatic, excited, hungry, satisfied, crying) */
   pose: PetPose;
   /** Additional CSS classes for the container */
   className?: string;
