@@ -64,12 +64,31 @@ export function AppHeader() {
 
       {/* Currencies */}
       <div className="flex items-center gap-2 text-sm" role="status" aria-label="Resources">
+        {/* Bond display (Bible §4.4: Bond is visible) */}
+        <div
+          className="px-2 py-1 rounded-full bg-pink-500/20 flex items-center gap-1"
+          aria-label={`Bond level ${pet.bond}`}
+          data-testid="hud-bond"
+        >
+          <span aria-hidden="true">💕</span>
+          <span className="text-pink-400 font-medium">{Math.round(pet.bond)}</span>
+        </div>
         <div
           className="px-2 py-1 rounded-full bg-yellow-500/20 flex items-center gap-1"
           aria-label={`${currencies.coins ?? 0} coins`}
+          data-testid="hud-coins"
         >
           <span aria-hidden="true">🪙</span>
           <span className="text-yellow-400 font-medium">{currencies.coins ?? 0}</span>
+        </div>
+        {/* Gems display */}
+        <div
+          className="px-2 py-1 rounded-full bg-purple-500/20 flex items-center gap-1"
+          aria-label={`${currencies.gems ?? 0} gems`}
+          data-testid="hud-gems"
+        >
+          <span aria-hidden="true">💎</span>
+          <span className="text-purple-400 font-medium">{currencies.gems ?? 0}</span>
         </div>
         {energy && (
           <div

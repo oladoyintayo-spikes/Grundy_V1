@@ -90,7 +90,7 @@ export function MiniGameHub({ onSelectGame, onBack }: MiniGameHubProps) {
 
       {/* Game Grid (P5-A11Y-LABELS) */}
       <div className="flex-1 p-4 grid grid-cols-2 gap-4 overflow-y-auto" role="group" aria-label="Available mini-games">
-        {GAMES.map((game) => {
+        {GAMES.map((game, index) => {
           const playStatus = canPlay(game.id);
           const playsToday = dailyMiniGames.plays[game.id] ?? 0;
 
@@ -98,6 +98,7 @@ export function MiniGameHub({ onSelectGame, onBack }: MiniGameHubProps) {
             <button
               type="button"
               key={game.id}
+              data-testid={index === 0 ? 'play-button' : `game-${game.id}`}
               onClick={() => handleSelectGame(game.id, playStatus.allowed)}
               disabled={!playStatus.allowed}
               aria-label={`${game.name}: ${game.description} Duration: ${game.duration}. ${playsToday} of 3 plays used today.${playStatus.isFree && playStatus.allowed ? ' Free play available.' : ''}${!playStatus.allowed && playStatus.reason ? ` ${playStatus.reason}` : ''}`}

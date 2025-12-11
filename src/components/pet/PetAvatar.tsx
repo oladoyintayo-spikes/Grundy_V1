@@ -154,6 +154,7 @@ export function PetDisplay({
 
   return (
     <div
+      data-testid="active-pet"
       className={[
         'flex items-center justify-center',
         breathing && 'animate-breath',

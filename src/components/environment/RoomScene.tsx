@@ -47,7 +47,7 @@ export function RoomScene({ children, showAccents = true }: RoomSceneProps) {
   const scene = getRoomSceneSpec(room, timeOfDay);
 
   return (
-    <div className="relative flex-1 flex flex-col overflow-hidden">
+    <div data-testid="room-background" className="relative flex-1 flex flex-col overflow-hidden">
       {/* Foreground overlay gradient */}
       <div
         className={[

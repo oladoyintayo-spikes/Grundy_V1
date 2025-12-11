@@ -53,6 +53,7 @@ export function FtueWorldIntro({ onContinue }: FtueWorldIntroProps) {
 
   return (
     <div
+      data-testid="ftue-screen"
       className="h-full w-full flex flex-col items-center justify-center bg-gradient-to-b from-[#2D1B4E] to-[#1A1025] px-8"
       role="article"
       aria-label="World introduction"
@@ -63,7 +64,7 @@ export function FtueWorldIntro({ onContinue }: FtueWorldIntroProps) {
       </div>
 
       {/* World intro lines (P5-A11Y-LABELS) */}
-      <div className="text-center space-y-4 mb-12" role="region" aria-label="Story introduction">
+      <div data-testid="ftue-lore" className="text-center space-y-4 mb-12" role="region" aria-label="Story introduction">
         <h1 className="sr-only">Welcome to Grundy</h1>
         {WORLD_INTRO_LINES.map((line, index) => (
           <p
