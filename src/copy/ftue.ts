@@ -6,14 +6,14 @@
 
 // ============================================
 // WORLD INTRO (LOCKED COPY)
-// Do NOT modify without deliberate Bible change
+// Single source of truth: bible.constants.ts
+// Do NOT modify - change in bible.constants.ts instead
 // ============================================
 
-export const WORLD_INTRO_LINES = [
-  'Sometimes, when a big feeling is left behind…',
-  'A tiny spirit called a Grundy wakes up.',
-  'One of them just found *you*.',
-] as const;
+import { FTUE_LORE_LINES } from '../constants/bible.constants';
+
+// Re-export as WORLD_INTRO_LINES for backwards compatibility
+export const WORLD_INTRO_LINES = FTUE_LORE_LINES;
 
 // ============================================
 // PET LORE SNIPPETS

@@ -25,7 +25,14 @@ function EnvironmentBadge() {
   );
 }
 
-export function AppHeader() {
+// Focus ring class for accessibility (P5-UX-KEYS)
+const FOCUS_RING_CLASS = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900';
+
+export interface AppHeaderProps {
+  onOpenShop?: () => void;
+}
+
+export function AppHeader({ onOpenShop }: AppHeaderProps) {
   const pet = useGameStore((state) => state.pet);
   const currencies = useGameStore((state) => state.currencies);
   // Energy removed from main HUD per BCT-HUD-001
@@ -62,7 +69,7 @@ export function AppHeader() {
         </div>
       </div>
 
-      {/* Currencies */}
+      {/* Currencies + Shop (Bible §14.6: Shop in top-corner) */}
       <div className="flex items-center gap-2 text-sm" role="status" aria-label="Resources">
         {/* Bond display (Bible §4.4: Bond is visible) */}
         <div
@@ -91,6 +98,18 @@ export function AppHeader() {
           <span className="text-purple-400 font-medium">{currencies.gems ?? 0}</span>
         </div>
         {/* Energy removed from main HUD per BCT-HUD-001: "Energy may show in mini-game context only" */}
+
+        {/* Shop button (Bible §14.6: Top-corner placement) */}
+        {onOpenShop && (
+          <button
+            onClick={onOpenShop}
+            className={`ml-1 px-2 py-1 rounded-full bg-green-500/20 hover:bg-green-500/30 flex items-center gap-1 transition-colors ${FOCUS_RING_CLASS}`}
+            aria-label="Open Shop"
+            data-testid="shop-button"
+          >
+            <span aria-hidden="true">🏪</span>
+          </button>
+        )}
       </div>
     </header>
   );

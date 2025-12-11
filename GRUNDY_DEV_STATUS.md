@@ -2,7 +2,7 @@
 
 # Grundy Web Prototype — Development Status
 
-**Last Updated:** December 11, 2024 (P6-DOC-ALIGN)
+**Last Updated:** December 11, 2024 (P6-DOC-STATUS-ALIGN)
 **Current Phase:** Web Edition 1.0.0 — COMPLETE
 **Next Phase:** Phase 6 Optimizations & Enhancements
 
@@ -355,7 +355,7 @@ The following copy is canonical and used across all onboarding documentation:
 
 **Backlog:** See `docs/PHASE6_BACKLOG.md` for full list of P6-* tasks and sources.
 
-**Status:** In progress — Bible v1.4 merged, doc alignment complete, implementation planned.
+**Status:** In progress — Bible v1.4 merged. Tier 1 tasks (P6-CORE-LOOP, P6-HUD-CLEANUP, P6-PET-HOME, P6-ENV-ROOMS) complete. 723 BCT tests passing.
 
 ### Summary
 
@@ -374,13 +374,13 @@ Bible v1.4 merged (December 2024). Phase 6 = implement the Bible's locked rules 
 |----|------|--------|-------|
 | **P6-DOC-BIBLE** | Bible v1.4 merge | ✅ | — |
 | **P6-DOC-ALIGN** | Docs alignment to v1.4 | ✅ | — |
-| **P6-CORE-COOLDOWN** | 30-min feeding cooldown | ⬜ | §4.3 |
-| **P6-CORE-STUFFED** | STUFFED blocks feeding | ⬜ | §4.4 |
-| **P6-HUD-PRODUCTION** | Bond-only production HUD | ⬜ | §4.4 |
-| **P6-HUD-DEBUG** | Gate debug HUD behind dev flag | ⬜ | §4.4 |
+| **P6-CORE-COOLDOWN** | 30-min feeding cooldown | ✅ | §4.3 |
+| **P6-CORE-STUFFED** | STUFFED blocks feeding | ✅ | §4.4 |
+| **P6-HUD-PRODUCTION** | Bond-only production HUD | ✅ | §4.4 |
+| **P6-HUD-DEBUG** | Gate debug HUD behind dev flag | ✅ | §4.4 |
 | **P6-MOBILE-LAYOUT** | Mobile viewport constraints | ⬜ | §14.6 |
-| **P6-NAV-CONFIRM** | Pet switch confirmation | ⬜ | §14.5 |
-| **P6-ENV-ROOMS** | Activity→room mapping | ⬜ | §14.4 |
+| **P6-NAV-CONFIRM** | Pet switch confirmation | ✅ | §14.5 |
+| **P6-ENV-ROOMS** | Activity→room mapping | ✅ | §14.4 |
 | **P6-ART-TEST** | Visual regression test (no emoji in prod) | ⬜ | §13.7 |
 
 ### Economy Rules (Already Enforced)

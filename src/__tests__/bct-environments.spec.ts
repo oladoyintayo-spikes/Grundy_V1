@@ -74,7 +74,8 @@ describe('BCT-FTUE-01: Lore text', () => {
   });
 
   it('should have correct Line 3 (Bible §7.4 LOCKED)', () => {
-    expect(FTUE_LORE_LINES[2]).toBe('One of them just found you.');
+    // BCT-FTUE-001: Line 3 must include "*you*" with emphasis markers
+    expect(FTUE_LORE_LINES[2]).toBe('One of them just found *you*.');
   });
 
   it('should use proper ellipsis character (\u2026), not three dots', () => {

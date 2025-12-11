@@ -125,7 +125,7 @@ export function hasMiniGameGems(platform: Platform): boolean {
 export const FTUE_LORE_LINES = [
   'Sometimes, when a big feeling is left behind\u2026',
   'A tiny spirit called a Grundy wakes up.',
-  'One of them just found you.',
+  'One of them just found *you*.',
 ] as const;
 
 export const FTUE_LORE_TEXT = {
