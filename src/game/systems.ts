@@ -22,6 +22,12 @@ import {
   applyRareXPChance,
   applyDecayReduction
 } from './abilities';
+import {
+  EVOLUTION_THRESHOLDS,
+  FULLNESS_STATES,
+  COOLDOWN,
+  type FullnessState
+} from '../constants/bible.constants';
 
 // ============================================
 // PET SYSTEM
@@ -41,8 +47,9 @@ export function createInitialPet(petId: string, customName?: string): PetState {
 }
 
 export function getEvolutionStage(level: number): EvolutionStage {
-  if (level >= GAME_CONFIG.evolutionLevels.evolved) return 'evolved';
-  if (level >= GAME_CONFIG.evolutionLevels.youth) return 'youth';
+  // Use bible.constants.ts as single source of truth (Bible §6.1 LOCKED)
+  if (level >= EVOLUTION_THRESHOLDS.EVOLVED) return 'evolved';
+  if (level >= EVOLUTION_THRESHOLDS.YOUTH) return 'youth';
   return 'baby';
 }
 
@@ -55,6 +62,93 @@ export function decayHunger(current: number, minutesElapsed: number, petId?: str
   }
 
   return Math.max(0, current - decay);
+}
+
+// ============================================
+// FULLNESS SYSTEM (Bible §4.4)
+// ============================================
+
+/**
+ * Get the fullness state for a given hunger/fullness value.
+ * Note: In Grundy, "hunger" gauge is actually fullness (0=empty, 100=full/stuffed)
+ * @see Bible §4.4 Fullness States
+ */
+export function getFullnessState(fullness: number): FullnessState {
+  if (fullness >= FULLNESS_STATES.STUFFED.min) return 'STUFFED';
+  if (fullness >= FULLNESS_STATES.SATISFIED.min) return 'SATISFIED';
+  if (fullness >= FULLNESS_STATES.CONTENT.min) return 'CONTENT';
+  if (fullness >= FULLNESS_STATES.PECKISH.min) return 'PECKISH';
+  return 'HUNGRY';
+}
+
+/**
+ * Get the feed value multiplier for a given fullness level.
+ * Returns 0 for STUFFED (feeding blocked), reduced values for higher fullness.
+ * @see Bible §4.4 - STUFFED blocks feeding entirely
+ */
+export function getFullnessFeedValue(fullness: number): number {
+  const state = getFullnessState(fullness);
+  return FULLNESS_STATES[state].feedValue;
+}
+
+/**
+ * Check if pet is too full to feed (STUFFED state).
+ * @see Bible §4.4 - "LOCKED RULE: When fullness reaches STUFFED (91-100),
+ *                    feeding is completely blocked, not just reduced."
+ */
+export function isStuffed(fullness: number): boolean {
+  return fullness >= FULLNESS_STATES.STUFFED.min;
+}
+
+// ============================================
+// COOLDOWN SYSTEM (Bible §4.3)
+// ============================================
+
+/**
+ * Check if currently in feeding cooldown.
+ * @param lastFeedCooldownStart Timestamp when cooldown started (ms)
+ * @param now Current timestamp (ms), defaults to Date.now()
+ */
+export function isOnCooldown(lastFeedCooldownStart: number, now: number = Date.now()): boolean {
+  if (lastFeedCooldownStart === 0) return false;
+  return (now - lastFeedCooldownStart) < COOLDOWN.DURATION_MS;
+}
+
+/**
+ * Get remaining cooldown time in milliseconds.
+ * @param lastFeedCooldownStart Timestamp when cooldown started (ms)
+ * @param now Current timestamp (ms)
+ */
+export function getCooldownRemaining(lastFeedCooldownStart: number, now: number = Date.now()): number {
+  if (lastFeedCooldownStart === 0) return 0;
+  const elapsed = now - lastFeedCooldownStart;
+  return Math.max(0, COOLDOWN.DURATION_MS - elapsed);
+}
+
+/**
+ * Get the feed value multiplier considering cooldown state.
+ * @see Bible §4.3 - "During cooldown: 25%"
+ */
+export function getCooldownFeedValue(lastFeedCooldownStart: number, now: number = Date.now()): number {
+  return isOnCooldown(lastFeedCooldownStart, now) ? COOLDOWN.REDUCED_VALUE : 1.0;
+}
+
+/**
+ * Calculate combined feed value multiplier from fullness and cooldown.
+ * Fullness feedValue × Cooldown feedValue
+ * Returns 0 if STUFFED (completely blocked).
+ */
+export function getCombinedFeedValue(
+  fullness: number,
+  lastFeedCooldownStart: number,
+  now: number = Date.now()
+): number {
+  const fullnessValue = getFullnessFeedValue(fullness);
+  // If stuffed, return 0 immediately (blocked)
+  if (fullnessValue === 0) return 0;
+
+  const cooldownValue = getCooldownFeedValue(lastFeedCooldownStart, now);
+  return fullnessValue * cooldownValue;
 }
 
 export function getMoodEmoji(mood: MoodState): string {
