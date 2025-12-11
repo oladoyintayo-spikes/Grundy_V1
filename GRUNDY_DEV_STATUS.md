@@ -371,17 +371,19 @@ The following copy is canonical and used across all onboarding documentation:
 
 **Backlog:** See `docs/PHASE6_BACKLOG.md` for full list of P6-* tasks and sources.
 
-**DevStatus:** COMPLETE — All Tier 1 + Tier 2 polish tasks implemented. 1214 tests passing (594 BCT tests).
+**DevStatus:** COMPLETE — All Tier 1 + Tier 2 polish tasks implemented. 1218 tests passing (598 BCT tests).
 **CEStatus:** PENDING REVIEW
 **QAStatus:** PENDING REVIEW
 
 ### Summary
 
-Dev: Phase 6 Bible v1.4 compliance tasks implemented:
+Dev: Phase 6 Bible v1.5 compliance tasks implemented:
 - **Tier 1:** P6-CORE-LOOP, P6-ECON-WEB, P6-HUD-CLEANUP, P6-PET-HOME, P6-ENV-ROOMS, P6-ENV-UI, P6-ENV-TOD, P6-NAV-GROUNDWORK, P6-FTUE-INTRO, P6-MOBILE-LAYOUT, P6-QA-BCT
 - **Tier 2 Polish:** P6-ART-POSES, P6-MOOD-SYSTEM, P6-ABILITY-UI, P6-T2-PET-BEHAVIORS, P6-ART-PRODUCTION, P6-ART-TEST
 
-Mood system (§4.5) with numeric moodValue 0-100, decay, and Grib/Plompo abilities. Pet behavior polish with transient eating poses and mood-based expressions. Ability indicators added (P1-ABILITY-4). **Art system: Pet sprites wired per pet/stage/pose with fallback chain; Home active pet uses PNG sprites when assets exist; emoji/orb fallbacks limited to DEV or true missing assets.** BCT suite passing (1214 tests, 594 BCT-specific incl. 401 BCT-ART tests).
+Mood system (§4.5) with numeric moodValue 0-100, decay, and Grib/Plompo abilities. Pet behavior polish with transient eating poses and mood-based expressions. Ability indicators added (P1-ABILITY-4). **Art system: Pet sprites wired per pet/stage/pose with fallback chain; Home active pet uses PNG sprites when assets exist; emoji/orb fallbacks limited to DEV or true missing assets.** BCT suite passing (1218 tests, 598 BCT-specific incl. 401 BCT-ART tests, 23 BCT-NEGLECT specs).
+
+**Bible v1.5 + BCT v2.1 Audit (P6-QA-BCT-AUDIT):** Verified alignment of core loop, mini-games, Rooms Lite, FTUE, HUD. Nav/env groundwork validated; room selector UI confirmed implemented (P6-ENV-UI). `bible.constants.ts` header updated to v1.5.
 
 ### Task Status Overview
 
@@ -419,11 +421,11 @@ Mood system (§4.5) with numeric moodValue 0-100, decay, and Grib/Plompo abiliti
 
 **Build & Types:**
 - [ ] `npx tsc --noEmit` passes (no type errors)
-- [ ] `npm test` passes (full unit/spec suite — 813 tests)
+- [ ] `npm test` passes (full unit/spec suite — 1218 tests)
 
 **Bible Compliance Tests (P6-QA-BCT):**
-- [ ] `npm run test:bible` runs and passes all BCT spec tests (187 BCT tests)
-- [ ] BCT test files exist in `src/__tests__/bct-*.spec.ts` (11 files incl. mood, ability, pet-behaviors)
+- [ ] `npm run test:bible` runs and passes all BCT spec tests (598 BCT tests)
+- [ ] BCT test files exist in `src/__tests__/bct-*.spec.ts` (12 files incl. mood, ability, pet-behaviors, art, neglect specs)
 - [ ] Bible E2E file exists: `e2e/bible-compliance.e2e.ts`
 
 **Core Loop & Economy (Player-side sanity check):**
@@ -441,13 +443,13 @@ Mood system (§4.5) with numeric moodValue 0-100, decay, and Grib/Plompo abiliti
 
 **Environment & Mobile Layout:**
 - [ ] Feeding → Kitchen, play → Playroom, default → Living Room
-- [ ] Time-of-day ranges match Bible v1.4: Morning 6-12, Day 12-17, Evening 17-21, Night 21-6
+- [ ] Time-of-day ranges match Bible v1.5: Morning 6-12, Day 12-17, Evening 17-21, Night 21-6
 - [ ] Room selector UI allows manual room selection; activities override manual selection
 - [ ] On a typical phone viewport (390×844), pet + actions + currencies + bottom nav are visible without scroll
 
 **FTUE (P6-FTUE-INTRO):**
 - [ ] FTUE lore lines come from `src/constants/bible.constants.ts`
-- [ ] Line 3 preserves the "*you*" emphasis exactly as in Bible v1.4
+- [ ] Line 3 preserves the "*you*" emphasis exactly as in Bible v1.5
 
 **Art / Poses (P6-ART-POSES):**
 - [ ] Pets use sprite poses (not generic blobs) in production builds

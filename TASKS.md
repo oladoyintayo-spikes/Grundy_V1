@@ -632,7 +632,7 @@ P8-TEST
 | P6-ENV-ROOMS | Rooms Lite & time-of-day behavior | 6 | ✅ Done | §14.4 | BCT-ENV-*, BCT-ROOMS-*; implemented |
 | P6-FTUE-INTRO | FTUE lore & intro performance | 6 | ✅ Done | §7.4 | BCT-FTUE-001, BCT-FTUE-002; lore from bible.constants.ts |
 | P6-MOBILE-LAYOUT | Mobile core loop & nav | 6 | ✅ Done | §14.5–14.6 | BCT-LAYOUT-001, BCT-NAV-*; no-scroll viewport implemented |
-| P6-QA-BCT | Bible Compliance tests (spec + E2E integration) | 6 | ✅ Done | — | 133 BCT tests passing; npm run test:bible command works |
+| P6-QA-BCT | Bible Compliance tests (spec + E2E integration) | 6 | ✅ Done | — | 598 BCT tests passing; npm run test:bible command works |
 
 ### Tier 1 ↔ Subtask Mapping
 
@@ -660,7 +660,7 @@ P8-TEST
 | P6-ENV-ROOMS | Rooms Lite & time-of-day behavior | 6 | ✅ Complete | Unassigned | Bible §14.4; BCT-ROOMS-*, BCT-ENV-* ✅ |
 | P6-FTUE-INTRO | FTUE lore & intro performance | 6 | ✅ Complete | Unassigned | Bible §7.4; BCT-FTUE-*; lore from bible.constants.ts ✅ |
 | P6-MOBILE-LAYOUT | Mobile core loop & nav | 6 | ✅ Complete | Unassigned | Bible §14.5–14.6; BCT-LAYOUT-*, BCT-NAV-*; no-scroll viewport ✅ |
-| P6-QA-BCT | Bible Compliance tests (spec + E2E integration) | 6 | ✅ Complete | Unassigned | 133 BCT tests passing; npm run test:bible works; E2E file exists ✅ |
+| P6-QA-BCT | Bible Compliance tests (spec + E2E integration) | 6 | ✅ Complete | Unassigned | 598 BCT tests passing; npm run test:bible works; E2E file exists ✅ |
 
 ---
 
