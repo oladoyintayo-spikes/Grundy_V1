@@ -2,7 +2,7 @@
 
 # Grundy Web Prototype — Development Status
 
-**Last Updated:** December 11, 2024 (P6-DOC-BIBLE)
+**Last Updated:** December 11, 2024 (P6-DOC-ALIGN)
 **Current Phase:** Web Edition 1.0.0 — COMPLETE
 **Next Phase:** Phase 6 Optimizations & Enhancements
 
@@ -349,53 +349,63 @@ The following copy is canonical and used across all onboarding documentation:
 
 ---
 
-## Web Phase 6 – Optimization & Enhancements
+## Web Phase 6 – Bible v1.4 Compliance
 
-**Goal:** Build on Web 1.0 baseline with branding, audio assets, richer environment UX, PWA upgrades, and deeper FTUE/mode behavior.
+**Goal:** Bring Web 1.0 up to Bible v1.4 specification.
 
 **Backlog:** See `docs/PHASE6_BACKLOG.md` for full list of P6-* tasks and sources.
 
-**Status:** In progress — Bible v1.4 merged, planning complete.
+**Status:** In progress — Bible v1.4 merged, doc alignment complete, implementation planned.
 
-### Documentation Complete (P6-DOC-BIBLE)
+### Summary
 
-**Bible v1.4 merged (December 2024):**
-- Platform & Phase Tags (§1.6) — [Web 1.0], [Web Phase 6+], [Unity Later], [Future]
-- Cooldown/Fullness rules (§4.3-4.4) — 30-min cooldown spec, STUFFED blocks feeding
-- Dev HUD exception (§4.4) — Debug stats only in dev builds
-- Evolution thresholds locked (§6.1) — Youth=10, Evolved=25 final
-- NO GEMS from mini-games (§8.3) — Locked invariant
-- Navigation structure (§14.5) — Menu-based pet selection design
-- Mobile layout constraints (§14.6) — Viewport rules for one-handed play
-- Rooms Lite platform note (§14.4) — Web 1.0 = time-of-day only
-- FTUE fallback (§7.4) — Minimum acceptable behavior spec
-- Production art rule (§13.7) — Emoji/orb are placeholders only
-- Updated prototype gaps (§15.6) — Web 1.0 status + Phase 6 priorities
+Bible v1.4 merged (December 2024). Phase 6 = implement the Bible's locked rules that Web 1.0 doesn't yet enforce.
 
-### Themes
+**Key gaps to close:**
+- Feeding cooldown + STUFFED block (§4.3-4.4)
+- Production HUD: Bond-only; debug stats gated (§4.4)
+- Mobile layout constraints (§14.6)
+- Activity→room mapping (§14.4)
+- Pet switch confirmations (§14.5)
+
+### Task Status Overview
+
+| ID | Task | Status | Bible |
+|----|------|--------|-------|
+| **P6-DOC-BIBLE** | Bible v1.4 merge | ✅ | — |
+| **P6-DOC-ALIGN** | Docs alignment to v1.4 | ✅ | — |
+| **P6-CORE-COOLDOWN** | 30-min feeding cooldown | ⬜ | §4.3 |
+| **P6-CORE-STUFFED** | STUFFED blocks feeding | ⬜ | §4.4 |
+| **P6-HUD-PRODUCTION** | Bond-only production HUD | ⬜ | §4.4 |
+| **P6-HUD-DEBUG** | Gate debug HUD behind dev flag | ⬜ | §4.4 |
+| **P6-MOBILE-LAYOUT** | Mobile viewport constraints | ⬜ | §14.6 |
+| **P6-NAV-CONFIRM** | Pet switch confirmation | ⬜ | §14.5 |
+| **P6-ENV-ROOMS** | Activity→room mapping | ⬜ | §14.4 |
+| **P6-ART-TEST** | Visual regression test (no emoji in prod) | ⬜ | §13.7 |
+
+### Economy Rules (Already Enforced)
+
+| Rule | Status | Verification |
+|------|--------|--------------|
+| NO GEMS from mini-games | ✅ | Code + tests |
+| Daily cap (3 plays) | ✅ | Code + tests |
+| First-game-free | ✅ | Code + tests |
+
+### Themes (Non-Bible Tasks)
 
 | Theme | Key Tasks | Source |
 |-------|-----------|--------|
 | Branding & Visual | P6-BRANDING, P6-ART-POSES, P6-ART-PROPS | QA-001, ART_NOTES |
 | Audio Assets | P6-AUDIO-ASSETS, P6-AUDIO-ROOM, P6-AUDIO-TOD | QA-002, AUDIO_NOTES |
-| Environment UX | P6-ENV-UI, P6-MOOD-SYSTEM | QA-003 |
 | PWA Enhancements | P6-PWA-PRECACHE, P6-PWA-UI, P6-PWA-UPDATE | QA-005, PWA_NOTES |
 | FTUE & Modes | P6-FTUE-MODES | General |
-| Documentation | ~~P6-DOC-BIBLE~~ ✅, P6-DOC-ROADMAP | General |
-
-### Priority Items
-
-1. **P6-BRANDING** — Visual impact, required for store submission
-2. **P6-AUDIO-ASSETS** — Noticeable polish, SFX/BGM config already wired
-3. **P6-PWA-UI** — Simple Settings button, infrastructure exists
-4. **P9-7** — Volume sliders for user control
 
 ### QA Issue Mapping
 
 All QA S3/S4 issues from Web 1.0 are mapped to Phase 6 tasks:
 - QA-001 → P6-BRANDING
 - QA-002 → P6-AUDIO-ASSETS
-- QA-003 → P6-ENV-UI
+- QA-003 → P6-ENV-ROOMS, P6-ENV-UI
 - QA-004 → P9-7
 - QA-005 → P6-PWA-UI
 

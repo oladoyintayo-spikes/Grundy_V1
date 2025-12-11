@@ -2,23 +2,31 @@
 
 # Grundy Web Edition — Development Roadmap
 
-**Version:** 2.0
-**Last Updated:** December 10, 2024 (CE-P3-PLAN)
-**Target:** Web 1.0 Release
+**Version:** 2.1
+**Last Updated:** December 11, 2024 (P6-DOC-ALIGN)
+**Current:** Web 1.0 RELEASED | Phase 6 In Progress
 
 ---
 
 ## Overview
 
-This roadmap defines the path to **Web 1.0** — the first complete, playable version of Grundy for web browsers. The Unity edition will follow separately.
+**Web 1.0 is RELEASED.** This roadmap now tracks **Phase 6+** — bringing Web 1.0 up to Bible v1.4 compliance, then extending with new features.
 
-### Web Edition Goals
+### Web Edition Goals (Web 1.0 — COMPLETE)
 
-1. **Playable core loop** — Feed, bond, evolve
-2. **5 mini-games** — Snack Catch, Memory Match, Pips, Rhythm Tap, Poop Scoop
-3. **Navigation shell** — Home, Games, Settings
-4. **FTUE** — New player onboarding in <60 seconds
-5. **PWA** — Installable on mobile devices
+1. **Playable core loop** — Feed, bond, evolve ✅
+2. **5 mini-games** — Snack Catch, Memory Match, Pips, Rhythm Tap, Poop Scoop ✅
+3. **Navigation shell** — Home, Games, Settings ✅
+4. **FTUE** — New player onboarding in <60 seconds ✅
+5. **PWA** — Installable on mobile devices ✅
+
+### Phase 6 Goals (Bible v1.4 Compliance)
+
+1. **Core loop hardening** — Feeding cooldown, STUFFED block
+2. **HUD cleanup** — Bond-only in production; debug stats gated
+3. **Mobile layout** — Viewport constraints per Bible §14.6
+4. **Rooms Lite** — Activity→room mapping per Bible §14.4
+5. **Navigation** — Pet switch confirmations per Bible §14.5
 
 ---
 
@@ -34,16 +42,22 @@ Web Phase 1: Core Loop & Data ✅
 Web Phase 2: Mini-Games & Infra ✅
     │
     ▼
-Web Phase 3: Navigation & Environment 🟡
+Web Phase 3: Navigation & Environment ✅
     │
     ▼
-Web Phase 4: FTUE / Onboarding
+Web Phase 4: FTUE / Onboarding ✅
     │
     ▼
-Web Phase 5: Polish / Web 1.0
+Web Phase 5: Polish / Web 1.0 ✅
     │
     ▼
-[ WEB 1.0 RELEASE ]
+[ WEB 1.0 RELEASE ] ← COMPLETE
+    │
+    ▼
+Web Phase 6: Bible v1.4 Compliance 🟡
+    │
+    ▼
+Web Phase 7+: Extended Features
 ```
 
 ---
@@ -104,36 +118,36 @@ Web Phase 5: Polish / Web 1.0
 
 ---
 
-### Web Phase 3: Navigation & Environment 🟡
+### Web Phase 3: Navigation & Environment ✅
 
 **Theme:** App shell, navigation, time-of-day theming.
 
 | Task Group | Status | Tasks |
 |------------|--------|-------|
 | P3-NAV: App Shell | ✅ | AppView model, header, bottom nav, Games tab |
-| P3-ENV: Environment | ⬜ | Time-of-day theming, rooms, view integration |
+| P3-ENV: Environment | ✅ | Time-of-day theming, rooms, view integration |
 
 **Exit Criteria:**
 - [x] App header shows pet, coins, energy
 - [x] Bottom nav switches Home/Games/Settings
 - [x] Games tab shows mini-game hub
-- [ ] Time-of-day theming applied
-- [ ] Rooms integrated into views
+- [x] Time-of-day theming applied
+- [x] Rooms integrated into views
 
 ---
 
-### Web Phase 4: FTUE / Onboarding ⬜
+### Web Phase 4: FTUE / Onboarding ✅
 
 **Theme:** New player experience from Bible §7.
 
 | Screen | Status | Description |
 |--------|--------|-------------|
-| Splash | ⬜ | Title + "Tap to Start" |
-| Age Gate | ⬜ | Birth year picker (COPPA) |
-| World Intro | ⬜ | 10-second lore snippet (LOCKED copy) |
-| Pet Selection | ⬜ | 3 starters, origin snippets, locked teasers |
-| Mode Select | ⬜ | Cozy vs Classic |
-| First Session | ⬜ | Guided feeding, first reaction always positive |
+| Splash | ✅ | Title + "Tap to Start" |
+| Age Gate | ✅ | "I'm old enough" single tap |
+| World Intro | ✅ | 10-second lore snippet (LOCKED copy) |
+| Pet Selection | ✅ | 3 starters, origin snippets, locked teasers |
+| Mode Select | ✅ | Cozy vs Classic |
+| First Session | ✅ | Guided feeding, first reaction always positive |
 
 **World Intro Copy (LOCKED):**
 > Sometimes, when a big feeling is left behind…
@@ -141,34 +155,77 @@ Web Phase 5: Polish / Web 1.0
 > One of them just found *you*.
 
 **Exit Criteria:**
-- [ ] New player completes FTUE in <60s
-- [ ] Mode selection works
-- [ ] First feeding always positive
-- [ ] World Intro shows LOCKED copy
+- [x] New player completes FTUE in <60s (30-42s achieved)
+- [x] Mode selection works
+- [x] First feeding always positive
+- [x] World Intro shows LOCKED copy
 
 ---
 
-### Web Phase 5: Polish / Web 1.0 ⬜
+### Web Phase 5: Polish / Web 1.0 ✅
 
 **Theme:** Final polish for release.
 
 | Task | Status | Description |
 |------|--------|-------------|
-| P5-SOUND-1 | ⬜ | Basic SFX/BGM + mute setting |
-| P5-PWA-1 | ⬜ | Icons, service worker, offline support |
-| P5-ART-1 | ⬜ | Replace emoji placeholders with final art |
-| P5-QA-1 | ⬜ | Full test pass + release checklist |
+| P5-AUDIO | ✅ | Audio manager, SFX/BGM, settings |
+| P5-PWA | ✅ | Manifest, service worker, install prompt |
+| P5-ART | ✅ | Pet sprites, room scenes, integration |
+| P5-UX-A11Y | ✅ | Keyboard nav, focus styles, ARIA |
+| P5-QA | ✅ | Full test pass, 616 tests |
+| P5-RELEASE | ✅ | Web 1.0.0 versioned and tagged |
 
 **Exit Criteria:**
-- [ ] Sound system working with mute
-- [ ] PWA installable on mobile
-- [ ] Final art integrated
-- [ ] All tests passing
-- [ ] Web 1.0 release tagged
+- [x] Sound system working with mute
+- [x] PWA installable on mobile
+- [x] Final art integrated
+- [x] All tests passing (616 tests)
+- [x] Web 1.0 release tagged
 
 ---
 
-## Post-Web 1.0 Systems
+### Web Phase 6: Bible v1.4 Compliance 🟡
+
+**Theme:** Bring Web 1.0 up to Bible v1.4 specification.
+
+> **Full backlog:** `docs/PHASE6_BACKLOG.md`
+
+| Task Group | Status | Bible Section |
+|------------|--------|---------------|
+| P6-CORE: Core Loop Hardening | ⬜ | §4.3–4.4 |
+| P6-HUD: HUD Cleanup | ⬜ | §4.4 |
+| P6-MOBILE: Layout & Nav | ⬜ | §14.5–14.6 |
+| P6-ENV: Rooms Lite | ⬜ | §14.4 |
+| P6-ART: Art Integration | 🟡 | §13.7 |
+| P6-DOC: Documentation | ✅ | — |
+
+**Key Tasks:**
+
+| ID | Task | Status | Notes |
+|----|------|--------|-------|
+| P6-CORE-COOLDOWN | 30-min feeding cooldown | ⬜ | Bible §4.3 |
+| P6-CORE-STUFFED | STUFFED blocks feeding | ⬜ | Bible §4.4 |
+| P6-HUD-PRODUCTION | Bond-only production HUD | ⬜ | Bible §4.4 |
+| P6-HUD-DEBUG | Gate debug HUD | ⬜ | Bible §4.4 |
+| P6-MOBILE-LAYOUT | Mobile viewport constraints | ⬜ | Bible §14.6 |
+| P6-NAV-CONFIRM | Pet switch confirmation | ⬜ | Bible §14.5 |
+| P6-ENV-ROOMS | Activity→room mapping | ⬜ | Bible §14.4 |
+| P6-DOC-BIBLE | Bible v1.4 merge | ✅ | Complete |
+| P6-DOC-ALIGN | Docs alignment | ✅ | Complete |
+
+**Exit Criteria:**
+- [ ] Feeding cooldown enforced (Bible §4.3)
+- [ ] STUFFED blocks feeding (Bible §4.4)
+- [ ] Production HUD: Bond-only (Bible §4.4)
+- [ ] Debug HUD gated behind dev flag (Bible §4.4)
+- [ ] Mobile viewport constraints met (Bible §14.6)
+- [ ] Pet switch shows confirmation (Bible §14.5)
+- [ ] Activity→room mapping works (Bible §14.4)
+- [ ] No emoji in production sprites (Bible §13.7)
+
+---
+
+## Post-Phase 6 Systems
 
 These features are planned for after the initial web release:
 
@@ -213,7 +270,8 @@ npm run dev
 
 ## Sources
 
-- `docs/GRUNDY_MASTER_BIBLE.md` — Design source of truth
+- `docs/GRUNDY_MASTER_BIBLE.md` (v1.4) — Design source of truth
+- `docs/PHASE6_BACKLOG.md` — Phase 6 task backlog
 - `TASKS.md` — Detailed task list
 - `ORCHESTRATOR.md` — Agent workflow
 - `GRUNDY_DEV_STATUS.md` — Current status
@@ -221,3 +279,4 @@ npm run dev
 ---
 
 *This roadmap tracks the Web Edition only. Unity Edition has a separate roadmap.*
+*Phase 6 = Bible v1.4 compliance. Later phases = extended features beyond Bible v1.4 baseline.*
