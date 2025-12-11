@@ -8,6 +8,8 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "test": "vitest",
+    "test:bible": "vitest run --testNamePattern=\"BCT-\"",
+    "test:bible:e2e": "npx playwright test e2e/bible-compliance.e2e.ts",
     "lint": "eslint src --ext ts,tsx"
   },
   "dependencies": {

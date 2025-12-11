@@ -14,6 +14,23 @@ All tests reference specific Bible sections. Passing these tests means the imple
 
 ---
 
+## Quick Start
+
+Run all Bible Compliance Tests:
+
+```bash
+# Spec tests (unit/integration) — runs ~120+ BCT tests
+npm run test:bible
+
+# E2E tests (requires browser) — runs against running app
+npm run test:bible:e2e
+
+# All tests (includes non-BCT tests)
+npm test -- --run
+```
+
+---
+
 ## Test Categories
 
 | Category | Prefix | Bible Sections | Description |
@@ -315,8 +332,16 @@ BCT spec tests verify that `bible.constants.ts` values match the Bible:
 | `src/__tests__/bct-core-loop.spec.ts` | BCT-FEED-01, 02, 03 |
 | `src/__tests__/bct-economy.spec.ts` | BCT-ECON-01, 02, BCT-GAME-01, 02, 03 |
 | `src/__tests__/bct-environments.spec.ts` | BCT-ROOMS-01, 02, 03, BCT-FTUE-01, 02 |
+| `src/__tests__/bct-hud.spec.ts` | BCT-HUD-001, 002 |
+| `src/__tests__/bct-pet-nav.spec.ts` | BCT-PET-01, 02, BCT-NAV-001 |
+| `src/__tests__/bct-env.spec.ts` | BCT-ENV-001, 002 |
+| `src/__tests__/bct-mobile-layout.spec.ts` | BCT-LAYOUT-001 |
 
-**Run:** `npm test -- run src/__tests__/bct-*.spec.ts`
+**Run:**
+
+```bash
+npm run test:bible
+```
 
 ### E2E Tests (Playwright)
 
@@ -333,18 +358,26 @@ Tests verify:
 - BCT-MOBILE-01: No scroll required
 - BCT-CURRENCY-01: Currency display
 
-**Run:** `npx playwright test e2e/bible-compliance.e2e.ts`
+**Run:**
+
+```bash
+npm run test:bible:e2e
+```
+
+> Note: E2E tests require the dev server running. The script automatically starts it via Playwright.
 
 ### Test Coverage by Bible Section
 
 | Bible Section | Spec Tests | E2E Tests |
 |--------------|------------|-----------|
 | §4.3-4.4 (Feeding/Cooldown) | ✅ bct-core-loop.spec.ts | — |
+| §4.4 (HUD) | ✅ bct-hud.spec.ts | ✅ BCT-HUD-01 |
 | §6.1 (Evolution) | ✅ bct-evolution.spec.ts | — |
 | §7.4 (FTUE) | ✅ bct-environments.spec.ts | ⏳ (skipped) |
 | §8.2-8.3 (Mini-games) | ✅ bct-economy.spec.ts | — |
-| §14.4 (Rooms) | ✅ bct-environments.spec.ts | — |
-| §14.5-14.6 (Navigation/Layout) | — | ✅ bible-compliance.e2e.ts |
+| §14.4 (Rooms/Environment) | ✅ bct-environments.spec.ts, bct-env.spec.ts | — |
+| §14.5 (Navigation/Pet) | ✅ bct-pet-nav.spec.ts | ✅ BCT-NAV-01, BCT-PET-01 |
+| §14.6 (Mobile Layout) | ✅ bct-mobile-layout.spec.ts | ✅ BCT-MOBILE-01 |
 
 ---
 
