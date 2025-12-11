@@ -610,12 +610,61 @@ P8-TEST
 
 ---
 
-## WEB PHASE 6: Optimization & Enhancements (Future)
+## WEB PHASE 6: Bible v1.4 Compliance
 
-> Optimization and enhancement tasks planned for after Web 1.0 release.
+> **Phase 6 = Bring Web 1.0 up to Bible v1.4 specification.**
 > Full backlog: `docs/PHASE6_BACKLOG.md`
 
-### P6-BRANDING: Branding & Visual Polish
+### P6-CORE: Core Loop Hardening (Bible §4.3–4.4)
+
+> Enforce feeding rules that prevent spam-leveling and preserve "Daily Moments" rhythm.
+
+| ID | Task | Status | Scope | Notes |
+|----|------|--------|-------|-------|
+| P6-CORE-COOLDOWN | Implement 30-min feeding cooldown | ⬜ | Store, HomeView | Bible §4.3 — Timer visible, 25% value during cooldown |
+| P6-CORE-STUFFED | Block feeding when STUFFED (91-100) | ⬜ | Store, FoodTray | Bible §4.4 — Pet refuses food entirely at STUFFED state |
+| P6-CORE-SPAM | Prevent spam-feed exploitation | ⬜ | Store | Bible §4.3 — Cooldown resets on each feed |
+
+### P6-HUD: HUD Cleanup (Bible §4.4)
+
+> Production HUD shows Bond only. Debug stats gated behind dev flag.
+
+| ID | Task | Status | Scope | Notes |
+|----|------|--------|-------|-------|
+| P6-HUD-PRODUCTION | Production HUD: Bond-only visible | ⬜ | AppHeader, HomeView | Bible §4.4 — Remove hunger/XP/energy from player-facing UI |
+| P6-HUD-DEBUG | Gate debug HUD behind dev flag | ⬜ | Components | Bible §4.4 — `import.meta.env.DEV` check; strip in prod |
+
+### P6-MOBILE: Mobile Layout & Navigation (Bible §14.5–14.6)
+
+> On phone, pet + primary actions + nav + currencies visible without scroll.
+
+| ID | Task | Status | Scope | Notes |
+|----|------|--------|-------|-------|
+| P6-MOBILE-LAYOUT | Enforce mobile viewport constraints | ⬜ | Layout, CSS | Bible §14.6 — Pet, actions, nav, currencies without scroll |
+| P6-NAV-GROUNDWORK | Navigation structure groundwork | ⬜ | BottomNav, App | Bible §14.5 — Prepare for future menu-based nav |
+| P6-NAV-CONFIRM | Add pet switch confirmation | ⬜ | PetSelector | Bible §14.5 — "Switch to Grib?" modal |
+
+### P6-ENV: Rooms Lite & Environment (Bible §14.4)
+
+> Time-of-day + activity→room mapping per Bible spec.
+
+| ID | Task | Status | Scope | Notes |
+|----|------|--------|-------|-------|
+| P6-ENV-ROOMS | Implement activity→room mapping | ⬜ | Environment system | Bible §14.4 — Feeding=Kitchen, Sleeping=Bedroom, Playing=Playroom |
+| P6-ENV-UI | Room selection UI | ⬜ | HomeView | Bible §14.4 — Explicit room switcher (QA-003) |
+| P6-ENV-TOD | Time-of-day consistency | 🟡 | Environment | Bible §14.4 — Verify compliance |
+| P6-MOOD-SYSTEM | Full mood decay system | ⬜ | Store, pet logic | Enables Grib's Chill Vibes fully |
+
+### P6-ART: Art Integration (Bible §13.7)
+
+> Sprite art in production; emoji/orb only in dev placeholders.
+
+| ID | Task | Status | Scope | Notes |
+|----|------|--------|-------|-------|
+| P6-ART-PRODUCTION | Verify sprites in production builds | 🟡 | PetAvatar | Bible §13.7 — Verify no emoji fallback in prod |
+| P6-ART-TEST | Add visual regression test | ⬜ | Tests | Bible §13.7 — Test no emoji where sprites should be |
+
+### P6-BRANDING: Branding & Visual Polish (QA Deferrals)
 
 | ID | Task | Status | Scope | Notes |
 |----|------|--------|-------|-------|
@@ -631,13 +680,6 @@ P8-TEST
 | P6-AUDIO-ASSETS | Add real audio files | ⬜ | public/audio/ | Hook actual SFX/BGM assets (QA-002) |
 | P6-AUDIO-ROOM | Room-specific music | ⬜ | Audio system | Different tracks per room (AUDIO_NOTES) |
 | P6-AUDIO-TOD | Time-of-day ambience | ⬜ | Audio system | Morning/evening/night variations (AUDIO_NOTES) |
-
-### P6-ENV: Environment & UX
-
-| ID | Task | Status | Scope | Notes |
-|----|------|--------|-------|-------|
-| P6-ENV-UI | Room selection UI | ⬜ | HomeView | Explicit room switcher (QA-003) |
-| P6-MOOD-SYSTEM | Full mood decay system | ⬜ | Store, pet logic | Enables Grib's Chill Vibes fully |
 
 ### P6-PWA: PWA Enhancements
 
@@ -657,7 +699,8 @@ P8-TEST
 
 | ID | Task | Status | Scope | Notes |
 |----|------|--------|-------|-------|
-| P6-DOC-BIBLE | Bible v1.4 merge | ✅ | docs/ | Merged v1.4 amendments: platform tags, cooldown/fullness, HUD rules, nav/mobile, Rooms Lite, FTUE fallback, art rule |
+| P6-DOC-BIBLE | Bible v1.4 merge | ✅ | docs/ | Merged v1.4 amendments |
+| P6-DOC-ALIGN | Docs alignment to Bible v1.4 | ✅ | docs/ | PHASE6_BACKLOG, DEV_STATUS, TASKS, ROADMAP aligned |
 | P6-DOC-ROADMAP | Roadmap update | ⬜ | docs/ | Phase 6+ roadmap from Web 1.0 baseline |
 
 ---

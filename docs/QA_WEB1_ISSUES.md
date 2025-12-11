@@ -165,8 +165,8 @@
   2. Tasks are marked as ⬜ TODO
 - **Expected:** Time-of-day theming and room contexts fully integrated
 - **Actual:** Time-of-day backgrounds work, but room switching is basic
-- **Notes:** The core environment system is implemented in `src/game/environment.ts` and works. The "incomplete" status in TASKS.md may be outdated — the functionality is present and tested. However, explicit room selection UI is not implemented.
-- **Status:** Deferred (Phase 6 – P6-ENV-UI) — Environment system is functional for Web 1.0; explicit room selection can be added post-release
+- **Notes:** The core environment system is implemented in `src/game/environment.ts` and works. The "incomplete" status in TASKS.md may be outdated — the functionality is present and tested. However, explicit room selection UI and activity→room mapping (Bible §14.4) are not implemented.
+- **Status:** Deferred (Phase 6 – P6-ENV-UI, P6-ENV-ROOMS) — Environment system is functional for Web 1.0; explicit room selection and activity→room mapping per Bible v1.4 §14.4 will be added in Phase 6
 
 ---
 
