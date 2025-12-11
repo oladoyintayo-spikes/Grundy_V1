@@ -47,10 +47,11 @@ const ProgressBar = ({ value, max, color, label, showText = true }: {
 );
 
 // Food Item Component
-const FoodItem = ({ food, count, onFeed, disabled }: {
-  food: FoodDefinition; count: number; onFeed: () => void; disabled: boolean
+const FoodItem = ({ food, count, onFeed, disabled, isFirst }: {
+  food: FoodDefinition; count: number; onFeed: () => void; disabled: boolean; isFirst?: boolean
 }) => (
   <button
+    data-testid={isFirst ? 'feed-button' : `food-item-${food.id}`}
     onClick={onFeed}
     disabled={disabled || count <= 0}
     className={`
@@ -330,13 +331,14 @@ function HomeView({ onOpenShop }: HomeViewProps) {
           </h3>
 
           <div className="flex gap-2 overflow-x-auto pb-2">
-            {allFoods.map(food => (
+            {allFoods.map((food, index) => (
               <FoodItem
                 key={food.id}
                 food={food}
                 count={inventory[food.id] || 0}
                 onFeed={() => handleFeed(food.id)}
                 disabled={isFeeding}
+                isFirst={index === 0}
               />
             ))}
           </div>

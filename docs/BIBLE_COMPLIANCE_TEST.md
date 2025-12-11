@@ -1,382 +1,398 @@
-# Grundy – Bible Compliance Test (Web 1.0 / Phase 6+)
+# Grundy — Bible Compliance Test (BCT)
 
-## 1. Purpose
-
-This document defines the **Bible Compliance Test** for the Grundy Web Edition.
-
-**Goal:**
-
-- Verify that the **Web build** behaves in accordance with **GRUNDY_MASTER_BIBLE v1.4**.
-- Detect **design drift** between implementation and Bible.
-- Feed concrete requirements into **spec tests, E2E tests, and QA passes**.
-
-This is not a full regression plan. It focuses on **non-negotiable invariants and core experience rules** from the Bible.
+**Version:** 2.0
+**Last Updated:** December 11, 2024 (P6-BCT-INTEGRATE)
+**Bible Reference:** `docs/GRUNDY_MASTER_BIBLE.md` v1.4
 
 ---
 
-## 2. Scope
+## Purpose
 
-- **Platform:** Web (First Light 1.0 + Phase 6 patches)
-- **Engine:** Vite + React + TypeScript
-- **Builds Covered:**
-  - Production / player build
-  - Dev/QA build (where debug HUD and placeholders may be enabled via flags)
+This document defines the **Bible Compliance Tests (BCT)** — the contract for CE and QA review of any phase, patch, or hotfix.
 
-Assumption: **GRUNDY_MASTER_BIBLE v1.4** is canonical.
+All tests reference specific Bible sections. Passing these tests means the implementation matches the canonical design specification.
 
 ---
 
-## 3. Test Structure
+## Test Categories
 
-Each test case has:
-
-- **ID** – `BCT-<area>-<number>`
-- **Spec Ref** – relevant section(s) in Bible v1.4
-- **Type** – Manual / Spec / E2E
-- **Steps**
-- **Expected Result**
-
-These should be mirrored as:
-
-- Jest/Vitest **spec tests** (logic / state).
-- Playwright/Cypress (or similar) **E2E tests** (FTUE, HUD, layout, nav).
-
----
-
-## 4. Test Summary
-
-| ID | Name | Type | Bible Ref |
-|----|------|------|-----------|
-| BCT-FEED-01 | Stuffed pets cannot be fed | Spec + Manual | §4.3–4.4 |
-| BCT-FEED-02 | Cooldown exists and blocks rapid re-feeding | Spec + E2E | §4.3–4.4 |
-| BCT-FEED-03 | No spam leveling via feeding while full | Spec + Manual | §4.3–4.4, §6.1 |
-| BCT-EVO-01 | Evolution thresholds match Bible | Spec | §6.1 |
-| BCT-ECON-01 | Mini-games never award gems | Spec + E2E | §8.2–8.3 |
-| BCT-ECON-02 | Gem sources match Bible list | Spec | §8.3 |
-| BCT-GAME-01 | Mini-game daily cap enforced | Spec + E2E | §8.2 |
-| BCT-GAME-02 | First daily game is free | Spec | §8.2 |
-| BCT-HUD-01 | Production HUD shows Bond only | E2E + Manual | §4.4 |
-| BCT-HUD-02 | Dev/QA HUD gated behind flag | Spec + Manual | §4.4 |
-| BCT-ROOMS-01 | Feeding uses Kitchen environment | Spec + E2E | §14.4 |
-| BCT-ROOMS-02 | Sleeping uses Bedroom; Play uses Playroom | Spec + E2E | §14.4 |
-| BCT-ROOMS-03 | Time-of-day visuals are correct | Spec + Manual | §14.4 |
-| BCT-FTUE-01 | Lore text matches Bible exactly | E2E + Manual | §7.4 |
-| BCT-FTUE-02 | Animation or smooth fallback behavior | E2E + Manual | §7.4 |
-| BCT-NAV-01 | Home / Games / Settings always accessible | E2E | §14.5, §14.6 |
-| BCT-PET-01 | Only active pet visible on Home | E2E + Manual | §14.5 |
-| BCT-PET-02 | Switching pet is deliberate and confirmed | E2E | §14.5 |
-| BCT-MOBILE-01 | No vertical scroll required for core loop | E2E | §14.6 |
-| BCT-MOBILE-02 | Session stats / debug counters off main view | E2E + Manual | §4.4, §14.6 |
-| BCT-ART-01 | Pet sprite art used in production | E2E + Manual | §13.7 |
-| BCT-ART-02 | Emoji/orb only in dev/testing modes | Spec + Manual | §13.7 |
+| Category | Prefix | Bible Sections | Description |
+|----------|--------|----------------|-------------|
+| Core Loop | BCT-CORE-* | §4.3–4.4 | Feeding, cooldown, fullness |
+| Economy | BCT-ECON-* | §8.2–8.3, §11 | Gems, rewards, daily caps |
+| Evolution | BCT-EVOL-* | §6.1 | Evolution thresholds |
+| HUD | BCT-HUD-* | §4.4 | Stats visibility, debug gating |
+| Navigation | BCT-NAV-* | §14.5 | Pet switching, confirmations |
+| Layout | BCT-LAYOUT-* | §14.6 | Mobile viewport constraints |
+| Environment | BCT-ENV-* | §14.4 | Rooms, time-of-day |
+| FTUE | BCT-FTUE-* | §7.4 | World Intro, onboarding |
+| Art | BCT-ART-* | §13.7 | Sprite art, no emoji in prod |
+| Mini-Games | BCT-GAME-* | §8 | Energy, rewards, daily caps |
 
 ---
 
-## 5. Detailed Test Cases
+## Core Loop Tests (BCT-CORE-*)
 
-### 5.1 Core Loop – Feeding, Cooldown, Fullness
+### BCT-CORE-001: Feeding Cooldown Exists
 
-#### BCT-FEED-01 – Stuffed pets cannot be fed
+**Bible:** §4.3
+**Requirement:** After feeding, a 30-minute digestion cooldown begins.
 
-- **Spec Ref:** §4.3–4.4 (Cooldown & fullness)
-- **Type:** Spec + Manual
-- **Steps:**
-  1. Set pet hunger to 100/100 (via dev tools or repeated feeds).
-  2. Attempt to feed again.
-- **Expected:**
-  - No XP or bond gain.
-  - No hunger increase.
-  - UI shows clear feedback (e.g. "Too full" / pet refuses).
-  - Further feeding is blocked until hunger drops below the "stuffed" range.
+| Check | Expected |
+|-------|----------|
+| Feeding starts cooldown timer | Timer appears after any feed |
+| Timer visible to player | UI shows countdown |
+| Timer persists across refresh | Reloading page preserves timer |
+| Timer resets on each feed | New feed restarts 30-min timer |
 
-#### BCT-FEED-02 – Cooldown exists and blocks rapid re-feeding
+### BCT-CORE-002: Cooldown Reduces Feed Value
 
-- **Spec Ref:** §4.3–4.4 (Cooldown invariant)
-- **Type:** Spec + E2E
-- **Steps:**
-  1. Feed pet once from a normal hunger state.
-  2. Immediately attempt to feed again, multiple times in quick succession.
-- **Expected:**
-  - A cooldown is enforced:
-    - Either second feed is blocked, **or**
-    - It applies reduced value per Bible rules.
-  - Spam tapping does not produce full-value feeding or uncontrolled XP gain.
+**Bible:** §4.3
+**Requirement:** Feeding during cooldown gives 25% value.
 
-#### BCT-FEED-03 – No spam leveling via feeding while full
+| Check | Expected |
+|-------|----------|
+| Full value outside cooldown | 100% hunger/XP gain |
+| Reduced value during cooldown | 25% hunger/XP gain |
+| UI indicates reduced value | Feedback shows "Digesting..." |
 
-- **Spec Ref:** §4.3–4.4 (Fullness), §6.1 (Evolution thresholds)
-- **Type:** Spec + Manual
-- **Steps:**
-  1. Raise pet hunger to "full"/"stuffed" and XP near evolution threshold.
-  2. Attempt repeated feeds while pet is full or stuffed.
-- **Expected:**
-  - XP does **not** climb indefinitely while pet is full/stuffed.
-  - Evolution cannot be brute-forced by ignoring fullness/cooldown rules.
+### BCT-CORE-003: STUFFED Blocks Feeding
+
+**Bible:** §4.4
+**Requirement:** At fullness 91-100 (STUFFED), feeding is completely blocked.
+
+| Check | Expected |
+|-------|----------|
+| Detect STUFFED state | Fullness >= 91 triggers STUFFED |
+| Feed button disabled/blocked | Cannot initiate feeding |
+| Pet refuses visually | Pet animation shows refusal |
+| Clear feedback to player | "Too full!" or similar message |
 
 ---
 
-### 5.2 Evolution – Thresholds
+## Economy Tests (BCT-ECON-*)
 
-#### BCT-EVO-01 – Evolution thresholds match Bible
+### BCT-ECON-001: No Gems from Mini-Games
 
-- **Spec Ref:** §6.1 (Locked thresholds)
-- **Type:** Spec
-- **Steps:**
-  1. Inspect evolution trigger levels in code/config.
-  2. Verify that all evolution checks use these shared values.
-- **Expected:**
-  - Youth evolution triggers at level **10**.
-  - Evolved evolution triggers at level **25**.
-  - No other values are used for these specific evolution thresholds.
+**Bible:** §8.3
+**Requirement:** Mini-games NEVER award gems under any circumstances.
 
----
+| Check | Expected |
+|-------|----------|
+| Bronze tier rewards | Coins + XP only |
+| Silver tier rewards | Coins + XP + food only |
+| Gold tier rewards | Coins + XP + food only |
+| Rainbow tier rewards | Coins + XP + rare food only — NO GEMS |
 
-### 5.3 Economy & Mini-games
+### BCT-ECON-002: Daily Mini-Game Cap
 
-#### BCT-ECON-01 – Mini-games never award gems
+**Bible:** §8.2
+**Requirement:** Maximum 3 rewarded plays per game per day.
 
-- **Spec Ref:** §8.2–8.3 (No-gems-from-mini-games invariant)
-- **Type:** Spec + E2E
-- **Steps:**
-  1. Play **each mini-game** through all reward tiers (Bronze → Rainbow).
-  2. Inspect reward payloads (UI + internal state).
-- **Expected:**
-  - `gems` awarded = **0** for all mini-games at all tiers.
-  - Rewards are limited to allowed types (coins, tickets, cosmetics, boosts, etc.).
+| Check | Expected |
+|-------|----------|
+| First play | Full rewards |
+| Second play | Full rewards |
+| Third play | Full rewards |
+| Fourth+ play | Reduced/no rewards (cap reached) |
+| Cap resets daily | New day = 3 new plays |
 
-#### BCT-ECON-02 – Gem sources match Bible list
+### BCT-ECON-003: First Game Free
 
-- **Spec Ref:** §8.3 (Allowed gem sources)
-- **Type:** Spec
-- **Steps:**
-  1. Enumerate all in-game sources where gems can be obtained.
-  2. Compare against Bible v1.4 gem source list.
-- **Expected:**
-  - All gem sources correspond exactly to allowed list.
-  - No undocumented or "hidden" gem sources exist.
+**Bible:** §8.2
+**Requirement:** First daily game is FREE (costs 0 energy).
 
-#### BCT-GAME-01 – Mini-game daily cap enforced
-
-- **Spec Ref:** §8.2 (Energy system & daily cap)
-- **Type:** Spec + E2E
-- **Steps:**
-  1. Start a new in-game day (or reset daily state via dev tools).
-  2. Play 3 mini-games during that day using normal flow.
-  3. Attempt to start a 4th mini-game.
-- **Expected:**
-  - The 4th game is blocked or clearly marked unavailable.
-  - Daily cap of **3 plays maximum** is enforced.
-
-#### BCT-GAME-02 – First daily game is free
-
-- **Spec Ref:** §8.2 ("First game free" rule)
-- **Type:** Spec
-- **Steps:**
-  1. Start a new in-game day.
-  2. Record current energy value.
-  3. Play the **first** mini-game of the day.
-  4. After it ends, record energy again.
-- **Expected:**
-  - First mini-game of the day costs **0 energy**.
-  - Subsequent mini-games consume **10 energy** each.
+| Check | Expected |
+|-------|----------|
+| First play energy cost | 0 energy deducted |
+| Subsequent plays | 10 energy per play |
+| "First free" resets daily | New day = new free play |
 
 ---
 
-### 5.4 HUD & Stats Visibility
+## Evolution Tests (BCT-EVOL-*)
 
-#### BCT-HUD-01 – Production HUD shows Bond only
+### BCT-EVOL-001: Evolution Thresholds
 
-- **Spec Ref:** §4.4 (HUD visibility rules)
-- **Type:** E2E + Manual
-- **Steps:**
-  1. Launch the **production build** (no dev/QA flags enabled).
-  2. Open the main pet/home screen.
-- **Expected:**
-  - Bond is visible (bar or equivalent indicator).
-  - No explicit Hunger or XP bars visible to the player.
-  - No debug counters shown on the main view.
+**Bible:** §6.1
+**Requirement:** Youth=10, Evolved=25. These values are LOCKED.
 
-#### BCT-HUD-02 – Dev/QA HUD gated behind flag
-
-- **Spec Ref:** §4.4 (Developer/QA exception)
-- **Type:** Spec + Manual
-- **Steps:**
-  1. Start build with a dev flag enabled.
-  2. Open the main pet/home screen.
-  3. Disable the flag and reload.
-- **Expected:**
-  - With flag **on**: debug HUD may show hunger, XP, cooldown timers.
-  - With flag **off**: all debug HUD elements disappear.
+| Check | Expected |
+|-------|----------|
+| Level 1-9 | Baby stage |
+| Level 10-24 | Youth stage |
+| Level 25+ | Evolved stage |
+| Threshold values hardcoded | Not configurable |
 
 ---
 
-### 5.5 Environments – Rooms Lite & Time-of-Day
+## HUD Tests (BCT-HUD-*)
 
-#### BCT-ROOMS-01 – Feeding uses Kitchen environment
+### BCT-HUD-001: Production HUD Bond-Only
 
-- **Spec Ref:** Rooms Lite §14.4
-- **Type:** Spec + E2E
-- **Steps:**
-  1. From default home state, initiate a feeding action.
-- **Expected:**
-  - Background switches to **Kitchen** while feeding.
-  - After feeding completes, environment returns to appropriate room.
+**Bible:** §4.4
+**Requirement:** Production HUD shows Bond only. Other stats hidden.
 
-#### BCT-ROOMS-02 – Sleeping uses Bedroom; Play uses Playroom
+| Check | Expected |
+|-------|----------|
+| Bond visible | Bond meter/number displayed |
+| Hunger hidden | No hunger bar in production |
+| Mood hidden | No mood bar in production |
+| XP hidden | No XP bar in production |
+| Energy hidden from main HUD | Energy may show in mini-game context only |
 
-- **Spec Ref:** §14.4 (Rooms Lite mapping)
-- **Type:** Spec + E2E
-- **Steps:**
-  1. Put the pet to sleep via sleep action.
-  2. Start a play/mini-game session from a normal state.
-- **Expected:**
-  - Sleep: **Bedroom** environment is shown.
-  - Play: **Playroom** environment while playing.
+### BCT-HUD-002: Debug HUD Gated
 
-#### BCT-ROOMS-03 – Time-of-day visuals are correct
+**Bible:** §4.4
+**Requirement:** Debug stats gated behind `import.meta.env.DEV`.
 
-- **Spec Ref:** §14.4 + time-of-day rules
-- **Type:** Spec + Manual
-- **Steps:**
-  1. Using dev controls, set time-of-day to morning, afternoon, evening, night.
-  2. Observe environment for each setting.
-- **Expected:**
-  - Background/lighting clearly respond to time-of-day.
-  - No mismatched combinations.
+| Check | Expected |
+|-------|----------|
+| Dev build | Debug stats visible (optional) |
+| Production build | No debug stats visible |
+| No accidental exposure | Debug HUD code stripped/disabled in prod |
 
 ---
 
-### 5.6 FTUE – Lore, Flow, Fallback
+## Navigation Tests (BCT-NAV-*)
 
-#### BCT-FTUE-01 – Lore text matches Bible exactly
+### BCT-NAV-001: Pet Switch Confirmation
 
-- **Spec Ref:** FTUE §7.4 (Locked intro copy)
-- **Type:** E2E + Manual
-- **Steps:**
-  1. Start a **fresh install** or clear all save data.
-  2. Play through FTUE until lore screen.
-- **Expected:**
-  - Lore text matches the locked copy from Bible v1.4 exactly.
-  - No alternate phrases, added lines, or missing lines.
+**Bible:** §14.5
+**Requirement:** Switching pets shows confirmation modal.
 
-#### BCT-FTUE-02 – Animation or smooth fallback behavior
-
-- **Spec Ref:** §7.4 (Timing + fallback)
-- **Type:** E2E + Manual
-- **Steps:**
-  1. Observe lore screen behavior from first appearance to completion.
-- **Expected:**
-  - Either staged fade-in per Bible timing, **or** single smooth fade-in (fallback).
-  - No stutter, jank, or double renders.
+| Check | Expected |
+|-------|----------|
+| Tap different pet | Confirmation modal appears |
+| Modal shows pet names | "Switch to Grib?" |
+| Stay option | Cancels switch, returns to current pet |
+| Switch option | Confirms switch, loads new pet |
+| Current state auto-saved | No data loss on switch |
 
 ---
 
-### 5.7 Navigation, Pet Switching, and Reset
+## Layout Tests (BCT-LAYOUT-*)
 
-#### BCT-NAV-01 – Home / Games / Settings always accessible
+### BCT-LAYOUT-001: Mobile Viewport Constraint
 
-- **Spec Ref:** Nav §14.5 + Mobile layout §14.6
-- **Type:** E2E
-- **Steps:**
-  1. On desktop and phone viewport, load main game screen.
-  2. Without scrolling, locate navigation.
-- **Expected:**
-  - Home, Games, Settings are clearly visible and tappable without vertical scroll.
-  - Home button actually returns to the home view when pressed.
+**Bible:** §14.6
+**Requirement:** On phone (360×640 to 414×896), pet + actions + nav + currencies visible without scroll.
 
-#### BCT-PET-01 – Only active pet visible on Home
-
-- **Spec Ref:** Pet switching UX §14.5
-- **Type:** E2E + Manual
-- **Steps:**
-  1. From a normal save, navigate to the main home screen.
-- **Expected:**
-  - A single **active pet** is presented as the main character.
-  - There is **no always-visible tab row** of all 8 pets on the primary home view.
-
-#### BCT-PET-02 – Switching pet is deliberate and confirmed
-
-- **Spec Ref:** §14.5 (Switching & reset)
-- **Type:** E2E
-- **Steps:**
-  1. Navigate to pet switching / manage pets UI.
-  2. Attempt to switch to another pet.
-- **Expected:**
-  - UI clearly shows which pet is active vs locked/available.
-  - Confirmation dialog appears for switching/resetting.
-  - Current pet state is auto-saved before switch.
+| Check | Expected |
+|-------|----------|
+| Pet visible | Large, centered, no scroll needed |
+| Primary actions visible | Feed button visible without scroll |
+| Navigation visible | Bottom nav visible |
+| Currencies visible | Coins/gems visible |
+| No vertical scroll needed | All above fits in viewport |
 
 ---
 
-### 5.8 Mobile Layout & Viewport Rules
+## Environment Tests (BCT-ENV-*)
 
-#### BCT-MOBILE-01 – No vertical scroll required for core loop
+### BCT-ENV-001: Activity-to-Room Mapping
 
-- **Spec Ref:** Mobile layout §14.6
-- **Type:** E2E
-- **Steps:**
-  1. Open game on a common phone viewport (e.g., 390×844).
-  2. Inspect the main pet/home screen **without scrolling**.
-- **Expected:**
-  - Visible without any scroll: Pet, Primary actions, Global nav, Currencies.
-  - Vertical scrolling is **not required** for the basic check-in loop.
+**Bible:** §14.4
+**Requirement:** Activities trigger room context switches.
 
-#### BCT-MOBILE-02 – Session stats / debug counters off the main view
+| Check | Expected |
+|-------|----------|
+| Feeding activity | Kitchen background |
+| Sleeping activity | Bedroom background |
+| Playing activity | Playroom background |
+| Default/idle | Living room + time-of-day |
 
-- **Spec Ref:** §4.4, §14.4, §14.6 (HUD + layout)
-- **Type:** E2E + Manual
-- **Steps:**
-  1. On mobile, inspect main game screen in a **production build**.
-- **Expected:**
-  - No QA/debug-only fields appear in the primary column.
-  - Such information is only in drawers, secondary screens, or dev-flagged views.
+### BCT-ENV-002: Time-of-Day
 
----
+**Bible:** §14.4
+**Requirement:** Background reflects time of day.
 
-### 5.9 Art – Pet Sprites vs Placeholders
-
-#### BCT-ART-01 – Pet sprite art used in production
-
-- **Spec Ref:** Art §13.7 (Production art rule)
-- **Type:** E2E + Manual
-- **Steps:**
-  1. In production build, start a new game and choose each available pet.
-- **Expected:**
-  - Each pet renders using its sprite art from `assets/pets/<petId>/...`.
-  - No emoji or generic orb is used as the primary visual.
-
-#### BCT-ART-02 – Emoji/orb only in dev/testing modes
-
-- **Spec Ref:** §13.7 (Placeholder art exception)
-- **Type:** Spec + Manual
-- **Steps:**
-  1. Enable any dev/testing flag designed to show placeholder art.
-  2. Inspect pet visuals.
-- **Expected:**
-  - Only dev/QA or explicit debug modes may show simplified emoji/orb forms.
-  - Production builds never fall back to placeholder art.
+| Check | Expected |
+|-------|----------|
+| Morning (6-12) | Morning tint/background |
+| Afternoon (12-18) | Day tint/background |
+| Evening (18-21) | Evening tint/background |
+| Night (21-6) | Night tint/background |
 
 ---
 
-## 6. Implementation Guidance
+## FTUE Tests (BCT-FTUE-*)
 
-For **QA & Dev**:
+### BCT-FTUE-001: World Intro Copy Locked
 
-- Each **BCT test case** should have a corresponding:
-  - **Spec test** (where logic is testable in isolation).
-  - **E2E test** (for full flow, device/layout checks) where applicable.
+**Bible:** §7.4
+**Requirement:** World Intro shows exact canonical text.
 
-- CI should:
-  - Run Bible Compliance **spec tests** on every PR.
-  - Run a minimal Bible Compliance **E2E suite** before tagging any release.
+| Check | Expected |
+|-------|----------|
+| Line 1 | "Sometimes, when a big feeling is left behind…" |
+| Line 2 | "A tiny spirit called a Grundy wakes up." |
+| Line 3 | "One of them just found *you*." |
+| No modifications | Text matches exactly |
 
-If a BCT test fails:
+### BCT-FTUE-002: FTUE Completion Time
 
-- Treat it as a **design regression**, not just a cosmetic bug.
-- Default response: **Fix implementation** to match the Bible.
-- Only if the design itself truly needs to change:
-  - Update **GRUNDY_MASTER_BIBLE** (bump version),  
-  - Update this Bible Compliance Test to match,  
-  - Then adjust tests and implementation.
+**Bible:** §7
+**Requirement:** FTUE completes in <60 seconds.
 
-**Assumption: Bible is right; implementation moves toward it.**
+| Check | Expected |
+|-------|----------|
+| Total FTUE time | <60 seconds |
+| No blocking steps | Player can progress smoothly |
+
+---
+
+## Art Tests (BCT-ART-*)
+
+### BCT-ART-001: No Emoji in Production
+
+**Bible:** §13.7
+**Requirement:** Production builds use sprites, not emoji/orb placeholders.
+
+| Check | Expected |
+|-------|----------|
+| Pet display | Sprite from assets/pets/, not emoji |
+| All pet states | Sprites for idle, happy, sad, etc. |
+| Visual regression | No emoji visible in production |
+
+---
+
+## Mini-Game Tests (BCT-GAME-*)
+
+### BCT-GAME-001: Energy Cost
+
+**Bible:** §8.2
+**Requirement:** Each mini-game play costs 10 energy (except first free).
+
+| Check | Expected |
+|-------|----------|
+| Starting energy | 50 max |
+| Cost per game | 10 energy |
+| Insufficient energy | Cannot play (or warning shown) |
+
+### BCT-GAME-002: Reward Tiers
+
+**Bible:** §8.3
+**Requirement:** Reward tiers match Bible specification.
+
+| Tier | Coins | XP | Food | Gems |
+|------|-------|-----|------|------|
+| Bronze | 2-3 | 3 | — | NEVER |
+| Silver | 5-7 | 5 | 40% common | NEVER |
+| Gold | 8-15 | 8 | 75% any | NEVER |
+| Rainbow | 12-22 | 12 | Rare guaranteed | NEVER |
+
+---
+
+## Automated Test Implementation
+
+### Constants (Single Source of Truth)
+
+All Bible-locked values are defined in a single constants file:
+
+```
+src/constants/bible.constants.ts
+```
+
+This file exports:
+- Evolution thresholds (§6.1)
+- Fullness states and cooldown values (§4.3-4.4)
+- Mini-game rules and reward tiers (§8.2-8.3)
+- Gem source definitions with platform flags
+- FTUE locked copy (§7.4)
+- Room activity mappings (§14.4)
+- UI test IDs for E2E testing
+
+**Both runtime code and tests import from this file.**
+
+### Spec Tests (Unit/Integration)
+
+BCT spec tests verify that `bible.constants.ts` values match the Bible:
+
+| File | Tests |
+|------|-------|
+| `src/__tests__/bct-evolution.spec.ts` | BCT-EVO-01 |
+| `src/__tests__/bct-core-loop.spec.ts` | BCT-FEED-01, 02, 03 |
+| `src/__tests__/bct-economy.spec.ts` | BCT-ECON-01, 02, BCT-GAME-01, 02, 03 |
+| `src/__tests__/bct-environments.spec.ts` | BCT-ROOMS-01, 02, 03, BCT-FTUE-01, 02 |
+
+**Run:** `npm test -- run src/__tests__/bct-*.spec.ts`
+
+### E2E Tests (Playwright)
+
+E2E tests verify the running application matches Bible spec:
+
+```
+e2e/bible-compliance.e2e.ts
+```
+
+Tests verify:
+- BCT-HUD-01: Bond visible, debug hidden
+- BCT-NAV-01: Navigation accessible
+- BCT-PET-01: Single active pet
+- BCT-MOBILE-01: No scroll required
+- BCT-CURRENCY-01: Currency display
+
+**Run:** `npx playwright test e2e/bible-compliance.e2e.ts`
+
+### Test Coverage by Bible Section
+
+| Bible Section | Spec Tests | E2E Tests |
+|--------------|------------|-----------|
+| §4.3-4.4 (Feeding/Cooldown) | ✅ bct-core-loop.spec.ts | — |
+| §6.1 (Evolution) | ✅ bct-evolution.spec.ts | — |
+| §7.4 (FTUE) | ✅ bct-environments.spec.ts | ⏳ (skipped) |
+| §8.2-8.3 (Mini-games) | ✅ bct-economy.spec.ts | — |
+| §14.4 (Rooms) | ✅ bct-environments.spec.ts | — |
+| §14.5-14.6 (Navigation/Layout) | — | ✅ bible-compliance.e2e.ts |
+
+---
+
+## Test Execution
+
+### For Phase Reviews
+
+Run **all BCT tests** before declaring a phase complete.
+
+### For Patches
+
+Run BCT tests **relevant to the patch scope**:
+- Feeding patch → BCT-CORE-*, BCT-ECON-*
+- Mini-game patch → BCT-GAME-*, BCT-ECON-*
+- UI patch → BCT-HUD-*, BCT-LAYOUT-*, BCT-NAV-*
+
+### For Hotfixes
+
+Run **at minimum** the BCT tests for the affected area:
+- Feeding hotfix → BCT-CORE-001, BCT-CORE-002, BCT-CORE-003
+- Mini-game hotfix → BCT-GAME-001, BCT-GAME-002, BCT-ECON-001
+- HUD hotfix → BCT-HUD-001, BCT-HUD-002
+
+---
+
+## Pass/Fail Criteria
+
+| Result | Meaning |
+|--------|---------|
+| PASS | Implementation matches Bible specification |
+| FAIL | Implementation deviates from Bible; fix required |
+| N/A | Test not applicable to this phase/patch |
+| BLOCKED | Cannot test (dependency missing) |
+
+---
+
+## Document Hierarchy
+
+```
+GRUNDY_MASTER_BIBLE.md          ← Design specification (what SHOULD be)
+    │
+    ▼
+BIBLE_COMPLIANCE_TEST.md        ← Test contract (how to VERIFY)
+    │
+    ▼
+GRUNDY_PHASE_REVIEW_SOP.md      ← Process (WHO reviews WHEN)
+```
+
+---
+
+*This document is the contract for CE and QA review. All phases, patches, and hotfixes must pass relevant BCT tests before deployment.*
