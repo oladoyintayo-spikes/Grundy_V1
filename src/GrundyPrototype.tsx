@@ -7,6 +7,7 @@ import { getXPForLevel } from './data/config';
 import { DEFAULT_VIEW } from './game/navigation';
 import { AppHeader } from './components/layout/AppHeader';
 import { BottomNav } from './components/layout/BottomNav';
+import { DebugHud } from './components/layout/DebugHud';
 import { getBackgroundClass, ENVIRONMENT_REFRESH_INTERVAL_MS } from './game/environment';
 import { MiniGameHub } from './components/MiniGameHub';
 import { MiniGameWrapper } from './components/MiniGameWrapper';
@@ -21,6 +22,8 @@ import { playPetHappy, playLevelUp, startBackgroundMusic, stopBackgroundMusic, a
 import { PetDisplay } from './components/pet/PetAvatar';
 import { RoomScene } from './components/environment/RoomScene';
 import { getDefaultPoseForState, getPoseForReaction } from './game/petVisuals';
+// P6-HUD-CLEANUP: Import fullness/cooldown systems for feedback
+import { isStuffed, isOnCooldown, getFullnessState, getCooldownRemaining } from './game/systems';
 
 // ============================================
 // SHARED COMPONENTS
@@ -47,28 +50,58 @@ const ProgressBar = ({ value, max, color, label, showText = true }: {
 );
 
 // Food Item Component
-const FoodItem = ({ food, count, onFeed, disabled, isFirst }: {
-  food: FoodDefinition; count: number; onFeed: () => void; disabled: boolean; isFirst?: boolean
-}) => (
-  <button
-    data-testid={isFirst ? 'feed-button' : `food-item-${food.id}`}
-    onClick={onFeed}
-    disabled={disabled || count <= 0}
-    className={`
-      relative p-3 rounded-xl border-2 transition-all duration-200 flex flex-col items-center min-w-[70px]
-      ${count > 0 && !disabled
-        ? 'border-amber-500/50 bg-amber-500/10 hover:bg-amber-500/20 hover:scale-105 cursor-pointer'
-        : 'border-gray-700 bg-gray-800/50 opacity-50 cursor-not-allowed'}
-    `}
-  >
-    <span className="text-2xl">{food.emoji}</span>
-    <span className="text-[10px] text-gray-400 mt-1">{food.name}</span>
-    <span className={`absolute -top-2 -right-2 text-xs px-2 py-0.5 rounded-full font-bold
-      ${count > 0 ? 'bg-amber-500 text-black' : 'bg-gray-600 text-gray-300'}`}>
-      {count}
-    </span>
-  </button>
-);
+// P6-HUD-CLEANUP: Added stuffed/cooldown props for Bible §4.4 feedback
+const FoodItem = ({ food, count, onFeed, disabled, isFirst, stuffed, onCooldown }: {
+  food: FoodDefinition;
+  count: number;
+  onFeed: () => void;
+  disabled: boolean;
+  isFirst?: boolean;
+  stuffed?: boolean;
+  onCooldown?: boolean;
+}) => {
+  // Bible §4.4: Food tray grays out when stuffed (feeding blocked entirely)
+  const isBlocked = stuffed || count <= 0;
+  const isReduced = onCooldown && !stuffed;
+
+  return (
+    <button
+      data-testid={isFirst ? 'feed-button' : `food-item-${food.id}`}
+      onClick={onFeed}
+      disabled={disabled || isBlocked}
+      className={`
+        relative p-3 rounded-xl border-2 transition-all duration-200 flex flex-col items-center min-w-[70px]
+        ${stuffed
+          ? 'border-red-500/30 bg-red-900/20 opacity-40 cursor-not-allowed'
+          : isReduced
+            ? 'border-orange-500/50 bg-orange-500/10 hover:bg-orange-500/20 cursor-pointer'
+            : count > 0 && !disabled
+              ? 'border-amber-500/50 bg-amber-500/10 hover:bg-amber-500/20 hover:scale-105 cursor-pointer'
+              : 'border-gray-700 bg-gray-800/50 opacity-50 cursor-not-allowed'}
+      `}
+      aria-label={stuffed ? `${food.name} - Too full to eat` : onCooldown ? `${food.name} - Reduced value (cooldown)` : food.name}
+    >
+      <span className="text-2xl">{food.emoji}</span>
+      <span className="text-[10px] text-gray-400 mt-1">{food.name}</span>
+      {/* Cooldown indicator */}
+      {onCooldown && !stuffed && (
+        <span className="absolute -top-1 -left-1 text-[8px] px-1 py-0.5 rounded bg-orange-500 text-white">
+          ⏱
+        </span>
+      )}
+      {/* Stuffed indicator */}
+      {stuffed && (
+        <span className="absolute -top-1 -left-1 text-[8px] px-1 py-0.5 rounded bg-red-500 text-white">
+          🚫
+        </span>
+      )}
+      <span className={`absolute -top-2 -right-2 text-xs px-2 py-0.5 rounded-full font-bold
+        ${count > 0 ? 'bg-amber-500 text-black' : 'bg-gray-600 text-gray-300'}`}>
+        {count}
+      </span>
+    </button>
+  );
+};
 
 // Reaction Display Component
 const ReactionDisplay = ({ reaction, message }: { reaction: ReactionType | null; message: string }) => {
@@ -265,39 +298,48 @@ function HomeView({ onOpenShop }: HomeViewProps) {
     <div className="h-full overflow-y-auto text-white p-4">
       <div className="max-w-md mx-auto">
 
-        {/* Pet Selection */}
-        <div className="flex justify-center gap-2 mb-4 flex-wrap">
-          {allPets.map((p) => (
-            <button
-              key={p.id}
-              onClick={() => changePet(p.id)}
-              className={`px-3 py-1 rounded-full text-sm transition-all
-                ${pet.id === p.id
-                  ? 'bg-white text-gray-900 font-bold'
-                  : 'bg-gray-700 hover:bg-gray-600'}`}
-            >
-              {p.emoji} {p.name}
-            </button>
-          ))}
-        </div>
+        {/* Pet Selection - Debug only per BCT-PET-01: Single active pet on Home */}
+        {/* Bible §14.5: "Only active pet visible on home screen. No pet bar showing all 8 pets simultaneously." */}
+        {import.meta.env.DEV && (
+          <div className="flex justify-center gap-2 mb-4 flex-wrap" data-testid="debug-pet-selector">
+            {allPets.map((p) => (
+              <button
+                key={p.id}
+                onClick={() => changePet(p.id)}
+                className={`px-3 py-1 rounded-full text-sm transition-all
+                  ${pet.id === p.id
+                    ? 'bg-white text-gray-900 font-bold'
+                    : 'bg-gray-700 hover:bg-gray-600'}`}
+              >
+                {p.emoji} {p.name}
+              </button>
+            ))}
+          </div>
+        )}
 
-        {/* Pet Display (P5-ART-PETS) */}
+        {/* Pet Display (P5-ART-PETS) - BCT-PET-01: Single active pet on Home */}
         <div
           className="relative rounded-3xl p-6 mb-4 text-center"
           style={{
             background: `linear-gradient(135deg, ${petColor}22, ${petColor}11)`,
             border: `2px solid ${petColor}44`
           }}
+          data-testid="active-pet-display"
         >
+          {/* Your Grundy Label - Bible §14.5 context */}
+          <div className="text-xs text-slate-400 mb-2">Your Grundy</div>
+
           {/* Level Badge */}
           <div className="absolute top-3 left-3 bg-black/50 px-3 py-1 rounded-full text-sm">
             {evolutionEmoji} Lv.{pet.level}
           </div>
 
-          {/* Mood Badge */}
-          <div className="absolute top-3 right-3 bg-black/50 px-3 py-1 rounded-full text-sm">
-            {moodEmoji} {pet.mood}
-          </div>
+          {/* Mood Badge - Debug only per BCT-HUD-001: Mood hidden in production */}
+          {import.meta.env.DEV && (
+            <div className="absolute top-3 right-3 bg-black/50 px-3 py-1 rounded-full text-sm">
+              {moodEmoji} {pet.mood}
+            </div>
+          )}
 
           {/* Pet Sprite (P5-ART-PETS) */}
           <div
@@ -315,34 +357,56 @@ function HomeView({ onOpenShop }: HomeViewProps) {
             <ReactionDisplay reaction={lastReaction} message={reactionMessage} />
           </div>
 
-          {/* Stats */}
+          {/* Stats - Bond only in production per BCT-HUD-001 */}
           <div className="space-y-3">
-            <ProgressBar value={pet.xp} max={xpForNextLevel} color="#a855f7" label="XP" />
-            <ProgressBar value={pet.hunger} max={100} color="#fb923c" label="Hunger" />
+            {/* XP and Hunger: Debug only per Bible §4.4 */}
+            {import.meta.env.DEV && (
+              <>
+                <ProgressBar value={pet.xp} max={xpForNextLevel} color="#a855f7" label="XP" />
+                <ProgressBar value={pet.hunger} max={100} color="#fb923c" label="Hunger" />
+              </>
+            )}
+            {/* Bond: Always visible per Bible §4.4 "Bond is visible" */}
             <ProgressBar value={pet.bond} max={100} color="#ec4899" label="Bond" />
           </div>
         </div>
 
-        {/* Food Bag */}
-        <div className="bg-gray-800/50 rounded-2xl p-4 mb-4">
-          <h3 className="text-sm text-gray-400 mb-3 flex items-center gap-2">
-            <span>🎒</span> Food Bag
-            <span className="ml-auto text-xs">Tap to feed!</span>
-          </h3>
+        {/* Food Bag - P6-HUD-CLEANUP: Fullness/cooldown feedback */}
+        {(() => {
+          const petStuffed = isStuffed(pet.hunger);
+          const petOnCooldown = isOnCooldown(stats.lastFeedCooldownStart);
 
-          <div className="flex gap-2 overflow-x-auto pb-2">
-            {allFoods.map((food, index) => (
-              <FoodItem
-                key={food.id}
-                food={food}
-                count={inventory[food.id] || 0}
-                onFeed={() => handleFeed(food.id)}
-                disabled={isFeeding}
-                isFirst={index === 0}
-              />
-            ))}
-          </div>
-        </div>
+          return (
+            <div className="bg-gray-800/50 rounded-2xl p-4 mb-4" data-testid="food-bag">
+              <h3 className="text-sm text-gray-400 mb-3 flex items-center gap-2">
+                <span>🎒</span> Food Bag
+                {/* Bible §4.4: Contextual UI cues for fullness state */}
+                {petStuffed ? (
+                  <span className="ml-auto text-xs text-red-400">Too full to eat! 🚫</span>
+                ) : petOnCooldown ? (
+                  <span className="ml-auto text-xs text-orange-400">Cooldown active ⏱</span>
+                ) : (
+                  <span className="ml-auto text-xs">Tap to feed!</span>
+                )}
+              </h3>
+
+              <div className="flex gap-2 overflow-x-auto pb-2">
+                {allFoods.map((food, index) => (
+                  <FoodItem
+                    key={food.id}
+                    food={food}
+                    count={inventory[food.id] || 0}
+                    onFeed={() => handleFeed(food.id)}
+                    disabled={isFeeding}
+                    isFirst={index === 0}
+                    stuffed={petStuffed}
+                    onCooldown={petOnCooldown}
+                  />
+                ))}
+              </div>
+            </div>
+          );
+        })()}
 
         {/* Shop Button */}
         <div className="text-center mb-4">
@@ -354,10 +418,12 @@ function HomeView({ onOpenShop }: HomeViewProps) {
           </button>
         </div>
 
-        {/* Stats Footer */}
-        <div className="text-center text-gray-500 text-sm">
-          Total feeds: {stats.totalFeeds} | Session started: {new Date(stats.sessionStartTime).toLocaleTimeString()}
-        </div>
+        {/* Stats Footer - Debug only per Bible §4.4 */}
+        {import.meta.env.DEV && (
+          <div className="text-center text-gray-500 text-sm">
+            Total feeds: {stats.totalFeeds} | Session started: {new Date(stats.sessionStartTime).toLocaleTimeString()}
+          </div>
+        )}
 
         {/* Hint */}
         {pet.hunger < 30 && (
@@ -453,17 +519,52 @@ function GamesView() {
 
 // ============================================
 // VIEW: SETTINGS
+// Bible §14.5: Pet switching via Settings with confirmation
 // ============================================
 function SettingsView() {
   const settings = useGameStore((state) => state.settings);
   const setSoundEnabled = useGameStore((state) => state.setSoundEnabled);
   const setMusicEnabled = useGameStore((state) => state.setMusicEnabled);
   const resetGame = useGameStore((state) => state.resetGame);
+  const pet = useGameStore((state) => state.pet);
+  const unlockedPets = useGameStore((state) => state.unlockedPets);
+  const selectPet = useGameStore((state) => state.selectPet);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [showPetSelector, setShowPetSelector] = useState(false);
+  const [pendingPetSwitch, setPendingPetSwitch] = useState<string | null>(null);
+
+  // Get current pet data
+  const currentPetData = getPetById(pet.id);
+
+  // Get unlocked pet data
+  const unlockedPetData = unlockedPets.map(id => getPetById(id)).filter(Boolean);
 
   const handleReset = () => {
     resetGame();
     setShowResetConfirm(false);
+  };
+
+  // Bible §14.5: Pet switching with confirmation
+  const handlePetSelect = (petId: string) => {
+    if (petId === pet.id) {
+      // Already active, just close selector
+      setShowPetSelector(false);
+      return;
+    }
+    // Show confirmation modal
+    setPendingPetSwitch(petId);
+  };
+
+  const confirmPetSwitch = () => {
+    if (pendingPetSwitch) {
+      selectPet(pendingPetSwitch);
+      setPendingPetSwitch(null);
+      setShowPetSelector(false);
+    }
+  };
+
+  const cancelPetSwitch = () => {
+    setPendingPetSwitch(null);
   };
 
   return (
@@ -503,6 +604,90 @@ function SettingsView() {
             </div>
           </button>
         </div>
+
+        {/* Pet Switching - Bible §14.5: Pet selector via Settings with confirmation */}
+        <div className="bg-slate-800/50 rounded-xl p-4" data-testid="pet-switch-section">
+          <h3 className="text-sm font-medium text-slate-300 mb-3">Your Grundy</h3>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">{currentPetData?.emoji || '🐾'}</span>
+              <div>
+                <span className="font-medium">{currentPetData?.name || 'Unknown'}</span>
+                <span className="text-xs text-slate-400 block">Lv.{pet.level}</span>
+              </div>
+            </div>
+            <button
+              onClick={() => setShowPetSelector(true)}
+              className="px-3 py-1.5 bg-slate-600 hover:bg-slate-500 rounded-lg text-sm transition-colors"
+              data-testid="switch-pet-button"
+            >
+              Switch Pet
+            </button>
+          </div>
+        </div>
+
+        {/* Pet Selector Modal */}
+        {showPetSelector && (
+          <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" data-testid="pet-selector-modal">
+            <div className="bg-slate-800 rounded-2xl p-6 max-w-sm w-full">
+              <h2 className="text-lg font-bold mb-4">Select Your Grundy</h2>
+              <div className="space-y-2 max-h-60 overflow-y-auto">
+                {unlockedPetData.map(petData => petData && (
+                  <button
+                    key={petData.id}
+                    onClick={() => handlePetSelect(petData.id)}
+                    className={`w-full p-3 rounded-xl flex items-center gap-3 transition-colors
+                      ${pet.id === petData.id
+                        ? 'bg-green-500/20 border-2 border-green-500'
+                        : 'bg-slate-700 hover:bg-slate-600 border-2 border-transparent'}`}
+                    data-testid={`pet-option-${petData.id}`}
+                  >
+                    <span className="text-2xl">{petData.emoji}</span>
+                    <div className="text-left">
+                      <span className="font-medium">{petData.name}</span>
+                      {pet.id === petData.id && (
+                        <span className="text-xs text-green-400 block">Currently Active</span>
+                      )}
+                    </div>
+                  </button>
+                ))}
+              </div>
+              <button
+                onClick={() => setShowPetSelector(false)}
+                className="w-full mt-4 py-2 px-4 bg-slate-600 hover:bg-slate-500 rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Pet Switch Confirmation Modal - BCT-NAV-001 */}
+        {pendingPetSwitch && (
+          <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" data-testid="pet-switch-confirm-modal">
+            <div className="bg-slate-800 rounded-2xl p-6 max-w-sm w-full text-center">
+              <div className="text-4xl mb-4">{getPetById(pendingPetSwitch)?.emoji || '🐾'}</div>
+              <h2 className="text-lg font-bold mb-2">Switch to {getPetById(pendingPetSwitch)?.name}?</h2>
+              <p className="text-sm text-slate-400 mb-4">Your progress is auto-saved. You can switch back anytime!</p>
+              <div className="flex gap-3">
+                <button
+                  onClick={cancelPetSwitch}
+                  className="flex-1 py-2 px-4 bg-slate-600 hover:bg-slate-500 rounded-lg transition-colors"
+                  data-testid="pet-switch-cancel"
+                >
+                  Stay
+                </button>
+                <button
+                  onClick={confirmPetSwitch}
+                  className="flex-1 py-2 px-4 bg-green-500 hover:bg-green-600 rounded-lg transition-colors font-medium"
+                  data-testid="pet-switch-confirm"
+                >
+                  Switch
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Danger Zone */}
         <div className="bg-red-900/20 border border-red-500/30 rounded-xl p-4">
@@ -678,6 +863,9 @@ function MainApp() {
         onBuy={handleBuy}
         inventory={inventory}
       />
+
+      {/* Debug HUD - only visible in dev builds (BCT-HUD-002) */}
+      <DebugHud />
     </div>
   );
 }
