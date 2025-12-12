@@ -1,8 +1,13 @@
 # Grundy — Bible Compliance Test (BCT)
 
-**Version:** 2.1
-**Last Updated:** December 11, 2024 (Bible v1.5 Update)
-**Bible Reference:** `docs/GRUNDY_MASTER_BIBLE.md` v1.5
+**Version:** 2.2
+**Last Updated:** December 2025 (Bible v1.6 Update)
+**Bible Reference:** `docs/GRUNDY_MASTER_BIBLE.md` v1.6
+
+**Changelog:**
+- v2.2: Shop + Inventory spec tests — Added BCT-SHOP (25 tests), BCT-INV (17 tests), BCT-ECON starting resources tests (5 tests). Total: 47 new specifications for Web Phase 8.
+- v2.1: Bible v1.5 Neglect & Withdrawal tests (BCT-NEGLECT-001 through 023)
+- v2.0: Initial BCT specification
 
 ---
 
@@ -36,7 +41,7 @@ npm test -- --run
 | Category | Prefix | Bible Sections | Description |
 |----------|--------|----------------|-------------|
 | Core Loop | BCT-CORE-* | §4.3–4.4 | Feeding, cooldown, fullness |
-| Economy | BCT-ECON-* | §8.2–8.3, §11 | Gems, rewards, daily caps |
+| Economy | BCT-ECON-* | §5.8, §8.2–8.3, §11 | Starting resources, gems, rewards, daily caps |
 | Evolution | BCT-EVOL-* | §6.1 | Evolution thresholds |
 | HUD | BCT-HUD-* | §4.4 | Stats visibility, debug gating |
 | Navigation | BCT-NAV-* | §14.5 | Pet switching, confirmations |
@@ -46,6 +51,8 @@ npm test -- --run
 | Art | BCT-ART-* | §13.7 | Sprite art, no emoji in prod |
 | Mini-Games | BCT-GAME-* | §8 | Energy, rewards, daily caps |
 | Neglect | BCT-NEGLECT-* | §9.4.3 | Neglect & Withdrawal (Classic) |
+| Shop | BCT-SHOP-* | §5.4, §11.5, §14.7 | Prices, purchase flow, gating, UI |
+| Inventory | BCT-INV-* | §11.7, §14.8 | Capacity, stacking, decomposition, UI |
 
 ---
 
@@ -125,6 +132,51 @@ npm test -- --run
 | First play energy cost | 0 energy deducted |
 | Subsequent plays | 10 energy per play |
 | "First free" resets daily | New day = new free play |
+
+### BCT-ECON-004: Starting Coins
+
+**Bible:** §5.8
+**Requirement:** New player starts with 100 coins.
+
+| Check | Expected |
+|-------|----------|
+| Fresh save coins | initialState.coins === 100 |
+
+### BCT-ECON-005: Starting Gems
+
+**Bible:** §5.8
+**Requirement:** New player starts with 0 gems.
+
+| Check | Expected |
+|-------|----------|
+| Fresh save gems | initialState.gems === 0 |
+
+### BCT-ECON-006: Tutorial Inventory — Apples
+
+**Bible:** §5.8
+**Requirement:** New save includes 2× Apple in starting inventory.
+
+| Check | Expected |
+|-------|----------|
+| Tutorial apple count | inventory.apple === 2 |
+
+### BCT-ECON-007: Tutorial Inventory — Bananas
+
+**Bible:** §5.8
+**Requirement:** New save includes 2× Banana in starting inventory.
+
+| Check | Expected |
+|-------|----------|
+| Tutorial banana count | inventory.banana === 2 |
+
+### BCT-ECON-008: Tutorial Inventory — Cookie
+
+**Bible:** §5.8
+**Requirement:** New save includes 1× Cookie in starting inventory.
+
+| Check | Expected |
+|-------|----------|
+| Tutorial cookie count | inventory.cookie === 1 |
 
 ---
 
@@ -609,6 +661,108 @@ npm test -- --run
 |-------|----------|
 | Set as active | Not a care action |
 | Still needs feed/play | Counter not reset by selection |
+
+---
+
+## Shop Tests (BCT-SHOP-*)
+
+### Pricing & Catalog Tests
+
+| ID | Description | Bible Ref | Expected Result |
+|----|-------------|-----------|-----------------|
+| BCT-SHOP-001 | Individual food prices match §5.4 | §5.4, §11.5.1 | Unit price for each individual food equals §5.4 Cost column |
+| BCT-SHOP-002 | Bundle + care item prices match Shop table | §11.5 | Each shop item id has correct price (coins/gems) as defined in §11.5 |
+| BCT-SHOP-003 | Individual foods are coins-only | §11.5.1 | All individual food purchases require coins; gem cost must be null/0 |
+| BCT-SHOP-004 | Food tab ordering: Bundles before Individual | §14.7 | UI renders Bundles section above Individual section |
+
+### Quantity Selector & Cost Math
+
+| ID | Description | Bible Ref | Expected Result |
+|----|-------------|-----------|-----------------|
+| BCT-SHOP-005 | Quantity selector min=1 | §11.5.1 | Quantity cannot be set below 1 |
+| BCT-SHOP-006 | Quantity selector max=10 | §11.5.1 | Quantity cannot be set above 10 |
+| BCT-SHOP-007 | Total cost = unitCost × quantity | §11.5.1 | Purchase modal displays totalCost correctly for individual foods |
+
+### Purchase Flow (Coins + Inventory)
+
+| ID | Description | Bible Ref | Expected Result |
+|----|-------------|-----------|-----------------|
+| BCT-SHOP-008 | Successful purchase deducts coins | §11.5.1 | coins decreases by totalCost; no other currency changes |
+| BCT-SHOP-009 | Successful individual purchase adds to inventory | §11.5.1, §11.7.1 | inventory[foodId] += quantity (base ids) |
+| BCT-SHOP-010 | Successful bundle purchase decomposes to base items | §11.7.1 | Buying bundle increases multiple base ids (no bundle id stored in inventory) |
+| BCT-SHOP-011 | Insufficient coins blocks purchase | §11.5.1 | Returns error "Not enough coins!", no state change |
+| BCT-SHOP-012 | Slot exhaustion blocks purchase | §11.7.1 | Returns error "Inventory full!", no state change |
+| BCT-SHOP-013 | Stack overflow blocks purchase (99+) | §11.7.1 | Returns error "Inventory full!", no state change |
+
+### Visibility & Gating
+
+| ID | Description | Bible Ref | Expected Result |
+|----|-------------|-----------|-----------------|
+| BCT-SHOP-014 | Medicine hidden in Cozy mode | §11.5, §14.7 | `care_medicine` not in Care list when mode = cozy |
+| BCT-SHOP-015 | Medicine visible in Classic mode | §11.5, §14.7 | `care_medicine` present when mode = classic |
+| BCT-SHOP-016 | Diet Food hidden when weight < 31 | §5.7, §11.5, §14.7 | `care_diet_food` not present when weight < 31 |
+| BCT-SHOP-017 | Diet Food visible when weight >= 31 | §5.7, §11.5, §14.7 | `care_diet_food` present when weight >= 31 |
+| BCT-SHOP-018 | Gems tab locked below Level 5 | §11.5, §14.7 | Gems tab shows locked state when player level < 5 |
+| BCT-SHOP-019 | Gems tab unlocks at Level 5+ | §11.5, §14.7 | Gems tab becomes active when player level >= 5 |
+| BCT-SHOP-020 | Cosmetics tab is "Coming Soon" stub | §14.7 | Cosmetics tab renders stub state (no purchasable cosmetics in Web Phase 8) |
+
+### Sorting
+
+| ID | Description | Bible Ref | Expected Result |
+|----|-------------|-----------|-----------------|
+| BCT-SHOP-021 | Individual foods sorted by rarity | §14.7 | UI order is Common → Uncommon → Rare → Epic → Legendary |
+
+### Recommendations (Deterministic)
+
+| ID | Description | Bible Ref | Expected Result |
+|----|-------------|-----------|-----------------|
+| BCT-SHOP-022 | Recommended section hidden when no triggers | §14.7 | No "Recommended For You" section when all trigger conditions false |
+| BCT-SHOP-023 | Recommended prioritizes sick→medicine | §14.7 | When classic + sick, first recommendation is `care_medicine` |
+| BCT-SHOP-024 | Recommended includes energy drink at low energy | §14.7 | When energy < 20, includes `care_energy_drink` unless superseded by sick |
+| BCT-SHOP-025 | Recommended includes balanced pack at low hunger | §14.7 | When hunger < 30, includes `food_balanced_x5` unless superseded by higher priorities |
+
+> Recommendation tests should validate **presence + ordering** (priority) and must also verify that ineligible items are skipped.
+
+---
+
+## Inventory Tests (BCT-INV-*)
+
+### Slot & Stack Semantics
+
+| ID | Description | Bible Ref | Expected Result |
+|----|-------------|-----------|-----------------|
+| BCT-INV-001 | Base capacity is 15 slots | §11.7 | initialState.inventoryCapacity === 15 |
+| BCT-INV-002 | Slot counts unique item ids only | §11.7.1 | inventoryUsedSlots = count(keys with qty>0) |
+| BCT-INV-003 | Stack max is 99 per id | §11.7.1 | inventory[itemId] cannot exceed 99 |
+| BCT-INV-004 | Quantity reaching 0 removes slot | §11.7.1 | Setting qty to 0 removes key or marks as empty |
+| BCT-INV-005 | Purchase blocked when new slot required but none available | §11.7.1 | "Inventory full!", no state change |
+| BCT-INV-006 | Purchase allowed when item already exists (no new slot) | §11.7.1 | If item exists and stack allows, purchase succeeds |
+
+### Bundle Decomposition
+
+| ID | Description | Bible Ref | Expected Result |
+|----|-------------|-----------|-----------------|
+| BCT-INV-007 | Apple bundle adds 5 apples | §11.5, §11.7.1 | Buying `food_apple_x5` results in `inventory.apple += 5` |
+| BCT-INV-008 | Spicy sampler decomposes correctly | §11.5, §11.7.1 | Buying `food_spicy_x3` adds `hot_pepper += 3` and `spicy_taco += 2` |
+
+### Inventory UI (Web)
+
+| ID | Description | Bible Ref | Expected Result |
+|----|-------------|-----------|-----------------|
+| BCT-INV-009 | Food tab filters to food only | §14.8 | Food tab renders only food items |
+| BCT-INV-010 | Care tab filters to care only | §14.8 | Care tab renders only care items |
+| BCT-INV-011 | Item card shows quantity badge | §14.8 | Each item card displays "×N" |
+| BCT-INV-012 | Slot counter shows X/15 | §14.8 | Header displays used/total slots |
+| BCT-INV-013 | Empty state shows Shop CTA | §14.8 | When inventory empty, "Go to Shop" CTA exists |
+
+### Item Detail & Use Flow
+
+| ID | Description | Bible Ref | Expected Result |
+|----|-------------|-----------|-----------------|
+| BCT-INV-014 | Detail modal shows quantity | §14.8 | Quantity displayed in modal |
+| BCT-INV-015 | Detail modal shows rarity | §14.8 | Rarity displayed in modal |
+| BCT-INV-016 | Detail modal shows affinities | §14.8 | For foods, affinity reactions for all pets are displayed |
+| BCT-INV-017 | "Use on Pet" routes to feeding flow | §14.8 | Button triggers feed flow with item preselected |
 
 ---
 
