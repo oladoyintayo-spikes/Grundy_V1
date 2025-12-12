@@ -2,7 +2,7 @@
  * Bible Compliance E2E Tests
  *
  * These tests verify that the running application complies with
- * GRUNDY_MASTER_BIBLE v1.4 specifications.
+ * GRUNDY_MASTER_BIBLE v1.6 / BCT v2.2 specifications.
  *
  * @see docs/GRUNDY_MASTER_BIBLE.md
  * @see docs/BIBLE_COMPLIANCE_TEST.md

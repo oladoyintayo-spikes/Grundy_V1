@@ -10,6 +10,9 @@
     "test": "vitest",
     "test:bible": "vitest run --testNamePattern=\"BCT-\"",
     "test:bible:e2e": "npx playwright test e2e/bible-compliance.e2e.ts",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:all": "npm test -- --run && npm run test:bible && npm run test:e2e",
     "lint": "eslint src --ext ts,tsx"
   },
   "dependencies": {

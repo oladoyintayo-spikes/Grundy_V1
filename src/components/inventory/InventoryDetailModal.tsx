@@ -154,7 +154,7 @@ export function InventoryDetailModal({ item, quantity, onClose, onUseOnPet }: In
               : 'bg-slate-600 text-slate-400 cursor-not-allowed'}
             ${FOCUS_RING_CLASS}
           `}
-          data-testid="use-on-pet-button"
+          data-testid="inventory-use-on-pet"
         >
           Use on Pet
         </button>
