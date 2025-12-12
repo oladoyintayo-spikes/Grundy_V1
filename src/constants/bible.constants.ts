@@ -511,6 +511,484 @@ export const TEST_IDS = {
 } as const;
 
 // ============================================================================
+// §11.5 / §14.7 Shop Catalog (LOCKED - BCT-SHOP)
+// ============================================================================
+
+/**
+ * Shop tab identifiers per Bible §14.7.
+ */
+export type ShopTab = 'food' | 'care' | 'cosmetics' | 'gems';
+
+/**
+ * Shop item kind for categorization.
+ * - 'bundle': Multi-item packages (fixed qty 1)
+ * - 'individual': Single foods with qty selector (1-10)
+ * - 'care_item': Care consumables (fixed qty 1)
+ */
+export type ShopItemKind = 'bundle' | 'individual' | 'care_item';
+
+/**
+ * Currency types accepted in Shop.
+ */
+export type ShopCurrency = 'coins' | 'gems';
+
+/**
+ * Shop item definition per Bible §11.5.
+ */
+export interface ShopItem {
+  id: string;
+  /** Which tab this item appears in */
+  tab: 'food' | 'care';
+  /** Item kind determines UI behavior */
+  kind: ShopItemKind;
+  /** Display name (may differ from base food name for bundles) */
+  displayName: string;
+  /** Description text */
+  description: string;
+  /** Price amount */
+  price: number;
+  /** Currency type (coins or gems) */
+  currency: ShopCurrency;
+  /** Emoji icon */
+  emoji: string;
+  /** Minimum level required to see this item (optional) */
+  levelRequired?: number;
+  /** For bundles: decomposition mapping { baseItemId: quantity } */
+  decomposition?: Record<string, number>;
+  /** Visibility condition: 'classic_only' | 'weight_chubby' | null */
+  visibilityCondition?: 'classic_only' | 'weight_chubby' | null;
+}
+
+/**
+ * Individual food prices per Bible §5.4 Cost column.
+ * BCT-SHOP-001: Individual food prices match §5.4 Cost column.
+ * BCT-SHOP-003: Individual foods are coins-only.
+ */
+export const INDIVIDUAL_FOOD_PRICES: Record<string, number> = {
+  // Common (5 coins)
+  apple: 5,
+  banana: 5,
+  carrot: 5,
+  lollipop: 10,
+  // Uncommon (15-20 coins)
+  cookie: 15,
+  grapes: 15,
+  candy: 20,
+  // Rare (25-30 coins)
+  spicy_taco: 25,
+  hot_pepper: 25,
+  ice_cream: 30,
+  // Epic (50-75 coins)
+  birthday_cake: 50,
+  dream_treat: 75,
+  // Legendary (150 coins)
+  golden_feast: 150,
+} as const;
+
+/**
+ * Shop catalog per Bible §11.5 and §14.7.
+ * BCT-SHOP-002: Bundle + care item prices match Shop table.
+ */
+export const SHOP_CATALOG: ShopItem[] = [
+  // ============================================================================
+  // Food Bundles (appear first in Food tab per BCT-SHOP-004)
+  // ============================================================================
+  {
+    id: 'food_apple_x5',
+    tab: 'food',
+    kind: 'bundle',
+    displayName: 'Apple Bundle',
+    description: '5× Apples',
+    price: 20,
+    currency: 'coins',
+    emoji: '🍎',
+    decomposition: { apple: 5 },
+  },
+  {
+    id: 'food_balanced_x5',
+    tab: 'food',
+    kind: 'bundle',
+    displayName: 'Balanced Meal Pack',
+    description: '5× mixed common foods',
+    price: 40,
+    currency: 'coins',
+    emoji: '🥗',
+    decomposition: { apple: 2, banana: 2, carrot: 1 },
+  },
+  {
+    id: 'food_spicy_x3',
+    tab: 'food',
+    kind: 'bundle',
+    displayName: 'Spicy Sampler',
+    description: '3× Hot Peppers + 2× Tacos',
+    price: 60,
+    currency: 'coins',
+    emoji: '🌶️',
+    decomposition: { hot_pepper: 3, spicy_taco: 2 },
+  },
+  {
+    id: 'food_sweet_x3',
+    tab: 'food',
+    kind: 'bundle',
+    displayName: 'Sweet Treats',
+    description: '3× Cookies + 2× Candy',
+    price: 50,
+    currency: 'coins',
+    emoji: '🍪',
+    decomposition: { cookie: 3, candy: 2 },
+  },
+  {
+    id: 'food_rare_x1',
+    tab: 'food',
+    kind: 'bundle',
+    displayName: 'Rare Food Box',
+    description: '1× random Rare food',
+    price: 75,
+    currency: 'coins',
+    emoji: '📦',
+    levelRequired: 5,
+    decomposition: { spicy_taco: 1 }, // Simplified: gives taco
+  },
+  {
+    id: 'food_epic_x1',
+    tab: 'food',
+    kind: 'bundle',
+    displayName: 'Epic Feast',
+    description: '1× Birthday Cake or Dream Treat',
+    price: 5,
+    currency: 'gems',
+    emoji: '🎂',
+    levelRequired: 10,
+    decomposition: { birthday_cake: 1 },
+  },
+  {
+    id: 'food_legendary_x1',
+    tab: 'food',
+    kind: 'bundle',
+    displayName: 'Golden Feast',
+    description: '1× Golden Feast',
+    price: 10,
+    currency: 'gems',
+    emoji: '👑',
+    levelRequired: 15,
+    decomposition: { golden_feast: 1 },
+  },
+
+  // ============================================================================
+  // Care Items (Care tab)
+  // ============================================================================
+  {
+    id: 'care_medicine',
+    tab: 'care',
+    kind: 'care_item',
+    displayName: 'Medicine',
+    description: 'Cures sickness instantly',
+    price: 50,
+    currency: 'coins',
+    emoji: '💊',
+    visibilityCondition: 'classic_only',
+  },
+  {
+    id: 'care_diet_food',
+    tab: 'care',
+    kind: 'care_item',
+    displayName: 'Diet Food',
+    description: '-20 weight, +5 hunger',
+    price: 30,
+    currency: 'coins',
+    emoji: '🥗',
+    visibilityCondition: 'weight_chubby',
+  },
+  {
+    id: 'care_energy_drink',
+    tab: 'care',
+    kind: 'care_item',
+    displayName: 'Energy Drink',
+    description: '+50 energy instantly',
+    price: 25,
+    currency: 'coins',
+    emoji: '⚡',
+  },
+  {
+    id: 'care_mood_boost',
+    tab: 'care',
+    kind: 'care_item',
+    displayName: 'Mood Boost',
+    description: '+30 happiness instantly',
+    price: 40,
+    currency: 'coins',
+    emoji: '💖',
+  },
+  {
+    id: 'care_cleaning_brush',
+    tab: 'care',
+    kind: 'care_item',
+    displayName: 'Cleaning Brush',
+    description: 'Auto-clean poop 1 hour',
+    price: 10,
+    currency: 'coins',
+    emoji: '🧹',
+  },
+  {
+    id: 'care_sleep_potion',
+    tab: 'care',
+    kind: 'care_item',
+    displayName: 'Sleep Potion',
+    description: 'Skip to wake time',
+    price: 20,
+    currency: 'coins',
+    emoji: '😴',
+  },
+];
+
+/**
+ * Get all individual foods for Shop display.
+ * These use base food IDs and prices from INDIVIDUAL_FOOD_PRICES.
+ * BCT-SHOP-003: All individual foods are coins-only.
+ */
+export function getIndividualFoodItems(): ShopItem[] {
+  return Object.entries(INDIVIDUAL_FOOD_PRICES).map(([id, price]) => ({
+    id,
+    tab: 'food' as const,
+    kind: 'individual' as const,
+    displayName: id.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+    description: `Purchase individual ${id.replace(/_/g, ' ')}`,
+    price,
+    currency: 'coins' as const,
+    emoji: getFoodEmoji(id),
+  }));
+}
+
+/**
+ * Get food emoji by ID.
+ */
+function getFoodEmoji(foodId: string): string {
+  const emojiMap: Record<string, string> = {
+    apple: '🍎',
+    banana: '🍌',
+    carrot: '🥕',
+    cookie: '🍪',
+    grapes: '🍇',
+    candy: '🍬',
+    lollipop: '🍭',
+    spicy_taco: '🌮',
+    hot_pepper: '🌶️',
+    ice_cream: '🍦',
+    birthday_cake: '🎂',
+    dream_treat: '⭐',
+    golden_feast: '👑',
+  };
+  return emojiMap[foodId] || '🍽️';
+}
+
+/**
+ * Get Shop items filtered by tab.
+ */
+export function getShopItemsByTab(tab: ShopTab): ShopItem[] {
+  if (tab === 'food') {
+    // Food tab: Bundles first, then individual foods
+    const bundles = SHOP_CATALOG.filter(item => item.tab === 'food' && item.kind === 'bundle');
+    const individuals = getIndividualFoodItems();
+    return [...bundles, ...individuals];
+  }
+  if (tab === 'care') {
+    return SHOP_CATALOG.filter(item => item.tab === 'care');
+  }
+  // Cosmetics and Gems tabs return empty (stubs)
+  return [];
+}
+
+/**
+ * Get bundles only for Food tab.
+ * BCT-SHOP-004: Food tab renders Bundles section above Individual section.
+ */
+export function getFoodBundles(): ShopItem[] {
+  return SHOP_CATALOG.filter(item => item.tab === 'food' && item.kind === 'bundle');
+}
+
+/**
+ * Get individual foods sorted by rarity.
+ * BCT-SHOP-021: Individual foods sorted by rarity (Common → Uncommon → Rare → Epic → Legendary).
+ */
+export function getIndividualFoodsSorted(): ShopItem[] {
+  const rarityOrder: Record<string, number> = {
+    common: 1,
+    uncommon: 2,
+    rare: 3,
+    epic: 4,
+    legendary: 5,
+  };
+
+  // Map food IDs to their rarities
+  const foodRarities: Record<string, string> = {
+    apple: 'common',
+    banana: 'common',
+    carrot: 'common',
+    lollipop: 'common',
+    cookie: 'uncommon',
+    grapes: 'uncommon',
+    candy: 'uncommon',
+    spicy_taco: 'rare',
+    hot_pepper: 'rare',
+    ice_cream: 'rare',
+    birthday_cake: 'epic',
+    dream_treat: 'epic',
+    golden_feast: 'legendary',
+  };
+
+  return getIndividualFoodItems().sort((a, b) => {
+    const rarityA = rarityOrder[foodRarities[a.id] || 'common'] || 0;
+    const rarityB = rarityOrder[foodRarities[b.id] || 'common'] || 0;
+    if (rarityA !== rarityB) return rarityA - rarityB;
+    return a.displayName.localeCompare(b.displayName);
+  });
+}
+
+/**
+ * Quantity selector bounds per Bible §11.5.1.
+ * BCT-SHOP-005: Quantity selector min=1.
+ * BCT-SHOP-006: Quantity selector max=10.
+ */
+export const SHOP_QTY_SELECTOR = {
+  MIN: 1,
+  MAX: 10,
+} as const;
+
+/**
+ * Get Shop item by ID.
+ */
+export function getShopItemById(id: string): ShopItem | undefined {
+  // Check catalog first
+  const catalogItem = SHOP_CATALOG.find(item => item.id === id);
+  if (catalogItem) return catalogItem;
+
+  // Check individual foods
+  if (INDIVIDUAL_FOOD_PRICES[id] !== undefined) {
+    return getIndividualFoodItems().find(item => item.id === id);
+  }
+
+  return undefined;
+}
+
+// ============================================================================
+// §14.7 Shop Recommendations (LOCKED - BCT-SHOP-022 to 025)
+// ============================================================================
+
+/**
+ * Recommendation trigger conditions.
+ * Priority order per Bible §14.7:
+ * 1. Sick (Classic) → care_medicine
+ * 2. Energy < 20 → care_energy_drink
+ * 3. Hunger < 30 → food_balanced_x5
+ * 4. Mood < 40 → care_mood_boost
+ * 5. Weight >= 31 → care_diet_food
+ */
+export interface RecommendationTrigger {
+  priority: number;
+  itemId: string;
+  condition: (state: RecommendationState) => boolean;
+}
+
+export interface RecommendationState {
+  isSick: boolean;
+  isClassicMode: boolean;
+  energy: number;
+  hunger: number;
+  mood: number;
+  weight: number;
+}
+
+export const SHOP_RECOMMENDATION_TRIGGERS: RecommendationTrigger[] = [
+  {
+    priority: 1,
+    itemId: 'care_medicine',
+    condition: (state) => state.isSick && state.isClassicMode,
+  },
+  {
+    priority: 2,
+    itemId: 'care_energy_drink',
+    condition: (state) => state.energy < 20,
+  },
+  {
+    priority: 3,
+    itemId: 'food_balanced_x5',
+    condition: (state) => state.hunger < 30,
+  },
+  {
+    priority: 4,
+    itemId: 'care_mood_boost',
+    condition: (state) => state.mood < 40,
+  },
+  {
+    priority: 5,
+    itemId: 'care_diet_food',
+    condition: (state) => state.weight >= 31,
+  },
+];
+
+/**
+ * Get recommended Shop items based on current state.
+ * BCT-SHOP-022: Recommended section hidden when no triggers.
+ * BCT-SHOP-023: Recommended prioritizes sick→medicine.
+ * BCT-SHOP-024: Recommended includes energy drink at low energy.
+ * BCT-SHOP-025: Recommended includes balanced pack at low hunger.
+ *
+ * @param state Current game state for recommendation triggers
+ * @returns Array of recommended item IDs (max 3), ordered by priority
+ */
+export function getShopRecommendations(state: RecommendationState): string[] {
+  const recommendations: string[] = [];
+
+  // Check triggers in priority order
+  for (const trigger of SHOP_RECOMMENDATION_TRIGGERS) {
+    if (recommendations.length >= 3) break;
+
+    if (trigger.condition(state)) {
+      // Verify item is eligible (visibility conditions)
+      const item = getShopItemById(trigger.itemId);
+      if (item) {
+        // Check visibility conditions
+        if (item.visibilityCondition === 'classic_only' && !state.isClassicMode) {
+          continue; // Skip - not in classic mode
+        }
+        if (item.visibilityCondition === 'weight_chubby' && state.weight < 31) {
+          continue; // Skip - not chubby
+        }
+        recommendations.push(trigger.itemId);
+      }
+    }
+  }
+
+  return recommendations;
+}
+
+// ============================================================================
+// Shop TestIDs (BCT-SHOP)
+// ============================================================================
+
+export const SHOP_TEST_IDS = {
+  // Entry
+  SHOP_BUTTON: 'shop-button',
+  // View
+  SHOP_VIEW: 'shop-view',
+  // Tabs
+  TAB_FOOD: 'shop-tab-food',
+  TAB_CARE: 'shop-tab-care',
+  TAB_COSMETICS: 'shop-tab-cosmetics',
+  TAB_GEMS: 'shop-tab-gems',
+  // Sections
+  SECTION_BUNDLES: 'shop-section-bundles',
+  SECTION_INDIVIDUAL: 'shop-section-individual',
+  SECTION_RECOMMENDED: 'shop-recommended-section',
+  // Item helpers (use with item id)
+  itemCard: (id: string) => `shop-item-${id}`,
+  itemPrice: (id: string) => `shop-item-price-${id}`,
+  qtyMinus: (id: string) => `shop-qty-minus-${id}`,
+  qtyPlus: (id: string) => `shop-qty-plus-${id}`,
+  qtyValue: (id: string) => `shop-qty-value-${id}`,
+} as const;
+
+// ============================================================================
 // Type Exports
 // ============================================================================
 

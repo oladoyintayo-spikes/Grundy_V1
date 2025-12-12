@@ -331,14 +331,14 @@ P1-CORE-4, P1-DOC-1,2 ── Can run in parallel
 
 | ID | Task | Status | Bible | Acceptance Criteria |
 |----|------|--------|-------|---------------------|
-| P8-SHOP-01 | Audit shop vs Bible v1.6 | ⬜ | §11.5, §11.5.1 | Document gaps |
-| P8-SHOP-02 | Implement shop tabs (Food, Care, Cosmetics, Gems) | ⬜ | §14.7 | Per §14.7 Web Shop Tabs |
-| P8-SHOP-03 | Implement individual food purchase | ⬜ | §11.5.1 | Quantity selector 1-10, coins-only |
-| P8-SHOP-04 | Implement bundle purchase + decomposition | ⬜ | §11.5.1, §11.7.1 | Bundles decompose to base items |
-| P8-SHOP-05 | Implement visibility rules | ⬜ | §14.7 | Medicine (Classic), Diet (weight≥31), Gems tab (Lv5+) |
-| P8-SHOP-06 | Add "Recommended" section | ⬜ | §14.7 | Deterministic priority: sick→medicine, energy<20, hunger<30, mood<40, weight≥31 |
-| P8-SHOP-07 | Implement purchase flow | ⬜ | §11.5.1 | Coin deduction, "Not enough coins!", "Inventory full!" errors |
-| P8-SHOP-08 | Add starting resources | ⬜ | §5.8 | 100 coins, 0 gems, starter inventory (2 Apple, 2 Banana, 1 Cookie) |
+| P8-SHOP-01 | Audit shop vs Bible v1.6 | ✅ | §11.5, §11.5.1 | Catalog constants in bible.constants.ts |
+| P8-SHOP-02 | Implement shop tabs (Food, Care, Cosmetics, Gems) | ✅ | §14.7 | ShopView with 4-tab structure |
+| P8-SHOP-03 | Implement individual food purchase UI | ✅ | §11.5.1 | Quantity selector 1-10, coins-only (Shop-A UI only) |
+| P8-SHOP-04 | Implement bundle purchase + decomposition | ⬜ | §11.5.1, §11.7.1 | Shop-B: Bundles decompose to base items |
+| P8-SHOP-05 | Implement visibility rules | ✅ | §14.7 | Medicine (Classic), Diet (weight≥31), Gems tab (Lv5+) |
+| P8-SHOP-06 | Add "Recommended" section | ✅ | §14.7 | getShopRecommendations() with priority rules |
+| P8-SHOP-07 | Implement purchase flow | ⬜ | §11.5.1 | Shop-B: Coin deduction, error handling |
+| P8-SHOP-08 | Add starting resources | ✅ | §5.8 | Already implemented: 100 coins, 0 gems, starter inventory |
 
 ---
 

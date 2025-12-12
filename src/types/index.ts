@@ -311,6 +311,12 @@ export interface GameStore {
   /** ISO timestamp when account was created (for grace period calculation) */
   accountCreatedAt: string | null;
 
+  // Shop UI state (P8-SHOP-CATALOG, Shop-A: UI only, no purchase logic)
+  /** Whether shop modal is open */
+  isShopOpen: boolean;
+  /** Active shop tab */
+  shopActiveTab: 'food' | 'care' | 'cosmetics' | 'gems';
+
   // Actions
   feed: (foodId: string) => FeedResult | null;
   addCurrency: (type: CurrencyType, amount: number, source: string) => void;
@@ -384,6 +390,11 @@ export interface GameStore {
   callBackRunawayPet: (petId: string, now?: Date) => boolean;
   /** Check if pet can be interacted with (not locked out) */
   canInteractWithPet: (petId: string) => boolean;
+
+  // Shop UI actions (P8-SHOP-CATALOG, Shop-A: UI only)
+  openShop: () => void;
+  closeShop: () => void;
+  setShopTab: (tab: 'food' | 'care' | 'cosmetics' | 'gems') => void;
 }
 
 // --- Legacy Currencies interface (for compatibility) ---

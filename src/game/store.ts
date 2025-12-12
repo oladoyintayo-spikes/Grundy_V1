@@ -185,6 +185,9 @@ function createInitialState() {
     // P7-NEGLECT-SYSTEM: Per-pet neglect tracking (Classic Mode only)
     neglectByPetId: {} as Record<string, NeglectState>,
     accountCreatedAt: null as string | null,
+    // P8-SHOP-CATALOG: Shop UI state (Shop-A: UI only, no purchase logic)
+    isShopOpen: false,
+    shopActiveTab: 'food' as 'food' | 'care' | 'cosmetics' | 'gems',
   };
 }
 
@@ -1431,6 +1434,21 @@ export const useGameStore = create<GameStore>()(
       },
 
       // ========================================
+      // SHOP UI (P8-SHOP-CATALOG, Shop-A: UI only)
+      // ========================================
+      openShop: () => {
+        set({ isShopOpen: true });
+      },
+
+      closeShop: () => {
+        set({ isShopOpen: false });
+      },
+
+      setShopTab: (tab: 'food' | 'care' | 'cosmetics' | 'gems') => {
+        set({ shopActiveTab: tab });
+      },
+
+      // ========================================
       // RESET
       // ========================================
       resetGame: () => {
@@ -1458,6 +1476,10 @@ export const usePlayMode = () => useGameStore((state) => state.playMode);
 export const useEnvironment = () => useGameStore((state) => state.environment);
 export const useSettings = () => useGameStore((state) => state.settings);
 export const useAbilityTriggers = () => useGameStore((state) => state.abilityTriggers);
+
+// Shop selectors (P8-SHOP-CATALOG)
+export const useIsShopOpen = () => useGameStore((state) => state.isShopOpen);
+export const useShopActiveTab = () => useGameStore((state) => state.shopActiveTab);
 
 // FTUE helper: Check if FTUE should be shown
 export function shouldShowFtue(state: { ftue: FtueState }): boolean {
