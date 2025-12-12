@@ -3,7 +3,7 @@
 **Version:** 2.1
 **Owner:** Chief Engineer (Amos)
 **Scope:** Grundy web prototype (React + TS + Zustand)
-**Last Updated:** December 11, 2024 (ORCH-REF-01)
+**Last Updated:** December 12, 2025 (P8-CLOSEOUT-GOV)
 
 ---
 
@@ -80,8 +80,18 @@ These documents form the **governance triad** for all Grundy development:
 | Phase | Status |
 |-------|--------|
 | Phases 0–7 | Complete (Web 1.0 + Phase 6 compliance + Phase 7 neglect runtime) |
-| Phase 8 | Shop + Inventory (Web Phase 8) |
+| Phase 8 | **CE/QA APPROVED** (2025-12-12) — Shop + Inventory |
 | Phase 9 | Pet Slots / Multi-pet |
+
+#### Phase 8 CE/QA Approval
+
+- **Review Date:** 2025-12-12
+- **Audit Commit:** `947e1b9`
+- **Audit Report:** [`docs/P8_SHOPB_AUDIT_REPORT.md`](docs/P8_SHOPB_AUDIT_REPORT.md)
+- **Sign-Off Notes:** [`docs/CEQA_PHASE8_SIGNOFF_NOTES.md`](docs/CEQA_PHASE8_SIGNOFF_NOTES.md)
+
+| Phase | Status |
+|-------|--------|
 | Phase 9+ | Classic sickness/weight/care mistakes |
 | Phase 10+ | Lore Journal |
 | Phase 11 | Cosmetics |
