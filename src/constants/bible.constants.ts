@@ -991,13 +991,88 @@ export const SHOP_TEST_IDS = {
 } as const;
 
 // ============================================================================
+// §11.6 Pet Slots (LOCKED - P9-A)
+// ============================================================================
+
+/**
+ * Pet slot configuration per Bible §11.6.
+ * Player starts with 1 slot (FREE), can purchase up to 4.
+ */
+export const PET_SLOTS_CONFIG = {
+  /** Maximum number of pet slots per Bible §11.6 */
+  MAX_SLOTS: 4,
+  /** Starting slots for free players */
+  FREE_PLAYER_SLOTS: 1,
+  /** Starting slots for Grundy Plus subscribers (Bible §11.8: 2 included) */
+  PLUS_SUBSCRIBER_SLOTS: 2,
+} as const;
+
+/**
+ * Pet slot pricing per Bible §11.6.
+ * All slots are purchased with gems (💎).
+ */
+export const PET_SLOT_PRICES = {
+  /** 2nd slot: 100💎, or 80💎 with Plus (20% off) */
+  SLOT_2: { base: 100, plusDiscount: 80 },
+  /** 3rd slot: 150💎, or 120💎 with Plus (20% off) */
+  SLOT_3: { base: 150, plusDiscount: 120 },
+  /** 4th slot: 200💎, or 160💎 with Plus (20% off) */
+  SLOT_4: { base: 200, plusDiscount: 160 },
+} as const;
+
+/**
+ * Get slot price for a given slot number.
+ * @param slotNumber The slot to price (2, 3, or 4)
+ * @param hasPlusSubscription Whether player has Grundy Plus
+ * @returns Gem cost, or undefined if slot 1 (free) or invalid
+ */
+export function getPetSlotPrice(slotNumber: number, hasPlusSubscription: boolean = false): number | undefined {
+  if (slotNumber === 1) return 0; // Free
+  if (slotNumber === 2) return hasPlusSubscription ? PET_SLOT_PRICES.SLOT_2.plusDiscount : PET_SLOT_PRICES.SLOT_2.base;
+  if (slotNumber === 3) return hasPlusSubscription ? PET_SLOT_PRICES.SLOT_3.plusDiscount : PET_SLOT_PRICES.SLOT_3.base;
+  if (slotNumber === 4) return hasPlusSubscription ? PET_SLOT_PRICES.SLOT_4.plusDiscount : PET_SLOT_PRICES.SLOT_4.base;
+  return undefined;
+}
+
+/**
+ * Global resource rules per Bible §11.6 and §6.
+ * "All slotted pets share: Coins, Gems, Inventory"
+ * "SHARED across all pets: Coins, Gems, Food Inventory"
+ */
+export const GLOBAL_RESOURCES = {
+  /** Coins are shared across all pets */
+  COINS_GLOBAL: true,
+  /** Gems are shared across all pets */
+  GEMS_GLOBAL: true,
+  /** Food inventory is shared across all pets */
+  INVENTORY_GLOBAL: true,
+} as const;
+
+/**
+ * Pet slot test IDs for BCT tests.
+ */
+export const PET_SLOTS_TEST_IDS = {
+  PET_SWITCHER: 'pet-switcher',
+  PET_SWITCH_BUTTON: (speciesId: string) => `pet-switch-${speciesId}`,
+  ACTIVE_PET_INDICATOR: 'active-pet-indicator',
+  OWNED_PETS_LIST: 'owned-pets-list',
+} as const;
+
+// ============================================================================
 // Type Exports
 // ============================================================================
+
+/** Unique identifier for an owned pet instance */
+export type PetInstanceId = string;
+
+/** Species identifier (one of the 8 canonical pets) */
+export type SpeciesId = typeof ALL_PET_IDS[number];
 
 export type EvolutionStage = typeof EVOLUTION_STAGES[keyof typeof EVOLUTION_STAGES];
 export type FullnessState = keyof typeof FULLNESS_STATES;
 export type RewardTier = keyof typeof REWARD_TIERS;
 export type RoomType = typeof ROOM_ACTIVITY_MAP[keyof typeof ROOM_ACTIVITY_MAP];
+/** @deprecated Use SpeciesId instead. PetId refers to species. */
 export type PetId = typeof ALL_PET_IDS[number];
 export type TimeOfDay = keyof typeof TIME_OF_DAY;
 export type TestId = typeof TEST_IDS[keyof typeof TEST_IDS];

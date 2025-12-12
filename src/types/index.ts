@@ -207,6 +207,23 @@ export interface PetState {
   lastMoodUpdate?: number;
 }
 
+// --- Owned Pet State (P9-A Multi-Pet Foundation) ---
+// Re-export types from bible.constants.ts
+import type { PetInstanceId, SpeciesId } from '../constants/bible.constants';
+export type { PetInstanceId, SpeciesId };
+
+/**
+ * Owned pet instance state (extends PetState with instance tracking).
+ * Bible §11.6: Each pet has SEPARATE: Level, XP, Bond, Mood, Hunger.
+ * P9-A: Minimal foundation for multi-pet ownership.
+ */
+export interface OwnedPetState extends PetState {
+  /** Unique instance ID for this owned pet (format: {speciesId}-{suffix}) */
+  instanceId: PetInstanceId;
+  /** Species ID (one of 8 canonical species) - duplicates 'id' for clarity */
+  speciesId: SpeciesId;
+}
+
 // --- Food Definition ---
 export interface FoodDefinition {
   id: string;
@@ -294,7 +311,7 @@ export interface GameStore {
   inventoryCapacity: number;
   stats: GameStats;
   settings: GameSettings;
-  unlockedPets: string[];  // Pet IDs that the player has unlocked
+  unlockedPets: string[];  // Species IDs that the player has unlocked
   energy: EnergyState;     // Mini-game energy system
   dailyMiniGames: DailyMiniGameState; // Daily play tracking
   ftue: FtueState;         // FTUE / Onboarding state
@@ -316,6 +333,16 @@ export interface GameStore {
   isShopOpen: boolean;
   /** Active shop tab */
   shopActiveTab: 'food' | 'care' | 'cosmetics' | 'gems';
+
+  // P9-A: Multi-pet foundation state
+  /** All owned pets keyed by instance ID. Bible §11.6: supports up to 4 slots. */
+  petsById: Record<PetInstanceId, OwnedPetState>;
+  /** Ordered list of owned pet instance IDs (order = acquisition order) */
+  ownedPetIds: PetInstanceId[];
+  /** Currently active pet instance ID. Persists across sessions. */
+  activePetId: PetInstanceId;
+  /** Number of pet slots unlocked (1-4). Bible §11.6: starts at 1. */
+  unlockedSlots: number;
 
   // Actions
   feed: (foodId: string) => FeedResult | null;
@@ -402,6 +429,16 @@ export interface GameStore {
     quantity?: number,
     options?: ShopPurchaseOptions
   ) => ShopPurchaseResult;
+
+  // P9-A: Multi-pet foundation actions
+  /** Get the currently active pet. Returns null if no pets owned (should never happen). */
+  getActivePet: () => OwnedPetState | null;
+  /** Switch to a different owned pet. Bible §11.6: "Switching between slotted pets is instant" */
+  setActivePet: (petId: PetInstanceId) => void;
+  /** Get all owned pets in acquisition order */
+  getOwnedPets: () => OwnedPetState[];
+  /** Get owned pet by instance ID */
+  getOwnedPetById: (petId: PetInstanceId) => OwnedPetState | null;
 }
 
 // --- Shop Purchase Types (P8-SHOP-PURCHASE) ---

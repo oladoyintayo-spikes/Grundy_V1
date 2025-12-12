@@ -1,7 +1,7 @@
 # TASKS.md
 ## Grundy Development Task List
 
-**Last Updated:** December 12, 2024 (P8-SHOP-PURCHASE)
+**Last Updated:** December 12, 2025 (P8-CLOSEOUT-GOV — Phase 8 CE/QA Approved)
 **Design SoT:** `docs/GRUNDY_MASTER_BIBLE.md`
 **Pre-Flight Report:** December 9, 2024 ✅
 
@@ -349,13 +349,23 @@ P1-CORE-4, P1-DOC-1,2 ── Can run in parallel
 
 | ID | Task | Status | Bible | Acceptance Criteria |
 |----|------|--------|-------|---------------------|
-| P8-INV-01 | Add inventory capacity | ⬜ | §11.7 | Base 15 slots |
-| P8-INV-02 | Implement stacking semantics | ⬜ | §11.7.1 | Max 99 per item id, slot = unique item id |
-| P8-INV-03 | Implement capacity check | ⬜ | §11.7.1 | Block purchase if new slot needed + none available OR stack > 99 |
-| P8-INV-04 | Add expansion items | ⬜ | §11.7 | 25/50/100/150 gems for +5 slots each |
-| P8-INV-05 | Show capacity in UI | ⬜ | §14.8 | "X/15" header, Food/Care tabs |
-| P8-INV-06 | Implement item detail modal | ⬜ | §14.8 | Quantity, rarity, affinities, "Use on Pet" action |
-| P8-INV-07 | Implement empty state | ⬜ | §14.8 | "Go to Shop" CTA when empty |
+| P8-INV-01 | Add inventory capacity | ✅ | §11.7 | Base 15 slots |
+| P8-INV-02 | Implement stacking semantics | ✅ | §11.7.1 | Max 99 per item id, slot = unique item id |
+| P8-INV-03 | Implement capacity check | ✅ | §11.7.1 | Block purchase if new slot needed + none available OR stack > 99 |
+| P8-INV-04 | Add expansion items | ⬜ | §11.7 | 25/50/100/150 gems for +5 slots each (deferred to future phase) |
+| P8-INV-05 | Show capacity in UI | ✅ | §14.8 | "X/15" header, Food/Care tabs |
+| P8-INV-06 | Implement item detail modal | ✅ | §14.8 | Quantity, rarity, affinities, "Use on Pet" action |
+| P8-INV-07 | Implement empty state | ✅ | §14.8 | "Go to Shop" CTA when empty |
+
+### Phase 8 CE/QA Sign-Off
+
+> **Status:** ✅ CE/QA APPROVED (2025-12-12)
+>
+> - **Audit Report:** [`docs/P8_SHOPB_AUDIT_REPORT.md`](docs/P8_SHOPB_AUDIT_REPORT.md)
+> - **Sign-Off Notes:** [`docs/CEQA_PHASE8_SIGNOFF_NOTES.md`](docs/CEQA_PHASE8_SIGNOFF_NOTES.md)
+> - **Audit Commit:** `947e1b9`
+>
+> All Shop + Inventory BCT tests pass (778 BCT, 1434 total). Atomicity, blocking, bundle decomposition, and recommendations validated per Bible v1.6 / BCT v2.2.
 
 ---
 
