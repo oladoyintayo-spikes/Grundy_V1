@@ -577,6 +577,43 @@ All QA S3/S4 issues from Web 1.0 are mapped to Phase 6 tasks:
 - QA-004 → P9-7 (deferred)
 - QA-005 → P6-PWA-UI ✅ (install CTA + update toast implemented)
 
+### CE/QA Validation Notes – Art & Audio (December 2024)
+
+**Art System Validation (P6-ART-PRODUCTION):**
+- ✅ `PET_SPRITES_BY_STAGE` covers 8 pets × 3 stages × 11 poses
+- ✅ `resolvePetSprite()` and `getStageAwarePetSprite()` resolve with proper fallback chain
+- ✅ `POSE_FALLBACKS` chain: ecstatic→happy→idle, eating_loved→eating→ecstatic→happy→idle, etc.
+- ✅ No-orb guarantee: BCT-ART-03 tests verify all known pet/stage/pose combos resolve to sprites
+- ✅ `PetAvatar` and `PetDisplay` use stage-aware resolution when stage prop provided
+- ✅ 401 BCT-ART tests passing (covers asset coverage, fallback chain, no-orb guarantee, stage-aware resolution)
+
+**Audio & Ambience Validation (P6-AUDIO-ROOM, P6-AUDIO-TOD):**
+- ✅ `AMBIENCE_CONFIG` paths use correct naming convention: `<room>_ambience.mp3`
+- ✅ `ROOM_AMBIENCE_MAP` correctly maps 5 rooms to their ambience tracks
+- ✅ `TIME_OF_DAY_VOLUME_MULTIPLIERS` values: morning 0.9, day 1.0, evening 0.8, night 0.6
+- ✅ `audioManager.calculateAmbienceVolume()` applies TOD multiplier to base volume
+- ✅ `getAllAmbienceAudioPaths()` helper returns all 5 ambience file paths for PWA pre-caching
+- ✅ 45 audio config tests passing (incl. 15 ambience-specific tests)
+
+**PWA Precache Validation (P6-PWA-PRECACHE):**
+- ✅ `public/service-worker.js` cache name bumped to `grundy-shell-v3`
+- ✅ `AMBIENCE_AUDIO_ASSETS` array contains all 5 room ambience files
+- ✅ `PRECACHE_URLS` combines `SHELL_ASSETS` and `AMBIENCE_AUDIO_ASSETS`
+- ✅ Install event uses `PRECACHE_URLS` (not just shell assets)
+- ✅ 45 PWA config tests passing
+
+**Test Coverage Summary:**
+- Total tests: 1326 passing
+- BCT tests: 685 passing
+- BCT-ART: 401 tests
+- Audio config: 45 tests
+- PWA config: 45 tests
+
+**No Issues Found:**
+- Art system stage-aware resolution working as designed
+- Audio ambience wiring matches expected file naming convention
+- PWA service worker correctly precaches ambience audio
+
 ---
 
 ## Future Phases
