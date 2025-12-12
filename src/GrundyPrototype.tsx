@@ -607,8 +607,10 @@ function SettingsView() {
   const setMusicEnabled = useGameStore((state) => state.setMusicEnabled);
   const resetGame = useGameStore((state) => state.resetGame);
   const pet = useGameStore((state) => state.pet);
-  const unlockedPets = useGameStore((state) => state.unlockedPets);
-  const selectPet = useGameStore((state) => state.selectPet);
+  // P9-A: Use multi-pet selectors
+  const activePetId = useGameStore((state) => state.activePetId);
+  const ownedPets = useGameStore((state) => state.getOwnedPets());
+  const setActivePet = useGameStore((state) => state.setActivePet);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [showPetSelector, setShowPetSelector] = useState(false);
   const [pendingPetSwitch, setPendingPetSwitch] = useState<string | null>(null);
@@ -639,28 +641,33 @@ function SettingsView() {
   // Get current pet data
   const currentPetData = getPetById(pet.id);
 
-  // Get unlocked pet data
-  const unlockedPetData = unlockedPets.map(id => getPetById(id)).filter(Boolean);
+  // P9-A: Get owned pet data for selector
+  const ownedPetData = ownedPets.map(ownedPet => ({
+    ...getPetById(ownedPet.speciesId),
+    instanceId: ownedPet.instanceId,
+    speciesId: ownedPet.speciesId,
+    level: ownedPet.level,
+  })).filter(p => p.id);
 
   const handleReset = () => {
     resetGame();
     setShowResetConfirm(false);
   };
 
-  // Bible §14.5: Pet switching with confirmation
-  const handlePetSelect = (petId: string) => {
-    if (petId === pet.id) {
+  // P9-A: Pet switching with confirmation using instance IDs
+  const handlePetSelect = (instanceId: string) => {
+    if (instanceId === activePetId) {
       // Already active, just close selector
       setShowPetSelector(false);
       return;
     }
     // Show confirmation modal
-    setPendingPetSwitch(petId);
+    setPendingPetSwitch(instanceId);
   };
 
   const confirmPetSwitch = () => {
     if (pendingPetSwitch) {
-      selectPet(pendingPetSwitch);
+      setActivePet(pendingPetSwitch);
       setPendingPetSwitch(null);
       setShowPetSelector(false);
     }
@@ -668,6 +675,12 @@ function SettingsView() {
 
   const cancelPetSwitch = () => {
     setPendingPetSwitch(null);
+  };
+
+  // P9-A: Get pending pet data for confirmation modal
+  const getPendingPetData = () => {
+    const pendingPet = ownedPets.find(p => p.instanceId === pendingPetSwitch);
+    return pendingPet ? getPetById(pendingPet.speciesId) : null;
   };
 
   return (
@@ -729,29 +742,30 @@ function SettingsView() {
           </div>
         </div>
 
-        {/* Pet Selector Modal */}
+        {/* P9-A: Pet Selector Modal - Shows owned pets with levels */}
         {showPetSelector && (
           <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" data-testid="pet-selector-modal">
             <div className="bg-slate-800 rounded-2xl p-6 max-w-sm w-full">
               <h2 className="text-lg font-bold mb-4">Select Your Grundy</h2>
-              <div className="space-y-2 max-h-60 overflow-y-auto">
-                {unlockedPetData.map(petData => petData && (
+              <div className="space-y-2 max-h-60 overflow-y-auto" data-testid="pet-switcher">
+                {ownedPetData.map(petData => petData && (
                   <button
-                    key={petData.id}
-                    onClick={() => handlePetSelect(petData.id)}
+                    key={petData.instanceId}
+                    onClick={() => handlePetSelect(petData.instanceId)}
                     className={`w-full p-3 rounded-xl flex items-center gap-3 transition-colors
-                      ${pet.id === petData.id
+                      ${activePetId === petData.instanceId
                         ? 'bg-green-500/20 border-2 border-green-500'
                         : 'bg-slate-700 hover:bg-slate-600 border-2 border-transparent'}`}
-                    data-testid={`pet-option-${petData.id}`}
+                    data-testid={`pet-switch-${petData.speciesId}`}
                   >
                     <span className="text-2xl">{petData.emoji}</span>
-                    <div className="text-left">
+                    <div className="text-left flex-1">
                       <span className="font-medium">{petData.name}</span>
-                      {pet.id === petData.id && (
-                        <span className="text-xs text-green-400 block">Currently Active</span>
-                      )}
+                      <span className="text-xs text-slate-400 block">Lv.{petData.level}</span>
                     </div>
+                    {activePetId === petData.instanceId && (
+                      <span className="text-xs text-green-400 bg-green-500/20 px-2 py-0.5 rounded-full">Active</span>
+                    )}
                   </button>
                 ))}
               </div>
@@ -765,12 +779,12 @@ function SettingsView() {
           </div>
         )}
 
-        {/* Pet Switch Confirmation Modal - BCT-NAV-001 */}
+        {/* P9-A: Pet Switch Confirmation Modal */}
         {pendingPetSwitch && (
           <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" data-testid="pet-switch-confirm-modal">
             <div className="bg-slate-800 rounded-2xl p-6 max-w-sm w-full text-center">
-              <div className="text-4xl mb-4">{getPetById(pendingPetSwitch)?.emoji || '🐾'}</div>
-              <h2 className="text-lg font-bold mb-2">Switch to {getPetById(pendingPetSwitch)?.name}?</h2>
+              <div className="text-4xl mb-4">{getPendingPetData()?.emoji || '🐾'}</div>
+              <h2 className="text-lg font-bold mb-2">Switch to {getPendingPetData()?.name}?</h2>
               <p className="text-sm text-slate-400 mb-4">Your progress is auto-saved. You can switch back anytime!</p>
               <div className="flex gap-3">
                 <button
