@@ -12,18 +12,18 @@
 
 | Resource | Location |
 |----------|----------|
-| **Design SoT** | `docs/GRUNDY_MASTER_BIBLE.md` v1.6 |
+| **Design SoT** | `docs/GRUNDY_MASTER_BIBLE.md` v1.7 |
 | **Task List** | `TASKS.md` |
 | **Agent Workflow** | `ORCHESTRATOR.md` |
 | **Bible Update Log** | `BIBLE_UPDATE_BACKLOG.md` |
-| **BCT Specs** | `docs/BIBLE_COMPLIANCE_TEST.md` v2.2 |
+| **BCT Specs** | `docs/BIBLE_COMPLIANCE_TEST.md` v2.3 |
 
 ### Canonical Versions (December 2025)
 
 | Artifact | Version | Notes |
 |----------|---------|-------|
-| Bible | **v1.6** | Shop + Inventory spec (§5.8, §11.5.1, §11.7.1, §14.7–§14.8) |
-| BCT | **v2.2** | Shop + Inventory tests (BCT-SHOP, BCT-INV, BCT-ECON starting resources) |
+| Bible | **v1.7** | Multi-Pet Runtime Clarifications (§8.2.1, §9.4.4–9.4.7, §14.6) |
+| BCT | **v2.3** | Multi-Pet tests (BCT-MULTIPET-001 thru 014, BCT-PETSLOTS-001 thru 011) |
 | Locked Constants | `src/constants/bible.constants.ts` | Single source for locked values |
 
 ---

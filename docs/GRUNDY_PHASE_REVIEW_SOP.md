@@ -11,8 +11,8 @@
 This Standard Operating Procedure (SOP) defines the review process for phases, patches, and hotfixes in the Grundy project.
 
 **Key documents:**
-- **Design specification:** `docs/GRUNDY_MASTER_BIBLE.md` (v1.4)
-- **Test contract:** `docs/BIBLE_COMPLIANCE_TEST.md`
+- **Design specification:** `docs/GRUNDY_MASTER_BIBLE.md` (v1.7)
+- **Test contract:** `docs/BIBLE_COMPLIANCE_TEST.md` (v2.3)
 - **Status tracking:** `GRUNDY_DEV_STATUS.md`
 - **Task tracking:** `TASKS.md`
 
@@ -141,7 +141,7 @@ Each phase/patch has three status fields:
 
 #### CE Checklist (Before APPROVED)
 
-- [ ] Dev work matches Bible v1.4 requirements
+- [ ] Dev work matches Bible v1.7 requirements
 - [ ] BCT spec tests pass (`npm run test:bible`)
 - [ ] BCT E2E tests pass (`npm run test:bible:e2e`)
 - [ ] No regressions from previous phases

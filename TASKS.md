@@ -361,11 +361,54 @@ P1-CORE-4, P1-DOC-1,2 ── Can run in parallel
 
 ## PHASE 9: Pet Slots (Multi-Pet)
 
-> Bible v1.6: §11.6 — Multi-pet care system.
+> Bible v1.7: §11.6, §8.2.1, §9.4.4–9.4.7, §14.6 — Multi-pet care system with runtime clarifications.
+> BCT v2.3: BCT-PETSLOTS-001 thru 011 (P9-A), BCT-MULTIPET-001 thru 014 (P9-B)
+
+### P9-DOC: Documentation Updates
+
+| ID | Task | Status | Bible | Notes |
+|----|------|--------|-------|-------|
+| P9-DOC-01 | Apply Bible v1.7 patch (multi-pet runtime) | ✅ | §8.2.1, §9.4.4–9.4.7, §14.6 | Energy scope, runaway handling, switching constraints, offline rules, alerts |
+| P9-DOC-02 | Update BCT v2.2 → v2.3 | ✅ | — | Added BCT-PETSLOTS (11), BCT-MULTIPET (14) |
+| P9-DOC-03 | Update repo references | ✅ | — | ORCHESTRATOR, TASKS, DEV_STATUS, SOP updated to v1.7/v2.3 |
+
+### P9-A: Pet Slots Foundation (COMPLETE)
+
+> Multi-pet data model, save migration, initialization, switching UI, BCT tests.
+
+| ID | Task | Status | Bible | Notes |
+|----|------|--------|-------|-------|
+| P9-A-01 | Multi-pet data model | ✅ | §11.6 | petsById, ownedPetIds, activePetId |
+| P9-A-02 | Save migration v1→v2 | ✅ | §15.3 | Migrate single-pet to multi-pet |
+| P9-A-03 | New-game initialization | ✅ | §6 | 3 starters owned, 1 slot unlocked |
+| P9-A-04 | Pet switching UI | ✅ | §11.6 | Settings view pet selector |
+| P9-A-05 | BCT tests | ✅ | — | 33 BCT-PETSLOTS tests passing |
+
+### P9-B: Multi-Pet Runtime (BLOCKED → UNBLOCKED)
+
+> Runtime integration: mood/neglect/alerts/runaway rules across multiple pets.
+
+| ID | Task | Status | Bible | Notes |
+|----|------|--------|-------|-------|
+| P9-B-01 | Global energy scope | ⬜ | §8.2.1 | Energy shared across all pets |
+| P9-B-02 | Runaway auto-switch | ⬜ | §9.4.4 | Auto-switch to next available pet |
+| P9-B-03 | Switching constraints | ⬜ | §9.4.5 | Allow switching to/from neglected pets |
+| P9-B-04 | Offline multi-pet rules | ⬜ | §9.4.6 | Decay/neglect applies to all pets |
+| P9-B-05 | Alert routing & suppression | ⬜ | §14.6 | Per-pet alerts, batching, cooldowns |
+| P9-B-06 | BCT-MULTIPET tests | ⬜ | — | 14 BCT-MULTIPET compliance tests |
+
+### P9-C: Weight & Sickness Runtime (DEFERRED)
+
+| ID | Task | Status | Bible | Notes |
+|----|------|--------|-------|-------|
+| P9-C-01 | Weight runtime | ⬜ | §5.7, §9.4.7 | Per-pet weight system |
+| P9-C-02 | Sickness runtime | ⬜ | §5.4, §9.4.7 | Per-pet sickness (Classic) |
+
+### P9-SLOTS: Slot Purchase & UI
 
 | ID | Task | Status | Bible | Acceptance Criteria |
 |----|------|--------|-------|---------------------|
-| P9-SLOTS-01 | Add pet slots to state | ⬜ | §11.6 | `activeSlots`, `maxSlots` |
+| P9-SLOTS-01 | Add pet slots to state | ✅ | §11.6 | `unlockedSlots`, selectors/actions |
 | P9-SLOTS-02 | Implement slot purchase | ⬜ | §11.6 | 100/150/200 gems |
 | P9-SLOTS-03 | Update pet selector | ⬜ | §11.6 | Assign/swap slots |
 | P9-SLOTS-04 | Implement parallel decay | ⬜ | §11.6 | All slotted pets decay |
