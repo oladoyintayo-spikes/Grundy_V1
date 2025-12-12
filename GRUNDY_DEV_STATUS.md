@@ -492,13 +492,13 @@ Mood system (§4.5) with numeric moodValue 0-100, decay, and Grib/Plompo abiliti
 
 **Environment & Mobile Layout:**
 - [ ] Feeding → Kitchen, play → Playroom, default → Living Room
-- [ ] Time-of-day ranges match Bible v1.5: Morning 6-12, Day 12-17, Evening 17-21, Night 21-6
+- [ ] Time-of-day ranges match Bible v1.6: Morning 6-12, Day 12-17, Evening 17-21, Night 21-6
 - [ ] Room selector UI allows manual room selection; activities override manual selection
 - [ ] On a typical phone viewport (390×844), pet + actions + currencies + bottom nav are visible without scroll
 
 **FTUE (P6-FTUE-INTRO):**
 - [ ] FTUE lore lines come from `src/constants/bible.constants.ts`
-- [ ] Line 3 preserves the "*you*" emphasis exactly as in Bible v1.5
+- [ ] Line 3 preserves the "*you*" emphasis exactly as in Bible v1.6
 
 **Art / Poses (P6-ART-POSES):**
 - [ ] Pets use sprite poses (not generic blobs) in production builds

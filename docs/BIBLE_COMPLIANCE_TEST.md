@@ -745,6 +745,29 @@ npm test -- --run
 | BCT-INV-007 | Apple bundle adds 5 apples | §11.5, §11.7.1 | Buying `food_apple_x5` results in `inventory.apple += 5` |
 | BCT-INV-008 | Spicy sampler decomposes correctly | §11.5, §11.7.1 | Buying `food_spicy_x3` adds `hot_pepper += 3` and `spicy_taco += 2` |
 
+#### Bundle Decomposition Truth Table (Bible v1.6 §11.5 / §11.7.1)
+
+Deterministic bundle decompositions (Inventory stores base IDs only):
+
+| Bundle ID | Decomposition | Notes |
+|-----------|---------------|-------|
+| `food_apple_x5` | `{ apple: 5 }` | |
+| `food_balanced_x5` | `{ apple: 2, banana: 1, carrot: 1, lollipop: 1 }` | Bible §11.5 says "5× mixed common foods." Bible §5.4 defines Candy as Uncommon, so balanced pack must remain common-only and may repeat a common. |
+| `food_spicy_x3` | `{ hot_pepper: 3, spicy_taco: 2 }` | |
+| `food_sweet_x3` | `{ cookie: 3, candy: 2 }` | |
+| `food_legendary_x1` | `{ golden_feast: 1 }` | |
+
+Non-deterministic bundles (runtime selection; deterministic in tests via injected selector/seed):
+
+| Bundle ID | Selection Rule |
+|-----------|----------------|
+| `food_rare_x1` | 1× random Rare food (from rarity pool: spicy_taco, hot_pepper, ice_cream) |
+| `food_epic_x1` | Birthday Cake OR Dream Treat (Bible-defined choice) |
+
+**Implementation rule:** Decomposition occurs on purchase (Shop-B), and Inventory stores only base item IDs.
+
+**Primary refs:** Bible v1.6 §11.5, §11.7.1; BCT v2.2 Shop/Inventory bundle expectations.
+
 ### Inventory UI (Web)
 
 | ID | Description | Bible Ref | Expected Result |
