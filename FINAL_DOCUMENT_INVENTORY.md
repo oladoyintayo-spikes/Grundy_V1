@@ -20,7 +20,7 @@ All files have Design SoT reference and are production-ready.
 
 | File | Size | Purpose |
 |------|------|---------|
-| `GRUNDY_MASTER_BIBLE.md` | 122KB | **DESIGN SOURCE OF TRUTH** (v1.3) |
+| `GRUNDY_MASTER_BIBLE.md` | 122KB+ | **DESIGN SOURCE OF TRUTH** (v1.6) |
 | `ASSET_MANIFEST.md` | 4KB | 120 sprite files, 8 pets, state mapping |
 | `GRUNDY_LORE_CODEX.md` | 28KB | Full pet lore, journal system, unlocks |
 | `GRUNDY_ONBOARDING_FLOW.md` | 35KB | FTUE timing, screens, dialogue tables |
@@ -84,7 +84,7 @@ grundy/
 ├── CURRENT_SPRINT.md              ← Updated
 │
 ├── docs/
-│   ├── GRUNDY_MASTER_BIBLE.md     ← DESIGN SoT (122KB, v1.3)
+│   ├── GRUNDY_MASTER_BIBLE.md     ← DESIGN SoT (v1.6)
 │   ├── ASSET_MANIFEST.md          ← 120 sprites, state mapping
 │   ├── GRUNDY_LORE_CODEX.md       ← Extended lore
 │   └── GRUNDY_ONBOARDING_FLOW.md  ← FTUE detail
