@@ -2,9 +2,9 @@
 
 # Grundy Web Prototype — Development Status
 
-**Last Updated:** December 11, 2024 (Phase 7 Neglect System)
-**Current Phase:** Web Phase 7 — P7-NEGLECT-SYSTEM DEV COMPLETE
-**Next Phase:** Phase 7 continued (Sickness System / Weight System)
+**Last Updated:** December 12, 2025 (Phase 8 CE/QA Approved)
+**Current Phase:** Web Phase 8 — **CE/QA APPROVED** (Shop + Inventory)
+**Next Phase:** Phase 9 (Pet Slots / Multi-pet) or Phase 7 continued (Sickness/Weight)
 
 ---
 
@@ -42,6 +42,7 @@
 | **Web Phase 6** | Bible v1.4 Compliance | ✅ TIER 1 DEV COMPLETE | Tier 1 implemented; P6-ART-POSES ✅; P6-ART-PRODUCTION ✅; P6-ART-TEST ✅; 1214 tests (594 BCT); CE Review Required |
 | **Web Phase 6** | Tier 2 Polish | ✅ TIER 2 DEV COMPLETE | P6-AUDIO-ROOM ✅; P6-AUDIO-TOD ✅; P6-PWA-PRECACHE ✅; P6-PWA-UI ✅; P6-PWA-UPDATE ✅; 1224 tests; CE Review Required |
 | **Web Phase 7** | Classic Mode | 🟡 P7-NEGLECT ✅ | Neglect & Withdrawal runtime ✅; 49 BCT-NEGLECT tests; Sickness ⬜; Weight ⬜ |
+| **Web Phase 8** | Shop + Inventory | ✅ CE/QA APPROVED | Audit: `947e1b9`; Sign-off: 2025-12-12; See [`docs/CEQA_PHASE8_SIGNOFF_NOTES.md`](docs/CEQA_PHASE8_SIGNOFF_NOTES.md) |
 
 ### Post-Web 1.0
 
@@ -49,8 +50,8 @@
 |--------|--------|---------|
 | Art / Sprite States | ⬜ DEFERRED | Connect stats to visual states (getDisplayState) |
 | Sound & Vibration | ✅ COMPLETE | Core audio (P5-AUDIO-CORE) + Room ambience (P6-AUDIO-ROOM) + TOD variations (P6-AUDIO-TOD); vibration deferred |
-| Shop & Economy | ⬜ NOT STARTED | Shop tabs, gem confirm, milestones |
-| Inventory | ⬜ NOT STARTED | Capacity, expansion items |
+| Shop & Economy | ✅ CE/QA APPROVED | Shop tabs, bundles, purchase flow, recommendations — Phase 8 |
+| Inventory | ✅ CE/QA APPROVED | Capacity (15 slots), stack max (99), Use-on-Pet flow — Phase 8 |
 | Pet Slots | ⬜ NOT STARTED | Multi-pet care system |
 | Classic Mode | 🟡 PARTIAL | Neglect & Withdrawal ✅ (P7-NEGLECT-SYSTEM); Sickness ⬜; Weight ⬜ |
 
