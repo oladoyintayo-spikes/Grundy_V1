@@ -4,10 +4,12 @@
 // ============================================
 
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { persist, createJSONStorage } from 'zustand/middleware';
 import {
   GameStore,
   PetState,
+  OwnedPetState,
+  PetInstanceId,
   CurrencyType,
   MoodState,
   FeedResult,
@@ -65,6 +67,7 @@ import {
 } from './miniGameRewards';
 // Bible §14.4: Activity-to-room mapping
 // Bible §9.4.3: Neglect system constants
+// Bible §11.6: Pet Slots constants (P9-A)
 import {
   ROOM_ACTIVITY_MAP,
   MODE_CONFIG,
@@ -73,7 +76,10 @@ import {
   getNeglectStage,
   STARTING_RESOURCES,
   INVENTORY_CONFIG,
+  PET_SLOTS_CONFIG,
+  STARTER_PET_IDS,
   type NeglectStageId,
+  type PetInstanceId as BiblePetInstanceId,
 } from '../constants/bible.constants';
 // P8-SHOP-PURCHASE: Shop purchase engine
 import { purchaseShopItem as executePurchase } from './shopPurchase';
@@ -149,10 +155,61 @@ function resetNeglectState(current: NeglectState, now: Date): NeglectState {
   };
 }
 
+// ============================================
+// P9-A: MULTI-PET HELPERS
+// Bible §11.6: Player owns all 3 starters
+// ============================================
+
+/**
+ * Create an owned pet instance from a species ID.
+ * P9-A: Generates unique instance ID and initializes state.
+ */
+function createOwnedPet(speciesId: string, suffix: string = 'starter'): OwnedPetState {
+  const basePet = createInitialPet(speciesId);
+  const instanceId: PetInstanceId = `${speciesId}-${suffix}`;
+  // Type assertion needed since speciesId comes from STARTER_PET_IDS array
+  return {
+    ...basePet,
+    instanceId,
+    speciesId: speciesId as OwnedPetState['speciesId'],
+  };
+}
+
+/**
+ * Create initial multi-pet state with all 3 starters.
+ * Bible §6: "All 3 STARTERS always available (Munchlet, Grib, Plompo)"
+ * Bible §6: "Player picks which starter to play FIRST" (handled by FTUE)
+ */
+function createInitialMultiPetState(): {
+  petsById: Record<PetInstanceId, OwnedPetState>;
+  ownedPetIds: PetInstanceId[];
+  activePetId: PetInstanceId;
+} {
+  const petsById: Record<PetInstanceId, OwnedPetState> = {};
+  const ownedPetIds: PetInstanceId[] = [];
+
+  // Create all 3 starter pets per Bible §6
+  for (const speciesId of STARTER_PET_IDS) {
+    const pet = createOwnedPet(speciesId, 'starter');
+    petsById[pet.instanceId] = pet;
+    ownedPetIds.push(pet.instanceId);
+  }
+
+  // Default to munchlet (first starter) - Bible §7.4 fallback
+  const activePetId = 'munchlet-starter';
+
+  return { petsById, ownedPetIds, activePetId };
+}
+
 // Initial state factory
 function createInitialState() {
+  // P9-A: Initialize multi-pet state
+  const multiPetState = createInitialMultiPetState();
+  const activePet = multiPetState.petsById[multiPetState.activePetId];
+
   return {
-    pet: createInitialPet('munchlet'), // Bible-compliant default starter
+    // P9-A: Keep legacy 'pet' field synced with active pet for backward compat
+    pet: activePet ? { ...activePet, id: activePet.speciesId } : createInitialPet('munchlet'),
     currencies: {
       coins: STARTING_RESOURCES.COINS, // BCT-ECON-004: 100
       gems: STARTING_RESOURCES.GEMS,   // BCT-ECON-005: 0
@@ -174,7 +231,7 @@ function createInitialState() {
       musicEnabled: true,
       autoSave: true,
     } as GameSettings,
-    unlockedPets: [...STARTER_PETS], // Start with munchlet, grib, plompo
+    unlockedPets: [...STARTER_PETS], // Start with munchlet, grib, plompo (species unlocks)
     energy: createInitialEnergyState(),
     dailyMiniGames: createInitialDailyState(),
     ftue: {
@@ -192,6 +249,11 @@ function createInitialState() {
     // P8-SHOP-CATALOG: Shop UI state (Shop-A: UI only, no purchase logic)
     isShopOpen: false,
     shopActiveTab: 'food' as 'food' | 'care' | 'cosmetics' | 'gems',
+    // P9-A: Multi-pet foundation state
+    petsById: multiPetState.petsById,
+    ownedPetIds: multiPetState.ownedPetIds,
+    activePetId: multiPetState.activePetId,
+    unlockedSlots: PET_SLOTS_CONFIG.FREE_PLAYER_SLOTS, // Bible §11.6: starts with 1 slot
   };
 }
 
@@ -876,16 +938,23 @@ export const useGameStore = create<GameStore>()(
       },
 
       selectFtuePet: (petId: string) => {
-        set((state) => ({
+        const state = get();
+
+        // P9-A: Find the pet instance for this species
+        const instanceId = `${petId}-starter`;
+        const ownedPet = state.petsById?.[instanceId];
+
+        set((prev) => ({
           ftue: {
-            ...state.ftue,
+            ...prev.ftue,
             selectedPetId: petId,
           },
-          // Also set as active pet
-          pet: {
-            ...state.pet,
-            id: petId,
-          },
+          // P9-A: Update activePetId to the starter instance
+          activePetId: instanceId,
+          // Also set legacy pet field for backward compat
+          pet: ownedPet
+            ? { ...ownedPet, id: ownedPet.speciesId }
+            : { ...prev.pet, id: petId },
         }));
       },
 
@@ -1517,6 +1586,72 @@ export const useGameStore = create<GameStore>()(
       },
 
       // ========================================
+      // P9-A: MULTI-PET FOUNDATION
+      // Bible §11.6: Pet Slots system
+      // ========================================
+
+      /**
+       * Get the currently active pet.
+       * Returns null if no pets owned (should never happen in normal play).
+       */
+      getActivePet: (): OwnedPetState | null => {
+        const state = get();
+        if (!state.activePetId || !state.petsById) {
+          return null;
+        }
+        return state.petsById[state.activePetId] ?? null;
+      },
+
+      /**
+       * Switch to a different owned pet.
+       * Bible §11.6: "Switching between slotted pets is instant"
+       */
+      setActivePet: (petId: PetInstanceId) => {
+        const state = get();
+
+        // Validate pet exists in owned pets
+        if (!state.petsById || !state.petsById[petId]) {
+          console.warn(`[MultiPet] Cannot switch to unknown pet: ${petId}`);
+          return;
+        }
+
+        const newActivePet = state.petsById[petId];
+
+        // Update both activePetId and legacy pet field for backward compat
+        set({
+          activePetId: petId,
+          // Keep legacy 'pet' field synced
+          pet: { ...newActivePet, id: newActivePet.speciesId },
+        });
+
+        console.log(`[MultiPet] Switched active pet to ${newActivePet.speciesId} (${petId})`);
+      },
+
+      /**
+       * Get all owned pets in acquisition order.
+       */
+      getOwnedPets: (): OwnedPetState[] => {
+        const state = get();
+        if (!state.ownedPetIds || !state.petsById) {
+          return [];
+        }
+        return state.ownedPetIds
+          .map(id => state.petsById[id])
+          .filter((pet): pet is OwnedPetState => pet != null);
+      },
+
+      /**
+       * Get owned pet by instance ID.
+       */
+      getOwnedPetById: (petId: PetInstanceId): OwnedPetState | null => {
+        const state = get();
+        if (!state.petsById) {
+          return null;
+        }
+        return state.petsById[petId] ?? null;
+      },
+
+      // ========================================
       // RESET
       // ========================================
       resetGame: () => {
@@ -1525,7 +1660,77 @@ export const useGameStore = create<GameStore>()(
     }),
     {
       name: 'grundy-save',
-      version: 1,
+      version: 2, // P9-A: Bumped version for multi-pet migration
+      migrate: (persistedState: unknown, version: number) => {
+        // P9-A: Migration from v1 (single-pet) to v2 (multi-pet)
+        if (version < 2) {
+          console.log('[Migration] Migrating save from v1 to v2 (multi-pet)');
+
+          const oldState = persistedState as Record<string, unknown>;
+
+          // Check if already has multi-pet fields (partial migration)
+          if (oldState.petsById && oldState.ownedPetIds && oldState.activePetId) {
+            console.log('[Migration] Save already has multi-pet fields, skipping');
+            return persistedState;
+          }
+
+          // Get legacy pet data
+          const legacyPet = oldState.pet as PetState | undefined;
+          if (!legacyPet || !legacyPet.id) {
+            console.warn('[Migration] No legacy pet found, using fresh state');
+            const freshMultiPet = createInitialMultiPetState();
+            return {
+              ...oldState,
+              petsById: freshMultiPet.petsById,
+              ownedPetIds: freshMultiPet.ownedPetIds,
+              activePetId: freshMultiPet.activePetId,
+              unlockedSlots: PET_SLOTS_CONFIG.FREE_PLAYER_SLOTS,
+            };
+          }
+
+          // Create instance ID for legacy pet
+          const legacySpeciesId = legacyPet.id as string;
+          const legacyInstanceId = `${legacySpeciesId}-legacy`;
+
+          // Convert legacy pet to owned pet (preserve all progress)
+          // Type assertion needed for migration from untyped legacy data
+          const legacyOwnedPet = {
+            ...legacyPet,
+            instanceId: legacyInstanceId,
+            speciesId: legacySpeciesId,
+          } as OwnedPetState;
+
+          // Build petsById with legacy pet and other starters
+          const petsById: Record<PetInstanceId, OwnedPetState> = {};
+          const ownedPetIds: PetInstanceId[] = [];
+
+          // Add legacy pet first (preserves progress)
+          petsById[legacyInstanceId] = legacyOwnedPet;
+          ownedPetIds.push(legacyInstanceId);
+
+          // Add other starters (fresh state)
+          for (const speciesId of STARTER_PET_IDS) {
+            if (speciesId !== legacySpeciesId) {
+              const starterInstanceId = `${speciesId}-starter`;
+              petsById[starterInstanceId] = createOwnedPet(speciesId, 'starter');
+              ownedPetIds.push(starterInstanceId);
+            }
+          }
+
+          console.log(`[Migration] Migrated pet ${legacySpeciesId} to multi-pet structure`);
+          console.log(`[Migration] Owned pets: ${ownedPetIds.join(', ')}`);
+
+          return {
+            ...oldState,
+            petsById,
+            ownedPetIds,
+            activePetId: legacyInstanceId, // Keep playing the same pet
+            unlockedSlots: PET_SLOTS_CONFIG.FREE_PLAYER_SLOTS,
+          };
+        }
+
+        return persistedState;
+      },
     }
   )
 );
@@ -1548,6 +1753,27 @@ export const useAbilityTriggers = () => useGameStore((state) => state.abilityTri
 // Shop selectors (P8-SHOP-CATALOG)
 export const useIsShopOpen = () => useGameStore((state) => state.isShopOpen);
 export const useShopActiveTab = () => useGameStore((state) => state.shopActiveTab);
+
+// P9-A: Multi-pet selectors
+export const usePetsById = () => useGameStore((state) => state.petsById);
+export const useOwnedPetIds = () => useGameStore((state) => state.ownedPetIds);
+export const useActivePetId = () => useGameStore((state) => state.activePetId);
+export const useUnlockedSlots = () => useGameStore((state) => state.unlockedSlots);
+
+/** Get the currently active pet (convenience hook) */
+export const useActivePet = () => {
+  const store = useGameStore();
+  return store.getActivePet();
+};
+
+/** Get all owned pets in acquisition order (convenience hook) */
+export const useOwnedPets = () => {
+  const store = useGameStore();
+  return store.getOwnedPets();
+};
+
+/** Get the setActivePet action */
+export const useSetActivePet = () => useGameStore((state) => state.setActivePet);
 
 // FTUE helper: Check if FTUE should be shown
 export function shouldShowFtue(state: { ftue: FtueState }): boolean {
