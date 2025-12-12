@@ -1,15 +1,21 @@
 // ============================================
 // GRUNDY — AUDIO CONFIG TESTS
 // Tests for audio system configuration and types
-// P5-AUDIO-CORE
+// P5-AUDIO-CORE, P6-AUDIO-ROOM, P6-AUDIO-TOD
 // ============================================
 
 import { describe, it, expect, beforeEach } from 'vitest';
 import {
   SOUND_CONFIG,
   MUSIC_CONFIG,
+  AMBIENCE_CONFIG,
+  ROOM_AMBIENCE_MAP,
+  TIME_OF_DAY_VOLUME_MULTIPLIERS,
+  AMBIENCE_AUDIO_PATHS,
   getAllSoundIds,
   getAllMusicTrackIds,
+  getAllAmbienceTrackIds,
+  getAllAmbienceAudioPaths,
 } from '../audio/config';
 import {
   audioManager,
@@ -23,7 +29,7 @@ import {
   stopBackgroundMusic,
 } from '../audio/audioManager';
 import { useGameStore } from '../game/store';
-import type { SoundId } from '../audio/types';
+import type { SoundId, AmbienceTrackId } from '../audio/types';
 
 describe('Audio Configuration', () => {
   describe('SOUND_CONFIG', () => {
@@ -112,6 +118,146 @@ describe('Audio Configuration', () => {
       ids.forEach((id) => {
         expect(configKeys).toContain(id);
       });
+    });
+  });
+
+  // ============================================
+  // P6-AUDIO-ROOM: Ambience Configuration Tests
+  // ============================================
+
+  describe('AMBIENCE_CONFIG', () => {
+    it('has all expected room ambience track IDs', () => {
+      const expectedIds: AmbienceTrackId[] = [
+        'ambience_living_room',
+        'ambience_kitchen',
+        'ambience_bedroom',
+        'ambience_playroom',
+        'ambience_yard',
+      ];
+
+      expectedIds.forEach((id) => {
+        expect(AMBIENCE_CONFIG).toHaveProperty(id);
+      });
+    });
+
+    it('has exactly 5 ambience tracks (one per room)', () => {
+      expect(Object.keys(AMBIENCE_CONFIG).length).toBe(5);
+    });
+
+    it('all ambience tracks have valid configuration', () => {
+      getAllAmbienceTrackIds().forEach((id) => {
+        const config = AMBIENCE_CONFIG[id];
+
+        // Has id that matches key
+        expect(config.id).toBe(id);
+
+        // Has valid src path with correct naming convention
+        expect(config.src).toBeTruthy();
+        expect(typeof config.src).toBe('string');
+        expect(config.src).toMatch(/^\/audio\/.+_ambience\.mp3$/);
+
+        // Has baseVolume between 0 and 1
+        expect(config.baseVolume).toBeGreaterThanOrEqual(0);
+        expect(config.baseVolume).toBeLessThanOrEqual(1);
+
+        // Has loop property set to true
+        expect(config.loop).toBe(true);
+      });
+    });
+
+    it('getAllAmbienceTrackIds returns all config keys', () => {
+      const ids = getAllAmbienceTrackIds();
+      const configKeys = Object.keys(AMBIENCE_CONFIG);
+
+      expect(ids.length).toBe(configKeys.length);
+      ids.forEach((id) => {
+        expect(configKeys).toContain(id);
+      });
+    });
+  });
+
+  describe('getAllAmbienceAudioPaths', () => {
+    it('returns array of 5 audio paths', () => {
+      const paths = getAllAmbienceAudioPaths();
+      expect(paths.length).toBe(5);
+    });
+
+    it('returns paths matching the expected file naming convention', () => {
+      const paths = getAllAmbienceAudioPaths();
+      paths.forEach((path) => {
+        expect(path).toMatch(/^\/audio\/.+_ambience\.mp3$/);
+      });
+    });
+
+    it('includes all expected room ambience files', () => {
+      const paths = getAllAmbienceAudioPaths();
+      expect(paths).toContain('/audio/living_room_ambience.mp3');
+      expect(paths).toContain('/audio/kitchen_ambience.mp3');
+      expect(paths).toContain('/audio/bedroom_ambience.mp3');
+      expect(paths).toContain('/audio/playroom_ambience.mp3');
+      expect(paths).toContain('/audio/yard_ambience.mp3');
+    });
+  });
+
+  describe('AMBIENCE_AUDIO_PATHS constant', () => {
+    it('has all 5 room paths', () => {
+      expect(AMBIENCE_AUDIO_PATHS.LIVING_ROOM).toBe('/audio/living_room_ambience.mp3');
+      expect(AMBIENCE_AUDIO_PATHS.KITCHEN).toBe('/audio/kitchen_ambience.mp3');
+      expect(AMBIENCE_AUDIO_PATHS.BEDROOM).toBe('/audio/bedroom_ambience.mp3');
+      expect(AMBIENCE_AUDIO_PATHS.PLAYROOM).toBe('/audio/playroom_ambience.mp3');
+      expect(AMBIENCE_AUDIO_PATHS.YARD).toBe('/audio/yard_ambience.mp3');
+    });
+
+    it('matches paths in getAllAmbienceAudioPaths', () => {
+      const helperPaths = getAllAmbienceAudioPaths();
+      const constantPaths = Object.values(AMBIENCE_AUDIO_PATHS);
+
+      constantPaths.forEach((path) => {
+        expect(helperPaths).toContain(path);
+      });
+    });
+  });
+
+  describe('ROOM_AMBIENCE_MAP', () => {
+    it('maps all 5 rooms to their ambience tracks', () => {
+      expect(ROOM_AMBIENCE_MAP.living_room).toBe('ambience_living_room');
+      expect(ROOM_AMBIENCE_MAP.kitchen).toBe('ambience_kitchen');
+      expect(ROOM_AMBIENCE_MAP.bedroom).toBe('ambience_bedroom');
+      expect(ROOM_AMBIENCE_MAP.playroom).toBe('ambience_playroom');
+      expect(ROOM_AMBIENCE_MAP.yard).toBe('ambience_yard');
+    });
+
+    it('all mapped tracks exist in AMBIENCE_CONFIG', () => {
+      Object.values(ROOM_AMBIENCE_MAP).forEach((trackId) => {
+        expect(AMBIENCE_CONFIG).toHaveProperty(trackId);
+      });
+    });
+  });
+
+  describe('TIME_OF_DAY_VOLUME_MULTIPLIERS', () => {
+    it('has multipliers for all 4 time periods', () => {
+      expect(TIME_OF_DAY_VOLUME_MULTIPLIERS).toHaveProperty('morning');
+      expect(TIME_OF_DAY_VOLUME_MULTIPLIERS).toHaveProperty('day');
+      expect(TIME_OF_DAY_VOLUME_MULTIPLIERS).toHaveProperty('evening');
+      expect(TIME_OF_DAY_VOLUME_MULTIPLIERS).toHaveProperty('night');
+    });
+
+    it('all multipliers are between 0 and 1', () => {
+      Object.values(TIME_OF_DAY_VOLUME_MULTIPLIERS).forEach((multiplier) => {
+        expect(multiplier).toBeGreaterThan(0);
+        expect(multiplier).toBeLessThanOrEqual(1);
+      });
+    });
+
+    it('day period has full volume (1.0)', () => {
+      expect(TIME_OF_DAY_VOLUME_MULTIPLIERS.day).toBe(1.0);
+    });
+
+    it('night period has lowest volume', () => {
+      const { morning, day, evening, night } = TIME_OF_DAY_VOLUME_MULTIPLIERS;
+      expect(night).toBeLessThan(morning);
+      expect(night).toBeLessThan(day);
+      expect(night).toBeLessThan(evening);
     });
   });
 

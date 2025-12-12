@@ -90,35 +90,36 @@ export const MUSIC_CONFIG: Record<MusicTrackId, MusicConfig> = {
  * Ambience tracks configuration.
  * Each room has its own ambient soundscape.
  * P6-AUDIO-ROOM: Room-specific ambience.
+ * NOTE: File naming convention is <room>_ambience.mp3
  */
 export const AMBIENCE_CONFIG: Record<AmbienceTrackId, AmbienceConfig> = {
   ambience_living_room: {
     id: 'ambience_living_room',
-    src: '/audio/ambience_living_room.mp3',
+    src: '/audio/living_room_ambience.mp3',
     baseVolume: 0.2,
     loop: true,
   },
   ambience_kitchen: {
     id: 'ambience_kitchen',
-    src: '/audio/ambience_kitchen.mp3',
+    src: '/audio/kitchen_ambience.mp3',
     baseVolume: 0.15,
     loop: true,
   },
   ambience_bedroom: {
     id: 'ambience_bedroom',
-    src: '/audio/ambience_bedroom.mp3',
+    src: '/audio/bedroom_ambience.mp3',
     baseVolume: 0.1,
     loop: true,
   },
   ambience_playroom: {
     id: 'ambience_playroom',
-    src: '/audio/ambience_playroom.mp3',
+    src: '/audio/playroom_ambience.mp3',
     baseVolume: 0.25,
     loop: true,
   },
   ambience_yard: {
     id: 'ambience_yard',
-    src: '/audio/ambience_yard.mp3',
+    src: '/audio/yard_ambience.mp3',
     baseVolume: 0.2,
     loop: true,
   },
@@ -174,3 +175,23 @@ export function getAllMusicTrackIds(): MusicTrackId[] {
 export function getAllAmbienceTrackIds(): AmbienceTrackId[] {
   return Object.keys(AMBIENCE_CONFIG) as AmbienceTrackId[];
 }
+
+/**
+ * Get all ambience audio file paths for PWA pre-caching.
+ * Returns paths relative to public folder (e.g., '/audio/living_room_ambience.mp3').
+ */
+export function getAllAmbienceAudioPaths(): string[] {
+  return Object.values(AMBIENCE_CONFIG).map((config) => config.src);
+}
+
+/**
+ * Expected ambience audio file paths.
+ * Exported for testing and PWA service worker configuration.
+ */
+export const AMBIENCE_AUDIO_PATHS = {
+  LIVING_ROOM: '/audio/living_room_ambience.mp3',
+  KITCHEN: '/audio/kitchen_ambience.mp3',
+  BEDROOM: '/audio/bedroom_ambience.mp3',
+  PLAYROOM: '/audio/playroom_ambience.mp3',
+  YARD: '/audio/yard_ambience.mp3',
+} as const;

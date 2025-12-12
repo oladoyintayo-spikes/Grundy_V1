@@ -5,7 +5,7 @@
 // ============================================
 
 // P6-PWA-UPDATE: Increment this version when deploying updates
-const CACHE_NAME = 'grundy-shell-v2';
+const CACHE_NAME = 'grundy-shell-v3';
 
 // P6-PWA-PRECACHE: Shell assets to pre-cache (stable resources only)
 // Vite fingerprints built assets, so we only pre-cache the shell
@@ -18,12 +18,25 @@ const SHELL_ASSETS = [
   './icons/splash-512.png',
 ];
 
+// P6-PWA-PRECACHE: Ambience audio files for offline playback
+// These are large files but essential for the room atmosphere experience
+const AMBIENCE_AUDIO_ASSETS = [
+  './audio/living_room_ambience.mp3',
+  './audio/kitchen_ambience.mp3',
+  './audio/bedroom_ambience.mp3',
+  './audio/playroom_ambience.mp3',
+  './audio/yard_ambience.mp3',
+];
+
+// Combined precache list
+const PRECACHE_URLS = [...SHELL_ASSETS, ...AMBIENCE_AUDIO_ASSETS];
+
 // Install event: pre-cache shell assets
 self.addEventListener('install', (event) => {
   console.log('[SW] Installing new version...');
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(SHELL_ASSETS).catch((error) => {
+      return cache.addAll(PRECACHE_URLS).catch((error) => {
         // If pre-cache fails, don't block install
         // This is progressive enhancement, not a hard requirement
         console.warn('[SW] Pre-cache failed (non-blocking):', error);
