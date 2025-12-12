@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useGameStore, shouldShowFtue } from './game/store';
 import { PETS, getAllPets, getPetById } from './data/pets';
-import { getAllFoods, getShopFoods, getFoodById } from './data/foods';
+import { getAllFoods, getFoodById } from './data/foods';
 import { ReactionType, FoodDefinition, FeedResult, MiniGameId, MiniGameResult, AppView } from './types';
 import { getXPForLevel } from './data/config';
 import { DEFAULT_VIEW } from './game/navigation';
@@ -41,6 +41,8 @@ import { canInstall, promptInstall, isInstalled } from './pwa/installPrompt';
 import { onServiceWorkerUpdate, hasServiceWorkerUpdate, applyServiceWorkerUpdate } from './pwa/serviceWorker';
 // P8-INV-CORE: Inventory UI
 import { InventoryView } from './components/inventory';
+// P8-SHOP-CATALOG: Shop UI
+import { ShopView } from './components/shop/ShopView';
 
 // ============================================
 // SHARED COMPONENTS
@@ -192,56 +194,6 @@ const RoomSelector = ({ currentRoom, onSelectRoom }: {
           </button>
         );
       })}
-    </div>
-  );
-};
-
-// Shop Modal
-const ShopModal = ({ isOpen, onClose, coins, onBuy, inventory }: {
-  isOpen: boolean;
-  onClose: () => void;
-  coins: number;
-  onBuy: (foodId: string) => void;
-  inventory: Record<string, number>;
-}) => {
-  if (!isOpen) return null;
-
-  const shopFoods = getShopFoods();
-
-  return (
-    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-      <div className="bg-gray-800 rounded-2xl p-6 max-w-md w-full max-h-[80vh] overflow-auto">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold text-white">🏪 Food Shop</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-white text-2xl">&times;</button>
-        </div>
-        <div className="flex items-center gap-2 mb-4 p-2 bg-yellow-500/20 rounded-lg">
-          <span className="text-xl">🪙</span>
-          <span className="text-yellow-400 font-bold">{coins} coins</span>
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          {shopFoods.map(food => (
-            <button
-              key={food.id}
-              onClick={() => onBuy(food.id)}
-              disabled={coins < food.coinCost}
-              className={`p-3 rounded-xl border transition-all text-left
-                ${coins >= food.coinCost
-                  ? 'border-green-500/50 bg-green-500/10 hover:bg-green-500/20'
-                  : 'border-gray-700 bg-gray-900 opacity-50 cursor-not-allowed'}`}
-            >
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-xl">{food.emoji}</span>
-                <span className="text-sm text-white">{food.name}</span>
-              </div>
-              <div className="flex justify-between text-xs">
-                <span className="text-yellow-400">🪙 {food.coinCost}</span>
-                <span className="text-gray-400">Own: {inventory[food.id] || 0}</span>
-              </div>
-            </button>
-          ))}
-        </div>
-      </div>
     </div>
   );
 };
@@ -941,6 +893,10 @@ function MainApp() {
   const currencies = useGameStore((state) => state.currencies);
   const inventory = useGameStore((state) => state.inventory);
   const buyFood = useGameStore((state) => state.buyFood);
+  // P8-SHOP-CATALOG: Shop requires pet + mode for recommendations
+  const pet = useGameStore((state) => state.pet);
+  const playMode = useGameStore((state) => state.playMode);
+  const energy = useGameStore((state) => state.energy);
 
   // Audio settings (P5-AUDIO)
   const musicEnabled = useGameStore((state) => state.settings.musicEnabled);
@@ -1104,12 +1060,21 @@ function MainApp() {
       {/* Bottom Navigation */}
       <BottomNav currentView={currentView} onChangeView={handleChangeView} />
 
-      {/* Shop Modal (available from any view) */}
-      <ShopModal
+      {/* P8-SHOP-CATALOG: Shop Modal (available from any view) */}
+      <ShopView
         isOpen={showShop}
         onClose={handleCloseShop}
         coins={currencies.coins}
-        onBuy={handleBuy}
+        gems={currencies.gems}
+        petLevel={pet.level}
+        gameMode={playMode}
+        petState={{
+          hunger: pet.hunger,
+          mood: pet.moodValue ?? 50,
+          energy: energy.current,
+          weight: 0, // TODO: Add weight tracking in future phase
+          isSick: false, // TODO: Add sickness system in future phase
+        }}
         inventory={inventory}
       />
 
