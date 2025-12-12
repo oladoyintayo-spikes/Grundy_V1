@@ -150,11 +150,11 @@ function createInitialState() {
   return {
     pet: createInitialPet('munchlet'), // Bible-compliant default starter
     currencies: {
-      coins: STARTING_RESOURCES.COINS, // BCT-ECON-001: 100
-      gems: STARTING_RESOURCES.GEMS,   // BCT-ECON-002: 0
+      coins: STARTING_RESOURCES.COINS, // BCT-ECON-004: 100
+      gems: STARTING_RESOURCES.GEMS,   // BCT-ECON-005: 0
       eventTokens: 0,
     } as Record<CurrencyType, number>,
-    inventory: { ...STARTING_INVENTORY }, // BCT-ECON-003-005: 2 apple, 2 banana, 1 cookie
+    inventory: { ...STARTING_INVENTORY }, // BCT-ECON-006-008: 2 apple, 2 banana, 1 cookie
     inventoryCapacity: INVENTORY_CONFIG.BASE_CAPACITY, // BCT-INV-001: 15
     stats: {
       totalFeeds: 0,

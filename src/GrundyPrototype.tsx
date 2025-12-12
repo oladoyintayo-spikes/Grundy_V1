@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useGameStore, shouldShowFtue } from './game/store';
 import { PETS, getAllPets, getPetById } from './data/pets';
-import { getAllFoods, getShopFoods } from './data/foods';
+import { getAllFoods, getShopFoods, getFoodById } from './data/foods';
 import { ReactionType, FoodDefinition, FeedResult, MiniGameId, MiniGameResult, AppView } from './types';
 import { getXPForLevel } from './data/config';
 import { DEFAULT_VIEW } from './game/navigation';
@@ -271,9 +271,13 @@ const LevelUpModal = ({ level, onClose }: { level: number; onClose: () => void }
 interface HomeViewProps {
   /** @deprecated Shop is now in AppHeader per Bible §14.6 */
   onOpenShop?: () => void;
+  /** P8-INV-CORE: Preselected food from Inventory "Use on Pet" (BCT-INV-017) */
+  pendingFeedFoodId?: string | null;
+  /** P8-INV-CORE: Callback to clear preselection after feeding or cancel */
+  onClearPendingFeed?: () => void;
 }
 
-function HomeView({ onOpenShop }: HomeViewProps) {
+function HomeView({ onOpenShop, pendingFeedFoodId, onClearPendingFeed }: HomeViewProps) {
   // Get state and actions from Zustand store
   const pet = useGameStore((state) => state.pet);
   const currencies = useGameStore((state) => state.currencies);
@@ -308,6 +312,10 @@ function HomeView({ onOpenShop }: HomeViewProps) {
 
   // Get all pets for pet selector
   const allPets = getAllPets();
+
+  // BCT-INV-017: Get preselected food definition for display
+  const preselectedFood = pendingFeedFoodId ? getFoodById(pendingFeedFoodId) : null;
+  const preselectedFoodCount = pendingFeedFoodId ? (inventory[pendingFeedFoodId] || 0) : 0;
 
   // XP calculations
   const xpForNextLevel = getXPForLevel(pet.level + 1);
@@ -364,7 +372,12 @@ function HomeView({ onOpenShop }: HomeViewProps) {
       setIsFeeding(false);
     }, 1500);
 
-  }, [pet.id, inventory, isFeeding, feed, petName]);
+    // BCT-INV-017: Clear preselection after successful feed
+    if (onClearPendingFeed) {
+      onClearPendingFeed();
+    }
+
+  }, [pet.id, inventory, isFeeding, feed, petName, onClearPendingFeed]);
 
   // Change pet using store
   const changePet = (petId: string) => {
@@ -467,6 +480,44 @@ function HomeView({ onOpenShop }: HomeViewProps) {
         {pet.hunger < 30 && (
           <div className="text-center text-orange-400 text-xs py-1 shrink-0 animate-pulse">
             {petName} is getting hungry!
+          </div>
+        )}
+
+        {/* BCT-INV-017: Preselection banner from Inventory "Use on Pet" */}
+        {preselectedFood && preselectedFoodCount > 0 && (
+          <div
+            className="bg-amber-500/20 border border-amber-400/50 rounded-xl p-2 mt-2 shrink-0 flex items-center justify-between"
+            data-testid="feed-preselected-item"
+          >
+            <div className="flex items-center gap-2">
+              <span className="text-xl">{preselectedFood.emoji}</span>
+              <div>
+                <span className="text-sm text-amber-300 font-medium">Preselected: {preselectedFood.name}</span>
+                <span className="text-xs text-amber-400/70 ml-2">(×{preselectedFoodCount})</span>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => handleFeed(pendingFeedFoodId!)}
+                disabled={isFeeding || petStuffed || petOnCooldown}
+                className={`px-3 py-1 rounded-lg text-sm font-medium transition-all
+                  ${isFeeding || petStuffed || petOnCooldown
+                    ? 'bg-slate-600 text-slate-400 cursor-not-allowed'
+                    : 'bg-green-500 hover:bg-green-600 text-white active:scale-95'
+                  }`}
+                data-testid="feed-preselected-button"
+              >
+                Feed Now
+              </button>
+              <button
+                onClick={onClearPendingFeed}
+                className="text-amber-400/70 hover:text-amber-300 text-lg px-1"
+                aria-label="Clear preselection"
+                data-testid="feed-clear-preselection"
+              >
+                ×
+              </button>
+            </div>
           </div>
         )}
 
@@ -1033,7 +1084,11 @@ function MainApp() {
         {currentView === 'home' && (
           <RoomScene showAccents={true}>
             {/* Bible §14.6: Shop moved to header - HomeView focuses on core loop */}
-            <HomeView />
+            {/* BCT-INV-017: Pass preselection state from Inventory */}
+            <HomeView
+              pendingFeedFoodId={pendingFeedFoodId}
+              onClearPendingFeed={() => setPendingFeedFoodId(null)}
+            />
           </RoomScene>
         )}
         {currentView === 'games' && (
