@@ -36,8 +36,8 @@ export function calculateTier(score: number): RewardTier {
 
 /**
  * Coin ranges per tier (LOCKED)
- * Note: Bible says Rainbow can give 1 gem, but prompt LOCKED rules say NO GEMS EVER
- * Following LOCKED rules from prompt
+ * Web Edition mini-games award 0 gems always (Bible §8.3).
+ * Unity may award gems for Rainbow tier; Web does not.
  */
 const COIN_RANGES: Record<RewardTier, [number, number]> = {
   bronze: [2, 3],

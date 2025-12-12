@@ -2756,7 +2756,7 @@ Play free → See cool cosmetics → Buy 1 small cosmetic (10-20💎)
 | Level up | 5 | Per level | Reliable progression |
 | First feed daily | 1 | Daily | Free players: 1/day |
 | First feed daily (Plus) | 3 | Daily | Plus subscribers: 3/day |
-| Mini-game Rainbow tier | 1-3 | Per achievement | Skill reward |
+| Mini-game Rainbow tier | 1-3 | Per achievement | **Unity only**; Web Edition awards 0 gems (see §8.3) |
 | Daily login (Day 7) | 10 | Weekly | Streak reward |
 | Achievements | 5-50 | One-time | Milestone rewards |
 | Season Pass (Premium) | ~100 | Per season | Spread across tiers |

@@ -70,7 +70,7 @@ test.describe('BCT-INV-017: Use on Pet', () => {
       await expect(page.getByTestId('inventory-modal')).not.toBeVisible();
 
       // Verify preselection banner is visible
-      await expect(page.getByTestId('feed-preselected-item')).toBeVisible();
+      await expect(page.getByTestId('feed-preselected-banner')).toBeVisible();
     }
   });
 
@@ -100,14 +100,14 @@ test.describe('BCT-INV-017: Use on Pet', () => {
       await page.waitForTimeout(500);
 
       // Verify preselection banner is visible
-      await expect(page.getByTestId('feed-preselected-item')).toBeVisible();
+      await expect(page.getByTestId('feed-preselected-banner')).toBeVisible();
 
       // Click "Feed Now" button
       await page.getByTestId('feed-now-button').click();
       await page.waitForTimeout(500);
 
       // Verify preselection banner is cleared
-      await expect(page.getByTestId('feed-preselected-item')).not.toBeVisible();
+      await expect(page.getByTestId('feed-preselected-banner')).not.toBeVisible();
     }
   });
 
@@ -137,14 +137,14 @@ test.describe('BCT-INV-017: Use on Pet', () => {
       await page.waitForTimeout(500);
 
       // Verify preselection banner is visible
-      await expect(page.getByTestId('feed-preselected-item')).toBeVisible();
+      await expect(page.getByTestId('feed-preselected-banner')).toBeVisible();
 
       // Click "X" clear button
       await page.getByTestId('feed-clear-preselection').click();
       await page.waitForTimeout(300);
 
       // Verify preselection banner is cleared (without feeding)
-      await expect(page.getByTestId('feed-preselected-item')).not.toBeVisible();
+      await expect(page.getByTestId('feed-preselected-banner')).not.toBeVisible();
     }
   });
 });
