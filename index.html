@@ -9,9 +9,10 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="Grundy" />
     <title>Grundy - Virtual Pet Game</title>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐾</text></svg>" />
-    <link rel="apple-touch-icon" href="icons/icon-192.png" />
-    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png" />
+    <link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
     <style>
       /* Loading state styles - removed when React mounts */
       #loading {
@@ -37,10 +38,6 @@
         font-size: 14px;
         opacity: 0.8;
       }
-      #loading .emoji {
-        font-size: 48px;
-        margin-bottom: 16px;
-      }
       @keyframes spin {
         to { transform: rotate(360deg); }
       }
@@ -50,7 +47,7 @@
     <div id="root">
       <!-- Loading state - replaced when React mounts -->
       <div id="loading">
-        <div class="emoji">🐾</div>
+        <img src="/icons/grundy-192.png" alt="Grundy" width="64" height="64" style="margin-bottom: 16px;" />
         <div class="spinner"></div>
         <p>Loading Grundy...</p>
       </div>

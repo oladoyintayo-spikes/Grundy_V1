@@ -382,26 +382,8 @@ The following copy is canonical and used across all onboarding documentation:
 Dev: Phase 6 Bible v1.5 compliance tasks implemented:
 - **Tier 1:** P6-CORE-LOOP, P6-ECON-WEB, P6-HUD-CLEANUP, P6-PET-HOME, P6-ENV-ROOMS, P6-ENV-UI, P6-ENV-TOD, P6-NAV-GROUNDWORK, P6-FTUE-INTRO, P6-MOBILE-LAYOUT, P6-QA-BCT
 - **Tier 2 Polish:** P6-ART-POSES, P6-MOOD-SYSTEM, P6-ABILITY-UI, P6-T2-PET-BEHAVIORS, P6-ART-PRODUCTION, P6-ART-TEST
-- **Audio & PWA:** P6-AUDIO-ASSETS, P6-AUDIO-ROOM, P6-AUDIO-TOD, P6-PWA-PRECACHE, P6-PWA-UI, P6-PWA-UPDATE
-- **FTUE Modes:** P6-FTUE-MODES — Cozy vs Classic divergence with MODE_CONFIG, decay/penalty multipliers, 38 BCT-MODE tests
 
-Mood system (§4.5) with numeric moodValue 0-100, decay, and Grib/Plompo abilities. Pet behavior polish with transient eating poses and mood-based expressions. Ability indicators added (P1-ABILITY-4). **Art system: Pet sprites wired per pet/stage/pose with fallback chain; Home active pet uses PNG sprites when assets exist; emoji/orb fallbacks limited to DEV or true missing assets.** BCT suite passing (1311 tests, 685 BCT-specific incl. 401 BCT-ART tests, 49 BCT-NEGLECT tests). **Phase 7 started:** P7-NEGLECT-SYSTEM complete with full Neglect & Withdrawal runtime.
-
-**P6-AUDIO / P6-PWA Implementation (December 2024):**
-- Audio: Room-specific ambience with crossfade transitions (Living Room, Kitchen, Bedroom, Playroom, Yard)
-- Audio: Time-of-day volume multipliers (morning 0.9, day 1.0, evening 0.8, night 0.6)
-- PWA: Service worker precaches shell assets (index.html, manifest, icons, splash)
-- PWA: Install CTA in Settings (shows when beforeinstallprompt available, hidden after install)
-- PWA: "New version available" toast with user-controlled refresh (no auto-skipWaiting)
-
-**P6-FTUE-MODES Implementation (December 2024):**
-- Central MODE_CONFIG in bible.constants.ts with decay/penalty multipliers
-- Cozy: 50% slower mood decay, 50% penalty reduction, no neglect/sickness
-- Classic: Baseline decay/penalties, neglect/sickness/care-mistakes enabled
-- decayMood() and updateMoodValue() now accept optional gameMode parameter
-- Store passes playMode to mood functions for mode-aware behavior
-- FTUE copy updated to accurately describe mode differences
-- 38 BCT-MODE tests verify config values, decay differences, penalty scaling
+Mood system (§4.5) with numeric moodValue 0-100, decay, and Grib/Plompo abilities. Pet behavior polish with transient eating poses and mood-based expressions. Ability indicators added (P1-ABILITY-4). **Art system: Pet sprites wired per pet/stage/pose with fallback chain; Home active pet uses PNG sprites when assets exist; emoji/orb fallbacks limited to DEV or true missing assets.** BCT suite passing (1218 tests, 598 BCT-specific incl. 401 BCT-ART tests, 23 BCT-NEGLECT specs).
 
 **P6-MOOD-SYSTEM / P6-ABILITY-UI Verification (December 2024):**
 - Mood tiers (ECSTATIC/HAPPY/CONTENT/LOW/UNHAPPY) match Bible §4.5
@@ -412,6 +394,14 @@ Mood system (§4.5) with numeric moodValue 0-100, decay, and Grib/Plompo abiliti
 - BCT-MOOD-01 through BCT-MOOD-07 passing (42 mood/ability tests)
 
 **Bible v1.5 + BCT v2.1 Audit (P6-QA-BCT-AUDIT):** Verified alignment of core loop, mini-games, Rooms Lite, FTUE, HUD. Nav/env groundwork validated; room selector UI confirmed implemented (P6-ENV-UI). `bible.constants.ts` header updated to v1.5.
+
+**P6-BRANDING & P6-ART-PROPS (December 2024):**
+- Branding finalized: favicon, apple-touch-icon, 192/512 PWA icons (grundy-192.png, grundy-512.png) wired
+- Manifest aligned: name="Grundy", theme_color=#0f172a, background_color=#020617
+- Loading screen uses Grundy icon instead of emoji
+- Room props added for Kitchen (counter), Bedroom (bed), Playroom (shelf), Living Room (sofa), Yard (tree)
+- Ability indicators visually aligned with final HUD/brand; bounce-in animation defined in index.css
+- 1219 tests passing (BCT-PROPS-01 added)
 
 ### Task Status Overview
 
@@ -440,53 +430,6 @@ Mood system (§4.5) with numeric moodValue 0-100, decay, and Grib/Plompo abiliti
 | **P6-ABILITY-UI** | Ability activation indicators | ✅ | §3.7, §4.10 |
 | **P6-T2-PET-BEHAVIORS** | Pet pose behavior wiring | ✅ | §4.5, §13.7 |
 | **P6-ART-TEST** | BCT-ART tests (sprite coverage, no-orb guarantee) | ✅ | §13.7 |
-| **P6-AUDIO-ASSETS** | Audit SFX/BGM assets | ✅ | — |
-| **P6-AUDIO-ROOM** | Room-specific ambience | ✅ | — |
-| **P6-AUDIO-TOD** | Time-of-day volume variations | ✅ | — |
-| **P6-PWA-PRECACHE** | Core asset precaching | ✅ | — |
-| **P6-PWA-UI** | Install CTA in Settings | ✅ | — |
-| **P6-PWA-UPDATE** | New version toast | ✅ | — |
-| **P6-FTUE-MODES** | Cozy vs Classic mode divergence | ✅ | §9 |
-
----
-
-## Web Phase 7 — Classic Mode Runtime
-
-**Goal:** Implement the runtime systems for Classic Mode per Bible v1.5 §9.4.
-
-### P7-NEGLECT-SYSTEM ✅ (December 2024)
-
-Implemented the Neglect & Withdrawal System per Bible §9.4.3:
-
-**Files Added/Modified:**
-- `src/constants/bible.constants.ts` — Added `NEGLECT_CONFIG`, `NEGLECT_STAGES`, `NEGLECT_UI_COPY`, helper functions
-- `src/types/index.ts` — Added `NeglectState` interface, `DEFAULT_NEGLECT_STATE`
-- `src/game/store.ts` — Added neglect slice with actions: `initNeglectForPet`, `updateNeglectOnLogin`, `registerCareEvent`, `recoverFromWithdrawnWithGems`, `recoverFromRunawayWithGems`, `callBackRunawayPet`, `canInteractWithPet`, `getNeglectState`
-- `src/components/pet/NeglectIndicator.tsx` — Added UI components: `NeglectBadge`, `NeglectMessage`, `RunawayScreen`, `WithdrawalRecoveryPanel`, `NeglectPetWrapper`, `useNeglectForPet` hook
-- `src/__tests__/bct-neglect.spec.ts` — 49 BCT-NEGLECT tests covering all 23 BCT specs
-
-**Features:**
-- 5-stage neglect ladder: Normal → Worried (Day 2) → Sad (Day 4) → Withdrawn (Day 7) → Critical (Day 10) → Runaway (Day 14)
-- Per-pet neglect tracking (each pet has independent state)
-- Calendar-day semantics (midnight to midnight)
-- Offline cap (max 14 days accrued)
-- FTUE protection (neglect disabled during onboarding)
-- Grace period (first 48h after account creation)
-- Free recovery paths: 7 consecutive care days (withdrawn) / 72h wait (runaway)
-- Paid recovery paths: 15💎 instant (withdrawn) / 25💎 after 24h (runaway)
-- Bond penalties: -25% instant (withdrawn), -50% on return (runaway)
-- Cozy mode fully disables neglect (MODE_CONFIG.neglectEnabled = false)
-- Classic mode enables neglect (MODE_CONFIG.neglectEnabled = true)
-
-**Tests:** 49 BCT-NEGLECT tests + 1311 total tests passing
-
-### P7 Remaining Tasks
-
-| ID | Task | Status | Bible | Notes |
-|----|------|--------|-------|-------|
-| P7-SICKNESS | Sickness system | ⬜ | §9.4.2 | Hunger=0 4h trigger, 2× decay, medicine cure |
-| P7-WEIGHT | Weight system | ⬜ | §5.7 | Hidden 0-100 scale, visual stages |
-| P7-HIDE-COZY | Hide care items in Cozy | ⬜ | §9.4 | Medicine not visible in Cozy mode |
 
 ---
 
