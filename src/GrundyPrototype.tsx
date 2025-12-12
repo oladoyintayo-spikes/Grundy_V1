@@ -39,6 +39,8 @@ import { AbilityIndicator } from './components/abilities/AbilityIndicator';
 // P6-PWA-UI, P6-PWA-UPDATE imports
 import { canInstall, promptInstall, isInstalled } from './pwa/installPrompt';
 import { onServiceWorkerUpdate, hasServiceWorkerUpdate, applyServiceWorkerUpdate } from './pwa/serviceWorker';
+// P8-INV-CORE: Inventory UI
+import { InventoryView } from './components/inventory';
 
 // ============================================
 // SHARED COMPONENTS
@@ -881,6 +883,10 @@ function MainApp() {
 
   // Shop modal state (shared across views)
   const [showShop, setShowShop] = useState(false);
+  // P8-INV-CORE: Inventory modal state
+  const [showInventory, setShowInventory] = useState(false);
+  // P8-INV-CORE: Track food to pre-select for feeding
+  const [pendingFeedFoodId, setPendingFeedFoodId] = useState<string | null>(null);
   const currencies = useGameStore((state) => state.currencies);
   const inventory = useGameStore((state) => state.inventory);
   const buyFood = useGameStore((state) => state.buyFood);
@@ -1003,10 +1009,24 @@ function MainApp() {
     buyFood(foodId, 1);
   }, [buyFood]);
 
+  // P8-INV-CORE: Inventory handlers
+  const handleOpenInventory = () => setShowInventory(true);
+  const handleCloseInventory = () => setShowInventory(false);
+  const handleInventoryToShop = () => {
+    setShowInventory(false);
+    setShowShop(true);
+  };
+  // BCT-INV-017: Use on Pet routes to feeding flow
+  const handleInventoryToFeed = useCallback((foodId: string) => {
+    setShowInventory(false);
+    setCurrentView('home');
+    setPendingFeedFoodId(foodId);
+  }, []);
+
   return (
     <div className={`h-screen w-screen flex flex-col bg-gradient-to-b ${bgClass} overflow-hidden`}>
-      {/* App Header (Bible §14.6: Shop button in top-corner) */}
-      <AppHeader onOpenShop={handleOpenShop} />
+      {/* App Header (Bible §14.6: Shop button in top-corner, P8-INV-CORE: Inventory button) */}
+      <AppHeader onOpenShop={handleOpenShop} onOpenInventory={handleOpenInventory} />
 
       {/* Main Content (P5-ART-ROOMS: RoomScene wraps home view) */}
       <main className="flex-1 overflow-hidden flex flex-col">
@@ -1037,6 +1057,15 @@ function MainApp() {
         onBuy={handleBuy}
         inventory={inventory}
       />
+
+      {/* P8-INV-CORE: Inventory Modal (available from any view via header button) */}
+      {showInventory && (
+        <InventoryView
+          onClose={handleCloseInventory}
+          onNavigateToShop={handleInventoryToShop}
+          onNavigateToFeed={handleInventoryToFeed}
+        />
+      )}
 
       {/* Debug HUD - only visible in dev builds (BCT-HUD-002) */}
       <DebugHud />

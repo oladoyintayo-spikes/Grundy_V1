@@ -260,16 +260,14 @@ export function getAffinityForPet(foodId: string, petId: string): Affinity {
 }
 
 // =============================================================================
-// STARTING INVENTORY - FROM MOCKUP
+// STARTING INVENTORY - Bible §5.8 (BCT-ECON-003 to 005)
 // =============================================================================
 
-export const STARTING_INVENTORY: Record<string, number> = {
-  apple: 3,
-  banana: 5,
-  cookie: 2,
-  spicy_taco: 1,
-  birthday_cake: 1,
-  carrot: 4,
-  grapes: 2,
-  hot_pepper: 2,
-};
+import { TUTORIAL_INVENTORY } from '../constants/bible.constants';
+
+/**
+ * Tutorial starting inventory per Bible §5.8.
+ * Re-exported from bible.constants for backward compatibility.
+ * BCT-ECON-003: 2× Apple, BCT-ECON-004: 2× Banana, BCT-ECON-005: 1× Cookie
+ */
+export const STARTING_INVENTORY: Record<string, number> = { ...TUTORIAL_INVENTORY };

@@ -30,9 +30,10 @@ const FOCUS_RING_CLASS = 'focus-visible:outline-none focus-visible:ring-2 focus-
 
 export interface AppHeaderProps {
   onOpenShop?: () => void;
+  onOpenInventory?: () => void;
 }
 
-export function AppHeader({ onOpenShop }: AppHeaderProps) {
+export function AppHeader({ onOpenShop, onOpenInventory }: AppHeaderProps) {
   const pet = useGameStore((state) => state.pet);
   const currencies = useGameStore((state) => state.currencies);
   // Energy removed from main HUD per BCT-HUD-001
@@ -100,6 +101,17 @@ export function AppHeader({ onOpenShop }: AppHeaderProps) {
         </div>
         {/* Energy removed from main HUD per BCT-HUD-001: "Energy may show in mini-game context only" */}
 
+        {/* Inventory button (Bible §14.8: ≤2 taps to access) */}
+        {onOpenInventory && (
+          <button
+            onClick={onOpenInventory}
+            className={`ml-1 px-2 py-1 rounded-full bg-amber-500/20 hover:bg-amber-500/30 flex items-center gap-1 transition-colors ${FOCUS_RING_CLASS}`}
+            aria-label="Open Inventory"
+            data-testid="inventory-button"
+          >
+            <span aria-hidden="true">🎒</span>
+          </button>
+        )}
         {/* Shop button (Bible §14.6: Top-corner placement) */}
         {onOpenShop && (
           <button

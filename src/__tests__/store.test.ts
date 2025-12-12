@@ -17,7 +17,7 @@ describe('GameStore', () => {
       const state = useGameStore.getState()
 
       expect(state.currencies.coins).toBe(100)
-      expect(state.currencies.gems).toBe(10)
+      expect(state.currencies.gems).toBe(0) // BCT-ECON-002: New player starts with 0 gems
       expect(state.currencies.eventTokens).toBe(0)
     })
 
@@ -127,7 +127,7 @@ describe('GameStore', () => {
       // Verify reset
       const newState = useGameStore.getState()
       expect(newState.currencies.coins).toBe(100)
-      expect(newState.currencies.gems).toBe(10)
+      expect(newState.currencies.gems).toBe(0) // BCT-ECON-002: New player starts with 0 gems
       expect(newState.pet.level).toBe(1)
     })
   })
