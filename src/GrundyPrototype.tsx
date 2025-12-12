@@ -439,7 +439,7 @@ function HomeView({ onOpenShop, pendingFeedFoodId, onClearPendingFeed }: HomeVie
         {preselectedFood && preselectedFoodCount > 0 && (
           <div
             className="bg-amber-500/20 border border-amber-400/50 rounded-xl p-2 mt-2 shrink-0 flex items-center justify-between"
-            data-testid="feed-preselected-item"
+            data-testid="feed-preselected-banner"
           >
             <div className="flex items-center gap-2">
               <span className="text-xl">{preselectedFood.emoji}</span>
