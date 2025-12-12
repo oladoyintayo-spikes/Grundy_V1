@@ -108,7 +108,7 @@ export function InventoryView({ onClose, onNavigateToShop, onNavigateToFeed }: I
   return (
     <div
       className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
-      data-testid="inventory-view"
+      data-testid="inventory-modal"
     >
       <div className="bg-slate-900 rounded-2xl w-full max-w-md max-h-[85vh] flex flex-col overflow-hidden">
         {/* Header with Slot Counter - BCT-INV-012 */}

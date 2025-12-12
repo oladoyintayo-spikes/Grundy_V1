@@ -38,7 +38,8 @@ export function InventoryItemCard({ item, quantity, onSelect }: InventoryItemCar
         hover:scale-105 hover:border-amber-400/50 active:scale-95
         ${FOCUS_RING_CLASS}
       `}
-      data-testid={`inventory-item-${item.id}`}
+      data-testid="inventory-item-card"
+      data-item-id={item.id}
       aria-label={`${item.name}, quantity ${quantity}, ${item.rarity} rarity`}
     >
       {/* Item Emoji */}

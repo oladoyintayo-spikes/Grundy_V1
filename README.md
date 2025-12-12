@@ -251,6 +251,15 @@ npm test
 # Run Bible Compliance Tests (BCT suite)
 npm run test:bible
 
+# Run E2E tests (Playwright)
+npm run test:e2e
+
+# Run E2E tests with UI mode
+npm run test:e2e:ui
+
+# Run all tests (unit + bible + e2e)
+npm run test:all
+
 # Run with watch mode
 npm test -- --watch
 

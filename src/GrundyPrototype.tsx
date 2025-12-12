@@ -505,7 +505,7 @@ function HomeView({ onOpenShop, pendingFeedFoodId, onClearPendingFeed }: HomeVie
                     ? 'bg-slate-600 text-slate-400 cursor-not-allowed'
                     : 'bg-green-500 hover:bg-green-600 text-white active:scale-95'
                   }`}
-                data-testid="feed-preselected-button"
+                data-testid="feed-now-button"
               >
                 Feed Now
               </button>
