@@ -73,6 +73,8 @@ These documents form the **governance triad** for all Grundy development:
 | BCT Spec | `docs/BIBLE_COMPLIANCE_TEST.md` | **v2.2** |
 | Locked Constants | `src/constants/bible.constants.ts` | Single source for locked values |
 
+> **Note:** Patch artifacts in `docs/patches/` are non-canonical reference material only. Always use the canonical docs above.
+
 ### Phase Snapshot
 
 | Phase | Status |

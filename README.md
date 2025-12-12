@@ -20,6 +20,7 @@
 > ⚠️ **Design SoT: `docs/GRUNDY_MASTER_BIBLE.md`**
 >
 > If any document or code conflicts with the Bible, the Bible wins.
+> Patch artifacts in `docs/patches/` are non-canonical reference material only.
 
 ---
 
