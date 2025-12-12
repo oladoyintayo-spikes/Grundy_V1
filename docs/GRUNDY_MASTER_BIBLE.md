@@ -111,6 +111,8 @@ This Bible describes the **full Grundy design**. Not all features are implemente
 |-----|---------|
 | **[Web 1.0]** | Implemented in Web Edition 1.0 "First Light" |
 | **[Web Phase 6+]** | Design locked, targeted for Web Phase 6 or later |
+| **[Web Phase 8]** | Design locked, targeted for Web Phase 8 |
+| **[Web Phase 8+]** | Design locked, targeted for Web Phase 8 or later |
 | **[Unity Later]** | Reserved for Unity/mobile builds |
 | **[Future]** | Designed but not yet scheduled |
 
@@ -131,12 +133,15 @@ This means:
 
 | Section | Tag | Status |
 |---------|-----|--------|
-| §4.3 Cooldown System | [Web Phase 6+] | Not yet implemented |
-| §4.4 Fullness States | [Web Phase 6+] | Not yet implemented |
-| §9.4 Classic Mode (full) | [Web Phase 6+] | Mode select exists; consequences partial |
-| §14.4 Rooms (activity-based) | [Web Phase 6+] | Time-of-day only in Web 1.0 |
-| §14.5 Navigation Structure | [Web Phase 6+] | Pet tabs visible; needs menu-based |
-| §8 Mini-Games | [Web 1.0] | 5 games implemented |
+| §4.3 Cooldown System | [Web Phase 6+] | Implemented (Web Phase 6) |
+| §4.4 Fullness States | [Web Phase 6+] | Implemented (Web Phase 6) |
+| §9 Cozy vs Classic Mode | [Web Phase 6+] | Implemented (Mode Config + helpers) |
+| §9.4.3 Neglect & Withdrawal | [Web Phase 6+] | Implemented (Web Phase 7, Classic-only) |
+| §14.4 Rooms (activity-based) | [Web Phase 6+] | Implemented (activity→room mapping + TOD) |
+| §14.5 Navigation Structure | [Web 1.0] | Implemented (Home/Games/Settings + Settings pet switch) |
+| §11.5 Shop (Phase 8 subset) | [Web Phase 8] | Not yet implemented |
+| §11.7 Inventory (Phase 8 subset) | [Web Phase 8] | Not yet implemented |
+| §11.6 Pet Slots | [Web Phase 8+] | Not yet implemented |
 | §11.9 Season Pass | [Unity Later] | Not in Web |
 | §11.10 Rewarded Ads | [Unity Later] | Not in Web |
 
