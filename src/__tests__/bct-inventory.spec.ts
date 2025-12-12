@@ -155,9 +155,10 @@ describe('BCT-INV-006: Purchase allowed when item already exists (no new slot)',
 
 // ============================================================================
 // BCT-ECON: Starting Resources (§5.8)
+// Note: BCT-ECON-001 to 003 are mini-game economy tests in bct-economy.spec.ts
 // ============================================================================
 
-describe('BCT-ECON-001: New player starts with 100 coins', () => {
+describe('BCT-ECON-004: Starting Coins', () => {
   it('should have STARTING_RESOURCES.COINS === 100', () => {
     expect(STARTING_RESOURCES.COINS).toBe(100);
   });
@@ -168,7 +169,7 @@ describe('BCT-ECON-001: New player starts with 100 coins', () => {
   });
 });
 
-describe('BCT-ECON-002: New player starts with 0 gems', () => {
+describe('BCT-ECON-005: Starting Gems', () => {
   it('should have STARTING_RESOURCES.GEMS === 0', () => {
     expect(STARTING_RESOURCES.GEMS).toBe(0);
   });
@@ -179,7 +180,7 @@ describe('BCT-ECON-002: New player starts with 0 gems', () => {
   });
 });
 
-describe('BCT-ECON-003: Tutorial inventory: 2x Apple', () => {
+describe('BCT-ECON-006: Tutorial Inventory — Apples', () => {
   it('should have TUTORIAL_INVENTORY.apple === 2', () => {
     expect(TUTORIAL_INVENTORY.apple).toBe(2);
   });
@@ -190,7 +191,7 @@ describe('BCT-ECON-003: Tutorial inventory: 2x Apple', () => {
   });
 });
 
-describe('BCT-ECON-004: Tutorial inventory: 2x Banana', () => {
+describe('BCT-ECON-007: Tutorial Inventory — Bananas', () => {
   it('should have TUTORIAL_INVENTORY.banana === 2', () => {
     expect(TUTORIAL_INVENTORY.banana).toBe(2);
   });
@@ -201,7 +202,7 @@ describe('BCT-ECON-004: Tutorial inventory: 2x Banana', () => {
   });
 });
 
-describe('BCT-ECON-005: Tutorial inventory: 1x Cookie', () => {
+describe('BCT-ECON-008: Tutorial Inventory — Cookie', () => {
   it('should have TUTORIAL_INVENTORY.cookie === 1', () => {
     expect(TUTORIAL_INVENTORY.cookie).toBe(1);
   });
