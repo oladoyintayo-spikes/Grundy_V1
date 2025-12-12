@@ -561,3 +561,419 @@ describe('BCT-SHOP TestIDs are defined', () => {
     expect(SHOP_TEST_IDS.qtyValue('apple')).toBe('shop-qty-value-apple');
   });
 });
+
+// ============================================================================
+// SHOP PURCHASE TESTS (P8-SHOP-PURCHASE, Shop-B)
+// ============================================================================
+
+import {
+  purchaseShopItem,
+  decomposeShopItem,
+  canAddItemsToInventory,
+  calculatePrice,
+  RANDOM_BUNDLE_POOLS,
+  type PurchaseState,
+} from '../game/shopPurchase';
+import { INVENTORY_CONFIG } from '../constants/bible.constants';
+
+// ============================================================================
+// BCT-SHOP-010: Currency deducted, inventory updated
+// ============================================================================
+
+describe('BCT-SHOP-010: Currency deducted, inventory updated', () => {
+  it('should deduct coins and add item for individual food purchase', () => {
+    const state: PurchaseState = {
+      coins: 100,
+      gems: 0,
+      inventory: {},
+      inventoryCapacity: 15,
+    };
+
+    const result = purchaseShopItem(state, 'apple', 1);
+
+    expect(result.success).toBe(true);
+    expect(result.newCoins).toBe(95); // 100 - 5
+    expect(result.itemsAdded).toEqual({ apple: 1 });
+    expect(result.totalCost).toBe(5);
+    expect(result.currency).toBe('coins');
+  });
+
+  it('should deduct coins for bundle purchase', () => {
+    const state: PurchaseState = {
+      coins: 100,
+      gems: 0,
+      inventory: {},
+      inventoryCapacity: 15,
+    };
+
+    const result = purchaseShopItem(state, 'food_apple_x5', 1);
+
+    expect(result.success).toBe(true);
+    expect(result.newCoins).toBe(80); // 100 - 20
+    expect(result.itemsAdded).toEqual({ apple: 5 });
+    expect(result.totalCost).toBe(20);
+    expect(result.currency).toBe('coins');
+  });
+
+  it('should deduct gems for gem-priced items', () => {
+    const state: PurchaseState = {
+      coins: 100,
+      gems: 10,
+      inventory: {},
+      inventoryCapacity: 15,
+    };
+
+    const result = purchaseShopItem(state, 'food_epic_x1', 1);
+
+    expect(result.success).toBe(true);
+    expect(result.newGems).toBe(5); // 10 - 5
+    expect(result.newCoins).toBe(100); // Unchanged
+    expect(result.currency).toBe('gems');
+  });
+
+  it('should handle quantity multiplier for individual foods', () => {
+    const state: PurchaseState = {
+      coins: 100,
+      gems: 0,
+      inventory: {},
+      inventoryCapacity: 15,
+    };
+
+    const result = purchaseShopItem(state, 'apple', 5);
+
+    expect(result.success).toBe(true);
+    expect(result.newCoins).toBe(75); // 100 - (5 * 5)
+    expect(result.itemsAdded).toEqual({ apple: 5 });
+    expect(result.totalCost).toBe(25);
+  });
+});
+
+// ============================================================================
+// BCT-SHOP-011: Insufficient coins blocks purchase
+// ============================================================================
+
+describe('BCT-SHOP-011: Insufficient coins blocks purchase', () => {
+  it('should fail when not enough coins for individual food', () => {
+    const state: PurchaseState = {
+      coins: 3,
+      gems: 0,
+      inventory: {},
+      inventoryCapacity: 15,
+    };
+
+    const result = purchaseShopItem(state, 'apple', 1);
+
+    expect(result.success).toBe(false);
+    expect(result.error).toBe('insufficient_funds');
+  });
+
+  it('should fail when not enough coins for bundle', () => {
+    const state: PurchaseState = {
+      coins: 15,
+      gems: 0,
+      inventory: {},
+      inventoryCapacity: 15,
+    };
+
+    const result = purchaseShopItem(state, 'food_apple_x5', 1); // Costs 20
+
+    expect(result.success).toBe(false);
+    expect(result.error).toBe('insufficient_funds');
+  });
+
+  it('should fail when not enough gems for gem items', () => {
+    const state: PurchaseState = {
+      coins: 100,
+      gems: 2,
+      inventory: {},
+      inventoryCapacity: 15,
+    };
+
+    const result = purchaseShopItem(state, 'food_epic_x1', 1); // Costs 5 gems
+
+    expect(result.success).toBe(false);
+    expect(result.error).toBe('insufficient_funds');
+  });
+
+  it('should fail when quantity multiplier exceeds balance', () => {
+    const state: PurchaseState = {
+      coins: 20,
+      gems: 0,
+      inventory: {},
+      inventoryCapacity: 15,
+    };
+
+    const result = purchaseShopItem(state, 'apple', 5); // Costs 25 (5 * 5)
+
+    expect(result.success).toBe(false);
+    expect(result.error).toBe('insufficient_funds');
+  });
+});
+
+// ============================================================================
+// BCT-SHOP-012: Inventory full blocks purchase
+// ============================================================================
+
+describe('BCT-SHOP-012: Inventory full blocks purchase', () => {
+  it('should fail when inventory slots are full and adding new item', () => {
+    // Fill all 15 slots with different items
+    const fullInventory: Record<string, number> = {};
+    for (let i = 0; i < 15; i++) {
+      fullInventory[`item_${i}`] = 1;
+    }
+
+    const state: PurchaseState = {
+      coins: 100,
+      gems: 0,
+      inventory: fullInventory,
+      inventoryCapacity: 15,
+    };
+
+    const result = purchaseShopItem(state, 'apple', 1);
+
+    expect(result.success).toBe(false);
+    expect(result.error).toBe('inventory_full');
+  });
+
+  it('should succeed when adding to existing stack even at capacity', () => {
+    // Fill 15 slots, but one is apple
+    const inventory: Record<string, number> = { apple: 5 };
+    for (let i = 1; i < 15; i++) {
+      inventory[`item_${i}`] = 1;
+    }
+
+    const state: PurchaseState = {
+      coins: 100,
+      gems: 0,
+      inventory,
+      inventoryCapacity: 15,
+    };
+
+    const result = purchaseShopItem(state, 'apple', 1);
+
+    expect(result.success).toBe(true);
+    expect(result.itemsAdded).toEqual({ apple: 1 });
+  });
+
+  it('should fail when bundle decomposition requires new slots at capacity', () => {
+    // Fill 14 slots, have apple but not banana/carrot/lollipop
+    const inventory: Record<string, number> = { apple: 1 };
+    for (let i = 1; i < 15; i++) {
+      inventory[`item_${i}`] = 1;
+    }
+
+    const state: PurchaseState = {
+      coins: 100,
+      gems: 0,
+      inventory,
+      inventoryCapacity: 15,
+    };
+
+    // food_balanced_x5 decomposes to apple, banana, carrot, lollipop
+    const result = purchaseShopItem(state, 'food_balanced_x5', 1);
+
+    expect(result.success).toBe(false);
+    expect(result.error).toBe('inventory_full');
+  });
+});
+
+// ============================================================================
+// BCT-SHOP-013: Stack limit blocks purchase
+// ============================================================================
+
+describe('BCT-SHOP-013: Stack limit blocks purchase', () => {
+  it('should fail when purchase would exceed stack limit of 99', () => {
+    const state: PurchaseState = {
+      coins: 100,
+      gems: 0,
+      inventory: { apple: 95 },
+      inventoryCapacity: 15,
+    };
+
+    const result = purchaseShopItem(state, 'apple', 5); // Would make 100 > 99
+
+    expect(result.success).toBe(false);
+    expect(result.error).toBe('stack_limit');
+  });
+
+  it('should succeed when purchase reaches exactly 99', () => {
+    const state: PurchaseState = {
+      coins: 100,
+      gems: 0,
+      inventory: { apple: 94 },
+      inventoryCapacity: 15,
+    };
+
+    const result = purchaseShopItem(state, 'apple', 5); // Makes exactly 99
+
+    expect(result.success).toBe(true);
+    expect(result.itemsAdded).toEqual({ apple: 5 });
+  });
+
+  it('should verify INVENTORY_CONFIG.STACK_MAX is 99', () => {
+    expect(INVENTORY_CONFIG.STACK_MAX).toBe(99);
+  });
+});
+
+// ============================================================================
+// BCT-INV-007: Purchase adds correct quantity
+// ============================================================================
+
+describe('BCT-INV-007: Purchase adds correct quantity', () => {
+  it('should add exactly the purchased quantity for individual food', () => {
+    const state: PurchaseState = {
+      coins: 100,
+      gems: 0,
+      inventory: { apple: 3 },
+      inventoryCapacity: 15,
+    };
+
+    const result = purchaseShopItem(state, 'apple', 5);
+
+    expect(result.success).toBe(true);
+    expect(result.itemsAdded).toEqual({ apple: 5 });
+  });
+
+  it('should add exactly the decomposed quantities for bundles', () => {
+    const state: PurchaseState = {
+      coins: 100,
+      gems: 0,
+      inventory: {},
+      inventoryCapacity: 15,
+    };
+
+    const result = purchaseShopItem(state, 'food_apple_x5', 1);
+
+    expect(result.success).toBe(true);
+    expect(result.itemsAdded).toEqual({ apple: 5 });
+  });
+});
+
+// ============================================================================
+// BCT-INV-008: Bundle decomposed correctly
+// ============================================================================
+
+describe('BCT-INV-008: Bundle decomposed correctly', () => {
+  it('should decompose food_apple_x5 to 5 apples', () => {
+    const decomposed = decomposeShopItem('food_apple_x5', 1);
+    expect(decomposed).toEqual({ apple: 5 });
+  });
+
+  it('should decompose food_balanced_x5 to Bible-strict Common foods only', () => {
+    const decomposed = decomposeShopItem('food_balanced_x5', 1);
+    // Bible-strict: apple, banana, carrot, lollipop (all Common)
+    // Candy is Uncommon, so NOT included
+    expect(decomposed).toEqual({ apple: 2, banana: 1, carrot: 1, lollipop: 1 });
+  });
+
+  it('should decompose food_spicy_x3 to hot_pepper and spicy_taco', () => {
+    const decomposed = decomposeShopItem('food_spicy_x3', 1);
+    expect(decomposed).toEqual({ hot_pepper: 3, spicy_taco: 2 });
+  });
+
+  it('should decompose food_sweet_x3 to cookies and candy', () => {
+    const decomposed = decomposeShopItem('food_sweet_x3', 1);
+    expect(decomposed).toEqual({ cookie: 3, candy: 2 });
+  });
+
+  it('should decompose food_legendary_x1 to golden_feast', () => {
+    const decomposed = decomposeShopItem('food_legendary_x1', 1);
+    expect(decomposed).toEqual({ golden_feast: 1 });
+  });
+
+  it('should decompose individual food to itself with quantity', () => {
+    const decomposed = decomposeShopItem('apple', 3);
+    expect(decomposed).toEqual({ apple: 3 });
+  });
+});
+
+// ============================================================================
+// Random Bundle Deterministic Testing
+// ============================================================================
+
+describe('Random bundles with deterministic selector', () => {
+  it('should use injected selector for food_rare_x1', () => {
+    // Deterministically select hot_pepper
+    const selector = () => 'hot_pepper';
+    const decomposed = decomposeShopItem('food_rare_x1', 1, { randomSelector: selector });
+    expect(decomposed).toEqual({ hot_pepper: 1 });
+  });
+
+  it('should use injected selector for food_epic_x1', () => {
+    // Deterministically select dream_treat
+    const selector = () => 'dream_treat';
+    const decomposed = decomposeShopItem('food_epic_x1', 1, { randomSelector: selector });
+    expect(decomposed).toEqual({ dream_treat: 1 });
+  });
+
+  it('should have correct pool for food_rare_x1', () => {
+    expect(RANDOM_BUNDLE_POOLS['food_rare_x1']).toEqual(['spicy_taco', 'hot_pepper', 'ice_cream']);
+  });
+
+  it('should have correct pool for food_epic_x1', () => {
+    expect(RANDOM_BUNDLE_POOLS['food_epic_x1']).toEqual(['birthday_cake', 'dream_treat']);
+  });
+});
+
+// ============================================================================
+// Price Calculation Tests
+// ============================================================================
+
+describe('Shop Price Calculation', () => {
+  it('should calculate correct price for individual food with quantity', () => {
+    const priceInfo = calculatePrice('apple', 5);
+    expect(priceInfo).toEqual({ price: 25, currency: 'coins' });
+  });
+
+  it('should calculate correct price for bundle (ignores quantity)', () => {
+    const priceInfo = calculatePrice('food_apple_x5', 3);
+    expect(priceInfo).toEqual({ price: 20, currency: 'coins' }); // Bundles are qty 1
+  });
+
+  it('should calculate correct price for gem items', () => {
+    const priceInfo = calculatePrice('food_epic_x1', 1);
+    expect(priceInfo).toEqual({ price: 5, currency: 'gems' });
+  });
+
+  it('should return null for invalid item', () => {
+    const priceInfo = calculatePrice('nonexistent_item', 1);
+    expect(priceInfo).toBeNull();
+  });
+});
+
+// ============================================================================
+// Inventory Validation Tests
+// ============================================================================
+
+describe('Inventory Validation', () => {
+  it('should allow adding to empty inventory', () => {
+    const result = canAddItemsToInventory({}, 15, { apple: 5 });
+    expect(result.allowed).toBe(true);
+  });
+
+  it('should allow stacking existing items', () => {
+    const result = canAddItemsToInventory({ apple: 10 }, 15, { apple: 5 });
+    expect(result.allowed).toBe(true);
+  });
+
+  it('should reject when exceeding stack limit', () => {
+    const result = canAddItemsToInventory({ apple: 95 }, 15, { apple: 10 });
+    expect(result.allowed).toBe(false);
+    expect(result.reason).toBe('stack_limit');
+  });
+
+  it('should reject when adding new items at capacity', () => {
+    const fullInv: Record<string, number> = {};
+    for (let i = 0; i < 15; i++) {
+      fullInv[`item_${i}`] = 1;
+    }
+    const result = canAddItemsToInventory(fullInv, 15, { apple: 1 });
+    expect(result.allowed).toBe(false);
+    expect(result.reason).toBe('inventory_full');
+  });
+
+  it('should allow adding multiple new items if slots available', () => {
+    const result = canAddItemsToInventory({}, 15, { apple: 2, banana: 1, carrot: 1, lollipop: 1 });
+    expect(result.allowed).toBe(true);
+  });
+});

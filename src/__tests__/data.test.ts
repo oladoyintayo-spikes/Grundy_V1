@@ -97,9 +97,10 @@ describe('foods data', () => {
   const allFoodIds = Object.keys(FOODS);
   const allPetIds = Object.keys(PETS);
 
-  it('should have exactly 10 foods', () => {
-    expect(allFoods.length).toBe(10);
-    expect(allFoodIds.length).toBe(10);
+  it('should have exactly 13 foods', () => {
+    // 10 original + lollipop, candy, ice_cream (added in P8-SHOP-PURCHASE)
+    expect(allFoods.length).toBe(13);
+    expect(allFoodIds.length).toBe(13);
   });
 
   it('should have affinities for all 8 pets', () => {
@@ -163,7 +164,7 @@ describe('foods data', () => {
     expect(rarities.has('legendary')).toBe(true);
   });
 
-  it('should have 80 total affinity entries (10 foods × 8 pets)', () => {
+  it('should have 104 total affinity entries (13 foods × 8 pets)', () => {
     let totalEntries = 0;
 
     allFoods.forEach(food => {
@@ -171,6 +172,7 @@ describe('foods data', () => {
       totalEntries += affinityKeys.length;
     });
 
-    expect(totalEntries).toBe(80);
+    // 13 foods × 8 pets = 104
+    expect(totalEntries).toBe(104);
   });
 });

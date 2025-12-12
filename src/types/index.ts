@@ -395,6 +395,29 @@ export interface GameStore {
   openShop: () => void;
   closeShop: () => void;
   setShopTab: (tab: 'food' | 'care' | 'cosmetics' | 'gems') => void;
+
+  // Shop purchase action (P8-SHOP-PURCHASE, Shop-B)
+  purchaseShopItem: (
+    itemId: string,
+    quantity?: number,
+    options?: ShopPurchaseOptions
+  ) => ShopPurchaseResult;
+}
+
+// --- Shop Purchase Types (P8-SHOP-PURCHASE) ---
+export interface ShopPurchaseResult {
+  success: boolean;
+  error?: 'insufficient_funds' | 'inventory_full' | 'stack_limit' | 'invalid_item' | 'invalid_quantity';
+  newCoins?: number;
+  newGems?: number;
+  itemsAdded?: Record<string, number>;
+  totalCost?: number;
+  currency?: 'coins' | 'gems';
+}
+
+export interface ShopPurchaseOptions {
+  /** For random bundles, inject a selector for deterministic testing */
+  randomSelector?: (choices: string[]) => string;
 }
 
 // --- Legacy Currencies interface (for compatibility) ---
