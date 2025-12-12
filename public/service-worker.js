@@ -1,23 +1,26 @@
 // ============================================
 // GRUNDY — SERVICE WORKER
 // Shell-focused caching for offline-friendly experience
-// P5-PWA-CORE, P5-PWA-SHELL
+// P5-PWA-CORE, P5-PWA-SHELL, P6-PWA-PRECACHE, P6-PWA-UPDATE
 // ============================================
 
-const CACHE_NAME = 'grundy-shell-v1';
+// P6-PWA-UPDATE: Increment this version when deploying updates
+const CACHE_NAME = 'grundy-shell-v2';
 
-// Shell assets to pre-cache (stable resources only)
+// P6-PWA-PRECACHE: Shell assets to pre-cache (stable resources only)
 // Vite fingerprints built assets, so we only pre-cache the shell
 const SHELL_ASSETS = [
   './',
   './index.html',
   './manifest.webmanifest',
-  './icons/grundy-192.png',
-  './icons/grundy-512.png',
+  './icons/icon-192.png',
+  './icons/icon-512.png',
+  './icons/splash-512.png',
 ];
 
 // Install event: pre-cache shell assets
 self.addEventListener('install', (event) => {
+  console.log('[SW] Installing new version...');
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(SHELL_ASSETS).catch((error) => {
@@ -27,8 +30,8 @@ self.addEventListener('install', (event) => {
       });
     })
   );
-  // Activate immediately without waiting for reload
-  self.skipWaiting();
+  // P6-PWA-UPDATE: Don't skipWaiting automatically - let the app control activation
+  // This allows the user to see the update toast and choose when to refresh
 });
 
 // Activate event: clean up old caches

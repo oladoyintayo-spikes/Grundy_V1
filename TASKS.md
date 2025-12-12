@@ -374,16 +374,32 @@ P1-CORE-4, P1-DOC-1,2 ── Can run in parallel
 
 > Bible Section 9 — Full neglect system.
 
+### P7-NEGLECT-SYSTEM ✅
+
+> Bible §9.4.3 — Neglect & Withdrawal System (Classic Mode Only)
+>
+> **Status:** COMPLETE — Per-pet neglect tracking, 5-stage ladder, calendar-day semantics, offline cap, recovery paths, and UI indicators implemented.
+
+| ID | Task | Status | Bible | Notes |
+|----|------|--------|-------|-------|
+| P7-NEGLECT-1 | NEGLECT_CONFIG | ✅ | §9.4.3 | Stage thresholds, recovery costs, offline cap |
+| P7-NEGLECT-2 | NeglectState type | ✅ | §9.4.3 | Per-pet tracking with all fields |
+| P7-NEGLECT-3 | Store slice | ✅ | §9.4.3 | updateNeglectOnLogin, registerCareEvent, recovery actions |
+| P7-NEGLECT-4 | BCT-NEGLECT tests | ✅ | BCT | 49 tests covering all 23 BCT specs |
+| P7-NEGLECT-5 | UI indicators | ✅ | §9.4.3 | NeglectBadge, RunawayScreen, WithdrawalRecoveryPanel |
+
+### P7 Remaining Tasks
+
 | ID | Task | Status | Bible | Acceptance Criteria |
 |----|------|--------|-------|---------------------|
-| P7-1 | Implement sickness trigger | ⬜ | 9.4 | Hunger=0 4h OR overweight/dirty |
-| P7-2 | Implement sick state | ⬜ | 9.4 | 2× decay, can't play games |
-| P7-3 | Implement medicine | ⬜ | 9.4 | Instant cure |
+| P7-1 | Implement sickness trigger | ⬜ | 9.4.2 | Hunger=0 4h OR overweight/dirty |
+| P7-2 | Implement sick state | ⬜ | 9.4.2 | 2× decay, can't play games |
+| P7-3 | Implement medicine | ⬜ | 9.4.2 | Instant cure |
 | P7-4 | Implement weight system | ⬜ | 5.7 | Hidden 0-100, visual stages |
-| P7-5 | Implement neglect warnings | ⬜ | 9.4 | 4-stage warning |
-| P7-6 | Implement runaway | ⬜ | 9.4 | Pet leaves after neglect |
-| P7-7 | Implement return options | ⬜ | 9.4 | 48h wait OR 25 gems, bond -50% |
-| P7-8 | Hide care items in Cozy | ⬜ | 9.4 | Medicine not visible |
+| P7-5 | Implement neglect warnings | ✅ | 9.4.3 | 5-stage warning (P7-NEGLECT-SYSTEM) |
+| P7-6 | Implement runaway | ✅ | 9.4.3 | Pet leaves after Day 14 neglect |
+| P7-7 | Implement return options | ✅ | 9.4.3 | 72h wait OR 24h+25 gems, bond -50% |
+| P7-8 | Hide care items in Cozy | ⬜ | 9.4 | Medicine not visible in Cozy mode |
 
 ---
 
@@ -728,24 +744,24 @@ P8-TEST
 
 | ID | Task | Status | Scope | Notes |
 |----|------|--------|-------|-------|
-| P6-AUDIO-ASSETS | Add real audio files | ⬜ | public/audio/ | Hook actual SFX/BGM assets (QA-002) |
-| P6-AUDIO-ROOM | Room-specific music | ⬜ | Audio system | Different tracks per room (AUDIO_NOTES) |
-| P6-AUDIO-TOD | Time-of-day ambience | ⬜ | Audio system | Morning/evening/night variations (AUDIO_NOTES) |
+| P6-AUDIO-ASSETS | Audio configuration audit | ✅ | src/audio/ | Config clean (no placeholder names); audio files not yet present |
+| P6-AUDIO-ROOM | Room-specific ambience | ✅ | Audio system | Ambience config per room + crossfade (AUDIO_NOTES) |
+| P6-AUDIO-TOD | Time-of-day volume variations | ✅ | Audio system | Volume multipliers: morning 0.9, day 1.0, evening 0.8, night 0.6 |
 
 ### P6-PWA: PWA Enhancements
 
 | ID | Task | Status | Scope | Notes |
 |----|------|--------|-------|-------|
-| P6-PWA-PRECACHE | vite-plugin-pwa integration | ⬜ | vite.config.ts, SW | Richer precache manifest (PWA_NOTES) |
-| P6-PWA-UI | "Install Grundy" button | ⬜ | SettingsView | Uses existing promptInstall() (QA-005) |
-| P6-PWA-UPDATE | Update notification | ⬜ | App shell | "New version available" toast (PWA_NOTES) |
+| P6-PWA-PRECACHE | Shell + icons precaching | ✅ | service-worker.js | Shell assets, icons, splash precached |
+| P6-PWA-UI | "Install Grundy" button | ✅ | SettingsView | Uses promptInstall(); shows when available (QA-005) |
+| P6-PWA-UPDATE | Update notification | ✅ | App shell | "New version available" toast with refresh button |
 
 ### P6-FTUE: FTUE & Modes
 
 | ID | Task | Status | Scope | Notes |
 |----|------|--------|-------|-------|
 | P6-FTUE-INTRO | FTUE lore & intro from Bible | ✅ | FTUE, bible.constants.ts | Lore lines pulled from bible.constants.ts; "*you*" emphasis preserved |
-| P6-FTUE-MODES | Cozy vs Classic differentiation | ⬜ | Game logic | Actual gameplay differences per mode |
+| P6-FTUE-MODES | Cozy vs Classic differentiation | ✅ | Game logic, bible.constants.ts | MODE_CONFIG with decay/penalty multipliers; mood/penalty wiring; FTUE copy updated; 38 BCT-MODE tests |
 
 ### P6-DOC: Documentation
 

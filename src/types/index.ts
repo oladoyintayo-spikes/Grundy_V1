@@ -128,6 +128,61 @@ export interface AbilityTrigger {
   triggeredAt: number; // Unix timestamp (ms)
 }
 
+// --- Neglect State (Bible §9.4.3, Classic Mode Only) ---
+import type { NeglectStageId } from '../constants/bible.constants';
+
+/**
+ * Per-pet neglect tracking state.
+ * Bible §9.4.3: Classic Mode only, per-pet tracking.
+ */
+export interface NeglectState {
+  /** ISO date string of last qualifying care action (feed or play) */
+  lastCareDate: string | null;
+  /** ISO date string of when player last opened the app */
+  lastSeenDate: string | null;
+  /** Current consecutive neglect days (0-14, capped) */
+  neglectDays: number;
+  /** Current neglect stage derived from neglectDays */
+  currentStage: NeglectStageId;
+  /** True if pet is in withdrawn state (neglect >= 7) */
+  isWithdrawn: boolean;
+  /** ISO timestamp when withdrawal started */
+  withdrawnAt: string | null;
+  /** Consecutive care days completed toward recovery (0-7) */
+  recoveryDaysCompleted: number;
+  /** True if pet has run away (neglect >= 14) */
+  isRunaway: boolean;
+  /** ISO timestamp when runaway was triggered */
+  runawayAt: string | null;
+  /** ISO timestamp when free return becomes available (72h after runaway) */
+  canReturnFreeAt: string | null;
+  /** ISO timestamp when paid return becomes available (24h after runaway) */
+  canReturnPaidAt: string | null;
+  /** True if still in grace period (first 48h after account creation) */
+  isInGracePeriod: boolean;
+  /** ISO timestamp when account was created (for grace period calc) */
+  accountCreatedAt: string | null;
+}
+
+/**
+ * Default neglect state for new pets.
+ */
+export const DEFAULT_NEGLECT_STATE: NeglectState = {
+  lastCareDate: null,
+  lastSeenDate: null,
+  neglectDays: 0,
+  currentStage: 'normal',
+  isWithdrawn: false,
+  withdrawnAt: null,
+  recoveryDaysCompleted: 0,
+  isRunaway: false,
+  runawayAt: null,
+  canReturnFreeAt: null,
+  canReturnPaidAt: null,
+  isInGracePeriod: true,
+  accountCreatedAt: null,
+};
+
 // --- Pet State (runtime state for store.ts) ---
 export interface PetState {
   id: string;
@@ -243,6 +298,10 @@ export interface GameStore {
   };
   /** Active ability triggers for UI display (P1-ABILITY-4) */
   abilityTriggers: AbilityTrigger[];
+  /** Per-pet neglect tracking (P7-NEGLECT-SYSTEM, Classic Mode only) */
+  neglectByPetId: Record<string, NeglectState>;
+  /** ISO timestamp when account was created (for grace period calculation) */
+  accountCreatedAt: string | null;
 
   // Actions
   feed: (foodId: string) => FeedResult | null;
@@ -295,6 +354,24 @@ export interface GameStore {
   // Pet behavior actions (P6-T2-PET-BEHAVIORS)
   setTransientPose: (pose: PetPose, durationMs: number) => void;
   clearTransientPose: () => void;
+
+  // Neglect system actions (P7-NEGLECT-SYSTEM, Classic Mode only)
+  /** Initialize neglect state for a pet */
+  initNeglectForPet: (petId: string, now?: Date) => void;
+  /** Update neglect state on app login/restore */
+  updateNeglectOnLogin: (now?: Date) => void;
+  /** Register a qualifying care action (feed or play) */
+  registerCareEvent: (petId: string, now?: Date) => void;
+  /** Get current neglect state for a pet */
+  getNeglectState: (petId: string) => NeglectState | null;
+  /** Spend gems to recover from withdrawn state */
+  recoverFromWithdrawnWithGems: (petId: string) => boolean;
+  /** Spend gems to speed up runaway return */
+  recoverFromRunawayWithGems: (petId: string) => boolean;
+  /** Call back a runaway pet (free path after 72h) */
+  callBackRunawayPet: (petId: string, now?: Date) => boolean;
+  /** Check if pet can be interacted with (not locked out) */
+  canInteractWithPet: (petId: string) => boolean;
 }
 
 // --- Legacy Currencies interface (for compatibility) ---

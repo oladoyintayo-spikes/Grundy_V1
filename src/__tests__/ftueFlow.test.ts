@@ -282,20 +282,22 @@ describe('Mode Descriptions', () => {
     expect(modeIds).toContain('classic');
   });
 
+  // P6-FTUE-MODES: Updated to match Bible §9 accurate copy
   it('cozy mode has correct properties', () => {
     const cozy = MODE_DESCRIPTIONS.find((m) => m.id === 'cozy');
     expect(cozy).toBeDefined();
     expect(cozy?.name).toBe('Cozy Mode');
-    expect(cozy?.tagline).toContain('No consequences');
-    expect(cozy?.features).toContain('Pet never leaves');
+    expect(cozy?.tagline).toContain('Relax');
+    expect(cozy?.features.some((f) => f.toLowerCase().includes('decay'))).toBe(true);
   });
 
+  // P6-FTUE-MODES: Updated to match Bible §9 accurate copy
   it('classic mode has correct properties', () => {
     const classic = MODE_DESCRIPTIONS.find((m) => m.id === 'classic');
     expect(classic).toBeDefined();
     expect(classic?.name).toBe('Classic Mode');
     expect(classic?.tagline).toContain('Your care matters');
-    expect(classic?.features.some((f) => f.includes('runaway'))).toBe(true);
+    expect(classic?.features.some((f) => f.toLowerCase().includes('neglect'))).toBe(true);
   });
 
   it('both modes have non-empty features', () => {

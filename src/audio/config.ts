@@ -1,10 +1,19 @@
 // ============================================
 // GRUNDY — AUDIO CONFIG
 // Sound and music configuration registry
-// P5-AUDIO-CORE
+// P5-AUDIO-CORE, P6-AUDIO-ROOM, P6-AUDIO-TOD
 // ============================================
 
-import type { SoundConfig, MusicConfig, SoundId, MusicTrackId } from './types';
+import type {
+  SoundConfig,
+  MusicConfig,
+  AmbienceConfig,
+  SoundId,
+  MusicTrackId,
+  AmbienceTrackId,
+  TimeOfDayVolumeMultipliers,
+  RoomAmbienceMap,
+} from './types';
 
 /**
  * Sound effects configuration.
@@ -72,6 +81,79 @@ export const MUSIC_CONFIG: Record<MusicTrackId, MusicConfig> = {
   },
 };
 
+// ============================================
+// P6-AUDIO-ROOM: AMBIENCE CONFIGURATION
+// Room-specific atmosphere sounds
+// ============================================
+
+/**
+ * Ambience tracks configuration.
+ * Each room has its own ambient soundscape.
+ * P6-AUDIO-ROOM: Room-specific ambience.
+ */
+export const AMBIENCE_CONFIG: Record<AmbienceTrackId, AmbienceConfig> = {
+  ambience_living_room: {
+    id: 'ambience_living_room',
+    src: '/audio/ambience_living_room.mp3',
+    baseVolume: 0.2,
+    loop: true,
+  },
+  ambience_kitchen: {
+    id: 'ambience_kitchen',
+    src: '/audio/ambience_kitchen.mp3',
+    baseVolume: 0.15,
+    loop: true,
+  },
+  ambience_bedroom: {
+    id: 'ambience_bedroom',
+    src: '/audio/ambience_bedroom.mp3',
+    baseVolume: 0.1,
+    loop: true,
+  },
+  ambience_playroom: {
+    id: 'ambience_playroom',
+    src: '/audio/ambience_playroom.mp3',
+    baseVolume: 0.25,
+    loop: true,
+  },
+  ambience_yard: {
+    id: 'ambience_yard',
+    src: '/audio/ambience_yard.mp3',
+    baseVolume: 0.2,
+    loop: true,
+  },
+};
+
+/**
+ * P6-AUDIO-ROOM: Maps each room to its ambience track.
+ */
+export const ROOM_AMBIENCE_MAP: RoomAmbienceMap = {
+  living_room: 'ambience_living_room',
+  kitchen: 'ambience_kitchen',
+  bedroom: 'ambience_bedroom',
+  playroom: 'ambience_playroom',
+  yard: 'ambience_yard',
+};
+
+/**
+ * P6-AUDIO-TOD: Volume multipliers for time-of-day.
+ * Creates subtle atmosphere changes throughout the day.
+ * - Morning: Brighter, moderate volume
+ * - Day: Full volume, lively
+ * - Evening: Slightly softer, winding down
+ * - Night: Quietest, peaceful
+ */
+export const TIME_OF_DAY_VOLUME_MULTIPLIERS: TimeOfDayVolumeMultipliers = {
+  morning: 0.9,
+  day: 1.0,
+  evening: 0.8,
+  night: 0.6,
+};
+
+// ============================================
+// HELPER FUNCTIONS
+// ============================================
+
 /**
  * Get all sound IDs for validation.
  */
@@ -84,4 +166,11 @@ export function getAllSoundIds(): SoundId[] {
  */
 export function getAllMusicTrackIds(): MusicTrackId[] {
   return Object.keys(MUSIC_CONFIG) as MusicTrackId[];
+}
+
+/**
+ * Get all ambience track IDs for validation.
+ */
+export function getAllAmbienceTrackIds(): AmbienceTrackId[] {
+  return Object.keys(AMBIENCE_CONFIG) as AmbienceTrackId[];
 }

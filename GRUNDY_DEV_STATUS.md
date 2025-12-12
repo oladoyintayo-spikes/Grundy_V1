@@ -2,9 +2,9 @@
 
 # Grundy Web Prototype — Development Status
 
-**Last Updated:** December 11, 2024 (Bible v1.5 Update — Neglect & Withdrawal System)
-**Current Phase:** Web Phase 6 Tier 1 — DEV COMPLETE (CE Review Required)
-**Next Phase:** Phase 6 Tier 2 (Branding, Audio, PWA Enhancements)
+**Last Updated:** December 11, 2024 (Phase 7 Neglect System)
+**Current Phase:** Web Phase 7 — P7-NEGLECT-SYSTEM DEV COMPLETE
+**Next Phase:** Phase 7 continued (Sickness System / Weight System)
 
 ---
 
@@ -32,17 +32,19 @@
 | **Web Phase 5** | Polish / Web 1.0 | ✅ RELEASE COMPLETE | Audio ✅, PWA ✅, Art ✅, UX/A11Y ✅, QA ✅, Release ✅ |
 | **Web Phase 6** | Bible v1.4 Compliance | ✅ TIER 1 DEV COMPLETE | Tier 1 implemented; P6-ART-POSES ✅; P6-ABILITY-INTEGRATION ✅; 817 tests (191 BCT); CE Review Required |
 | **Web Phase 6** | Bible v1.4 Compliance | ✅ TIER 1 DEV COMPLETE | Tier 1 implemented; P6-ART-POSES ✅; P6-ART-PRODUCTION ✅; P6-ART-TEST ✅; 1214 tests (594 BCT); CE Review Required |
+| **Web Phase 6** | Tier 2 Polish | ✅ TIER 2 DEV COMPLETE | P6-AUDIO-ROOM ✅; P6-AUDIO-TOD ✅; P6-PWA-PRECACHE ✅; P6-PWA-UI ✅; P6-PWA-UPDATE ✅; 1224 tests; CE Review Required |
+| **Web Phase 7** | Classic Mode | 🟡 P7-NEGLECT ✅ | Neglect & Withdrawal runtime ✅; 49 BCT-NEGLECT tests; Sickness ⬜; Weight ⬜ |
 
 ### Post-Web 1.0
 
 | System | Status | Summary |
 |--------|--------|---------|
 | Art / Sprite States | ⬜ DEFERRED | Connect stats to visual states (getDisplayState) |
-| Sound & Vibration | 🟡 PARTIAL | Core audio done (P5-AUDIO-CORE); vibration deferred |
+| Sound & Vibration | ✅ COMPLETE | Core audio (P5-AUDIO-CORE) + Room ambience (P6-AUDIO-ROOM) + TOD variations (P6-AUDIO-TOD); vibration deferred |
 | Shop & Economy | ⬜ NOT STARTED | Shop tabs, gem confirm, milestones |
 | Inventory | ⬜ NOT STARTED | Capacity, expansion items |
 | Pet Slots | ⬜ NOT STARTED | Multi-pet care system |
-| Classic Mode | 📋 SPEC COMPLETE | Bible v1.5 §9.4.3 Neglect & Withdrawal System defined; runtime implementation Phase 7 |
+| Classic Mode | 🟡 PARTIAL | Neglect & Withdrawal ✅ (P7-NEGLECT-SYSTEM); Sickness ⬜; Weight ⬜ |
 
 ---
 
@@ -149,7 +151,7 @@ The following copy is canonical and used across all onboarding documentation:
 | `npm run build` | ✅ PASSING | Production build succeeds |
 | `npm test -- --run` | ✅ PASSING | 817 tests passing |
 | `npm run test:bible` | ✅ PASSING | 191 BCT tests passing (incl. mood/ability/pet-behaviors/integration) |
-| `npm test -- --run` | ✅ PASSING | 1214 tests passing |
+| `npm test -- --run` | ✅ PASSING | 1224 tests passing |
 | `npm run test:bible` | ✅ PASSING | 594 BCT tests passing (incl. mood/ability/pet-behaviors/art) |
 | `npx tsc --noEmit` | ✅ PASSING | No type errors |
 
@@ -371,7 +373,7 @@ The following copy is canonical and used across all onboarding documentation:
 
 **Backlog:** See `docs/PHASE6_BACKLOG.md` for full list of P6-* tasks and sources.
 
-**DevStatus:** COMPLETE — All Tier 1 + Tier 2 polish tasks implemented. 1218 tests passing (598 BCT tests).
+**DevStatus:** COMPLETE — All Tier 1 + Tier 2 + Audio/PWA tasks implemented. 1224 tests passing (598 BCT tests).
 **CEStatus:** PENDING REVIEW
 **QAStatus:** PENDING REVIEW
 
@@ -379,7 +381,7 @@ The following copy is canonical and used across all onboarding documentation:
 
 Dev: Phase 6 Bible v1.5 compliance tasks implemented:
 - **Tier 1:** P6-CORE-LOOP, P6-ECON-WEB, P6-HUD-CLEANUP, P6-PET-HOME, P6-ENV-ROOMS, P6-ENV-UI, P6-ENV-TOD, P6-NAV-GROUNDWORK, P6-FTUE-INTRO, P6-MOBILE-LAYOUT, P6-QA-BCT
-- **Tier 2 Polish:** P6-ART-POSES, P6-MOOD-SYSTEM, P6-ABILITY-UI, P6-T2-PET-BEHAVIORS, P6-ART-PRODUCTION, P6-ART-TEST, P6-BRANDING, P6-ART-PROPS
+- **Tier 2 Polish:** P6-ART-POSES, P6-MOOD-SYSTEM, P6-ABILITY-UI, P6-T2-PET-BEHAVIORS, P6-ART-PRODUCTION, P6-ART-TEST
 
 Mood system (§4.5) with numeric moodValue 0-100, decay, and Grib/Plompo abilities. Pet behavior polish with transient eating poses and mood-based expressions. Ability indicators added (P1-ABILITY-4). **Art system: Pet sprites wired per pet/stage/pose with fallback chain; Home active pet uses PNG sprites when assets exist; emoji/orb fallbacks limited to DEV or true missing assets.** BCT suite passing (1218 tests, 598 BCT-specific incl. 401 BCT-ART tests, 23 BCT-NEGLECT specs).
 
@@ -428,8 +430,6 @@ Mood system (§4.5) with numeric moodValue 0-100, decay, and Grib/Plompo abiliti
 | **P6-ABILITY-UI** | Ability activation indicators | ✅ | §3.7, §4.10 |
 | **P6-T2-PET-BEHAVIORS** | Pet pose behavior wiring | ✅ | §4.5, §13.7 |
 | **P6-ART-TEST** | BCT-ART tests (sprite coverage, no-orb guarantee) | ✅ | §13.7 |
-| **P6-BRANDING** | PWA icons, manifest, favicon wiring | ✅ | — |
-| **P6-ART-PROPS** | Room visual props (Kitchen/Bedroom/Playroom/Living Room/Yard) | ✅ | §14.4 |
 
 ---
 
@@ -501,21 +501,21 @@ Mood system (§4.5) with numeric moodValue 0-100, decay, and Grib/Plompo abiliti
 
 ### Themes (Non-Bible Tasks)
 
-| Theme | Key Tasks | Source |
-|-------|-----------|--------|
-| Branding & Visual | P6-BRANDING, P6-ART-POSES, P6-ART-PROPS | QA-001, ART_NOTES |
-| Audio Assets | P6-AUDIO-ASSETS, P6-AUDIO-ROOM, P6-AUDIO-TOD | QA-002, AUDIO_NOTES |
-| PWA Enhancements | P6-PWA-PRECACHE, P6-PWA-UI, P6-PWA-UPDATE | QA-005, PWA_NOTES |
-| FTUE & Modes | P6-FTUE-MODES | General |
+| Theme | Key Tasks | Source | Status |
+|-------|-----------|--------|--------|
+| Branding & Visual | P6-BRANDING, P6-ART-POSES, P6-ART-PROPS | QA-001, ART_NOTES | 🟡 P6-BRANDING deferred |
+| Audio Assets | P6-AUDIO-ASSETS, P6-AUDIO-ROOM, P6-AUDIO-TOD | QA-002, AUDIO_NOTES | ✅ COMPLETE |
+| PWA Enhancements | P6-PWA-PRECACHE, P6-PWA-UI, P6-PWA-UPDATE | QA-005, PWA_NOTES | ✅ COMPLETE |
+| FTUE & Modes | P6-FTUE-MODES | Bible §9, General | ✅ COMPLETE |
 
 ### QA Issue Mapping
 
 All QA S3/S4 issues from Web 1.0 are mapped to Phase 6 tasks:
-- QA-001 → P6-BRANDING
-- QA-002 → P6-AUDIO-ASSETS
-- QA-003 → P6-ENV-ROOMS, P6-ENV-UI
-- QA-004 → P9-7
-- QA-005 → P6-PWA-UI
+- QA-001 → P6-BRANDING (deferred)
+- QA-002 → P6-AUDIO-ASSETS ✅ (room ambience + TOD variations implemented)
+- QA-003 → P6-ENV-ROOMS, P6-ENV-UI ✅
+- QA-004 → P9-7 (deferred)
+- QA-005 → P6-PWA-UI ✅ (install CTA + update toast implemented)
 
 ---
 

@@ -1,13 +1,12 @@
 {
-  "name": "Grundy",
+  "name": "Grundy - Virtual Pet Game",
   "short_name": "Grundy",
-  "description": "Care for a tiny spirit with big feelings. Play, feed, and grow your Grundy.",
+  "description": "A cozy virtual pet game where you feed, nurture, and watch your creature evolve.",
+  "start_url": "/",
   "display": "standalone",
-  "start_url": "./",
-  "scope": "./",
-  "background_color": "#020617",
-  "theme_color": "#0f172a",
-  "orientation": "portrait-primary",
+  "background_color": "#1a1025",
+  "theme_color": "#a855f7",
+  "orientation": "portrait",
   "icons": [
     {
       "src": "./icons/icon-192.png",
@@ -21,6 +20,5 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
-  ],
-  "categories": ["games", "entertainment"]
+  ]
 }
