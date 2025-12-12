@@ -733,11 +733,11 @@ P8-TEST
 
 | ID | Task | Status | Scope | Notes |
 |----|------|--------|-------|-------|
-| P6-BRANDING | Replace placeholder PWA icons | ⬜ | public/icons/ | Real branded icons for manifest & PWA (QA-001) |
+| P6-BRANDING | Replace placeholder PWA icons | ✅ | public/icons/ | Grundy icons wired: favicon, apple-touch-icon, manifest 192/512; manifest name/colors aligned |
 | P6-ART-POSES | Extended pet sprite poses | ✅ | assets/pets/ | 11 poses wired: idle, happy, sad, sleeping, eating, eating_loved, ecstatic, excited, hungry, satisfied, crying |
 | P6-T2-PET-BEHAVIORS | Pet pose behavior wiring | ✅ | PetAvatar, Store | Transient eating poses, mood-based expressions, pose priority system |
-| P6-ART-PROPS | Room-specific prop art | ⬜ | assets/rooms/ | Replace placeholder accent badges (ART_NOTES) |
-| P6-ABILITY-UI | Ability activation indicators | ✅ | Components | P1-ABILITY-4 — AbilityIndicator component, toast-style triggers |
+| P6-ART-PROPS | Room-specific prop art | ✅ | RoomProps.tsx | Visual props for Kitchen/Bedroom/Playroom/Living Room/Yard; CSS-based shapes |
+| P6-ABILITY-UI | Ability activation indicators | ✅ | Components | P1-ABILITY-4 — AbilityIndicator component, toast-style triggers, bounce-in animation |
 | P6-ABILITY-INTEGRATION | Wire ability triggers to store actions | ✅ | Store, GrundyPrototype | Munchlet/Grib/Ember/Chomper feed triggers + Fizz minigame trigger + Luxe gem trigger |
 
 ### P6-AUDIO: Audio Assets & Polish
