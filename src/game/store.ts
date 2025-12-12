@@ -69,6 +69,8 @@ import {
   NEGLECT_CONFIG,
   NEGLECT_STAGES,
   getNeglectStage,
+  STARTING_RESOURCES,
+  INVENTORY_CONFIG,
   type NeglectStageId,
 } from '../constants/bible.constants';
 
@@ -148,11 +150,12 @@ function createInitialState() {
   return {
     pet: createInitialPet('munchlet'), // Bible-compliant default starter
     currencies: {
-      coins: 100,
-      gems: 10,
+      coins: STARTING_RESOURCES.COINS, // BCT-ECON-001: 100
+      gems: STARTING_RESOURCES.GEMS,   // BCT-ECON-002: 0
       eventTokens: 0,
     } as Record<CurrencyType, number>,
-    inventory: { ...STARTING_INVENTORY },
+    inventory: { ...STARTING_INVENTORY }, // BCT-ECON-003-005: 2 apple, 2 banana, 1 cookie
+    inventoryCapacity: INVENTORY_CONFIG.BASE_CAPACITY, // BCT-INV-001: 15
     stats: {
       totalFeeds: 0,
       totalXpEarned: 0,
@@ -416,14 +419,25 @@ export const useGameStore = create<GameStore>()(
       buyFood: (foodId: string, quantity: number): boolean => {
         const state = get();
         const food = getFoodById(foodId);
-        
+
         if (!food) return false;
-        
+
+        // BCT-SHOP-012, BCT-SHOP-013: Check inventory constraints first
+        const invCheck = get().canAddToInventory(foodId, quantity);
+        if (!invCheck.allowed) {
+          console.log(`[Shop] Purchase blocked: ${invCheck.reason}`);
+          return false;
+        }
+
         const totalCost = food.coinCost * quantity;
-        
+
         if (food.coinCost > 0) {
-          if (state.currencies.coins < totalCost) return false;
-          
+          // BCT-SHOP-011: Insufficient coins blocks purchase
+          if (state.currencies.coins < totalCost) {
+            console.log('[Shop] Purchase blocked: Not enough coins!');
+            return false;
+          }
+
           set((state) => ({
             currencies: {
               ...state.currencies,
@@ -431,13 +445,19 @@ export const useGameStore = create<GameStore>()(
             },
             inventory: {
               ...state.inventory,
-              [foodId]: (state.inventory[foodId] || 0) + quantity,
+              [foodId]: Math.min(
+                (state.inventory[foodId] || 0) + quantity,
+                INVENTORY_CONFIG.STACK_MAX
+              ),
             },
           }));
         } else if (food.gemCost > 0) {
           const gemCost = food.gemCost * quantity;
-          if (state.currencies.gems < gemCost) return false;
-          
+          if (state.currencies.gems < gemCost) {
+            console.log('[Shop] Purchase blocked: Not enough gems!');
+            return false;
+          }
+
           set((state) => ({
             currencies: {
               ...state.currencies,
@@ -445,21 +465,70 @@ export const useGameStore = create<GameStore>()(
             },
             inventory: {
               ...state.inventory,
-              [foodId]: (state.inventory[foodId] || 0) + quantity,
+              [foodId]: Math.min(
+                (state.inventory[foodId] || 0) + quantity,
+                INVENTORY_CONFIG.STACK_MAX
+              ),
             },
           }));
         }
-        
+
         return true;
       },
       
       addFood: (foodId: string, quantity: number) => {
-        set((state) => ({
-          inventory: {
-            ...state.inventory,
-            [foodId]: (state.inventory[foodId] || 0) + quantity,
-          },
-        }));
+        const state = get();
+        const check = get().canAddToInventory(foodId, quantity);
+        if (!check.allowed) {
+          console.log(`[Inventory] Cannot add ${quantity}x ${foodId}: ${check.reason}`);
+          return;
+        }
+
+        set((state) => {
+          const newQty = (state.inventory[foodId] || 0) + quantity;
+          // BCT-INV-004: If quantity reaches 0, remove slot
+          if (newQty <= 0) {
+            const { [foodId]: _, ...rest } = state.inventory;
+            return { inventory: rest };
+          }
+          return {
+            inventory: {
+              ...state.inventory,
+              [foodId]: Math.min(newQty, INVENTORY_CONFIG.STACK_MAX), // BCT-INV-003
+            },
+          };
+        });
+      },
+
+      // BCT-INV-002: Slot counts unique item ids only
+      getUsedSlots: (): number => {
+        const state = get();
+        return Object.entries(state.inventory).filter(([_, qty]) => qty > 0).length;
+      },
+
+      // BCT-INV-005 & BCT-INV-006: Check if item can be added
+      canAddToInventory: (itemId: string, quantity: number): { allowed: boolean; reason?: string } => {
+        const state = get();
+        const currentQty = state.inventory[itemId] || 0;
+        const newQty = currentQty + quantity;
+
+        // BCT-INV-003: Stack max is 99
+        if (newQty > INVENTORY_CONFIG.STACK_MAX) {
+          return { allowed: false, reason: 'Inventory full!' };
+        }
+
+        // BCT-INV-006: If item already exists, no new slot needed
+        if (currentQty > 0) {
+          return { allowed: true };
+        }
+
+        // BCT-INV-005: New slot required - check capacity
+        const usedSlots = Object.entries(state.inventory).filter(([_, qty]) => qty > 0).length;
+        if (usedSlots >= state.inventoryCapacity) {
+          return { allowed: false, reason: 'Inventory full!' };
+        }
+
+        return { allowed: true };
       },
       
       // ========================================
@@ -1379,6 +1448,7 @@ export const useGameStore = create<GameStore>()(
 export const usePet = () => useGameStore((state) => state.pet);
 export const useCurrencies = () => useGameStore((state) => state.currencies);
 export const useInventory = () => useGameStore((state) => state.inventory);
+export const useInventoryCapacity = () => useGameStore((state) => state.inventoryCapacity);
 export const useStats = () => useGameStore((state) => state.stats);
 export const useUnlockedPets = () => useGameStore((state) => state.unlockedPets);
 export const useEnergy = () => useGameStore((state) => state.energy);

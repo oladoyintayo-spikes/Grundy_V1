@@ -219,7 +219,7 @@ describe('unlock integration', () => {
     it('can unlock Fizz with gems', () => {
       const store = useGameStore.getState();
 
-      // Give enough gems
+      // Give enough gems (BCT-ECON-002: start with 0 gems)
       store.addCurrency('gems', 100, 'test');
 
       const result = store.unlockPetWithGems('fizz');
@@ -227,13 +227,13 @@ describe('unlock integration', () => {
       const newState = useGameStore.getState();
       expect(result).toBe(true);
       expect(newState.unlockedPets).toContain('fizz');
-      expect(newState.currencies.gems).toBe(110 - 50); // Started with 10, added 100, spent 50
+      expect(newState.currencies.gems).toBe(100 - 50); // Started with 0, added 100, spent 50
     });
 
     it('cannot unlock with insufficient gems', () => {
       const store = useGameStore.getState();
 
-      // Default 10 gems is not enough for Fizz (50)
+      // Default 0 gems is not enough for Fizz (50) - BCT-ECON-002
       const result = store.unlockPetWithGems('fizz');
 
       const newState = useGameStore.getState();

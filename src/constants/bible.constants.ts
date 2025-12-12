@@ -434,6 +434,38 @@ export const ALL_PET_IDS = Object.values(PETS).map(p => p.id);
 export const STARTER_PET_IDS = Object.values(PETS).filter(p => p.tier === 'starter').map(p => p.id);
 
 // ============================================================================
+// §5.8 Starting Resources (LOCKED - BCT-ECON)
+// ============================================================================
+
+export const STARTING_RESOURCES = {
+  /** Starting coins for new player. BCT-ECON-001 */
+  COINS: 100,
+  /** Starting gems for new player. BCT-ECON-002 */
+  GEMS: 0,
+} as const;
+
+/**
+ * Tutorial starting inventory per Bible §5.8.
+ * BCT-ECON-003: 2× Apple, BCT-ECON-004: 2× Banana, BCT-ECON-005: 1× Cookie
+ */
+export const TUTORIAL_INVENTORY: Record<string, number> = {
+  apple: 2,
+  banana: 2,
+  cookie: 1,
+} as const;
+
+// ============================================================================
+// §11.7 Inventory System (LOCKED - BCT-INV)
+// ============================================================================
+
+export const INVENTORY_CONFIG = {
+  /** Base inventory capacity. BCT-INV-001 */
+  BASE_CAPACITY: 15,
+  /** Maximum stack per item ID. BCT-INV-003 */
+  STACK_MAX: 99,
+} as const;
+
+// ============================================================================
 // §14.5-14.6 UI & Layout
 // ============================================================================
 

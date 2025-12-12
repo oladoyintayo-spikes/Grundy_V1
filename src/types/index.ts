@@ -38,6 +38,12 @@ export type Affinity = 'loved' | 'liked' | 'neutral' | 'disliked';
 // --- Rarity ---
 export type Rarity = 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary';
 
+// --- Inventory Types (Bible §11.7, §14.8) ---
+export type InventoryTab = 'food' | 'care';
+export type InventoryMap = Record<string, number>;
+/** Item category for filtering inventory tabs */
+export type ItemCategory = 'food' | 'care';
+
 // --- Mood State (string-based for store.ts compatibility) ---
 export type MoodState = 'happy' | 'neutral' | 'sad' | 'ecstatic';
 
@@ -284,6 +290,8 @@ export interface GameStore {
   pet: PetState;
   currencies: Record<CurrencyType, number>;
   inventory: Record<string, number>;
+  /** Inventory capacity (slots). Bible §11.7: Base is 15. BCT-INV-001 */
+  inventoryCapacity: number;
   stats: GameStats;
   settings: GameSettings;
   unlockedPets: string[];  // Pet IDs that the player has unlocked
@@ -309,6 +317,10 @@ export interface GameStore {
   spendCurrency: (type: CurrencyType, amount: number, sink: string) => boolean;
   buyFood: (foodId: string, quantity: number) => boolean;
   addFood: (foodId: string, quantity: number) => void;
+  /** Get count of used inventory slots (unique item IDs). BCT-INV-002 */
+  getUsedSlots: () => number;
+  /** Check if item can be added (slot/stack space). BCT-INV-005, BCT-INV-006 */
+  canAddToInventory: (itemId: string, quantity: number) => { allowed: boolean; reason?: string };
   updateMood: (mood: MoodState) => void;
   tick: (deltaMinutes: number) => void;
   selectPet: (petId: string) => void;
