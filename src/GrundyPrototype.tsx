@@ -893,6 +893,8 @@ function MainApp() {
   const currencies = useGameStore((state) => state.currencies);
   const inventory = useGameStore((state) => state.inventory);
   const buyFood = useGameStore((state) => state.buyFood);
+  // P8-SHOP-PURCHASE: Shop purchase action
+  const purchaseShopItem = useGameStore((state) => state.purchaseShopItem);
   // P8-SHOP-CATALOG: Shop requires pet + mode for recommendations
   const pet = useGameStore((state) => state.pet);
   const playMode = useGameStore((state) => state.playMode);
@@ -1060,7 +1062,7 @@ function MainApp() {
       {/* Bottom Navigation */}
       <BottomNav currentView={currentView} onChangeView={handleChangeView} />
 
-      {/* P8-SHOP-CATALOG: Shop Modal (available from any view) */}
+      {/* P8-SHOP-CATALOG + P8-SHOP-PURCHASE: Shop Modal */}
       <ShopView
         isOpen={showShop}
         onClose={handleCloseShop}
@@ -1076,6 +1078,11 @@ function MainApp() {
           isSick: false, // TODO: Add sickness system in future phase
         }}
         inventory={inventory}
+        onPurchase={(itemId, quantity) => {
+          const result = purchaseShopItem(itemId, quantity);
+          // Could add toast/feedback here in future
+          return result.success;
+        }}
       />
 
       {/* P8-INV-CORE: Inventory Modal (available from any view via header button) */}

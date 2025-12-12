@@ -27,6 +27,8 @@ import {
   PetPose,
   NeglectState,
   DEFAULT_NEGLECT_STATE,
+  ShopPurchaseResult,
+  ShopPurchaseOptions,
 } from '../types';
 import {
   DEFAULT_ENVIRONMENT,
@@ -73,6 +75,8 @@ import {
   INVENTORY_CONFIG,
   type NeglectStageId,
 } from '../constants/bible.constants';
+// P8-SHOP-PURCHASE: Shop purchase engine
+import { purchaseShopItem as executePurchase } from './shopPurchase';
 
 // ============================================
 // ABILITY TRIGGER MESSAGES (P1-ABILITY-4)
@@ -1446,6 +1450,70 @@ export const useGameStore = create<GameStore>()(
 
       setShopTab: (tab: 'food' | 'care' | 'cosmetics' | 'gems') => {
         set({ shopActiveTab: tab });
+      },
+
+      // ========================================
+      // SHOP PURCHASE (P8-SHOP-PURCHASE, Shop-B)
+      // BCT-SHOP-010: Currency deducted, inventory updated
+      // BCT-SHOP-011: Insufficient coins blocks purchase
+      // BCT-SHOP-012: Inventory full blocks purchase
+      // BCT-SHOP-013: Stack limit blocks purchase
+      // BCT-INV-007: Purchase adds correct quantity
+      // BCT-INV-008: Bundle decomposed correctly
+      // ========================================
+      purchaseShopItem: (
+        itemId: string,
+        quantity: number = 1,
+        options: ShopPurchaseOptions = {}
+      ): ShopPurchaseResult => {
+        const state = get();
+
+        // Build purchase state
+        const purchaseState = {
+          coins: state.currencies.coins,
+          gems: state.currencies.gems,
+          inventory: state.inventory,
+          inventoryCapacity: state.inventoryCapacity,
+        };
+
+        // Execute purchase
+        const result = executePurchase(purchaseState, itemId, quantity, options);
+
+        if (result.success && result.itemsAdded) {
+          // Apply state changes
+          set((s) => {
+            // Update currencies
+            const newCurrencies = {
+              ...s.currencies,
+              coins: result.newCoins ?? s.currencies.coins,
+              gems: result.newGems ?? s.currencies.gems,
+            };
+
+            // Update inventory with decomposed items
+            const newInventory = { ...s.inventory };
+            for (const [addItemId, addQty] of Object.entries(result.itemsAdded!)) {
+              const currentQty = newInventory[addItemId] || 0;
+              newInventory[addItemId] = Math.min(
+                currentQty + addQty,
+                INVENTORY_CONFIG.STACK_MAX
+              );
+            }
+
+            return {
+              currencies: newCurrencies,
+              inventory: newInventory,
+            };
+          });
+
+          console.log(
+            `[Shop] Purchased ${itemId} ×${quantity} for ${result.totalCost} ${result.currency}. ` +
+            `Items added: ${JSON.stringify(result.itemsAdded)}`
+          );
+        } else {
+          console.log(`[Shop] Purchase failed: ${result.error}`);
+        }
+
+        return result;
       },
 
       // ========================================

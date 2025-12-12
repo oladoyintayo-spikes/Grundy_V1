@@ -613,7 +613,9 @@ export const SHOP_CATALOG: ShopItem[] = [
     price: 40,
     currency: 'coins',
     emoji: '🥗',
-    decomposition: { apple: 2, banana: 2, carrot: 1 },
+    // Bible-strict: Only Common foods (apple, banana, carrot, lollipop)
+    // Candy is Uncommon per §5.4, so NOT included here
+    decomposition: { apple: 2, banana: 1, carrot: 1, lollipop: 1 },
   },
   {
     id: 'food_spicy_x3',

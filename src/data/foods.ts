@@ -80,6 +80,30 @@ export const FOODS: Record<string, FoodDefinition> = {
     },
     emoji: '🥕',
   },
+  // Bible §5.4: Lollipop - Common Snack
+  lollipop: {
+    id: 'lollipop',
+    name: 'Lollipop',
+    description: 'A sweet treat on a stick.',
+    rarity: 'common',
+    hunger: 2,
+    mood: 18,
+    xp: 2,
+    bond: 0.5,
+    coinCost: 10,
+    gemCost: 0,
+    affinity: {
+      munchlet: 'loved',    // Likes sweet
+      grib: 'disliked',     // Dislikes sweet
+      plompo: 'liked',      // Likes sweet
+      fizz: 'neutral',
+      ember: 'disliked',    // Dislikes sweet
+      chomper: 'liked',     // Likes everything
+      whisp: 'disliked',    // Dislikes common foods
+      luxe: 'disliked'      // Dislikes common foods
+    },
+    emoji: '🍭',
+  },
 
   // === UNCOMMON (3-4 XP) ===
   cookie: {
@@ -128,8 +152,56 @@ export const FOODS: Record<string, FoodDefinition> = {
     },
     emoji: '🍇',
   },
+  // Bible §5.4: Candy - Uncommon Snack
+  candy: {
+    id: 'candy',
+    name: 'Candy',
+    description: 'Sweet and sugary - a quick mood boost.',
+    rarity: 'uncommon',
+    hunger: 3,
+    mood: 20,
+    xp: 3,
+    bond: 0.8,
+    coinCost: 20,
+    gemCost: 0,
+    affinity: {
+      munchlet: 'loved',    // Likes sweet
+      grib: 'disliked',     // Dislikes sweet
+      plompo: 'loved',      // Likes sweet
+      fizz: 'liked',        // Energetic sugar rush
+      ember: 'disliked',    // Dislikes sweet
+      chomper: 'liked',     // Likes everything
+      whisp: 'neutral',     // Uncommon acceptable
+      luxe: 'neutral'       // Uncommon acceptable
+    },
+    emoji: '🍬',
+  },
 
   // === RARE (5-6 XP) ===
+  // Bible §5.4: Ice Cream - Rare Snack
+  ice_cream: {
+    id: 'ice_cream',
+    name: 'Ice Cream',
+    description: 'A cold, creamy delight that boosts mood.',
+    rarity: 'rare',
+    hunger: 5,
+    mood: 25,
+    xp: 5,
+    bond: 1.2,
+    coinCost: 30,
+    gemCost: 0,
+    affinity: {
+      munchlet: 'loved',    // Likes sweet
+      grib: 'disliked',     // Dislikes sweet
+      plompo: 'loved',      // Likes sweet, cold treats
+      fizz: 'liked',        // Refreshing
+      ember: 'disliked',    // Dislikes cold and sweet
+      chomper: 'liked',     // Likes everything
+      whisp: 'liked',       // Rare rarity
+      luxe: 'liked'         // Rare, somewhat premium
+    },
+    emoji: '🍦',
+  },
   spicy_taco: {
     id: 'spicy_taco',
     name: 'Spicy Taco',
