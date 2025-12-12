@@ -1,13 +1,14 @@
 # GRUNDY — MASTER BIBLE
 ## Single Source of Truth
 
-**Version:** 1.6
+**Version:** 1.7
 **Last Updated:** December 2025
 **Status:** Production Reference
 **Platforms:** Web (First Light 1.0) [Current], Android/iOS [Unity Later]
 **Engine:** Web (Vite + React + TypeScript) [Current], Unity 2022 LTS [Planned Mobile]
 
 **Changelog:**
+- v1.7: Multi-Pet Runtime Clarifications (P9-B) — Added §8.2.1 Energy Scope (global), §9.4.4 Multi-Pet Runaway Handling (auto-switch + slot rules), §9.4.5 Switching During Neglect States, §9.4.6 Multi-Pet Offline Rules (mood/bond/neglect fanout), §11.6.1 Multi-Pet Notifications (routing + suppression). Deferred Weight/Sickness runtime to P9-C.
 - v1.6: Shop + Inventory (Web Phase 8) — Added starter resources (§5.8), individual food purchase rules (§11.5.1), inventory stacking semantics (§11.7.1), and UI specs for Shop/Inventory (§14.7–§14.8). Updated §15.6 gaps to match current Web state.
 - v1.5: Neglect & Withdrawal System — Replaced old "Neglect & Runaway" spec in §9.4 with comprehensive §9.4.3 Neglect & Withdrawal System (Classic Mode Only). Added 5-stage neglect timeline (Worried/Sad/Withdrawn/Critical/Runaway), protection rules (FTUE + 48h grace period), per-pet tracking, recovery paths, offline handling, canonical UI copy, data schema, and state machine. Added 23 BCT-NEGLECT test specifications.
 - v1.4: Bible Compliance Update — Added platform phase tags (§1.6), navigation structure (§14.5), mobile layout constraints (§14.6), expanded cooldown spec (§4.3), dev HUD exception (§4.4), locked mini-game rules (§8.2-8.3), evolution thresholds locked (§6.1), FTUE fallback (§7.4), art vs emoji rule (§13.7), updated prototype gaps (§15.6)
@@ -1836,6 +1837,21 @@ Each design doc includes:
 >
 > Do not increase daily cap or remove energy costs without explicit approval.
 
+### 8.2.1 Energy Scope (Multi-Pet)
+
+Energy is **GLOBAL** (shared across all owned pets).
+
+| Attribute | Scope | Rationale |
+|-----------|-------|-----------|
+| Energy pool | Global | Prevents gaming system by switching pets; matches "one player" mental model |
+| Energy regeneration | Global | 1 per 30 minutes regardless of active pet |
+| First-free daily | Global | One free play per day total, not per pet |
+| Daily cap (3 plays) | Global | Prevents circumventing session limits via pet switching |
+
+**Design Rationale:** Energy gates mini-game access for the *player*, not the pet. Allowing per-pet energy would let players bypass daily caps by switching pets, undermining the "check-in" session design.
+
+**Grundy Plus:** Max energy increases to 75 (global pool, not per-pet).
+
 ## 8.3 Reward Tiers [Web 1.0]
 
 | Tier | Coins | XP | Food |
@@ -2523,6 +2539,116 @@ Evolution Results (Lv 13):
 | Critical | "Your pet is SICK! 🏥" | Sickness triggered |
 | Emergency | "Your pet needs you NOW! 💔" | Sick + Hunger = 0 |
 
+### 9.4.4 Multi-Pet Runaway Handling
+
+When managing multiple pets, runaway mechanics work as follows:
+
+#### Active Pet Enters Runaway
+
+When the **currently active pet** enters Runaway state:
+1. **Auto-switch:** The game automatically switches to the next available non-runaway pet in slot order
+2. **Toast notification:** "Your [PetName] has gone into hiding. Switching to [NextPet]..."
+3. **If no available pets:** Show "All Pets Away" state (see below)
+
+**Slot Order:** Pets are checked in `ownedPetIds` array order (acquisition order).
+
+#### Runaway Pets in Slot UI
+
+| Behavior | Rule |
+|----------|------|
+| Slot occupancy | Runaway pets **remain in their slot** (slot is not freed) |
+| Pet selector visibility | Runaway pets **are visible** with a 🔒 lockout indicator |
+| Selectability | Player **can select** a runaway pet to view recovery options |
+| Recovery UI | Selecting a runaway pet shows the recovery modal (72h wait or 24h+25💎) |
+
+#### "All Pets Away" State
+
+If all owned pets are in Runaway state simultaneously:
+- Home screen shows: "All your Grundies are in hiding. They still remember you. 💔"
+- Recovery prompts shown for each pet
+- Player must recover at least one pet to resume normal play
+- No mini-games or feeding available (no active pet to receive rewards)
+
+#### Recovery Priority
+
+When multiple pets are runaway, the game suggests recovering in this order:
+1. Pet closest to free recovery (72h timer)
+2. Pet with highest bond (emotional connection)
+3. Pet with highest level (progression investment)
+
+### 9.4.5 Switching During Neglect States
+
+| Current State | Switch TO | Switch FROM | Notes |
+|---------------|-----------|-------------|-------|
+| Normal | ✅ Allowed | ✅ Allowed | No restrictions |
+| Worried | ✅ Allowed | ✅ Allowed | Warning badge shown |
+| Sad | ✅ Allowed | ✅ Allowed | Warning badge shown |
+| Withdrawn | ✅ Allowed | ✅ Allowed | Player should care for withdrawn pets |
+| Critical | ✅ Allowed | ✅ Allowed | Urgent indicator shown |
+| Runaway | ✅ Allowed* | N/A (auto-switch) | *To view recovery UI only; cannot interact |
+
+**Key Rules:**
+- Switching is **always allowed** to enable players to care for neglected pets
+- Switching to a Withdrawn/Critical pet shows a warning: "This Grundy needs extra care to recover"
+- Switching FROM a runaway pet is handled by auto-switch (player never "leaves" a runaway pet manually)
+- Switching does NOT reset or transfer neglect counters (per §9.4.3)
+
+**No "Switching to Avoid Consequences":** Players cannot evade neglect by constantly switching. Each pet's neglect counter is independent and continues regardless of which pet is active.
+
+### 9.4.6 Multi-Pet Offline Rules
+
+When the player is offline (app closed), stats change for **all owned pets** simultaneously.
+
+#### Offline Stat Changes
+
+| Stat | Offline Behavior | Rate | Cap | Plus Bonus |
+|------|------------------|------|-----|------------|
+| **Neglect Days** | Accrue for all pets | +1 per calendar day | 14 days max | None |
+| **Mood** | Decays for all pets | -5 per 24h offline | Min 30 | None |
+| **Bond** | Decays for all pets | -2 per 24h offline | Min 0 | 50% slower decay |
+| **Hunger** | Decays for all pets | -10 per 24h offline | Min 0 | None |
+
+#### Order of Application on Return
+
+When the player returns after offline period:
+1. Calculate elapsed calendar days (for neglect)
+2. Apply neglect day accrual to ALL owned pets
+3. Evaluate neglect stage transitions for ALL pets
+4. Apply mood/bond/hunger decay to ALL pets
+5. Trigger any stage-transition alerts (batched, see §11.6.1)
+6. If active pet is now Runaway → auto-switch (see §9.4.4)
+7. Show "Welcome Back" summary if > 24h offline
+
+#### Caps and Protections
+
+- **Neglect cap:** 14 days maximum (extended absence doesn't compound beyond runaway)
+- **Mood floor:** 30 minimum (pet stays sad but not broken)
+- **Bond floor:** 0 minimum (bond can be fully lost but recoverable)
+- **FTUE protection:** No offline decay until FTUE complete
+- **48h grace period:** No offline decay for first 48h after account creation
+
+#### Grundy Plus Offline Benefits
+
+| Benefit | Effect |
+|---------|--------|
+| 50% slower bond decay | -1 per 24h instead of -2 |
+| 2× welcome back rewards | Returning after 24h+ gives bonus XP |
+
+### 9.4.7 Weight & Sickness Runtime (DEFERRED)
+
+**Status:** Deferred to P9-C
+
+The following systems are design-defined but runtime implementation is deferred:
+
+| System | Bible Spec | Status | Target |
+|--------|------------|--------|--------|
+| Weight consequences | §5.7 | Design-defined | P9-C |
+| Sickness (Classic) | §5.4 risk | Design-defined | P9-C |
+
+These systems do not block P9-B multi-pet runtime integration. When implemented:
+- Weight will be **per-pet** (matches feeding which is per-pet)
+- Sickness will be **per-pet** (Classic mode only)
+
 ## 9.5 Cleaning / Waste System (Both Modes)
 
 ### Poop Mechanic
@@ -3057,8 +3183,78 @@ Pet slots allow caring for multiple pets simultaneously — each with their own 
 
 - Each slot is independent (separate hunger, mood, bond)
 - Switching between slotted pets is instant
-- Notifications can come from any active pet
+- Notifications can come from any owned pet (see §11.6.1)
 - All slotted pets share: Coins, Gems, Inventory
+
+### 11.6.1 Multi-Pet Notifications
+
+#### Alert Routing
+
+Alerts can originate from **any owned pet**, not just the active pet.
+
+| Alert Type | Routing | Display |
+|------------|---------|---------|
+| Neglect stage transition | Per-pet | Toast + badge on pet icon |
+| Hunger critical (< 20) | Per-pet | Badge on pet icon only |
+| Mood critical (< 30) | Per-pet | Badge on pet icon only |
+| Runaway | Per-pet → auto-switch | Modal + toast |
+
+**Badge System:**
+- Pet selector button shows aggregate badge count (e.g., "2" if 2 pets need attention)
+- Individual pet icons in selector show specific badges:
+  - ⚠️ Warning (Worried/Sad)
+  - 💔 Urgent (Withdrawn/Critical)
+  - 🔒 Locked (Runaway)
+
+**Web Implementation (Phase 9-B):**
+- In-app toasts and badges only
+- No push notifications (Web lacks reliable push infra)
+- Settings badge shows if any pet needs attention
+
+#### Alert Suppression Rules
+
+To prevent alert spam:
+
+| Rule | Specification |
+|------|---------------|
+| Stage transition alerts | Fire **once per transition** (not repeated while in stage) |
+| Multi-pet batching | If returning from offline, batch alerts into single summary toast |
+| Cooldown | Minimum 30 minutes between alerts for same pet (except runaway) |
+| Session limit | Maximum 5 non-critical alerts per session |
+| Runaway override | Runaway alerts always fire immediately (critical path) |
+
+**Alert Priority (highest to lowest):**
+1. Runaway (any pet)
+2. Critical (any pet)
+3. Withdrawn (any pet)
+4. Sad (active pet only)
+5. Worried (active pet only)
+6. Hunger/Mood low (active pet only)
+
+**Batched Return Alert Example:**
+> "Welcome back! While you were away:
+> - Munchlet became Worried (2 days)
+> - Grib became Sad (4 days)
+> Your pets missed you! 💕"
+
+### Multi-Pet Runtime Summary
+
+| System | Scope | Offline Behavior | Notes |
+|--------|-------|------------------|-------|
+| Mood | Per-pet | Decays all pets (-5/24h, floor 30) | §9.4.6 |
+| Bond | Per-pet | Decays all pets (-2/24h, floor 0) | Plus: 50% slower |
+| Hunger | Per-pet | Decays all pets (-10/24h, floor 0) | §9.4.6 |
+| Neglect | Per-pet | Accrues all pets (+1/day, cap 14) | §9.4.3, §9.4.6 |
+| Energy | **Global** | Regenerates (1/30min) | §8.2.1 |
+| Coins | Global | No change | §6, §15.3 |
+| Gems | Global | No change | §6, §15.3 |
+| Inventory | Global | No change | §6, §15.3 |
+
+**Key Multi-Pet Rules:**
+- Auto-switch on runaway (§9.4.4)
+- Switching always allowed (§9.4.5)
+- Alerts from any pet (§11.6.1)
+- Offline applies to all pets (§9.4.6)
 
 ## 11.7 Inventory Slots
 

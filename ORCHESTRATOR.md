@@ -69,8 +69,8 @@ These documents form the **governance triad** for all Grundy development:
 
 | Artifact | Path | Version |
 |----------|------|---------|
-| Bible | `docs/GRUNDY_MASTER_BIBLE.md` | **v1.6** |
-| BCT Spec | `docs/BIBLE_COMPLIANCE_TEST.md` | **v2.2** |
+| Bible | `docs/GRUNDY_MASTER_BIBLE.md` | **v1.7** |
+| BCT Spec | `docs/BIBLE_COMPLIANCE_TEST.md` | **v2.3** |
 | Locked Constants | `src/constants/bible.constants.ts` | Single source for locked values |
 
 > **Note:** Patch artifacts in `docs/patches/` are non-canonical reference material only. Always use the canonical docs above.
@@ -117,7 +117,7 @@ GRUNDY_PHASE_REVIEW_SOP.md      ← Process (WHO reviews WHEN)
 
 ### Key Rules
 
-1. **Bible = Design Authority:** All implementation must match Bible v1.6 specification
+1. **Bible = Design Authority:** All implementation must match Bible v1.7 specification
 2. **BCT = Test Contract:** Use BCT-* tests to verify Bible compliance before marking work complete
 3. **SOP = Process Authority:** Follow Dev→CE→QA flow; agents cannot approve their own work
 
@@ -741,7 +741,7 @@ Your Responsibilities:
 
 3. **Verify Bible Compliance**
    - Check BCT test results against docs/BIBLE_COMPLIANCE_TEST.md
-   - Ensure implementation matches Bible v1.6 specification
+   - Ensure implementation matches Bible v1.7 specification
    - Flag any deviations or violations
 
 4. **Decide the task's state**
@@ -805,7 +805,7 @@ Constraints:
 - [Short explanation]
 
 ## Rationale
-- Why this decision, referencing Bible v1.6 sections and BCT tests
+- Why this decision, referencing Bible v1.7 sections and BCT tests
 
 ## Instructions for Agents
 - Implementer: [what to change, if any]

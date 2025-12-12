@@ -1,10 +1,11 @@
 # Grundy — Bible Compliance Test (BCT)
 
-**Version:** 2.2
-**Last Updated:** December 2025 (Bible v1.6 Update)
-**Bible Reference:** `docs/GRUNDY_MASTER_BIBLE.md` v1.6
+**Version:** 2.3
+**Last Updated:** December 2025 (Bible v1.7 Update)
+**Bible Reference:** `docs/GRUNDY_MASTER_BIBLE.md` v1.7
 
 **Changelog:**
+- v2.3: Multi-Pet Runtime tests — Added BCT-MULTIPET (14 tests) for P9-B runtime integration: energy scope, runaway auto-switch, switching constraints, offline rules, alert routing/suppression. Bible v1.7 alignment.
 - v2.2: Shop + Inventory spec tests — Added BCT-SHOP (25 tests), BCT-INV (17 tests), BCT-ECON starting resources tests (5 tests). Total: 47 new specifications for Web Phase 8.
 - v2.1: Bible v1.5 Neglect & Withdrawal tests (BCT-NEGLECT-001 through 023)
 - v2.0: Initial BCT specification
@@ -53,6 +54,8 @@ npm test -- --run
 | Neglect | BCT-NEGLECT-* | §9.4.3 | Neglect & Withdrawal (Classic) |
 | Shop | BCT-SHOP-* | §5.4, §11.5, §14.7 | Prices, purchase flow, gating, UI |
 | Inventory | BCT-INV-* | §11.7, §14.8 | Capacity, stacking, decomposition, UI |
+| Multi-Pet | BCT-MULTIPET-* | §8.2.1, §9.4.4–9.4.6, §14.6 | Energy scope, runaway handling, switching, offline, alerts |
+| Pet Slots | BCT-PETSLOTS-* | §11.6, §6 | Multi-pet ownership, slots, global resources |
 
 ---
 
@@ -789,6 +792,84 @@ Non-deterministic bundles (runtime selection; deterministic in tests via injecte
 
 ---
 
+## Pet Slots Tests (BCT-PETSLOTS-*)
+
+### Slot Configuration
+
+| ID | Description | Bible Ref | Expected Result |
+|----|-------------|-----------|-----------------|
+| BCT-PETSLOTS-001 | Max slots is 4 | §11.6 | PET_SLOTS_CONFIG.MAX_SLOTS === 4 |
+| BCT-PETSLOTS-002 | Free player slots is 1 | §11.6 | PET_SLOTS_CONFIG.FREE_PLAYER_SLOTS === 1 |
+| BCT-PETSLOTS-003 | Plus subscriber slots is 2 | §11.8 | PET_SLOTS_CONFIG.PLUS_SUBSCRIBER_SLOTS === 2 |
+
+### Global Resource Rules
+
+| ID | Description | Bible Ref | Expected Result |
+|----|-------------|-----------|-----------------|
+| BCT-PETSLOTS-004 | Coins are global | §11.6 | Coins persist across pet switches |
+| BCT-PETSLOTS-005 | Gems are global | §11.6 | Gems persist across pet switches |
+| BCT-PETSLOTS-006 | Inventory is global | §11.6 | Inventory persists across pet switches |
+
+### Per-Pet State Independence
+
+| ID | Description | Bible Ref | Expected Result |
+|----|-------------|-----------|-----------------|
+| BCT-PETSLOTS-007 | Each pet has separate level | §6 | Pet levels are independent |
+| BCT-PETSLOTS-008 | Each pet has separate bond | §6 | Pet bond is independent |
+| BCT-PETSLOTS-009 | Each pet has separate mood | §6 | Pet mood is independent |
+| BCT-PETSLOTS-010 | Each pet has separate hunger | §6 | Pet hunger is independent |
+| BCT-PETSLOTS-011 | Switching pets is instant | §11.6 | Switch completes < 100ms |
+
+---
+
+## Multi-Pet Runtime Tests (BCT-MULTIPET-*)
+
+### Energy Scope (Global)
+
+| ID | Description | Bible Ref | Expected Result |
+|----|-------------|-----------|-----------------|
+| BCT-MULTIPET-001 | Energy is global (shared pool) | §8.2.1 | Single energy pool shared across all owned pets |
+| BCT-MULTIPET-002 | First-free daily game is global | §8.2.1 | One free play per day total, not per pet |
+| BCT-MULTIPET-003 | Daily cap (3 plays) is global | §8.2.1 | 3 rewarded plays per day across all pets |
+
+### Runaway Auto-Switch
+
+| ID | Description | Bible Ref | Expected Result |
+|----|-------------|-----------|-----------------|
+| BCT-MULTIPET-004 | Runaway triggers auto-switch | §9.4.4 | When active pet enters runaway, auto-switch to next available pet in slot order |
+| BCT-MULTIPET-005 | All-pets-runaway shows empty state | §9.4.4 | If all pets runaway, show "All Pets Away" state with recovery prompts |
+
+### Runaway Slot Handling
+
+| ID | Description | Bible Ref | Expected Result |
+|----|-------------|-----------|-----------------|
+| BCT-MULTIPET-006 | Runaway pets remain in slot | §9.4.4 | Runaway pets stay in their slot with 🔒 lockout indicator |
+| BCT-MULTIPET-007 | Runaway pets are selectable for recovery | §9.4.4 | Player can select runaway pet to view recovery UI |
+
+### Switching Constraints
+
+| ID | Description | Bible Ref | Expected Result |
+|----|-------------|-----------|-----------------|
+| BCT-MULTIPET-008 | Switching TO withdrawn/critical allowed | §9.4.5 | Players can switch to neglected pets to care for them |
+
+### Offline Multi-Pet Rules
+
+| ID | Description | Bible Ref | Expected Result |
+|----|-------------|-----------|-----------------|
+| BCT-MULTIPET-009 | Offline mood decays for all pets | §9.4.6 | Mood decays -5/24h for ALL owned pets (floor 30) |
+| BCT-MULTIPET-010 | Offline bond decays for all pets | §9.4.6 | Bond decays -2/24h for ALL owned pets (floor 0); Plus: -1/24h |
+| BCT-MULTIPET-011 | Offline neglect accrues for all pets | §9.4.6 | Neglect +1/day for ALL owned pets (cap 14) |
+
+### Multi-Pet Alert Routing & Suppression
+
+| ID | Description | Bible Ref | Expected Result |
+|----|-------------|-----------|-----------------|
+| BCT-MULTIPET-012 | Neglect alerts fire once per transition | §14.6.2 | Stage transition alerts fire once, not repeatedly |
+| BCT-MULTIPET-013 | Alert cooldown is 30 minutes per pet | §14.6.2 | Minimum 30 minutes between alerts for same pet (except runaway) |
+| BCT-MULTIPET-014 | Offline return batches alerts | §14.6.2 | Returning from offline shows batched "Welcome Back" summary |
+
+---
+
 ## Automated Test Implementation
 
 ### Constants (Single Source of Truth)
@@ -825,6 +906,8 @@ BCT spec tests verify that `bible.constants.ts` values match the Bible:
 | `src/__tests__/bct-env.spec.ts` | BCT-ENV-001, 002 |
 | `src/__tests__/bct-mobile-layout.spec.ts` | BCT-LAYOUT-001 |
 | `src/__tests__/bct-art.spec.ts` | BCT-ART-01 thru 06 (401 tests) |
+| `src/__tests__/bct-petslots.spec.ts` | BCT-PETSLOTS-001 thru 011 (P9-A) |
+| `src/__tests__/bct-multipet.spec.ts` | BCT-MULTIPET-001 thru 014 (P9-B) |
 
 **Run:**
 
@@ -861,12 +944,18 @@ npm run test:bible:e2e
 |--------------|------------|-----------|
 | §4.3-4.4 (Feeding/Cooldown) | ✅ bct-core-loop.spec.ts | — |
 | §4.4 (HUD) | ✅ bct-hud.spec.ts | ✅ BCT-HUD-01 |
+| §6 (Per-Pet Stats) | ✅ bct-petslots.spec.ts | — |
 | §6.1 (Evolution) | ✅ bct-evolution.spec.ts | — |
 | §7.4 (FTUE) | ✅ bct-environments.spec.ts | ⏳ (skipped) |
 | §8.2-8.3 (Mini-games) | ✅ bct-economy.spec.ts | — |
+| §8.2.1 (Energy Scope) | ⏳ bct-multipet.spec.ts (P9-B) | — |
+| §9.4.3 (Neglect) | ✅ bct-neglect.spec.ts | — |
+| §9.4.4-9.4.6 (Multi-Pet Runtime) | ⏳ bct-multipet.spec.ts (P9-B) | — |
+| §11.6 (Pet Slots) | ✅ bct-petslots.spec.ts | — |
 | §14.4 (Rooms/Environment) | ✅ bct-environments.spec.ts, bct-env.spec.ts | — |
 | §14.5 (Navigation/Pet) | ✅ bct-pet-nav.spec.ts | ✅ BCT-NAV-01, BCT-PET-01 |
 | §14.6 (Mobile Layout) | ✅ bct-mobile-layout.spec.ts | ✅ BCT-MOBILE-01 |
+| §14.6.1-14.6.2 (Multi-Pet Alerts) | ⏳ bct-multipet.spec.ts (P9-B) | — |
 
 ---
 
