@@ -390,7 +390,10 @@ Mood system (§4.5) with numeric moodValue 0-100, decay, and Grib/Plompo abiliti
 **P6-AUDIO / P6-PWA Implementation (December 2024):**
 - Audio: Room-specific ambience with crossfade transitions (Living Room, Kitchen, Bedroom, Playroom, Yard)
 - Audio: Time-of-day volume multipliers (morning 0.9, day 1.0, evening 0.8, night 0.6)
-- PWA: Service worker precaches shell assets (index.html, manifest, icons, splash)
+- Audio: Ambience file naming convention: `<room>_ambience.mp3` (e.g., `living_room_ambience.mp3`)
+- Audio: Helper functions `getAllAmbienceAudioPaths()` and `AMBIENCE_AUDIO_PATHS` constant for PWA pre-caching
+- PWA: Service worker precaches shell assets + ambience audio (5 room MP3 files)
+- PWA: PRECACHE_URLS combines SHELL_ASSETS and AMBIENCE_AUDIO_ASSETS
 - PWA: Install CTA in Settings (shows when beforeinstallprompt available, hidden after install)
 - PWA: "New version available" toast with user-controlled refresh (no auto-skipWaiting)
 
