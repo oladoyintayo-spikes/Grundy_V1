@@ -252,6 +252,8 @@ npm test
 npm run test:bible
 
 # Run E2E tests (Playwright)
+# NOTE: First-time setup requires browser install:
+npx playwright install chromium
 npm run test:e2e
 
 # Run E2E tests with UI mode
@@ -266,6 +268,8 @@ npm test -- --watch
 # Run specific test file
 npm test -- FeedingSystem
 ```
+
+> **E2E Note:** CI environments must preinstall browsers or cache Playwright deps; otherwise `npx playwright install` may fail due to network restrictions.
 
 **Test Coverage Areas:**
 - XP formula correctness at various levels
