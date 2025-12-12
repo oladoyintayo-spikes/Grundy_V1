@@ -270,7 +270,7 @@ npm run dev
 
 ## Sources
 
-- `docs/GRUNDY_MASTER_BIBLE.md` (v1.4) — Design source of truth
+- `docs/GRUNDY_MASTER_BIBLE.md` (v1.6) — Design source of truth
 - `docs/PHASE6_BACKLOG.md` — Phase 6 task backlog
 - `TASKS.md` — Detailed task list
 - `ORCHESTRATOR.md` — Agent workflow

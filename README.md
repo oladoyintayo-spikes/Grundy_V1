@@ -12,13 +12,15 @@
 
 | Resource | Location |
 |----------|----------|
-| **Design SoT** | `docs/GRUNDY_MASTER_BIBLE.md` |
+| **Design SoT** | `docs/GRUNDY_MASTER_BIBLE.md` (v1.6) |
+| **BCT Spec** | `docs/BIBLE_COMPLIANCE_TEST.md` (v2.2) |
 | **Asset List** | `docs/ASSET_MANIFEST.md` |
 | **Current Sprint** | `CURRENT_SPRINT.md` |
 
 > ⚠️ **Design SoT: `docs/GRUNDY_MASTER_BIBLE.md`**
-> 
+>
 > If any document or code conflicts with the Bible, the Bible wins.
+> Patch artifacts in `docs/patches/` are non-canonical reference material only.
 
 ---
 
@@ -245,6 +247,9 @@ Zustand `persist` middleware with versioned migrations (currently v3). Data stor
 ```bash
 # Run all tests
 npm test
+
+# Run Bible Compliance Tests (BCT suite)
+npm run test:bible
 
 # Run with watch mode
 npm test -- --watch

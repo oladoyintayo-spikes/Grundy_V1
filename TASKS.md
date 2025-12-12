@@ -324,53 +324,57 @@ P1-CORE-4, P1-DOC-1,2 ── Can run in parallel
 
 > These features are planned for after the Web 1.0 release.
 
-### Shop System
+### Shop System (Phase 8)
 
-> Bible Section 11.5 — Complete shop implementation.
-
-| ID | Task | Status | Bible | Acceptance Criteria |
-|----|------|--------|-------|---------------------|
-| P4-1 | Audit shop vs Bible | ⬜ | 11.5 | Document gaps |
-| P4-2 | Implement shop tabs | ⬜ | 11.5 | Food, Cosmetics, Utility, Bundles, Event |
-| P4-3 | Implement tab visibility | ⬜ | 11.5 | Utility Lv5+, Bundles Lv3+, Event during events |
-| P4-4 | Add all Bible items | ⬜ | 11.5 | Complete catalog |
-| P4-5 | Implement visibility rules | ⬜ | 11.5 | Level-locked gray, owned shows ✓ |
-| P4-6 | Add "Recommended" section | ⬜ | 11.5 | Context-aware recommendations |
-| P4-7 | Add gem confirm dialog | ⬜ | 11.1 | Confirm for ≥50 gems |
-| P4-8 | Add shop milestones | ⬜ | 11.5 | Achievement badges |
-
----
-
-## PHASE 5: Inventory System
-
-> Bible Section 11.7 — Inventory expansion.
+> Bible v1.6: §5.8, §11.5, §11.5.1, §14.7 — Complete shop implementation.
+> BCT v2.2: BCT-SHOP-001 through BCT-SHOP-025
 
 | ID | Task | Status | Bible | Acceptance Criteria |
 |----|------|--------|-------|---------------------|
-| P5-1 | Add inventory capacity | ⬜ | 11.7 | Default 15 |
-| P5-2 | Implement capacity check | ⬜ | 11.7 | Block if full |
-| P5-3 | Add expansion items | ⬜ | 11.7 | 25/50/100/150 gems |
-| P5-4 | Implement expansion | ⬜ | 11.7 | +5 per purchase, max 35 |
-| P5-5 | Show capacity in UI | ⬜ | 11.7 | "12/15" display |
+| P8-SHOP-01 | Audit shop vs Bible v1.6 | ⬜ | §11.5, §11.5.1 | Document gaps |
+| P8-SHOP-02 | Implement shop tabs (Food, Care, Cosmetics, Gems) | ⬜ | §14.7 | Per §14.7 Web Shop Tabs |
+| P8-SHOP-03 | Implement individual food purchase | ⬜ | §11.5.1 | Quantity selector 1-10, coins-only |
+| P8-SHOP-04 | Implement bundle purchase + decomposition | ⬜ | §11.5.1, §11.7.1 | Bundles decompose to base items |
+| P8-SHOP-05 | Implement visibility rules | ⬜ | §14.7 | Medicine (Classic), Diet (weight≥31), Gems tab (Lv5+) |
+| P8-SHOP-06 | Add "Recommended" section | ⬜ | §14.7 | Deterministic priority: sick→medicine, energy<20, hunger<30, mood<40, weight≥31 |
+| P8-SHOP-07 | Implement purchase flow | ⬜ | §11.5.1 | Coin deduction, "Not enough coins!", "Inventory full!" errors |
+| P8-SHOP-08 | Add starting resources | ⬜ | §5.8 | 100 coins, 0 gems, starter inventory (2 Apple, 2 Banana, 1 Cookie) |
 
 ---
 
-## PHASE 6: Pet Slots (Multi-Pet)
+### Inventory System (Phase 8)
 
-> Bible Section 11.6 — Multi-pet care system.
+> Bible v1.6: §11.7, §11.7.1, §14.8 — Inventory slots and stacking.
+> BCT v2.2: BCT-INV-001 through BCT-INV-017, BCT-ECON-004 through BCT-ECON-008
 
 | ID | Task | Status | Bible | Acceptance Criteria |
 |----|------|--------|-------|---------------------|
-| P6-1 | Add pet slots to state | ⬜ | 11.6 | `activeSlots`, `maxSlots` |
-| P6-2 | Implement slot purchase | ⬜ | 11.6 | 100/150/200 gems |
-| P6-3 | Update pet selector | ⬜ | 11.6 | Assign/swap slots |
-| P6-4 | Implement parallel decay | ⬜ | 11.6 | All slotted pets decay |
-| P6-5 | Update notifications | ⬜ | 11.6 | Any pet can trigger |
-| P6-6 | Add slot UI | ⬜ | 11.6 | Active indicator, quick-switch |
+| P8-INV-01 | Add inventory capacity | ⬜ | §11.7 | Base 15 slots |
+| P8-INV-02 | Implement stacking semantics | ⬜ | §11.7.1 | Max 99 per item id, slot = unique item id |
+| P8-INV-03 | Implement capacity check | ⬜ | §11.7.1 | Block purchase if new slot needed + none available OR stack > 99 |
+| P8-INV-04 | Add expansion items | ⬜ | §11.7 | 25/50/100/150 gems for +5 slots each |
+| P8-INV-05 | Show capacity in UI | ⬜ | §14.8 | "X/15" header, Food/Care tabs |
+| P8-INV-06 | Implement item detail modal | ⬜ | §14.8 | Quantity, rarity, affinities, "Use on Pet" action |
+| P8-INV-07 | Implement empty state | ⬜ | §14.8 | "Go to Shop" CTA when empty |
 
 ---
 
-## PHASE 7: Classic Mode
+## PHASE 9: Pet Slots (Multi-Pet)
+
+> Bible v1.6: §11.6 — Multi-pet care system.
+
+| ID | Task | Status | Bible | Acceptance Criteria |
+|----|------|--------|-------|---------------------|
+| P9-SLOTS-01 | Add pet slots to state | ⬜ | §11.6 | `activeSlots`, `maxSlots` |
+| P9-SLOTS-02 | Implement slot purchase | ⬜ | §11.6 | 100/150/200 gems |
+| P9-SLOTS-03 | Update pet selector | ⬜ | §11.6 | Assign/swap slots |
+| P9-SLOTS-04 | Implement parallel decay | ⬜ | §11.6 | All slotted pets decay |
+| P9-SLOTS-05 | Update notifications | ⬜ | §11.6 | Any pet can trigger |
+| P9-SLOTS-06 | Add slot UI | ⬜ | §11.6 | Active indicator, quick-switch |
+
+---
+
+## PHASE 7: Classic Mode (Complete)
 
 > Bible Section 9 — Full neglect system.
 

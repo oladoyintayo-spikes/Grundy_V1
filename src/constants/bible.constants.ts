@@ -1,13 +1,14 @@
 /**
  * GRUNDY BIBLE CONSTANTS
  *
- * These values are LOCKED per GRUNDY_MASTER_BIBLE v1.5.
+ * These values are LOCKED per GRUNDY_MASTER_BIBLE v1.6 and BCT v2.2.
  * Do not modify without explicit Bible version bump.
  *
  * This is the SINGLE SOURCE OF TRUTH for Bible-locked values.
  * Both runtime code and tests import from this file.
  *
- * @see docs/GRUNDY_MASTER_BIBLE.md
+ * @see docs/GRUNDY_MASTER_BIBLE.md (v1.6)
+ * @see docs/BIBLE_COMPLIANCE_TEST.md (v2.2)
  */
 
 // ============================================================================

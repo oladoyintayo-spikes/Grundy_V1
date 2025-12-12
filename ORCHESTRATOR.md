@@ -65,6 +65,34 @@ These documents form the **governance triad** for all Grundy development:
 | **BIBLE_COMPLIANCE_TEST.md** | `docs/` | Test contract — how to VERIFY Bible compliance |
 | **GRUNDY_PHASE_REVIEW_SOP.md** | `docs/` | Process authority — WHO reviews WHEN |
 
+### Canonical Versions
+
+| Artifact | Path | Version |
+|----------|------|---------|
+| Bible | `docs/GRUNDY_MASTER_BIBLE.md` | **v1.6** |
+| BCT Spec | `docs/BIBLE_COMPLIANCE_TEST.md` | **v2.2** |
+| Locked Constants | `src/constants/bible.constants.ts` | Single source for locked values |
+
+> **Note:** Patch artifacts in `docs/patches/` are non-canonical reference material only. Always use the canonical docs above.
+
+### Phase Snapshot
+
+| Phase | Status |
+|-------|--------|
+| Phases 0–7 | Complete (Web 1.0 + Phase 6 compliance + Phase 7 neglect runtime) |
+| Phase 8 | Shop + Inventory (Web Phase 8) |
+| Phase 9 | Pet Slots / Multi-pet |
+| Phase 9+ | Classic sickness/weight/care mistakes |
+| Phase 10+ | Lore Journal |
+| Phase 11 | Cosmetics |
+| Phase 12+ | LiveOps |
+
+### Agent Constraints
+
+- Dev-only agents **cannot** change CE/QA status fields or mark phases complete
+- Agents must reference Bible + BCT and must not change locked invariants without an approved design change
+- All locked values must come from `src/constants/bible.constants.ts`
+
 ### Document Hierarchy
 
 ```
@@ -79,7 +107,7 @@ GRUNDY_PHASE_REVIEW_SOP.md      ← Process (WHO reviews WHEN)
 
 ### Key Rules
 
-1. **Bible = Design Authority:** All implementation must match Bible v1.4 specification
+1. **Bible = Design Authority:** All implementation must match Bible v1.6 specification
 2. **BCT = Test Contract:** Use BCT-* tests to verify Bible compliance before marking work complete
 3. **SOP = Process Authority:** Follow Dev→CE→QA flow; agents cannot approve their own work
 
@@ -703,7 +731,7 @@ Your Responsibilities:
 
 3. **Verify Bible Compliance**
    - Check BCT test results against docs/BIBLE_COMPLIANCE_TEST.md
-   - Ensure implementation matches Bible v1.4 specification
+   - Ensure implementation matches Bible v1.6 specification
    - Flag any deviations or violations
 
 4. **Decide the task's state**
@@ -767,7 +795,7 @@ Constraints:
 - [Short explanation]
 
 ## Rationale
-- Why this decision, referencing Bible v1.4 sections and BCT tests
+- Why this decision, referencing Bible v1.6 sections and BCT tests
 
 ## Instructions for Agents
 - Implementer: [what to change, if any]
