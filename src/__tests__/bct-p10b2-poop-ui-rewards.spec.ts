@@ -322,15 +322,9 @@ describe('P10-B2-005: Offline Mood Decay Acceleration', () => {
     useGameStore.getState().resetGame();
 
     // Complete FTUE to enable offline fanout
+    const store = useGameStore.getState();
     useGameStore.setState({
-      ftue: {
-        currentStep: 'COMPLETE' as any,
-        hasCompletedFtue: true,
-        hasSelectedStarterPet: true,
-        hasReceivedStarterFood: true,
-        hasCompletedFirstFeed: true,
-        hasDismissedFtue: true,
-      },
+      ftue: { ...store.ftue, hasCompletedFtue: true },
     });
   });
 

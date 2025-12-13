@@ -443,6 +443,25 @@ P1-CORE-4, P1-DOC-1,2 ── Can run in parallel
 | P10-DOC-02 | BCT v2.4 test suites defined | ✅ DONE | — | ~52 planned tests |
 | P10-DOC-03 | Governance sweep | ✅ DONE | — | ORCHESTRATOR, TASKS, DEV_STATUS updated |
 
+### P10-B/B1.5/B2: Poop System + Offline Order (COMPLETE)
+
+> **Commit:** `c1095b1` (via PR #88)
+> **Branch:** `claude/p10-b2-poop-ui-polish-01QyRrnRXgT1nMMoqTWKJtbk`
+
+| ID | Task | Status | Bible | Notes |
+|----|------|--------|-------|-------|
+| P10-B | Offline weight/sickness order | ✅ DONE | §9.4.7 | Order: weight decay → sickness triggers → stat decay |
+| P10-B1.5 | Poop state model + spawn + clean | ✅ DONE | §9.5 | isPoopDirty, poopDirtyStartTimestamp, feedingsSinceLastPoop |
+| P10-B2-01 | Poop UI indicator | ✅ DONE | §9.5, §14 | Visual indicator when poop dirty |
+| P10-B2-02 | Tap-to-clean interaction | ✅ DONE | §9.5 | cleanPoop() action with race guard |
+| P10-B2-03 | Cleaning rewards | ✅ DONE | §9.5 | +2 Happiness, +0.1 Bond |
+| P10-B2-04 | Mood decay 2× after 60m dirty | ✅ DONE | §9.5 | Online + offline (save-time anchored) |
+| P10-B2-05 | BCT tests | ✅ DONE | — | 18 tests in `bct-p10b2-poop-ui-rewards.spec.ts` |
+
+**Verification Notes:**
+- Bond decimals audit: ✅ PASS — bond typed as `number`, no integer coercion in state
+- Offline 60m threshold: Uses save-time-anchored approach (intentional approximation)
+
 ### P10-A: Weight State Model
 
 | ID | Task | Status | Bible | Notes |

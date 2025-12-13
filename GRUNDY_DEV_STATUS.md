@@ -2,9 +2,9 @@
 
 # Grundy Web Prototype — Development Status
 
-**Last Updated:** December 13, 2025 (Bible v1.8 Governance Sweep — Weight & Sickness Multi-Pet Rules)
-**Current Phase:** Web Phase 9 — **CE/QA APPROVED** (Pet Slots / Multi-Pet)
-**Next Phase:** Phase 10 (Weight & Sickness Runtime)
+**Last Updated:** December 13, 2025 (P10-B2 Merge-Readiness Verification)
+**Current Phase:** Web Phase 10 — 🟡 P10-B2 COMPLETE (Poop System + Offline Order)
+**Next Phase:** P10-C/D/E/F/G/H (Weight & Sickness Remaining Tasks)
 
 ---
 
@@ -45,6 +45,7 @@
 | **Web Phase 7** | Classic Mode | 🟡 P7-NEGLECT ✅ | Neglect & Withdrawal runtime ✅; 49 BCT-NEGLECT tests; Sickness ⬜; Weight ⬜ |
 | **Web Phase 8** | Shop + Inventory | ✅ CE/QA APPROVED | Audit: `947e1b9`; Sign-off: 2025-12-12; See [`docs/CEQA_PHASE8_SIGNOFF_NOTES.md`](docs/CEQA_PHASE8_SIGNOFF_NOTES.md) |
 | **Web Phase 9** | Pet Slots / Multi-Pet | ✅ CE/QA APPROVED | Audit: `83ce657`; Sign-off: 2025-12-12; See [`docs/CEQA_PHASE9_SIGNOFF_NOTES.md`](docs/CEQA_PHASE9_SIGNOFF_NOTES.md) |
+| **Web Phase 10** | Weight & Sickness Runtime | 🟡 P10-B2 COMPLETE | Poop UI + cleaning + rewards + mood decay 2× after 60m; commit `c1095b1` |
 
 ### Post-Web 1.0
 
@@ -649,12 +650,54 @@ All QA S3/S4 issues from Web 1.0 are mapped to Phase 6 tasks:
 
 ---
 
+## Web Phase 10 — P10-B2 COMPLETE (Poop System + Offline Order)
+
+**Theme:** Bible v1.8 §5.7, §9.4.7, §9.5 — Weight & Sickness runtime, Poop system.
+
+**Status:** 🟡 P10-B2 COMPLETE (2025-12-13)
+
+### P10-B/B1.5/B2 Summary
+
+| Sub-Phase | Status | Summary |
+|-----------|--------|---------|
+| **P10-B** (Offline Order) | ✅ DONE | Weight decay → sickness triggers → stat decay order |
+| **P10-B1.5** (Poop State) | ✅ DONE | isPoopDirty, poopDirtyStartTimestamp, feedingsSinceLastPoop |
+| **P10-B2** (Poop UI) | ✅ DONE | Indicator + tap-to-clean + rewards + 2× mood decay |
+
+### P10-B2 Implementation Details
+
+| Feature | Implementation | Notes |
+|---------|----------------|-------|
+| Poop UI indicator | `PoopIndicator` in `PetAvatar` | Visual when poop dirty |
+| Tap-to-clean | `cleanPoop()` action | Race-safe guard |
+| Rewards | +2 Happiness, +0.1 Bond | `POOP_CLEANING_REWARDS` constant |
+| Mood decay 2× | After 60+ min dirty | Online via `decayMood()`, offline via `applyOfflineDecayToPet()` |
+
+### Verification Artifacts
+
+| Artifact | Path | Notes |
+|----------|------|-------|
+| Commit | `c1095b1` | Via PR #88 |
+| Branch | `claude/p10-b2-poop-ui-polish-01QyRrnRXgT1nMMoqTWKJtbk` | Merged |
+| BCT Tests | `src/__tests__/bct-p10b2-poop-ui-rewards.spec.ts` | 18 tests |
+
+### Risk Audit Notes
+
+| Audit | Result | Finding |
+|-------|--------|---------|
+| **Bond Decimals** | ✅ PASS | `bond: number` type, no integer coercion in state updates |
+| **Offline 60m Threshold** | ⚠️ DOCUMENTED | Save-time-anchored approach (intentional approximation) |
+
+**Offline 60m Note:** Current implementation checks dirty duration at save time only. If threshold is crossed during offline, multiplier is not applied. This is an intentional approximation for simplicity.
+
+---
+
 ## Test Baselines (Informational)
 
 | Metric | Current | Previous | Notes |
 |--------|---------|----------|-------|
-| Unit tests | ~1547 | 1507 | +40 from P9-C Slot Unlock |
-| BCT tests | ~891 | 851 | +40 from `bct-slot-unlock.spec.ts` |
+| Unit tests | ~1565 | 1547 | +18 from P10-B2 poop tests |
+| BCT tests | ~909 | 891 | +18 from `bct-p10b2-poop-ui-rewards.spec.ts` |
 
 ---
 
