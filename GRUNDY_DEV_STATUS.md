@@ -2,9 +2,9 @@
 
 # Grundy Web Prototype — Development Status
 
-**Last Updated:** December 13, 2025 (P10-B2 Merge-Readiness Verification)
-**Current Phase:** Web Phase 10 — 🟡 P10-B2 COMPLETE (Poop System + Offline Order)
-**Next Phase:** P10-C/D/E/F/G/H (Weight & Sickness Remaining Tasks)
+**Last Updated:** December 13, 2025 (P10-D Mini-Game Gating Complete)
+**Current Phase:** Web Phase 10 — 🟡 P10-D COMPLETE (Feeding Triggers + Mini-Game Gating)
+**Next Phase:** P10-E/F/G/H (Weight & Sickness Remaining Tasks)
 
 ---
 
@@ -45,7 +45,7 @@
 | **Web Phase 7** | Classic Mode | 🟡 P7-NEGLECT ✅ | Neglect & Withdrawal runtime ✅; 49 BCT-NEGLECT tests; Sickness ⬜; Weight ⬜ |
 | **Web Phase 8** | Shop + Inventory | ✅ CE/QA APPROVED | Audit: `947e1b9`; Sign-off: 2025-12-12; See [`docs/CEQA_PHASE8_SIGNOFF_NOTES.md`](docs/CEQA_PHASE8_SIGNOFF_NOTES.md) |
 | **Web Phase 9** | Pet Slots / Multi-Pet | ✅ CE/QA APPROVED | Audit: `83ce657`; Sign-off: 2025-12-12; See [`docs/CEQA_PHASE9_SIGNOFF_NOTES.md`](docs/CEQA_PHASE9_SIGNOFF_NOTES.md) |
-| **Web Phase 10** | Weight & Sickness Runtime | 🟡 P10-B2 COMPLETE | Poop UI + cleaning + rewards + mood decay 2× after 60m; commit `c1095b1` |
+| **Web Phase 10** | Weight & Sickness Runtime | 🟡 P10-D COMPLETE | P10-B2 (Poop UI) + P10-C/D (Feeding+Gating); commit `ce23fd7` |
 
 ### Post-Web 1.0
 
@@ -650,11 +650,11 @@ All QA S3/S4 issues from Web 1.0 are mapped to Phase 6 tasks:
 
 ---
 
-## Web Phase 10 — P10-B2 COMPLETE (Poop System + Offline Order)
+## Web Phase 10 — P10-D COMPLETE (Feeding Triggers + Mini-Game Gating)
 
 **Theme:** Bible v1.8 §5.7, §9.4.7, §9.5 — Weight & Sickness runtime, Poop system.
 
-**Status:** 🟡 P10-B2 COMPLETE (2025-12-13)
+**Status:** 🟡 P10-D COMPLETE (2025-12-13)
 
 ### P10-B/B1.5/B2 Summary
 
@@ -692,14 +692,23 @@ All QA S3/S4 issues from Web 1.0 are mapped to Phase 6 tasks:
 
 **Offline 60m Poop Threshold:** This save-time-anchored behavior is an intentional approximation for Web Edition v1.x. Accepted unless CE requests parity later.
 
+### P10-C/D Summary
+
+| Sub-Phase | Status | Summary |
+|-----------|--------|---------|
+| **P10-C** (Feeding Triggers) | ✅ DONE | Snack weight gain + immediate sickness triggers; commit `8992656` |
+| **P10-D** (Mini-Game Gating) | ✅ DONE | Sick/Obese block mini-games (Classic only); Cozy bypasses; commit `ce23fd7` |
+
+**Traceability:** P10-D work originated from branch `claude/p10-b2-merge-readiness-01V13tp3PSDSWFZKxeQbuT5Z` (branch name mismatch). Canonical commit on main: `ce23fd7`.
+
 ---
 
 ## Test Baselines (Informational)
 
 | Metric | Current | Previous | Notes |
 |--------|---------|----------|-------|
-| Unit tests (full) | **1634** | 1616 | `npm test -- --run` |
-| BCT tests | **891** | 873 | `npm run test:bible` (filters by "BCT-" pattern) |
+| Unit tests (full) | **1680** | 1634 | `npm test -- --run` |
+| BCT tests | **914** | 891 | `npm run test:bible` (filters by "BCT-" pattern) |
 
 **Note:** BCT tests are a subset of the full suite. The `test:bible` command skips non-BCT tests (743 skipped).
 

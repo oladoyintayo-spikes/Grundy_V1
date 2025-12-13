@@ -462,6 +462,18 @@ P1-CORE-4, P1-DOC-1,2 ── Can run in parallel
 - Bond decimals audit: ✅ PASS — bond typed as `number`, no integer coercion in state
 - Offline 60m threshold: Uses save-time-anchored approach (intentional approximation)
 
+### P10-C/D: Feeding Triggers + Mini-Game Health Gating (COMPLETE)
+
+> **P10-C Commit:** `8992656` — Feeding-time triggers (weight gain + sickness)
+> **P10-D Commit:** `ce23fd7` — Mini-game health gating (Classic-only)
+> **Traceability:** P10-D implemented under branch `claude/p10-b2-merge-readiness-01V13tp3PSDSWFZKxeQbuT5Z` (naming mismatch); merged to main via PR #91.
+
+| ID | Task | Status | Bible | Notes |
+|----|------|--------|-------|-------|
+| P10-C | Feeding triggers (weight gain + sickness) | ✅ DONE | §5.7, §9.4.7 | Snack weight gain, immediate sickness triggers |
+| P10-D | Mini-game health gating | ✅ DONE | §9.4.7 | Sick/Obese block mini-games (Classic only); Cozy bypasses |
+| P10-D-BCT | BCT tests | ✅ DONE | — | 23 tests in `bct-p10d-minigame-gating.spec.ts` |
+
 ### P10-A: Weight State Model
 
 | ID | Task | Status | Bible | Notes |
