@@ -97,6 +97,9 @@ import {
   type SlotStatus,
   // P10-B1.5: Poop frequency constants
   POOP_FREQUENCY,
+  // P10-B2: Poop cleaning rewards and mood decay acceleration
+  POOP_CLEANING_REWARDS,
+  POOP_MOOD_DECAY,
 } from '../constants/bible.constants';
 // P8-SHOP-PURCHASE: Shop purchase engine
 import { purchaseShopItem as executePurchase } from './shopPurchase';
@@ -280,16 +283,36 @@ function calculateOfflineDecay(
 /**
  * Apply offline decay to a single pet's state.
  * Bible §9.4.6: Floor values for mood (30), bond (0), hunger (0).
+ * P10-B2: Applies 2× mood decay multiplier when poop was dirty for 60+ minutes.
+ *
+ * @param pet - The pet state to update
+ * @param decay - Decay amounts to apply
+ * @param offlineMinutes - Total minutes offline (for poop dirty duration check)
+ * @param lastSeenTimestamp - When player was last active (for calculating dirty duration)
  */
 function applyOfflineDecayToPet(
   pet: OwnedPetState,
-  decay: { moodDecay: number; bondDecay: number; hungerDecay: number }
+  decay: { moodDecay: number; bondDecay: number; hungerDecay: number },
+  offlineMinutes?: number,
+  lastSeenTimestamp?: number
 ): OwnedPetState {
+  let effectiveMoodDecay = decay.moodDecay;
+
+  // P10-B2: Apply 2× mood decay multiplier if poop was dirty for 60+ minutes
+  if (pet.isPoopDirty && pet.poopDirtyStartTimestamp !== null && lastSeenTimestamp !== undefined) {
+    // Calculate how long poop was dirty at save time
+    const dirtyMinutesAtSave = (lastSeenTimestamp - pet.poopDirtyStartTimestamp) / (1000 * 60);
+    // If poop was dirty for 60+ minutes at save time, apply 2× multiplier to offline mood decay
+    if (dirtyMinutesAtSave >= POOP_MOOD_DECAY.ACCELERATION_THRESHOLD_MINUTES) {
+      effectiveMoodDecay = decay.moodDecay * POOP_MOOD_DECAY.ACCELERATION_MULTIPLIER;
+    }
+  }
+
   return {
     ...pet,
     moodValue: Math.max(
       OFFLINE_DECAY_RATES.MOOD_FLOOR,
-      (pet.moodValue ?? 50) - decay.moodDecay
+      (pet.moodValue ?? 50) - effectiveMoodDecay
     ),
     bond: Math.max(
       OFFLINE_DECAY_RATES.BOND_FLOOR,
@@ -684,10 +707,10 @@ export const useGameStore = create<GameStore>()(
       // ========================================
 
       /**
-       * Clean poop for the specified pet.
+       * P10-B1.5/B2: Clean poop for the specified pet with rewards.
        * Bible v1.8 §9.5: Sets isPoopDirty = false, clears timestamp.
+       * P10-B2: Awards +2 Happiness (mood) and +0.1 Bond.
        * Does NOT reset feedingsSinceLastPoop counter.
-       * Does NOT award rewards (that's P10-B2).
        */
       cleanPoop: (petId: PetInstanceId) => {
         const state = get();
@@ -698,25 +721,41 @@ export const useGameStore = create<GameStore>()(
           return;
         }
 
+        // Race-safe guard: only award rewards if poop is actually dirty
         if (!pet.isPoopDirty) {
-          console.log(`[cleanPoop] No poop to clean for ${petId}`);
+          console.log(`[cleanPoop] No poop to clean for ${petId} (race guard)`);
           return;
         }
+
+        // P10-B2: Calculate reward values
+        const moodBoost = POOP_CLEANING_REWARDS.HAPPINESS_BOOST;
+        const bondBoost = POOP_CLEANING_REWARDS.BOND_BOOST;
+        const newMoodValue = Math.min(100, (pet.moodValue ?? 50) + moodBoost);
+        const newBond = Math.min(100, pet.bond + bondBoost);
+
+        const updatedPet = {
+          ...pet,
+          isPoopDirty: false,
+          poopDirtyStartTimestamp: null,
+          // P10-B2: Apply cleaning rewards
+          moodValue: newMoodValue,
+          bond: newBond,
+          // Do NOT reset feedingsSinceLastPoop per Bible §9.5
+          // Do NOT reset poopDirtyMinutesAccum here (handled by sickness trigger)
+        };
 
         set({
           petsById: {
             ...state.petsById,
-            [petId]: {
-              ...pet,
-              isPoopDirty: false,
-              poopDirtyStartTimestamp: null,
-              // Do NOT reset feedingsSinceLastPoop per Bible §9.5
-              // Do NOT reset poopDirtyMinutesAccum here (handled by sickness trigger)
-            },
+            [petId]: updatedPet,
           },
+          // Also update legacy pet field if this is the active pet
+          ...(petId === state.activePetId ? {
+            pet: { ...updatedPet, id: updatedPet.speciesId },
+          } : {}),
         });
 
-        console.log(`[cleanPoop] Cleaned poop for ${petId}`);
+        console.log(`[cleanPoop] Cleaned poop for ${petId}, +${moodBoost} mood, +${bondBoost} bond`);
       },
 
       // ========================================
@@ -1321,8 +1360,22 @@ export const useGameStore = create<GameStore>()(
       // ========================================
       tickMoodDecay: (deltaMinutes: number) => {
         set((state) => {
+          // P10-B2: Get active pet's poop state for mood decay acceleration
+          const activePet = state.petsById[state.activePetId];
+          const poopOptions = activePet ? {
+            isPoopDirty: activePet.isPoopDirty ?? false,
+            poopDirtyStartTimestamp: activePet.poopDirtyStartTimestamp ?? null,
+          } : undefined;
+
           // P6-FTUE-MODES: Pass playMode for decay multiplier
-          const newMoodValue = decayMood(state.pet.moodValue ?? 50, deltaMinutes, state.pet.id, state.playMode);
+          // P10-B2: Pass poop state for 2× decay when dirty 60+ minutes
+          const newMoodValue = decayMood(
+            state.pet.moodValue ?? 50,
+            deltaMinutes,
+            state.pet.id,
+            state.playMode,
+            poopOptions
+          );
           return {
             pet: {
               ...state.pet,
@@ -2057,7 +2110,8 @@ export const useGameStore = create<GameStore>()(
           const originalWeight = pet.weight;
 
           // Apply base stat decay (mood/bond/hunger)
-          let updatedPet = applyOfflineDecayToPet(pet, decay);
+          // P10-B2: Pass lastSeen timestamp for poop mood decay acceleration calculation
+          let updatedPet = applyOfflineDecayToPet(pet, decay, offlineMinutes, lastSeen);
 
           // P10-B: Apply weight decay + sickness order-of-application
           // Bible §9.4.6, §9.4.7: Weight decays in both modes; sickness Classic only

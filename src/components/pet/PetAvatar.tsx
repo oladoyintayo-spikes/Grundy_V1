@@ -196,4 +196,56 @@ export function PetDisplay({
   );
 }
 
+// ============================================
+// POOP INDICATOR (P10-B2)
+// ============================================
+
+export interface PoopIndicatorProps {
+  /** Whether poop is currently dirty */
+  isPoopDirty: boolean;
+  /** Callback when user taps to clean */
+  onClean: () => void;
+  /** Additional CSS classes for positioning */
+  className?: string;
+}
+
+/**
+ * PoopIndicator - Shows a 💩 emoji when pet has poop to clean.
+ * P10-B2: Visual indicator with tap-to-clean interaction.
+ *
+ * @example
+ * ```tsx
+ * <PoopIndicator
+ *   isPoopDirty={pet.isPoopDirty}
+ *   onClean={() => cleanPoop(petId)}
+ * />
+ * ```
+ */
+export function PoopIndicator({
+  isPoopDirty,
+  onClean,
+  className = '',
+}: PoopIndicatorProps) {
+  if (!isPoopDirty) return null;
+
+  return (
+    <button
+      data-testid="poop-indicator"
+      onClick={onClean}
+      className={[
+        'text-3xl sm:text-4xl cursor-pointer transition-transform',
+        'hover:scale-110 active:scale-90',
+        'animate-bounce',
+        className,
+      ]
+        .filter(Boolean)
+        .join(' ')}
+      aria-label="Clean poop"
+      title="Tap to clean!"
+    >
+      💩
+    </button>
+  );
+}
+
 export default PetAvatar;

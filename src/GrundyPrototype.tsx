@@ -29,7 +29,7 @@ import {
   updateTimeOfDay,
 } from './audio/audioManager';
 // P5-ART-PETS + P5-ART-ROOMS imports
-import { PetDisplay } from './components/pet/PetAvatar';
+import { PetDisplay, PoopIndicator } from './components/pet/PetAvatar';
 import { RoomScene } from './components/environment/RoomScene';
 import { getDefaultPoseForState, getPoseForReaction } from './game/petVisuals';
 // P6-HUD-CLEANUP: Import fullness/cooldown systems for feedback
@@ -254,6 +254,12 @@ function HomeView({ onOpenShop, pendingFeedFoodId, onClearPendingFeed }: HomeVie
   // P6-ENV-UI: Room selector state and action
   const environment = useGameStore((state) => state.environment);
   const setRoom = useGameStore((state) => state.setRoom);
+  // P10-B2: Poop state and clean action
+  const activePetId = useGameStore((state) => state.activePetId);
+  const petsById = useGameStore((state) => state.petsById);
+  const cleanPoop = useGameStore((state) => state.cleanPoop);
+  const activePet = petsById[activePetId];
+  const isPoopDirty = activePet?.isPoopDirty ?? false;
 
   // UI State (local)
   const [lastReaction, setLastReaction] = useState<ReactionType | null>(null);
@@ -412,10 +418,16 @@ function HomeView({ onOpenShop, pendingFeedFoodId, onClearPendingFeed }: HomeVie
 
           {/* Pet Sprite (P5-ART-PETS, P6-ART-PRODUCTION) - Constrained for mobile */}
           <div
-            className={`flex-1 flex items-center justify-center min-h-0 transition-transform duration-300 ${isFeeding ? 'scale-110' : ''}`}
+            className={`flex-1 flex items-center justify-center min-h-0 transition-transform duration-300 relative ${isFeeding ? 'scale-110' : ''}`}
             style={{ filter: pet.hunger < 20 ? 'grayscale(50%)' : 'none' }}
           >
             <PetDisplay petId={pet.id} pose={currentPose} stage={pet.evolutionStage} breathing={!isFeeding} />
+            {/* P10-B2: Poop indicator - positioned bottom-right of pet area */}
+            <PoopIndicator
+              isPoopDirty={isPoopDirty}
+              onClean={() => cleanPoop(activePetId)}
+              className="absolute bottom-0 right-4"
+            />
           </div>
 
           {/* Pet Name */}

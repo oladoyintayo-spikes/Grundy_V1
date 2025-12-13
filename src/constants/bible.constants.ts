@@ -1135,6 +1135,28 @@ export const POOP_FREQUENCY: Record<string, number> = {
 } as const;
 
 /**
+ * P10-B2: Poop cleaning rewards (Bible v1.8 §9.5)
+ * Rewards granted when player cleans poop.
+ */
+export const POOP_CLEANING_REWARDS = {
+  /** Happiness (mood) boost from cleaning */
+  HAPPINESS_BOOST: 2,
+  /** Bond boost from cleaning */
+  BOND_BOOST: 0.1,
+} as const;
+
+/**
+ * P10-B2: Poop mood decay acceleration (Bible v1.8 §9.5)
+ * Mood decays faster when poop is dirty for extended periods.
+ */
+export const POOP_MOOD_DECAY = {
+  /** Minutes of dirty poop before mood decay accelerates */
+  ACCELERATION_THRESHOLD_MINUTES: 60,
+  /** Mood decay multiplier when poop has been dirty >= threshold */
+  ACCELERATION_MULTIPLIER: 2,
+} as const;
+
+/**
  * Bible §11.6.1: Alert Suppression Rules
  */
 export const ALERT_SUPPRESSION = {
