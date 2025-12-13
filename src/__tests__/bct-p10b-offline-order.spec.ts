@@ -300,6 +300,10 @@ describe('P10-B-005: Cozy Mode Short-Circuit', () => {
     hungerZeroMinutesAccum: 0,
     poopDirtyMinutesAccum: 0,
     offlineSickCareMistakesAccruedThisSession: 0,
+    // P10-B1.5: Poop state fields
+    isPoopDirty: false,
+    poopDirtyStartTimestamp: null,
+    feedingsSinceLastPoop: 0,
     ...overrides,
   });
 
@@ -399,6 +403,10 @@ describe('P10-B-006: Classic Mode Full Order', () => {
     hungerZeroMinutesAccum: 0,
     poopDirtyMinutesAccum: 0,
     offlineSickCareMistakesAccruedThisSession: 0,
+    // P10-B1.5: Poop state fields
+    isPoopDirty: false,
+    poopDirtyStartTimestamp: null,
+    feedingsSinceLastPoop: 0,
     ...overrides,
   });
 

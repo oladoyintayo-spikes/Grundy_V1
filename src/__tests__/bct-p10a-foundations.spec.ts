@@ -105,6 +105,10 @@ describe('P10-A-002: OwnedPetState Type Compliance', () => {
       hungerZeroMinutesAccum: 0,
       poopDirtyMinutesAccum: 0,
       offlineSickCareMistakesAccruedThisSession: 0,
+      // P10-B1.5 fields (Bible v1.8 §9.5)
+      isPoopDirty: false,
+      poopDirtyStartTimestamp: null,
+      feedingsSinceLastPoop: 0,
     };
 
     // Type check: all fields exist and have correct types
@@ -114,6 +118,10 @@ describe('P10-A-002: OwnedPetState Type Compliance', () => {
     expect(typeof pet.hungerZeroMinutesAccum).toBe('number');
     expect(typeof pet.poopDirtyMinutesAccum).toBe('number');
     expect(typeof pet.offlineSickCareMistakesAccruedThisSession).toBe('number');
+    // P10-B1.5 poop state fields
+    expect(typeof pet.isPoopDirty).toBe('boolean');
+    expect(pet.poopDirtyStartTimestamp === null || typeof pet.poopDirtyStartTimestamp === 'number').toBe(true);
+    expect(typeof pet.feedingsSinceLastPoop).toBe('number');
   });
 });
 
