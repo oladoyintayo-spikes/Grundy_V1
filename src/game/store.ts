@@ -100,7 +100,12 @@ import {
   // P10-B2: Poop cleaning rewards and mood decay acceleration
   POOP_CLEANING_REWARDS,
   POOP_MOOD_DECAY,
+  // P10-C: Feeding-time triggers (weight gain + sickness)
+  SNACK_WEIGHT_GAIN,
+  FEEDING_SICKNESS_TRIGGERS,
 } from '../constants/bible.constants';
+// P10-C: Deterministic RNG for sickness chance rolls
+import { randomFloat } from './rng';
 // P8-SHOP-PURCHASE: Shop purchase engine
 import { purchaseShopItem as executePurchase } from './shopPurchase';
 // P10-B: Offline weight/sickness order-of-application
@@ -577,6 +582,47 @@ export const useGameStore = create<GameStore>()(
               newFeedingsSinceLastPoop = 0; // Reset counter after spawn
             }
 
+            // P10-C: Apply snack weight gain (Bible v1.8 §5.7, §9.4.7.1)
+            // Weight gain applies in both Cozy and Classic modes
+            const weightGain = SNACK_WEIGHT_GAIN[foodId] ?? 0;
+            const currentWeight = currentOwnedPet.weight ?? 0;
+            const newWeight = Math.min(100, currentWeight + weightGain);
+
+            // P10-C: Immediate sickness triggers (Bible v1.8 §9.4.7.2)
+            // Classic Mode only - Cozy mode is immune to all sickness
+            let newIsSick = currentOwnedPet.isSick ?? false;
+            let newSickStartTimestamp = currentOwnedPet.sickStartTimestamp ?? null;
+
+            // Only check triggers if not already sick and in Classic mode
+            if (!newIsSick && state.playMode === 'classic') {
+              let becameSick = false;
+
+              // 1. Hot Pepper trigger (5% always)
+              if (foodId === 'hot_pepper') {
+                if (randomFloat() < FEEDING_SICKNESS_TRIGGERS.HOT_PEPPER_CHANCE) {
+                  becameSick = true;
+                }
+              }
+
+              // 2. Overweight snack trigger (5% per snack when weight >= 61)
+              // Only check if not already sick from hot pepper (early exit)
+              if (!becameSick) {
+                const isSnack = SNACK_WEIGHT_GAIN[foodId] !== undefined;
+                const isOverweight = newWeight >= FEEDING_SICKNESS_TRIGGERS.OVERWEIGHT_THRESHOLD;
+                if (isSnack && isOverweight) {
+                  if (randomFloat() < FEEDING_SICKNESS_TRIGGERS.OVERWEIGHT_SNACK_CHANCE) {
+                    becameSick = true;
+                  }
+                }
+              }
+
+              if (becameSick) {
+                newIsSick = true;
+                newSickStartTimestamp = feedTime;
+                console.log(`[P10-C] Pet ${activePetId} became sick from feeding ${foodId} (weight: ${newWeight})`);
+              }
+            }
+
             updatedPetsById = {
               ...state.petsById,
               [activePetId]: {
@@ -595,6 +641,10 @@ export const useGameStore = create<GameStore>()(
                 isPoopDirty: newIsPoopDirty,
                 poopDirtyStartTimestamp: newPoopDirtyStartTimestamp,
                 feedingsSinceLastPoop: newFeedingsSinceLastPoop,
+                // P10-C: Weight and sickness state updates
+                weight: newWeight,
+                isSick: newIsSick,
+                sickStartTimestamp: newSickStartTimestamp,
               },
             };
           }

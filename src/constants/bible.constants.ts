@@ -1119,6 +1119,31 @@ export const SICKNESS_CONFIG = {
 } as const;
 
 /**
+ * P10-C: Snack weight gain by food (Bible v1.8 §5.7, §9.4.7.1)
+ * Only snacks add weight; all other foods add 0.
+ */
+export const SNACK_WEIGHT_GAIN: Record<string, number> = {
+  cookie: 5,      // +5% weight risk
+  candy: 10,      // +10% weight risk
+  ice_cream: 10,  // +10% weight risk
+  lollipop: 8,    // +8% weight risk
+} as const;
+
+/**
+ * P10-C: Immediate feeding-time sickness triggers (Bible v1.8 §9.4.7.2)
+ * These triggers are checked immediately on feeding (not timer-based).
+ * Classic Mode only.
+ */
+export const FEEDING_SICKNESS_TRIGGERS = {
+  /** Hot Pepper 🌶️ sickness chance (5% always) */
+  HOT_PEPPER_CHANCE: 0.05,
+  /** Snack when Overweight (61+) sickness chance (5% per snack) */
+  OVERWEIGHT_SNACK_CHANCE: 0.05,
+  /** Weight threshold for overweight sickness trigger */
+  OVERWEIGHT_THRESHOLD: 61,
+} as const;
+
+/**
  * P10-B1.5: Poop frequency by pet type (Bible v1.8 §9.5)
  * Values extracted directly from Bible "Poop Frequency by Pet" table.
  * Key = species ID, Value = number of feedings before poop spawns.
