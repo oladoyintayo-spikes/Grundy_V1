@@ -103,6 +103,8 @@ import {
   // P10-C: Feeding-time triggers (weight gain + sickness)
   SNACK_WEIGHT_GAIN,
   FEEDING_SICKNESS_TRIGGERS,
+  // P10-D: Mini-game gating thresholds
+  MINIGAME_GATING,
 } from '../constants/bible.constants';
 // P10-C: Deterministic RNG for sickness chance rolls
 import { randomFloat } from './rng';
@@ -406,6 +408,42 @@ function canShowAlert(
   }
 
   return true;
+}
+
+/**
+ * P10-D: Check if pet health state blocks mini-games (Classic Mode only).
+ * Bible v1.8: Sick pets and Obese pets (weight >= 81) cannot play mini-games.
+ * Cozy Mode bypasses ALL health gates.
+ *
+ * Gate order (deterministic):
+ * 1. Cozy mode → allowed (short-circuit)
+ * 2. Sick → blocked with reason 'sick'
+ * 3. Obese (weight >= 81) → blocked with reason 'obese'
+ * 4. Otherwise → allowed
+ */
+export type MinigameGateResult = { allowed: true } | { allowed: false; reason: 'sick' | 'obese' };
+
+export function getMinigameGateReason(
+  pet: { isSick: boolean; weight: number },
+  mode: 'cozy' | 'classic'
+): MinigameGateResult {
+  // 1. Cozy mode bypasses ALL health gates
+  if (mode === 'cozy') {
+    return { allowed: true };
+  }
+
+  // 2. Sick check (Classic only)
+  if (pet.isSick) {
+    return { allowed: false, reason: 'sick' };
+  }
+
+  // 3. Obese check: weight >= 81 (Classic only)
+  if (pet.weight >= MINIGAME_GATING.OBESE_THRESHOLD) {
+    return { allowed: false, reason: 'obese' };
+  }
+
+  // 4. All gates passed
+  return { allowed: true };
 }
 
 // Initial state factory
@@ -1149,7 +1187,23 @@ export const useGameStore = create<GameStore>()(
       canPlay: (gameId: MiniGameId): CanPlayResult => {
         const state = get();
 
-        // First, reset daily if needed
+        // P10-D: Health gates FIRST (before any other checks)
+        // Get active pet's health state for gating check
+        const activePet = state.petsById[state.activePetId];
+        if (activePet) {
+          const healthGate = getMinigameGateReason(
+            { isSick: activePet.isSick ?? false, weight: activePet.weight ?? 0 },
+            state.playMode
+          );
+          if (!healthGate.allowed) {
+            const reasonText = healthGate.reason === 'sick'
+              ? 'Your pet is sick'
+              : 'Your pet is too heavy';
+            return { allowed: false, reason: reasonText, isFree: false };
+          }
+        }
+
+        // Reset daily if needed
         const today = getTodayString();
         if (state.dailyMiniGames.date !== today) {
           // Will be reset on next action, but use fresh state

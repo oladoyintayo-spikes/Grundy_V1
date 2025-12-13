@@ -1144,6 +1144,16 @@ export const FEEDING_SICKNESS_TRIGGERS = {
 } as const;
 
 /**
+ * P10-D: Mini-game gating thresholds (Bible v1.8 §9.4.7)
+ * Health conditions that block mini-games (Classic Mode only).
+ */
+export const MINIGAME_GATING = {
+  /** Weight threshold for Obese (blocks mini-games in Classic) */
+  OBESE_THRESHOLD: 81,
+  // Sick check uses isSick boolean directly
+} as const;
+
+/**
  * P10-B1.5: Poop frequency by pet type (Bible v1.8 §9.5)
  * Values extracted directly from Bible "Poop Frequency by Pet" table.
  * Key = species ID, Value = number of feedings before poop spawns.
