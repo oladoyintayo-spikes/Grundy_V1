@@ -439,6 +439,17 @@ P1-CORE-4, P1-DOC-1,2 ── Can run in parallel
 > - Push notification infrastructure — deferred (no FCM/APNs in web)
 > - Plus subscription detection — deferred (no IAP in web prototype)
 
+### Phase 9 CE/QA Sign-Off
+
+> **Status:** ✅ CE/QA APPROVED (2025-12-12)
+>
+> - **Audit Report:** [`docs/P9_PHASE9_AUDIT_REPORT.md`](docs/P9_PHASE9_AUDIT_REPORT.md)
+> - **Sign-Off Notes:** [`docs/CEQA_PHASE9_SIGNOFF_NOTES.md`](docs/CEQA_PHASE9_SIGNOFF_NOTES.md)
+> - **Closeout Pack:** [`docs/CEQA_PHASE9_CLOSEOUT_PACK.md`](docs/CEQA_PHASE9_CLOSEOUT_PACK.md)
+> - **Audit Commit:** `83ce657`
+>
+> All P9-A/P9-B/P9-B-UI BCT tests pass (51 tests). Multi-pet data model, runtime integration, and UI wiring validated per Bible v1.7 / BCT v2.3.
+
 ### P9-SLOTS: Slot Purchase & UI
 
 | ID | Task | Status | Bible | Acceptance Criteria |

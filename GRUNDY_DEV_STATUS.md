@@ -2,9 +2,9 @@
 
 # Grundy Web Prototype — Development Status
 
-**Last Updated:** December 13, 2025 (P9-GOV-SWEEP — Phase 9 DevStatus COMPLETE)
-**Current Phase:** Web Phase 9 — **P9-A/P9-B/P9-B-UI DevStatus COMPLETE** (Pet Slots / Multi-Pet)
-**Next Phase:** Phase 9 CE/QA Review → P9-C (Weight/Sickness) or Phase 10 (Lore Journal)
+**Last Updated:** December 13, 2025 (P9-CEQA-STATUS-FLIP — Phase 9 CE/QA APPROVED)
+**Current Phase:** Web Phase 9 — **CE/QA APPROVED** (Pet Slots / Multi-Pet)
+**Next Phase:** P9-C (Weight/Sickness) or Phase 10 (Lore Journal)
 
 ---
 
@@ -43,7 +43,7 @@
 | **Web Phase 6** | Tier 2 Polish | ✅ TIER 2 DEV COMPLETE | P6-AUDIO-ROOM ✅; P6-AUDIO-TOD ✅; P6-PWA-PRECACHE ✅; P6-PWA-UI ✅; P6-PWA-UPDATE ✅; 1224 tests; CE Review Required |
 | **Web Phase 7** | Classic Mode | 🟡 P7-NEGLECT ✅ | Neglect & Withdrawal runtime ✅; 49 BCT-NEGLECT tests; Sickness ⬜; Weight ⬜ |
 | **Web Phase 8** | Shop + Inventory | ✅ CE/QA APPROVED | Audit: `947e1b9`; Sign-off: 2025-12-12; See [`docs/CEQA_PHASE8_SIGNOFF_NOTES.md`](docs/CEQA_PHASE8_SIGNOFF_NOTES.md) |
-| **Web Phase 9** | Pet Slots / Multi-Pet | ✅ P9-A/P9-B/P9-B-UI DEV COMPLETE | Multi-pet data model, runtime, UI wiring; 51 BCT tests; CE Review PENDING |
+| **Web Phase 9** | Pet Slots / Multi-Pet | ✅ CE/QA APPROVED | Audit: `83ce657`; Sign-off: 2025-12-12; See [`docs/CEQA_PHASE9_SIGNOFF_NOTES.md`](docs/CEQA_PHASE9_SIGNOFF_NOTES.md) |
 
 ### Post-Web 1.0
 
@@ -53,7 +53,7 @@
 | Sound & Vibration | ✅ COMPLETE | Core audio (P5-AUDIO-CORE) + Room ambience (P6-AUDIO-ROOM) + TOD variations (P6-AUDIO-TOD); vibration deferred |
 | Shop & Economy | ✅ CE/QA APPROVED | Shop tabs, bundles, purchase flow, recommendations — Phase 8 |
 | Inventory | ✅ CE/QA APPROVED | Capacity (15 slots), stack max (99), Use-on-Pet flow — Phase 8 |
-| Pet Slots | ✅ P9-A/P9-B/P9-B-UI DEV COMPLETE | Multi-pet data model, runtime, UI wiring — Phase 9; CE Review PENDING |
+| Pet Slots | ✅ CE/QA APPROVED | Multi-pet data model, runtime, UI wiring — Phase 9; Approved 2025-12-12 |
 | Classic Mode | 🟡 PARTIAL | Neglect & Withdrawal ✅ (P7-NEGLECT-SYSTEM); Sickness ⬜; Weight ⬜ (deferred to P9-C) |
 
 ---
@@ -589,24 +589,28 @@ All QA S3/S4 issues from Web 1.0 are mapped to Phase 6 tasks:
 
 ---
 
-## Web Phase 9 — P9-A/P9-B/P9-B-UI DEV COMPLETE (Pet Slots / Multi-Pet)
+## Web Phase 9 — CE/QA APPROVED (Pet Slots / Multi-Pet)
 
 **Theme:** Bible v1.7 §11.6, §8.2.1, §9.4.4–9.4.7, §14.6 — Multi-pet care system with runtime clarifications.
 
+**Status:** ✅ CE/QA APPROVED (2025-12-12)
+
 ### Phase 9 Sub-Phases
 
-| Sub-Phase | DevStatus | CEStatus | Summary |
-|-----------|-----------|----------|---------|
-| **P9-A** (Pet Slots Foundation) | ✅ COMPLETE | PENDING | Multi-pet data model, save migration, initialization, switching UI |
-| **P9-B** (Multi-Pet Runtime) | ✅ COMPLETE | PENDING | Global energy scope, runaway auto-switch, offline rules, alert routing |
-| **P9-B-UI** (Multi-Pet UI Wiring) | ✅ COMPLETE | PENDING | Multi-pet badges, welcome back modal, summary display |
-| **P9-C** (Weight/Sickness) | DEFERRED | — | Bible §9.4.7 — deferred to future phase |
+| Sub-Phase | Status | Summary |
+|-----------|--------|---------|
+| **P9-A** (Pet Slots Foundation) | ✅ CE/QA APPROVED | Multi-pet data model, save migration, initialization, switching UI |
+| **P9-B** (Multi-Pet Runtime) | ✅ CE/QA APPROVED | Global energy scope, runaway auto-switch, offline rules, alert routing |
+| **P9-B-UI** (Multi-Pet UI Wiring) | ✅ CE/QA APPROVED | Multi-pet badges, welcome back modal, summary display |
+| **P9-C** (Weight/Sickness) | DEFERRED | Bible §9.4.7 — deferred to future phase |
 
 ### Phase 9 Artifacts
 
 | Artifact | Path | Notes |
 |----------|------|-------|
 | Audit Report | [`docs/P9_PHASE9_AUDIT_REPORT.md`](docs/P9_PHASE9_AUDIT_REPORT.md) | Full P9-A/P9-B/P9-B-UI audit |
+| Signoff Notes | [`docs/CEQA_PHASE9_SIGNOFF_NOTES.md`](docs/CEQA_PHASE9_SIGNOFF_NOTES.md) | CE review checklist |
+| Closeout Pack | [`docs/CEQA_PHASE9_CLOSEOUT_PACK.md`](docs/CEQA_PHASE9_CLOSEOUT_PACK.md) | Bundle of artifacts + verification |
 | BCT Tests | `src/__tests__/bct-*.spec.ts` | 51 BCT tests (BCT-PETSLOTS + BCT-MULTIPET + BCT-MULTIPET-UI) |
 | Bible | `docs/GRUNDY_MASTER_BIBLE.md` v1.7 | Multi-pet runtime clarifications |
 | BCT Spec | `docs/BIBLE_COMPLIANCE_TEST.md` v2.3 | BCT-PETSLOTS, BCT-MULTIPET, BCT-MULTIPET-UI specs |
@@ -625,8 +629,8 @@ All QA S3/S4 issues from Web 1.0 are mapped to Phase 6 tasks:
 | Field | Value | Notes |
 |-------|-------|-------|
 | DevStatus | ✅ COMPLETE | P9-A + P9-B + P9-B-UI all complete |
-| CEStatus | **PENDING** | Awaiting CE review |
-| QAStatus | **PENDING** | Awaiting QA after CE approval |
+| CEStatus | ✅ **APPROVED** | Approved 2025-12-12 |
+| QAStatus | ✅ **APPROVED** | Approved 2025-12-12 |
 
 ---
 
