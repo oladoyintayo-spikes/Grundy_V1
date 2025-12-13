@@ -43,6 +43,16 @@ import { onServiceWorkerUpdate, hasServiceWorkerUpdate, applyServiceWorkerUpdate
 import { InventoryView } from './components/inventory';
 // P8-SHOP-CATALOG: Shop UI
 import { ShopView } from './components/shop/ShopView';
+// P9-B: Multi-pet UI components
+import {
+  AggregatedBadgeCount,
+  PetStatusRow,
+  WelcomeBackModal,
+  AllPetsAwayScreen,
+  AutoSwitchToast,
+  useMultiPetUI,
+  MultiPetDevDiagnostics,
+} from './components/multipet';
 
 // ============================================
 // SHARED COMPONENTS
@@ -611,6 +621,9 @@ function SettingsView() {
   const activePetId = useGameStore((state) => state.activePetId);
   const ownedPets = useGameStore((state) => state.getOwnedPets());
   const setActivePet = useGameStore((state) => state.setActivePet);
+  // P9-B: Pet status badges
+  const getPetStatusBadges = useGameStore((state) => state.getPetStatusBadges);
+  const petStatusBadges = getPetStatusBadges();
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [showPetSelector, setShowPetSelector] = useState(false);
   const [pendingPetSwitch, setPendingPetSwitch] = useState<string | null>(null);
@@ -640,14 +653,6 @@ function SettingsView() {
 
   // Get current pet data
   const currentPetData = getPetById(pet.id);
-
-  // P9-A: Get owned pet data for selector
-  const ownedPetData = ownedPets.map(ownedPet => ({
-    ...getPetById(ownedPet.speciesId),
-    instanceId: ownedPet.instanceId,
-    speciesId: ownedPet.speciesId,
-    level: ownedPet.level,
-  })).filter(p => p.id);
 
   const handleReset = () => {
     resetGame();
@@ -734,39 +739,31 @@ function SettingsView() {
             </div>
             <button
               onClick={() => setShowPetSelector(true)}
-              className="px-3 py-1.5 bg-slate-600 hover:bg-slate-500 rounded-lg text-sm transition-colors"
+              className="relative px-3 py-1.5 bg-slate-600 hover:bg-slate-500 rounded-lg text-sm transition-colors"
               data-testid="switch-pet-button"
             >
               Switch Pet
+              {/* P9-B: Aggregated badge count */}
+              <AggregatedBadgeCount />
             </button>
           </div>
         </div>
 
-        {/* P9-A: Pet Selector Modal - Shows owned pets with levels */}
+        {/* P9-A/P9-B: Pet Selector Modal - Shows owned pets with status badges */}
         {showPetSelector && (
           <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" data-testid="pet-selector-modal">
             <div className="bg-slate-800 rounded-2xl p-6 max-w-sm w-full">
               <h2 className="text-lg font-bold mb-4">Select Your Grundy</h2>
               <div className="space-y-2 max-h-60 overflow-y-auto" data-testid="pet-switcher">
-                {ownedPetData.map(petData => petData && (
-                  <button
-                    key={petData.instanceId}
-                    onClick={() => handlePetSelect(petData.instanceId)}
-                    className={`w-full p-3 rounded-xl flex items-center gap-3 transition-colors
-                      ${activePetId === petData.instanceId
-                        ? 'bg-green-500/20 border-2 border-green-500'
-                        : 'bg-slate-700 hover:bg-slate-600 border-2 border-transparent'}`}
-                    data-testid={`pet-switch-${petData.speciesId}`}
-                  >
-                    <span className="text-2xl">{petData.emoji}</span>
-                    <div className="text-left flex-1">
-                      <span className="font-medium">{petData.name}</span>
-                      <span className="text-xs text-slate-400 block">Lv.{petData.level}</span>
-                    </div>
-                    {activePetId === petData.instanceId && (
-                      <span className="text-xs text-green-400 bg-green-500/20 px-2 py-0.5 rounded-full">Active</span>
-                    )}
-                  </button>
+                {/* P9-B: Use PetStatusRow with badges for each pet */}
+                {petStatusBadges.map((badge) => (
+                  <PetStatusRow
+                    key={badge.petId}
+                    petId={badge.petId}
+                    badge={badge}
+                    isActive={activePetId === badge.petId}
+                    onSelect={handlePetSelect}
+                  />
                 ))}
               </div>
               <button
@@ -914,6 +911,20 @@ function MainApp() {
   const playMode = useGameStore((state) => state.playMode);
   const energy = useGameStore((state) => state.energy);
 
+  // P9-B: Multi-pet UI state (welcome back, auto-switch toast)
+  const {
+    welcomeBackSummary,
+    showWelcomeBack,
+    autoSwitchInfo,
+    showAutoSwitchToast,
+    dismissWelcomeBack,
+    dismissAutoSwitchToast,
+  } = useMultiPetUI();
+
+  // P9-B: All pets away state
+  const allPetsAway = useGameStore((state) => state.allPetsAway);
+  const setActivePet = useGameStore((state) => state.setActivePet);
+
   // Audio settings (P5-AUDIO)
   const musicEnabled = useGameStore((state) => state.settings.musicEnabled);
   const soundEnabled = useGameStore((state) => state.settings.soundEnabled);
@@ -1055,12 +1066,24 @@ function MainApp() {
       <main className="flex-1 overflow-hidden flex flex-col">
         {currentView === 'home' && (
           <RoomScene showAccents={true}>
-            {/* Bible §14.6: Shop moved to header - HomeView focuses on core loop */}
-            {/* BCT-INV-017: Pass preselection state from Inventory */}
-            <HomeView
-              pendingFeedFoodId={pendingFeedFoodId}
-              onClearPendingFeed={() => setPendingFeedFoodId(null)}
-            />
+            {/* P9-B: Show All Pets Away screen if all pets are runaway */}
+            {allPetsAway ? (
+              <AllPetsAwayScreen
+                onSelectPet={(petId) => {
+                  setActivePet(petId);
+                  setCurrentView('settings');
+                }}
+              />
+            ) : (
+              <>
+                {/* Bible §14.6: Shop moved to header - HomeView focuses on core loop */}
+                {/* BCT-INV-017: Pass preselection state from Inventory */}
+                <HomeView
+                  pendingFeedFoodId={pendingFeedFoodId}
+                  onClearPendingFeed={() => setPendingFeedFoodId(null)}
+                />
+              </>
+            )}
           </RoomScene>
         )}
         {currentView === 'games' && (
@@ -1153,6 +1176,26 @@ function MainApp() {
           </div>
         </div>
       )}
+
+      {/* P9-B: Welcome Back Modal (shown when return gap > 24h) */}
+      {showWelcomeBack && welcomeBackSummary && (
+        <WelcomeBackModal
+          summary={welcomeBackSummary}
+          onDismiss={dismissWelcomeBack}
+        />
+      )}
+
+      {/* P9-B: Auto-switch Toast (shown when active pet runs away) */}
+      {showAutoSwitchToast && autoSwitchInfo && (
+        <AutoSwitchToast
+          oldPetName={autoSwitchInfo.oldPetName}
+          newPetName={autoSwitchInfo.newPetName}
+          onDismiss={dismissAutoSwitchToast}
+        />
+      )}
+
+      {/* P9-B: DEV-only multi-pet diagnostics */}
+      <MultiPetDevDiagnostics />
     </div>
   );
 }
