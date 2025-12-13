@@ -1,13 +1,14 @@
 # GRUNDY — MASTER BIBLE
 ## Single Source of Truth
 
-**Version:** 1.7
-**Last Updated:** December 2025
+**Version:** 1.8
+**Last Updated:** December 12, 2025
 **Status:** Production Reference
 **Platforms:** Web (First Light 1.0) [Current], Android/iOS [Unity Later]
 **Engine:** Web (Vite + React + TypeScript) [Current], Unity 2022 LTS [Planned Mobile]
 
 **Changelog:**
+- v1.8: Weight & Sickness Multi-Pet Rules — Added §9.4.7 Weight & Sickness Multi-Pet Rules (complete per-pet weight/sickness systems), updated §9.4.6 offline rules table and order of application, clarified §5.7 weight risk calculation, extended §11.6.1 alert routing for weight/sickness alerts, updated §9.3 Cozy Mode immunity list, updated §9.4 care mistakes for offline accumulation, reconciled §9.4.3 Sickness/Neglect co-existence (PATCH 7 critical fix). See `docs/patches/BIBLE_v1.8_PATCH_WEIGHT_SICKNESS_MULTIPET.md` for full patch details.
 - v1.7: Multi-Pet Runtime Clarifications (P9-B) — Added §8.2.1 Energy Scope (global), §9.4.4 Multi-Pet Runaway Handling (auto-switch + slot rules), §9.4.5 Switching During Neglect States, §9.4.6 Multi-Pet Offline Rules (mood/bond/neglect fanout), §11.6.1 Multi-Pet Notifications (routing + suppression). Deferred Weight/Sickness runtime to P9-C.
 - v1.6: Shop + Inventory (Web Phase 8) — Added starter resources (§5.8), individual food purchase rules (§11.5.1), inventory stacking semantics (§11.7.1), and UI specs for Shop/Inventory (§14.7–§14.8). Updated §15.6 gaps to match current Web state.
 - v1.5: Neglect & Withdrawal System — Replaced old "Neglect & Runaway" spec in §9.4 with comprehensive §9.4.3 Neglect & Withdrawal System (Classic Mode Only). Added 5-stage neglect timeline (Worried/Sad/Withdrawn/Critical/Runaway), protection rules (FTUE + 48h grace period), per-pet tracking, recovery paths, offline handling, canonical UI copy, data schema, and state machine. Added 23 BCT-NEGLECT test specifications.
@@ -1315,6 +1316,12 @@ Weight Effects:
 Cure: Don't feed snacks for 24 hours, or use "Diet Food" item
 ```
 
+> **Weight Risk Calculation:** Snack risk percentages represent absolute points added to the 0-100 weight scale, not percentages of current weight.
+>
+> Example: Cookie (+5% weight) always adds exactly 5 points whether the pet's current weight is 10 or 80.
+>
+> Weight gain only occurs from active feeding. Weight does not increase offline.
+
 ### Visual Weight Stages
 
 | Weight | Pet Appearance |
@@ -2073,10 +2080,12 @@ Rewards are determined by tier (see §8.3). No gems from mini-games.
 
 ### Core Promise
 - Pet cannot die
-- Pet cannot get sick
+- Pet cannot get sick (sickness system disabled)
+- Pet cannot get Obese penalties (weight visual only, no gameplay effects)
 - No care mistakes recorded
 - Evolution is always positive
 - Notifications are gentle and optional
+- Neglect system disabled (no Worried → Runaway progression)
 
 ## 9.4 Classic Mode Specifics
 
@@ -2089,7 +2098,9 @@ Triggers:
 - Hunger = 0 for 30+ minutes → +1 mistake
 - Happiness < 20 for 2+ hours → +1 mistake
 - Poop uncleaned for 2+ hours → +1 mistake
-- Pet sick and untreated for 1+ hour → +1 mistake
+- Pet sick and untreated → +1 mistake per hour (max 4 per offline session)
+
+All triggers run offline. Timers accumulate during absence.
 
 Resets at each evolution (Baby → Youth → Evolved)
 ```
@@ -2362,10 +2373,20 @@ On return from runaway:
 **vs. Sickness (§9.4.2):**
 | Aspect | Sickness | Withdrawal |
 |--------|----------|------------|
-| Triggered by | Stat failures while playing | Days without playing |
+| Triggered by | Unsafe conditions (hunger=0, poop) | Days without care actions |
 | Visual | Green face, thermometer | Desaturated, pulled away |
 | Cure | Medicine (50 coins / ad) | 7 care days / 15💎 |
-| Can happen together? | No — Sickness requires presence, Withdrawal requires absence |
+| Can happen together? | **Yes** — see note below |
+
+**Sickness + Withdrawal Co-Existence (v1.8):**
+- Absence *alone* does not cause sickness
+- However, if unsafe conditions existed at save time (hunger=0, poop uncleaned), sickness triggers can fire on return per §9.4.7
+- Therefore: a pet can be both Sick and Withdrawn simultaneously
+- Example: Player leaves with hungry pet, returns 5 days later → pet is Sad (neglect) AND may have become Sick (hunger timer completed offline)
+
+**Conceptual separation remains:**
+- Withdrawal = "Did you show up?"
+- Sickness = "What state did you leave them in?"
 
 **vs. Altered Form Evolution:**
 | Aspect | Altered Form | Withdrawn State |
@@ -2607,17 +2628,29 @@ When the player is offline (app closed), stats change for **all owned pets** sim
 | **Mood** | Decays for all pets | -5 per 24h offline | Min 30 | None |
 | **Bond** | Decays for all pets | -2 per 24h offline | Min 0 | 50% slower decay |
 | **Hunger** | Decays for all pets | -10 per 24h offline | Min 0 | None |
+| **Weight** | Decays for all pets | -1 per hour | Min 0 | None |
+| **Sickness Triggers** | Timers accumulate (Classic) | Per §9.4.7 | N/A | None |
+| **Sickness Effects** | 2× decay runs (Classic) | Per §9.4.7 | N/A | None |
+| **Care Mistakes** | Accumulate if sick (Classic) | +1 per hour sick | 4 per session | None |
 
 #### Order of Application on Return
 
 When the player returns after offline period:
-1. Calculate elapsed calendar days (for neglect)
-2. Apply neglect day accrual to ALL owned pets
-3. Evaluate neglect stage transitions for ALL pets
-4. Apply mood/bond/hunger decay to ALL pets
-5. Trigger any stage-transition alerts (batched, see §11.6.1)
-6. If active pet is now Runaway → auto-switch (see §9.4.4)
-7. Show "Welcome Back" summary if > 24h offline
+1. Calculate elapsed time since last save
+2. Cap elapsed time at 14 days
+3. For each owned pet:
+   a. Apply mood/bond/hunger decay
+   b. Apply weight decay (-1/hr)
+   c. Apply neglect day accrual (Classic)
+   d. Evaluate neglect stage transitions (Classic)
+   e. Check sickness trigger conditions (Classic, per §9.4.7):
+      - Roll sickness chance for completed timers
+   f. If sick: apply 2× stat decay for sick duration (Classic)
+   g. If sick 1+ hours: add care mistakes (capped at 4) (Classic)
+   h. Check for Runaway threshold (Classic)
+4. Trigger any alerts (batched, see §11.6.1)
+5. If active pet is now Runaway → auto-switch (see §9.4.4)
+6. Show "Welcome Back" summary if > 24h offline
 
 #### Caps and Protections
 
@@ -2634,20 +2667,213 @@ When the player returns after offline period:
 | 50% slower bond decay | -1 per 24h instead of -2 |
 | 2× welcome back rewards | Returning after 24h+ gives bonus XP |
 
-### 9.4.7 Weight & Sickness Runtime (DEFERRED)
+### 9.4.7 Weight & Sickness Multi-Pet Rules
 
-**Status:** Deferred to P9-C
+**Status:** Specified in v1.8; implementation pending (P10)
 
-The following systems are design-defined but runtime implementation is deferred:
+> See `docs/patches/BIBLE_v1.8_PATCH_WEIGHT_SICKNESS_MULTIPET.md` for full patch details.
 
-| System | Bible Spec | Status | Target |
-|--------|------------|--------|--------|
-| Weight consequences | §5.7 | Design-defined | P9-C |
-| Sickness (Classic) | §5.4 risk | Design-defined | P9-C |
+#### §9.4.7.1 Weight System (Per-Pet, Both Modes)
 
-These systems do not block P9-B multi-pet runtime integration. When implemented:
-- Weight will be **per-pet** (matches feeding which is per-pet)
-- Sickness will be **per-pet** (Classic mode only)
+| Rule | Value |
+|------|-------|
+| **Scope** | Per-pet (each pet tracks independent weight 0-100) |
+| **Gain** | Snack risk % = absolute points (e.g., +5% weight = +5 points) |
+| **Decay** | -1 point per hour (runs offline, 14-day cap) |
+| **Floor** | 0 (cannot go negative) |
+| **Ceiling** | 100 (cannot exceed) |
+| **Starting Weight** | 0 (Normal) for new pets |
+
+**Weight States:**
+
+| Range | State | Visual | Gameplay Effect |
+|-------|-------|--------|-----------------|
+| 0-30 | Normal | Standard sprite | No effect |
+| 31-60 | Chubby | 10% wider, rounder | Visual only |
+| 61-80 | Overweight | 20% wider, waddle | Happiness decay 1.5× |
+| 81-100 | Obese | 30% wider, sweat drops | Happiness decay 2×, **cannot play mini-games** |
+
+**Weight Gain by Food:**
+
+| Food | Weight Risk | Points Added |
+|------|-------------|--------------|
+| Cookie 🍪 | +5% | +5 |
+| Candy 🍬 | +10% | +10 |
+| Ice Cream 🍦 | +10% | +10 |
+| Lollipop 🍭 | +8% | +8 |
+| All other foods | 0% | 0 |
+
+**Weight Recovery:**
+
+| Method | Effect | Cost |
+|--------|--------|------|
+| Natural decay | -1 per hour | Free |
+| Diet Food 🥗 | -20 weight, +5 hunger | 30🪙 |
+| No snacks for 24hr | Decay continues normally | Free |
+
+**Offline Weight Behavior:**
+- Weight decays -1 per hour while offline
+- 14-day cap (maximum -336 points, but floors at 0)
+- Weight gain only occurs from feeding (requires active play)
+
+---
+
+#### §9.4.7.2 Sickness System (Per-Pet, Classic Only)
+
+**Mode Restriction:** Sickness is **disabled in Cozy Mode**. Pets cannot get sick in Cozy Mode regardless of conditions.
+
+| Rule | Value |
+|------|-------|
+| **Scope** | Per-pet, Classic mode only |
+| **State** | Binary: `isSick = true/false` |
+| **Trigger Timers** | **Run offline** — accumulate toward thresholds |
+| **Sickness Effects** | **Run offline** — 2× stat decay applies |
+| **Recovery** | Medicine (50🪙) or Watch Ad (1/day limit) |
+
+**Sickness Triggers:**
+
+| Condition | Timer/Check | Chance | Offline Behavior |
+|-----------|-------------|--------|------------------|
+| Hunger = 0 | 30 minutes | 20% | Timer accumulates offline |
+| Poop uncleaned | 2 hours | 15% | Timer accumulates offline |
+| Snack when Overweight (61+) | Immediate | 5% per snack | N/A (requires active feeding) |
+| Hot Pepper 🌶️ food | Immediate | 5% always | N/A (requires active feeding) |
+
+**Trigger Timer Rules:**
+- Timers start when condition becomes true
+- Timers pause when condition becomes false
+- Timers accumulate across online and offline time
+- When timer completes, roll sickness chance once
+- After roll (pass or fail), timer resets for that trigger type
+
+**Sick State Effects:**
+
+| Effect | Value | Offline? |
+|--------|-------|----------|
+| All stat decay | 2× faster | ✅ Yes |
+| Mini-games | **Blocked** | N/A |
+| Care mistake | +1 per hour untreated | ✅ Yes (capped) |
+| Visual | Green face, thermometer | — |
+| Animation | Shiver, sweat drops | — |
+
+**Care Mistake Accumulation (Sickness):**
+- While sick and untreated: +1 care mistake per hour
+- **Offline cap:** Maximum 4 care mistakes per offline session
+- Timer starts when pet becomes sick
+- Resets when cured
+
+---
+
+#### §9.4.7.3 Offline Calculation Order
+
+When player returns after absence (Classic Mode):
+
+```
+1. Calculate elapsed time since last save
+2. Cap elapsed time at 14 days
+3. For each owned pet:
+   a. Apply base stat decay (hunger, mood) for elapsed time
+   b. Apply weight decay (-1/hr) for elapsed time
+   c. Check sickness trigger conditions at save time:
+      - If Hunger was 0: accumulate toward 30-min timer
+      - If Poop was uncleaned: accumulate toward 2-hr timer
+   d. For each completed trigger timer:
+      - Roll sickness chance (20% hunger, 15% poop)
+      - Only one roll per trigger type per return
+   e. If pet becomes sick (or was already sick):
+      - Apply 2× stat decay for sick duration
+      - Add care mistakes (1/hr, cap 4)
+   f. Apply neglect progression per §9.4.3
+   g. Check for Runaway threshold
+4. If active pet is Runaway, trigger auto-switch per §9.4.4
+5. Show Welcome Back modal with status summary
+```
+
+**Example Scenario:**
+
+Player leaves with:
+- Pet A: Hunger = 0, Poop = 1 uncleaned
+- Gone for 3 hours
+
+On return:
+1. Hunger=0 timer: 3 hours accumulated → 30 min threshold met → roll 20%
+2. Poop timer: 3 hours accumulated → 2 hr threshold met → roll 15%
+3. If either roll succeeds → pet is sick
+4. If sick: 3 hours × 2× decay applied to stats
+5. If sick: 3 care mistakes added (hours 0-1, 1-2, 2-3)
+6. Show status: "Your pet got sick while you were away!"
+
+---
+
+#### §9.4.7.4 Sickness Recovery
+
+| Method | Cost | Availability | Effect |
+|--------|------|--------------|--------|
+| Medicine 💊 | 50🪙 | Always | Instant cure |
+| Watch Ad | Free | Once per 24 hours | Instant cure |
+
+**Post-Recovery:**
+- `isSick` set to false immediately
+- All sickness timers reset
+- Care mistake timer stops (no further accumulation)
+- Pet needs feeding to restore stats lost during sickness
+- No "immunity period" — can get sick again immediately if conditions met
+
+**Medicine Availability:**
+- Sold in Shop → Care tab (Classic Mode only, hidden in Cozy)
+- Appears in "Recommended" section when pet is sick
+- Can be stockpiled in inventory (stacks to 99)
+
+---
+
+#### §9.4.7.5 Interactions with Other Systems
+
+**Weight + Sickness Interaction:**
+- Feeding snacks when Overweight (61+): 5% sickness chance per snack
+- This check happens immediately on feeding, not timer-based
+- Weight state is checked at moment of feeding
+
+**Sickness + Neglect Interaction:**
+- Sickness and Neglect are **independent systems** (see §9.4.3 "vs. Sickness" table)
+- Neglect tracks absence duration (§9.4.3)
+- Sickness tracks care quality (hunger, poop, feeding choices)
+- Both can progress simultaneously during offline periods
+- Sickness does NOT directly cause Neglect progression
+- Severe Neglect does NOT directly cause Sickness (but unsafe conditions left behind can)
+
+**Sickness + Mini-Games:**
+- Sick pets cannot play mini-games
+- Obese pets cannot play mini-games
+- If both conditions: still blocked (not double-blocked)
+- Energy is global — other healthy pets can still play
+
+**Sickness + Evolution:**
+- Care mistakes from untreated sickness count toward evolution branch
+- Per evolution stage: 4+ mistakes → "Troubled/Neglected" badge
+- Resets at each evolution (Baby → Youth → Evolved)
+
+---
+
+#### §9.4.7.6 Multi-Pet Sickness Scenarios
+
+**Scenario: Multiple Pets Sick**
+- Each pet tracks sickness independently
+- Medicine cures one pet at a time
+- Player must prioritize which pet to cure first
+- Care mistakes accumulate independently per pet
+
+**Scenario: Switch Away from Sick Pet**
+- Switching is allowed (per §9.4.5)
+- Sick pet continues to accumulate:
+  - 2× stat decay (while time passes)
+  - Care mistakes (1/hr, capped)
+- Toast warning: "This pet is sick and needs medicine!"
+
+**Scenario: All Pets Sick**
+- No gameplay block (unlike All Pets Runaway)
+- Mini-games blocked for all pets
+- Player can still feed, clean, use items
+- Strong incentive to cure at least one pet
 
 ## 9.5 Cleaning / Waste System (Both Modes)
 
@@ -3198,6 +3424,10 @@ Alerts can originate from **any owned pet**, not just the active pet.
 | Hunger critical (< 20) | Per-pet | Badge on pet icon only |
 | Mood critical (< 30) | Per-pet | Badge on pet icon only |
 | Runaway | Per-pet → auto-switch | Modal + toast |
+| Weight Warning (Obese) | Per-pet | Toast: "{Pet} is getting too heavy!" |
+| Weight Recovery | Per-pet | Toast: "{Pet} is back to healthy weight!" |
+| Sickness Onset | Per-pet (Classic) | Toast + badge: "{Pet} is sick!" |
+| Sickness Reminder | Per-pet (Classic) | Badge only (after 30min cooldown) |
 
 **Badge System:**
 - Pet selector button shows aggregate badge count (e.g., "2" if 2 pets need attention)
@@ -3226,10 +3456,12 @@ To prevent alert spam:
 **Alert Priority (highest to lowest):**
 1. Runaway (any pet)
 2. Critical (any pet)
-3. Withdrawn (any pet)
-4. Sad (active pet only)
-5. Worried (active pet only)
-6. Hunger/Mood low (active pet only)
+3. Sickness (any pet, Classic only)
+4. Obese Warning (any pet)
+5. Withdrawn (any pet)
+6. Sad (active pet only)
+7. Worried (active pet only)
+8. Hunger/Mood low (active pet only)
 
 **Batched Return Alert Example:**
 > "Welcome back! While you were away:
@@ -3245,6 +3477,8 @@ To prevent alert spam:
 | Bond | Per-pet | Decays all pets (-2/24h, floor 0) | Plus: 50% slower |
 | Hunger | Per-pet | Decays all pets (-10/24h, floor 0) | §9.4.6 |
 | Neglect | Per-pet | Accrues all pets (+1/day, cap 14) | §9.4.3, §9.4.6 |
+| Weight | Per-pet | Decays all pets (-1/hr, floor 0) | §9.4.7 |
+| Sickness | Per-pet | Triggers accumulate, effects apply | §9.4.7, Classic only |
 | Energy | **Global** | Regenerates (1/30min) | §8.2.1 |
 | Coins | Global | No change | §6, §15.3 |
 | Gems | Global | No change | §6, §15.3 |
