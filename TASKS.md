@@ -439,6 +439,16 @@ P1-CORE-4, P1-DOC-1,2 ── Can run in parallel
 > - Push notification infrastructure — deferred (no FCM/APNs in web)
 > - Plus subscription detection — deferred (no IAP in web prototype)
 
+### Phase 9 CE/QA Closeout
+
+> **CE/QA Review Materials:**
+>
+> | Document | Path | Purpose |
+> |----------|------|---------|
+> | Signoff Notes | [`docs/CEQA_PHASE9_SIGNOFF_NOTES.md`](docs/CEQA_PHASE9_SIGNOFF_NOTES.md) | CE review checklist |
+> | Closeout Pack | [`docs/CEQA_PHASE9_CLOSEOUT_PACK.md`](docs/CEQA_PHASE9_CLOSEOUT_PACK.md) | Bundle of artifacts + verification |
+> | Audit Report | [`docs/P9_PHASE9_AUDIT_REPORT.md`](docs/P9_PHASE9_AUDIT_REPORT.md) | Full implementation audit |
+
 ### P9-SLOTS: Slot Purchase & UI
 
 | ID | Task | Status | Bible | Acceptance Criteria |

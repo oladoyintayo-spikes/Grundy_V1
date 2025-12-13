@@ -100,6 +100,8 @@ These documents form the **governance triad** for all Grundy development:
 | P9-C (Weight/Sickness) | DEFERRED | — | Bible §9.4.7 — future phase |
 
 - **Audit Report:** [`docs/P9_PHASE9_AUDIT_REPORT.md`](docs/P9_PHASE9_AUDIT_REPORT.md)
+- **Signoff Notes:** [`docs/CEQA_PHASE9_SIGNOFF_NOTES.md`](docs/CEQA_PHASE9_SIGNOFF_NOTES.md)
+- **Closeout Pack:** [`docs/CEQA_PHASE9_CLOSEOUT_PACK.md`](docs/CEQA_PHASE9_CLOSEOUT_PACK.md)
 - **BCT Tests:** 51 tests (BCT-PETSLOTS-001..011 + BCT-MULTIPET-001..014 + BCT-MULTIPET-UI-001..021)
 
 | Phase | Status |

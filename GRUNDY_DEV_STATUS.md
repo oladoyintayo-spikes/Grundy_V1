@@ -607,6 +607,8 @@ All QA S3/S4 issues from Web 1.0 are mapped to Phase 6 tasks:
 | Artifact | Path | Notes |
 |----------|------|-------|
 | Audit Report | [`docs/P9_PHASE9_AUDIT_REPORT.md`](docs/P9_PHASE9_AUDIT_REPORT.md) | Full P9-A/P9-B/P9-B-UI audit |
+| Signoff Notes | [`docs/CEQA_PHASE9_SIGNOFF_NOTES.md`](docs/CEQA_PHASE9_SIGNOFF_NOTES.md) | CE review checklist |
+| Closeout Pack | [`docs/CEQA_PHASE9_CLOSEOUT_PACK.md`](docs/CEQA_PHASE9_CLOSEOUT_PACK.md) | Bundle of artifacts + verification |
 | BCT Tests | `src/__tests__/bct-*.spec.ts` | 51 BCT tests (BCT-PETSLOTS + BCT-MULTIPET + BCT-MULTIPET-UI) |
 | Bible | `docs/GRUNDY_MASTER_BIBLE.md` v1.7 | Multi-pet runtime clarifications |
 | BCT Spec | `docs/BIBLE_COMPLIANCE_TEST.md` v2.3 | BCT-PETSLOTS, BCT-MULTIPET, BCT-MULTIPET-UI specs |
