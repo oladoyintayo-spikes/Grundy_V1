@@ -424,6 +424,12 @@ export interface GameStore {
   feed: (foodId: string) => FeedResult | null;
   /** P10-B1.5: Clean poop for specified pet (Bible v1.8 §9.5) */
   cleanPoop: (petId: PetInstanceId) => void;
+  /** P10-E: Use medicine to cure sickness (Bible v1.8 §9.4.7.4). Classic only. */
+  useMedicine: (petId: PetInstanceId) => RecoveryResult;
+  /** P10-E: Use diet food to reduce weight (Bible v1.8 §11.5). */
+  useDietFood: (petId: PetInstanceId) => RecoveryResult;
+  /** P10-E: Ad recovery stub - Web Edition no-op (Bible v1.8 §9.4.7.4). */
+  useAdRecovery: (petId: PetInstanceId) => RecoveryResult;
   addCurrency: (type: CurrencyType, amount: number, source: string) => void;
   spendCurrency: (type: CurrencyType, amount: number, sink: string) => boolean;
   buyFood: (foodId: string, quantity: number) => boolean;
@@ -558,6 +564,17 @@ export interface ShopPurchaseOptions {
   /** For random bundles, inject a selector for deterministic testing */
   randomSelector?: (choices: string[]) => string;
 }
+
+// --- P10-E: Recovery Action Types (Bible §9.4.7.4) ---
+
+/** Recovery action result */
+export interface RecoveryResult {
+  success: boolean;
+  reason?: 'COZY_MODE' | 'NOT_SICK' | 'NO_ITEM' | 'NOT_OVERWEIGHT' | 'WEB_ADS_DISABLED';
+}
+
+/** Recovery action type */
+export type RecoveryActionType = 'medicine' | 'diet_food' | 'ad_recovery';
 
 // --- P9-B: Multi-Pet Alert Types (Bible §11.6.1) ---
 

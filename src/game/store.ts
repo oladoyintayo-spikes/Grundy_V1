@@ -36,6 +36,8 @@ import {
   OfflineReturnSummary,
   PetStatusBadge,
   AlertBadge,
+  // P10-E: Recovery action types
+  RecoveryResult,
 } from '../types';
 import {
   DEFAULT_ENVIRONMENT,
@@ -105,6 +107,8 @@ import {
   FEEDING_SICKNESS_TRIGGERS,
   // P10-D: Mini-game gating thresholds
   MINIGAME_GATING,
+  // P10-E: Recovery effects
+  RECOVERY_EFFECTS,
 } from '../constants/bible.constants';
 // P10-C: Deterministic RNG for sickness chance rolls
 import { randomFloat } from './rng';
@@ -844,6 +848,150 @@ export const useGameStore = create<GameStore>()(
         });
 
         console.log(`[cleanPoop] Cleaned poop for ${petId}, +${moodBoost} mood, +${bondBoost} bond`);
+      },
+
+      // ========================================
+      // P10-E: RECOVERY ACTIONS
+      // ========================================
+
+      /**
+       * P10-E: Use medicine to cure sickness (Bible v1.8 §9.4.7.4).
+       * Classic mode only. Consumes 1 medicine from inventory.
+       */
+      useMedicine: (petId: PetInstanceId): RecoveryResult => {
+        const state = get();
+
+        // Guard: Classic mode only
+        if (state.playMode === 'cozy') {
+          console.log(`[useMedicine] COZY_MODE - medicine not needed in Cozy`);
+          return { success: false, reason: 'COZY_MODE' };
+        }
+
+        const pet = state.petsById[petId];
+        if (!pet) {
+          console.warn(`[useMedicine] Pet not found: ${petId}`);
+          return { success: false, reason: 'NO_ITEM' };
+        }
+
+        // Guard: Pet must be sick
+        if (!pet.isSick) {
+          console.log(`[useMedicine] Pet ${petId} is not sick`);
+          return { success: false, reason: 'NOT_SICK' };
+        }
+
+        // Guard: Must have medicine in inventory
+        const medicineCount = state.inventory['care_medicine'] || 0;
+        if (medicineCount <= 0) {
+          console.log(`[useMedicine] No medicine in inventory`);
+          return { success: false, reason: 'NO_ITEM' };
+        }
+
+        // Apply cure inside set() for atomicity
+        set((s) => {
+          const currentPet = s.petsById[petId];
+          // Race guard: check still sick
+          if (!currentPet || !currentPet.isSick) {
+            return s;
+          }
+
+          const updatedPet = {
+            ...currentPet,
+            isSick: false,
+            sickStartTimestamp: null,
+          };
+
+          const newInventory = {
+            ...s.inventory,
+            care_medicine: (s.inventory['care_medicine'] || 0) - 1,
+          };
+
+          return {
+            ...s,
+            petsById: {
+              ...s.petsById,
+              [petId]: updatedPet,
+            },
+            inventory: newInventory,
+            // Update legacy pet if active
+            ...(petId === s.activePetId ? {
+              pet: { ...updatedPet, id: updatedPet.speciesId },
+            } : {}),
+          };
+        });
+
+        console.log(`[useMedicine] Cured ${petId} with medicine, inventory now ${(get().inventory['care_medicine'] || 0)}`);
+        return { success: true };
+      },
+
+      /**
+       * P10-E: Use diet food to reduce weight (Bible v1.8 §11.5).
+       * -20 weight, +5 hunger. Consumes 1 diet food from inventory.
+       */
+      useDietFood: (petId: PetInstanceId): RecoveryResult => {
+        const state = get();
+
+        const pet = state.petsById[petId];
+        if (!pet) {
+          console.warn(`[useDietFood] Pet not found: ${petId}`);
+          return { success: false, reason: 'NO_ITEM' };
+        }
+
+        // Guard: Must have diet food in inventory
+        const dietFoodCount = state.inventory['care_diet_food'] || 0;
+        if (dietFoodCount <= 0) {
+          console.log(`[useDietFood] No diet food in inventory`);
+          return { success: false, reason: 'NO_ITEM' };
+        }
+
+        // Apply effect inside set() for atomicity
+        set((s) => {
+          const currentPet = s.petsById[petId];
+          if (!currentPet) {
+            return s;
+          }
+
+          const newWeight = Math.max(0, (currentPet.weight ?? 0) - RECOVERY_EFFECTS.DIET_FOOD.WEIGHT_REDUCTION);
+          const newHunger = Math.min(100, (currentPet.hunger ?? 0) + RECOVERY_EFFECTS.DIET_FOOD.HUNGER_GAIN);
+
+          const updatedPet = {
+            ...currentPet,
+            weight: newWeight,
+            hunger: newHunger,
+          };
+
+          const newInventory = {
+            ...s.inventory,
+            care_diet_food: (s.inventory['care_diet_food'] || 0) - 1,
+          };
+
+          return {
+            ...s,
+            petsById: {
+              ...s.petsById,
+              [petId]: updatedPet,
+            },
+            inventory: newInventory,
+            // Update legacy pet if active
+            ...(petId === s.activePetId ? {
+              pet: { ...updatedPet, id: updatedPet.speciesId },
+            } : {}),
+          };
+        });
+
+        const newPet = get().petsById[petId];
+        console.log(`[useDietFood] ${petId} weight now ${newPet?.weight ?? 0}, hunger now ${newPet?.hunger ?? 0}`);
+        return { success: true };
+      },
+
+      /**
+       * P10-E: Ad recovery stub - Web Edition no-op (Bible v1.8 §9.4.7.4).
+       * Ads are [Unity Later]. Returns failure without modifying any state.
+       */
+      useAdRecovery: (_petId: PetInstanceId): RecoveryResult => {
+        // Web Edition: PURE NO-OP
+        // Do NOT modify any state, do NOT set any timestamps
+        console.log(`[useAdRecovery] WEB_ADS_DISABLED - ads not available on Web`);
+        return { success: false, reason: 'WEB_ADS_DISABLED' };
       },
 
       // ========================================
