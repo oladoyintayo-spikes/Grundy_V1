@@ -1,9 +1,9 @@
 # Grundy Web – AI Orchestrator Playbook
 
-**Version:** 2.1
+**Version:** 2.2
 **Owner:** Chief Engineer (Amos)
 **Scope:** Grundy web prototype (React + TS + Zustand)
-**Last Updated:** December 13, 2025 (P9-C-GOV-SWEEP — Post-CE patch: P9-C Slot Unlock)
+**Last Updated:** December 13, 2025 (Bible v1.8 Governance Sweep — Weight & Sickness Multi-Pet Rules)
 
 ---
 
@@ -69,9 +69,10 @@ These documents form the **governance triad** for all Grundy development:
 
 | Artifact | Path | Version |
 |----------|------|---------|
-| Bible | `docs/GRUNDY_MASTER_BIBLE.md` | **v1.7** |
-| BCT Spec | `docs/BIBLE_COMPLIANCE_TEST.md` | **v2.3** |
+| Bible | `docs/GRUNDY_MASTER_BIBLE.md` | **v1.8** |
+| BCT Spec | `docs/BIBLE_COMPLIANCE_TEST.md` | **v2.4** |
 | Locked Constants | `src/constants/bible.constants.ts` | Single source for locked values |
+| Weight/Sickness Patch | `docs/patches/BIBLE_v1.8_PATCH_WEIGHT_SICKNESS_MULTIPET.md` | **Proposed** |
 
 > **Note:** Patch artifacts in `docs/patches/` are non-canonical reference material only. Always use the canonical docs above.
 
@@ -103,9 +104,16 @@ These documents form the **governance triad** for all Grundy development:
 | P9-A (Pet Slots Foundation) | ✅ CE/QA APPROVED | Multi-pet data model, migration, switching |
 | P9-B (Multi-Pet Runtime) | ✅ CE/QA APPROVED | Energy scope, runaway, offline rules |
 | P9-B-UI (Multi-Pet UI Wiring) | ✅ CE/QA APPROVED | Badges, welcome back modal, summary |
-| P9-C (Weight/Sickness) | DEFERRED | Bible §9.4.7 — future phase |
+| P9-C (Weight/Sickness) | SPEC COMPLETE | Bible v1.8 §9.4.7 — implementation P10 |
 
 - **BCT Tests:** 51 tests (BCT-PETSLOTS-001..011 + BCT-MULTIPET-001..014 + BCT-MULTIPET-UI-001..021)
+
+#### Bible v1.8 Update
+
+- **Patch Date:** 2025-12-12
+- **Patch Artifact:** [`docs/patches/BIBLE_v1.8_PATCH_WEIGHT_SICKNESS_MULTIPET.md`](docs/patches/BIBLE_v1.8_PATCH_WEIGHT_SICKNESS_MULTIPET.md)
+- **Status:** Proposed (awaiting CE review)
+- **Changes:** §9.4.7 Weight & Sickness Multi-Pet Rules, §9.4.6 offline table extended, §9.4.3 Sickness/Neglect co-existence reconciled, §5.7 weight clarification, §11.6.1 alert routing extended, §9.3 Cozy immunity clarified
 
 #### Phase 9 Post-CE Patches
 
@@ -121,9 +129,9 @@ These documents form the **governance triad** for all Grundy development:
 
 | Phase | Status |
 |-------|--------|
-| Phase 9-C | DEFERRED — Classic sickness/weight/care mistakes (§9.4.7) |
-| Phase 10+ | Lore Journal |
-| Phase 11 | Cosmetics |
+| Phase 10 | **NEXT** — Weight & Sickness Runtime (Bible v1.8 §9.4.7, BCT v2.4 planned tests) |
+| Phase 11 | Lore Journal |
+| Phase 12 | Cosmetics |
 | Phase 12+ | LiveOps |
 
 ### Agent Constraints
