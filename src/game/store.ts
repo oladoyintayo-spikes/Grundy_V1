@@ -98,6 +98,12 @@ import {
 } from '../constants/bible.constants';
 // P8-SHOP-PURCHASE: Shop purchase engine
 import { purchaseShopItem as executePurchase } from './shopPurchase';
+// P10-B: Offline weight/sickness order-of-application
+import {
+  calculateOfflineDurationMinutes,
+  applyOfflineOrderToPet,
+  type OfflineOrderResult,
+} from './offlineSickness';
 
 // ============================================
 // ABILITY TRIGGER MESSAGES (P1-ABILITY-4)
@@ -1914,36 +1920,35 @@ export const useGameStore = create<GameStore>()(
       /**
        * Apply offline fanout to all owned pets.
        * Bible §9.4.6: Stats change for ALL owned pets simultaneously when offline.
+       * P10-B: Adds weight decay + sickness triggers per §9.4.7
        * @param now Current timestamp
        * @returns OfflineReturnSummary with all changes applied
        */
       applyOfflineFanout: (now: Date = new Date()): OfflineReturnSummary | null => {
         const state = get();
+        const currentTimestamp = now.getTime();
 
         // Skip if FTUE not complete (Bible §9.4.6: FTUE protection)
         if (!state.ftue.hasCompletedFtue) {
           return null;
         }
 
-        // Skip if neglect disabled (Cozy mode)
-        if (!MODE_CONFIG[state.playMode].neglectEnabled) {
-          // Still update lastSeenTimestamp even in Cozy mode
-          set({ lastSeenTimestamp: now.getTime() });
-          return null;
-        }
+        const lastSeen = state.lastSeenTimestamp ?? currentTimestamp;
 
-        const lastSeen = state.lastSeenTimestamp ?? now.getTime();
-        const hoursOffline = (now.getTime() - lastSeen) / (1000 * 60 * 60);
+        // P10-B: Calculate offline duration with 14-day cap
+        const offlineMinutes = calculateOfflineDurationMinutes(lastSeen, currentTimestamp);
+        const hoursOffline = offlineMinutes / 60;
 
-        // Skip if not enough time has passed
+        // Skip if not enough time has passed (< 1 hour)
         if (hoursOffline < 1) {
-          set({ lastSeenTimestamp: now.getTime() });
+          set({ lastSeenTimestamp: currentTimestamp });
           return null;
         }
 
-        console.log(`[P9-B] Applying offline fanout: ${hoursOffline.toFixed(1)}h offline`);
+        const isCozy = !MODE_CONFIG[state.playMode].neglectEnabled;
+        console.log(`[P10-B] Applying offline fanout: ${hoursOffline.toFixed(1)}h offline (mode: ${state.playMode})`);
 
-        // Calculate decay amounts (TODO: check for Plus subscription)
+        // Calculate base stat decay amounts (TODO: check for Plus subscription)
         const decay = calculateOfflineDecay(hoursOffline, false);
 
         const petChanges: OfflineReturnSummary['petChanges'] = [];
@@ -1957,16 +1962,35 @@ export const useGameStore = create<GameStore>()(
           const originalMood = pet.moodValue ?? 50;
           const originalBond = pet.bond;
           const originalHunger = pet.hunger;
+          const originalWeight = pet.weight;
 
-          // Apply stat decay
-          const updatedPet = applyOfflineDecayToPet(pet, decay);
+          // Apply base stat decay (mood/bond/hunger)
+          let updatedPet = applyOfflineDecayToPet(pet, decay);
+
+          // P10-B: Apply weight decay + sickness order-of-application
+          // Bible §9.4.6, §9.4.7: Weight decays in both modes; sickness Classic only
+          const offlineOrderResult = applyOfflineOrderToPet({
+            pet: updatedPet,
+            offlineMinutes,
+            gameMode: state.playMode,
+            // For sickness triggers: check if hunger was 0 at save time
+            hungerWasZeroAtSave: pet.hunger === 0,
+            // For poop trigger: check room state (if poop exists, it's uncleaned)
+            // Note: poop state would need to be tracked per-pet for full accuracy
+            // For now, assume poop was uncleaned if hunger was critical (conservative)
+            poopWasUncleanedAtSave: pet.hunger < 20,
+            currentTimestamp,
+          });
+
+          // Merge P10-B changes into pet
+          updatedPet = offlineOrderResult.pet;
           updatedPetsById[petId] = updatedPet;
 
-          // Get neglect state changes (already handled by updateNeglectOnLogin)
+          // Get neglect state changes (already handled by updateNeglectOnLogin for Classic)
           const neglectState = state.neglectByPetId[petId];
-          const neglectDaysAdded = neglectState?.neglectDays ?? 0;
-          const newNeglectStage = neglectState?.currentStage ?? null;
-          const becameRunaway = neglectState?.isRunaway ?? false;
+          const neglectDaysAdded = isCozy ? 0 : (neglectState?.neglectDays ?? 0);
+          const newNeglectStage = isCozy ? null : (neglectState?.currentStage ?? null);
+          const becameRunaway = isCozy ? false : (neglectState?.isRunaway ?? false);
 
           petChanges.push({
             petId,
@@ -1977,27 +2001,38 @@ export const useGameStore = create<GameStore>()(
             neglectDaysAdded,
             newNeglectStage,
             becameRunaway,
+            // P10-B: Add weight/sickness changes to summary
+            weightChange: offlineOrderResult.weightChange,
+            becameSick: offlineOrderResult.becameSick,
+            sicknessTrigger: offlineOrderResult.sicknessTrigger,
+            careMistakesAdded: offlineOrderResult.careMistakesAdded,
           });
+
+          if (offlineOrderResult.becameSick) {
+            console.log(`[P10-B] Pet ${petId} became sick from ${offlineOrderResult.sicknessTrigger} trigger`);
+          }
         }
 
-        // Check if active pet is now runaway and needs auto-switch
-        const activeNeglect = state.neglectByPetId[state.activePetId];
+        // Check if active pet is now runaway and needs auto-switch (Classic only)
         let autoSwitchOccurred = false;
         let newActivePetId: PetInstanceId | null = null;
 
-        if (activeNeglect?.isRunaway) {
-          // Find first available pet
-          newActivePetId = findFirstAvailablePet(state.ownedPetIds, state.neglectByPetId);
-          autoSwitchOccurred = newActivePetId !== null && newActivePetId !== state.activePetId;
+        if (!isCozy) {
+          const activeNeglect = state.neglectByPetId[state.activePetId];
+          if (activeNeglect?.isRunaway) {
+            // Find first available pet
+            newActivePetId = findFirstAvailablePet(state.ownedPetIds, state.neglectByPetId);
+            autoSwitchOccurred = newActivePetId !== null && newActivePetId !== state.activePetId;
+          }
         }
 
-        // Check if all pets are away
-        const allPetsAway = findFirstAvailablePet(state.ownedPetIds, state.neglectByPetId) === null;
+        // Check if all pets are away (Classic only)
+        const allPetsAway = isCozy ? false : findFirstAvailablePet(state.ownedPetIds, state.neglectByPetId) === null;
 
         // Apply updates
         set({
           petsById: { ...state.petsById, ...updatedPetsById },
-          lastSeenTimestamp: now.getTime(),
+          lastSeenTimestamp: currentTimestamp,
           allPetsAway,
           ...(autoSwitchOccurred && newActivePetId ? {
             activePetId: newActivePetId,
@@ -2020,7 +2055,7 @@ export const useGameStore = create<GameStore>()(
           allPetsAway,
         };
 
-        console.log(`[P9-B] Offline fanout complete:`, summary);
+        console.log(`[P10-B] Offline fanout complete:`, summary);
         return summary;
       },
 

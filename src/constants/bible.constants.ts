@@ -1088,6 +1088,34 @@ export const OFFLINE_DECAY_RATES = {
   NEGLECT_CAP_DAYS: 14,
   /** Welcome back threshold (show summary if offline longer than this) */
   WELCOME_BACK_THRESHOLD_HOURS: 24,
+  // P10-B: Weight & Sickness offline rules (Bible v1.8 §9.4.7)
+  /** Weight decay per hour offline */
+  WEIGHT_PER_HOUR: 1,
+  /** Weight floor (minimum value) */
+  WEIGHT_FLOOR: 0,
+  /** Maximum offline duration in days (14-day cap) */
+  MAX_OFFLINE_DAYS: 14,
+} as const;
+
+/**
+ * P10-B: Sickness system constants (Bible v1.8 §9.4.7.2)
+ * Classic Mode only - disabled in Cozy Mode.
+ */
+export const SICKNESS_CONFIG = {
+  /** Hunger=0 trigger timer threshold in minutes */
+  HUNGER_TRIGGER_MINUTES: 30,
+  /** Hunger=0 sickness chance (20%) */
+  HUNGER_TRIGGER_CHANCE: 0.20,
+  /** Poop uncleaned trigger timer threshold in minutes */
+  POOP_TRIGGER_MINUTES: 120,
+  /** Poop uncleaned sickness chance (15%) */
+  POOP_TRIGGER_CHANCE: 0.15,
+  /** Sickness stat decay multiplier (2×) */
+  SICK_DECAY_MULTIPLIER: 2,
+  /** Care mistakes per hour while sick */
+  CARE_MISTAKES_PER_HOUR: 1,
+  /** Maximum care mistakes per offline session */
+  CARE_MISTAKES_OFFLINE_CAP: 4,
 } as const;
 
 /**

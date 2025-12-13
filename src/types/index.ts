@@ -601,6 +601,15 @@ export interface OfflineReturnSummary {
     neglectDaysAdded: number;
     newNeglectStage: string | null;
     becameRunaway: boolean;
+    // P10-B: Weight & Sickness offline changes
+    /** Weight change during offline (Bible v1.8 §9.4.7.1) */
+    weightChange?: number;
+    /** Whether pet became sick during offline (Bible v1.8 §9.4.7.2) */
+    becameSick?: boolean;
+    /** Trigger that caused sickness (if any) */
+    sicknessTrigger?: 'hunger' | 'poop' | null;
+    /** Care mistakes added during offline (capped at 4) */
+    careMistakesAdded?: number;
   }>;
   /** Whether auto-switch occurred */
   autoSwitchOccurred: boolean;

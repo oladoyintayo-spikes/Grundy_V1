@@ -556,7 +556,7 @@ describe('BCT-MULTIPET: Multi-Pet Runtime Tests (Bible v1.7)', () => {
       expect(result).toBeNull();
     });
 
-    it('Cozy mode skips offline decay', () => {
+    it('Cozy mode applies weight decay but skips sickness (P10-B)', () => {
       const store = useGameStore.getState();
 
       // Complete FTUE but set Cozy mode
@@ -572,8 +572,20 @@ describe('BCT-MULTIPET: Multi-Pet Runtime Tests (Bible v1.7)', () => {
 
       const result = useGameStore.getState().applyOfflineFanout(now);
 
-      // Should return null (no decay in Cozy mode)
-      expect(result).toBeNull();
+      // P10-B: Cozy mode DOES apply weight decay (Bible v1.8 §9.4.7.1)
+      // but skips sickness (Bible v1.8 §9.3)
+      expect(result).not.toBeNull();
+      expect(result!.hoursOffline).toBe(48);
+
+      // Check that weight decay was applied but no sickness
+      for (const petChange of result!.petChanges) {
+        // Weight decay: -48 hours = -48 weight
+        expect(petChange.weightChange).toBeDefined();
+        // Sickness should NOT trigger in Cozy
+        expect(petChange.becameSick).toBe(false);
+        // No care mistakes in Cozy
+        expect(petChange.careMistakesAdded).toBe(0);
+      }
     });
   });
 });
