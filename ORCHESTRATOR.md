@@ -3,7 +3,7 @@
 **Version:** 2.1
 **Owner:** Chief Engineer (Amos)
 **Scope:** Grundy web prototype (React + TS + Zustand)
-**Last Updated:** December 12, 2025 (P8-CLOSEOUT-GOV)
+**Last Updated:** December 13, 2025 (P9-C-GOV-SWEEP — Post-CE patch: P9-C Slot Unlock)
 
 ---
 
@@ -106,6 +106,16 @@ These documents form the **governance triad** for all Grundy development:
 | P9-C (Weight/Sickness) | DEFERRED | Bible §9.4.7 — future phase |
 
 - **BCT Tests:** 51 tests (BCT-PETSLOTS-001..011 + BCT-MULTIPET-001..014 + BCT-MULTIPET-UI-001..021)
+
+#### Phase 9 Post-CE Patches
+
+| Patch | Commit | Status | Notes |
+|-------|--------|--------|-------|
+| P9-C Slot Unlock Purchase + UI + Prereqs | `930be64` | Dev Complete | Slot unlock purchase (100/150/200💎), prereqs (Level 5, sequential slots), Settings UI, 40 BCT tests |
+
+> **Note:** Phase 9 CE/QA remains APPROVED. Post-CE patches are extensions that do not require re-approval of previously approved sub-phases.
+>
+> **Delta Addendum:** [`docs/P9C_SLOTS_DELTA_AUDIT_ADDENDUM.md`](docs/P9C_SLOTS_DELTA_AUDIT_ADDENDUM.md) (placeholder — to be created if CE review needed)
 
 | Phase | Status |
 |-------|--------|
