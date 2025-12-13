@@ -81,7 +81,7 @@ These documents form the **governance triad** for all Grundy development:
 |-------|--------|
 | Phases 0–7 | Complete (Web 1.0 + Phase 6 compliance + Phase 7 neglect runtime) |
 | Phase 8 | **CE/QA APPROVED** (2025-12-12) — Shop + Inventory |
-| Phase 9 | Pet Slots / Multi-pet |
+| Phase 9 | **P9-A/P9-B/P9-B-UI COMPLETE** (DevStatus) — Pet Slots / Multi-pet |
 
 #### Phase 8 CE/QA Approval
 
@@ -90,9 +90,21 @@ These documents form the **governance triad** for all Grundy development:
 - **Audit Report:** [`docs/P8_SHOPB_AUDIT_REPORT.md`](docs/P8_SHOPB_AUDIT_REPORT.md)
 - **Sign-Off Notes:** [`docs/CEQA_PHASE8_SIGNOFF_NOTES.md`](docs/CEQA_PHASE8_SIGNOFF_NOTES.md)
 
+#### Phase 9 Status
+
+| Sub-Phase | DevStatus | CEStatus | Notes |
+|-----------|-----------|----------|-------|
+| P9-A (Pet Slots Foundation) | ✅ COMPLETE | PENDING | Multi-pet data model, migration, switching |
+| P9-B (Multi-Pet Runtime) | ✅ COMPLETE | PENDING | Energy scope, runaway, offline rules |
+| P9-B-UI (Multi-Pet UI Wiring) | ✅ COMPLETE | PENDING | Badges, welcome back modal, summary |
+| P9-C (Weight/Sickness) | DEFERRED | — | Bible §9.4.7 — future phase |
+
+- **Audit Report:** [`docs/P9_PHASE9_AUDIT_REPORT.md`](docs/P9_PHASE9_AUDIT_REPORT.md)
+- **BCT Tests:** 51 tests (BCT-PETSLOTS-001..011 + BCT-MULTIPET-001..014 + BCT-MULTIPET-UI-001..021)
+
 | Phase | Status |
 |-------|--------|
-| Phase 9+ | Classic sickness/weight/care mistakes |
+| Phase 9-C | DEFERRED — Classic sickness/weight/care mistakes (§9.4.7) |
 | Phase 10+ | Lore Journal |
 | Phase 11 | Cosmetics |
 | Phase 12+ | LiveOps |

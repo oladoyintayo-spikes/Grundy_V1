@@ -1,7 +1,7 @@
 # TASKS.md
 ## Grundy Development Task List
 
-**Last Updated:** December 12, 2025 (P8-CLOSEOUT-GOV — Phase 8 CE/QA Approved)
+**Last Updated:** December 13, 2025 (P9-GOV-SWEEP — Phase 9 P9-A/P9-B/P9-B-UI DevStatus COMPLETE)
 **Design SoT:** `docs/GRUNDY_MASTER_BIBLE.md`
 **Pre-Flight Report:** December 9, 2024 ✅
 
@@ -394,25 +394,50 @@ P1-CORE-4, P1-DOC-1,2 ── Can run in parallel
 | P9-A-04 | Pet switching UI | ✅ | §11.6 | Settings view pet selector |
 | P9-A-05 | BCT tests | ✅ | — | 33 BCT-PETSLOTS tests passing |
 
-### P9-B: Multi-Pet Runtime (BLOCKED → UNBLOCKED)
+### P9-B: Multi-Pet Runtime (COMPLETE)
 
 > Runtime integration: mood/neglect/alerts/runaway rules across multiple pets.
 
 | ID | Task | Status | Bible | Notes |
 |----|------|--------|-------|-------|
-| P9-B-01 | Global energy scope | ⬜ | §8.2.1 | Energy shared across all pets |
-| P9-B-02 | Runaway auto-switch | ⬜ | §9.4.4 | Auto-switch to next available pet |
-| P9-B-03 | Switching constraints | ⬜ | §9.4.5 | Allow switching to/from neglected pets |
-| P9-B-04 | Offline multi-pet rules | ⬜ | §9.4.6 | Decay/neglect applies to all pets |
-| P9-B-05 | Alert routing & suppression | ⬜ | §14.6 | Per-pet alerts, batching, cooldowns |
-| P9-B-06 | BCT-MULTIPET tests | ⬜ | — | 14 BCT-MULTIPET compliance tests |
+| P9-B-01 | Global energy scope | ✅ | §8.2.1 | Energy shared across all pets |
+| P9-B-02 | Runaway auto-switch | ✅ | §9.4.4 | Auto-switch to next available pet |
+| P9-B-03 | Switching constraints | ✅ | §9.4.5 | Allow switching to/from neglected pets |
+| P9-B-04 | Offline multi-pet rules | ✅ | §9.4.6 | Decay/neglect applies to all pets |
+| P9-B-05 | Alert routing & suppression | ✅ | §14.6 | Per-pet alerts, batching, cooldowns |
+| P9-B-06 | BCT-MULTIPET tests | ✅ | — | 14 BCT-MULTIPET compliance tests |
 
-### P9-C: Weight & Sickness Runtime (DEFERRED)
+### P9-B-UI: Multi-Pet UI Wiring (COMPLETE)
+
+> UI components for multi-pet status display and welcome back experience.
 
 | ID | Task | Status | Bible | Notes |
 |----|------|--------|-------|-------|
-| P9-C-01 | Weight runtime | ⬜ | §5.7, §9.4.7 | Per-pet weight system |
-| P9-C-02 | Sickness runtime | ⬜ | §5.4, §9.4.7 | Per-pet sickness (Classic) |
+| P9-B-UI-01 | Multi-pet badges | ✅ | §14.6 | Status badges for all owned pets |
+| P9-B-UI-02 | Welcome back modal | ✅ | §9.4.6 | Summary of offline events per pet |
+| P9-B-UI-03 | BCT-MULTIPET-UI tests | ✅ | — | 21 BCT-MULTIPET-UI compliance tests |
+
+### P9-C: Weight & Sickness Runtime (DEFERRED)
+
+> **DEFERRED:** Weight & Sickness runtime deferred per Bible §9.4.7 — future phase.
+
+| ID | Task | Status | Bible | Notes |
+|----|------|--------|-------|-------|
+| P9-C-01 | Weight runtime | ⬜ DEFERRED | §5.7, §9.4.7 | Per-pet weight system |
+| P9-C-02 | Sickness runtime | ⬜ DEFERRED | §5.4, §9.4.7 | Per-pet sickness (Classic) |
+
+### Phase 9 DevStatus Summary
+
+> **DevStatus:** P9-A + P9-B + P9-B-UI COMPLETE — Ready for CE Review
+>
+> - **Audit Report:** [`docs/P9_PHASE9_AUDIT_REPORT.md`](docs/P9_PHASE9_AUDIT_REPORT.md)
+> - **BCT Tests:** 51 tests (BCT-PETSLOTS-001..011 + BCT-MULTIPET-001..014 + BCT-MULTIPET-UI-001..021)
+>
+> **Deferrals:**
+> - P9-C (Weight/Sickness) — §9.4.7 deferred to future phase
+> - P9-SLOTS-02..06 — Slot purchase/UI deferred to post-CE review
+> - Push notification infrastructure — deferred (no FCM/APNs in web)
+> - Plus subscription detection — deferred (no IAP in web prototype)
 
 ### P9-SLOTS: Slot Purchase & UI
 
