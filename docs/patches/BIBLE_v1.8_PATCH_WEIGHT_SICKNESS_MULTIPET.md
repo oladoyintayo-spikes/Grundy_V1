@@ -11,6 +11,7 @@
 | **Applies-to** | `docs/GRUNDY_MASTER_BIBLE.md` v1.7 |
 | **Status** | Adopted |
 | **Adopted** | December 13, 2025 |
+| **CE Approval** | December 13, 2025 — P10 Kickoff Gate |
 | **Author** | Documentation Steward Agent |
 
 ---
