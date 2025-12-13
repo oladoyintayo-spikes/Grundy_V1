@@ -463,7 +463,9 @@ P1-CORE-4, P1-DOC-1,2 ── Can run in parallel
 
 ### P9-C Slot Unlock (Post-CE Patch)
 
-> **Commit:** `930be64` — feat(P9-C-SLOTS): Implement slot unlock purchase + UI + prereqs (Bible v1.7 / BCT v2.3)
+> **Commits:** Implementation `930be64` · Delta Audit `207facc`
+>
+> **Delta Addendum:** [`docs/P9C_SLOTS_DELTA_AUDIT_ADDENDUM.md`](docs/P9C_SLOTS_DELTA_AUDIT_ADDENDUM.md)
 >
 > **What Landed:**
 > - Slot unlock model: Slot 1 always owned, slots 2-4 unlockable with gem purchase

@@ -640,6 +640,10 @@ All QA S3/S4 issues from Web 1.0 are mapped to Phase 6 tasks:
 
 > **Note:** Phase 9 CE/QA remains APPROVED. This is a post-approval extension.
 >
+> **Commits:** Implementation `930be64` · Delta Audit `207facc`
+>
+> **Delta Addendum:** [`docs/P9C_SLOTS_DELTA_AUDIT_ADDENDUM.md`](docs/P9C_SLOTS_DELTA_AUDIT_ADDENDUM.md)
+>
 > **Deferral:** Plus subscription discount logic present but Plus detection not implemented on Web (`hasPlusSubscription=false`).
 
 ---
