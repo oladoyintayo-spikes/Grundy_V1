@@ -1125,6 +1125,229 @@ export const PET_SLOTS_TEST_IDS = {
 } as const;
 
 // ============================================================================
+// §11.6 Pet Slot Unlock System (P9-C-SLOTS)
+// ============================================================================
+
+/**
+ * Slot prerequisite types.
+ */
+export type SlotPrereqType = 'level' | 'slot_owned';
+
+/**
+ * Slot prerequisite definition.
+ */
+export interface SlotPrereq {
+  type: SlotPrereqType;
+  /** For 'level': minimum level required. For 'slot_owned': slot number that must be owned. */
+  value: number;
+  /** Human-readable description */
+  description: string;
+}
+
+/**
+ * Slot prerequisite configuration per Bible §11.5 Utility Items table.
+ * - Slot 2: Level 5+ required
+ * - Slot 3: Own slot 2
+ * - Slot 4: Own slot 3
+ */
+export const PET_SLOT_PREREQS: Record<number, SlotPrereq> = {
+  2: { type: 'level', value: 5, description: 'Reach Level 5' },
+  3: { type: 'slot_owned', value: 2, description: 'Own 2nd slot' },
+  4: { type: 'slot_owned', value: 3, description: 'Own 3rd slot' },
+} as const;
+
+/**
+ * Slot unlock TestIDs per task spec.
+ */
+export const SLOT_UNLOCK_TEST_IDS = {
+  /** Slot container: data-testid="pet-slot-{n}" */
+  SLOT_CONTAINER: (slotNumber: number) => `pet-slot-${slotNumber}`,
+  /** Unlock CTA: data-testid="slot-unlock-{n}" */
+  UNLOCK_CTA: (slotNumber: number) => `slot-unlock-${slotNumber}`,
+  /** Unlock modal */
+  UNLOCK_MODAL: 'slot-unlock-modal',
+  /** Confirm button */
+  CONFIRM_BUTTON: 'slot-unlock-confirm',
+  /** Cancel button */
+  CANCEL_BUTTON: 'slot-unlock-cancel',
+  /** Prereq message: data-testid="slot-prereq-{n}" */
+  PREREQ_MESSAGE: (slotNumber: number) => `slot-prereq-${slotNumber}`,
+  /** Price display: data-testid="slot-price-{n}" */
+  PRICE_DISPLAY: (slotNumber: number) => `slot-price-${slotNumber}`,
+  /** Pet slots section */
+  PET_SLOTS_SECTION: 'pet-slots-section',
+} as const;
+
+/**
+ * Check if slot prerequisite is met.
+ * @param slotNumber The slot to check (2, 3, or 4)
+ * @param playerLevel Current player level
+ * @param unlockedSlots Number of slots currently owned
+ * @returns { met: boolean, reason?: string }
+ */
+export function checkSlotPrereq(
+  slotNumber: number,
+  playerLevel: number,
+  unlockedSlots: number
+): { met: boolean; reason?: string } {
+  // Slot 1 is always free/available
+  if (slotNumber === 1) {
+    return { met: true };
+  }
+
+  const prereq = PET_SLOT_PREREQS[slotNumber];
+  if (!prereq) {
+    return { met: false, reason: 'Invalid slot number' };
+  }
+
+  if (prereq.type === 'level') {
+    if (playerLevel < prereq.value) {
+      return { met: false, reason: `Requires Level ${prereq.value}` };
+    }
+    return { met: true };
+  }
+
+  if (prereq.type === 'slot_owned') {
+    // Must own the previous slot (sequential unlock)
+    if (unlockedSlots < prereq.value) {
+      return { met: false, reason: `Requires ${ordinal(prereq.value)} slot` };
+    }
+    return { met: true };
+  }
+
+  return { met: false, reason: 'Unknown prerequisite type' };
+}
+
+/**
+ * Get ordinal suffix for a number (1st, 2nd, 3rd, 4th).
+ */
+function ordinal(n: number): string {
+  const s = ['th', 'st', 'nd', 'rd'];
+  const v = n % 100;
+  return n + (s[(v - 20) % 10] || s[v] || s[0]);
+}
+
+/**
+ * Result of a slot purchase attempt.
+ */
+export interface SlotPurchaseResult {
+  success: boolean;
+  error?: 'insufficient_gems' | 'prereq_not_met' | 'already_owned' | 'max_slots' | 'invalid_slot';
+  /** New gems balance after purchase (if successful) */
+  newGems?: number;
+  /** New unlocked slots count (if successful) */
+  newUnlockedSlots?: number;
+  /** Cost of the slot */
+  cost?: number;
+}
+
+/**
+ * Slot purchase state needed for validation.
+ */
+export interface SlotPurchaseState {
+  gems: number;
+  unlockedSlots: number;
+  playerLevel: number;
+  hasPlusSubscription: boolean;
+}
+
+/**
+ * Attempt to purchase a pet slot.
+ * Pure function - does not mutate state.
+ *
+ * @param state Current state
+ * @param slotNumber Slot to purchase (2, 3, or 4)
+ * @returns SlotPurchaseResult
+ */
+export function purchaseSlot(
+  state: SlotPurchaseState,
+  slotNumber: number
+): SlotPurchaseResult {
+  // Validate slot number
+  if (slotNumber < 2 || slotNumber > PET_SLOTS_CONFIG.MAX_SLOTS) {
+    return { success: false, error: 'invalid_slot' };
+  }
+
+  // Check if already owned
+  if (state.unlockedSlots >= slotNumber) {
+    return { success: false, error: 'already_owned' };
+  }
+
+  // Check max slots
+  if (slotNumber > PET_SLOTS_CONFIG.MAX_SLOTS) {
+    return { success: false, error: 'max_slots' };
+  }
+
+  // Check prerequisites (sequential unlock)
+  const prereqCheck = checkSlotPrereq(slotNumber, state.playerLevel, state.unlockedSlots);
+  if (!prereqCheck.met) {
+    return { success: false, error: 'prereq_not_met' };
+  }
+
+  // Get price
+  const cost = getPetSlotPrice(slotNumber, state.hasPlusSubscription);
+  if (cost === undefined) {
+    return { success: false, error: 'invalid_slot' };
+  }
+
+  // Check sufficient gems
+  if (state.gems < cost) {
+    return { success: false, error: 'insufficient_gems' };
+  }
+
+  // Success - return new state values
+  return {
+    success: true,
+    newGems: state.gems - cost,
+    newUnlockedSlots: slotNumber,
+    cost,
+  };
+}
+
+/**
+ * Get slot status for UI display.
+ */
+export interface SlotStatus {
+  slotNumber: number;
+  isOwned: boolean;
+  isLocked: boolean;
+  canUnlock: boolean;
+  price?: number;
+  prereqMet: boolean;
+  prereqReason?: string;
+}
+
+/**
+ * Get status for all slots (1-4).
+ */
+export function getAllSlotStatuses(
+  unlockedSlots: number,
+  playerLevel: number,
+  gems: number,
+  hasPlusSubscription: boolean = false
+): SlotStatus[] {
+  const statuses: SlotStatus[] = [];
+
+  for (let slotNumber = 1; slotNumber <= PET_SLOTS_CONFIG.MAX_SLOTS; slotNumber++) {
+    const isOwned = slotNumber <= unlockedSlots;
+    const prereqCheck = checkSlotPrereq(slotNumber, playerLevel, unlockedSlots);
+    const price = slotNumber === 1 ? 0 : getPetSlotPrice(slotNumber, hasPlusSubscription);
+
+    statuses.push({
+      slotNumber,
+      isOwned,
+      isLocked: !isOwned,
+      canUnlock: !isOwned && prereqCheck.met && (price !== undefined ? gems >= price : false),
+      price: slotNumber === 1 ? undefined : price,
+      prereqMet: prereqCheck.met,
+      prereqReason: prereqCheck.reason,
+    });
+  }
+
+  return statuses;
+}
+
+// ============================================================================
 // Type Exports
 // ============================================================================
 

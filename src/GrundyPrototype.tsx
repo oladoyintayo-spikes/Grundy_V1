@@ -43,6 +43,8 @@ import { onServiceWorkerUpdate, hasServiceWorkerUpdate, applyServiceWorkerUpdate
 import { InventoryView } from './components/inventory';
 // P8-SHOP-CATALOG: Shop UI
 import { ShopView } from './components/shop/ShopView';
+// P9-C-SLOTS: Slot unlock UI test IDs
+import { SLOT_UNLOCK_TEST_IDS } from './constants/bible.constants';
 // P9-B: Multi-pet UI components
 import {
   AggregatedBadgeCount,
@@ -624,9 +626,16 @@ function SettingsView() {
   // P9-B: Pet status badges
   const getPetStatusBadges = useGameStore((state) => state.getPetStatusBadges);
   const petStatusBadges = getPetStatusBadges();
+  // P9-C-SLOTS: Slot unlock state and actions
+  const currencies = useGameStore((state) => state.currencies);
+  const getSlotStatuses = useGameStore((state) => state.getSlotStatuses);
+  const purchasePetSlot = useGameStore((state) => state.purchasePetSlot);
+  const slotStatuses = getSlotStatuses();
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [showPetSelector, setShowPetSelector] = useState(false);
   const [pendingPetSwitch, setPendingPetSwitch] = useState<string | null>(null);
+  // P9-C-SLOTS: Slot unlock confirmation modal
+  const [pendingSlotUnlock, setPendingSlotUnlock] = useState<number | null>(null);
 
   // P6-PWA-UI: Install state
   const [installAvailable, setInstallAvailable] = useState(canInstall());
@@ -687,6 +696,34 @@ function SettingsView() {
     const pendingPet = ownedPets.find(p => p.instanceId === pendingPetSwitch);
     return pendingPet ? getPetById(pendingPet.speciesId) : null;
   };
+
+  // P9-C-SLOTS: Slot unlock handlers
+  const handleSlotUnlockClick = (slotNumber: number) => {
+    setPendingSlotUnlock(slotNumber);
+  };
+
+  const confirmSlotUnlock = () => {
+    if (pendingSlotUnlock) {
+      const result = purchasePetSlot(pendingSlotUnlock);
+      if (result.success) {
+        // Success - modal will close
+        setPendingSlotUnlock(null);
+      } else {
+        // Error handling could show a toast, but for now just log
+        console.log(`[Slots] Purchase failed: ${result.error}`);
+        setPendingSlotUnlock(null);
+      }
+    }
+  };
+
+  const cancelSlotUnlock = () => {
+    setPendingSlotUnlock(null);
+  };
+
+  // P9-C-SLOTS: Get pending slot data for confirmation modal
+  const pendingSlotStatus = pendingSlotUnlock
+    ? slotStatuses.find((s) => s.slotNumber === pendingSlotUnlock)
+    : null;
 
   return (
     <div className="h-full flex flex-col items-center justify-center text-slate-200 p-4" data-testid="settings-view">
@@ -797,6 +834,113 @@ function SettingsView() {
                   data-testid="pet-switch-confirm"
                 >
                   Switch
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* P9-C-SLOTS: Pet Slots Section */}
+        <div className="bg-slate-800/50 rounded-xl p-4" data-testid={SLOT_UNLOCK_TEST_IDS.PET_SLOTS_SECTION}>
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-medium text-slate-300">Pet Slots</h3>
+            <span className="text-xs text-slate-400">
+              <span className="text-purple-400">{currencies.gems}</span> 💎
+            </span>
+          </div>
+          <div className="grid grid-cols-4 gap-2">
+            {slotStatuses.map((slot) => (
+              <div
+                key={slot.slotNumber}
+                className={`
+                  relative p-2 rounded-lg border text-center
+                  ${slot.isOwned
+                    ? 'bg-green-500/10 border-green-500/30'
+                    : slot.canUnlock
+                      ? 'bg-purple-500/10 border-purple-500/30 cursor-pointer hover:bg-purple-500/20'
+                      : 'bg-slate-700/50 border-slate-600/50'
+                  }
+                `}
+                data-testid={SLOT_UNLOCK_TEST_IDS.SLOT_CONTAINER(slot.slotNumber)}
+              >
+                <div className="text-lg">
+                  {slot.isOwned ? '✓' : slot.canUnlock ? '🔓' : '🔒'}
+                </div>
+                <div className="text-[10px] text-slate-400">Slot {slot.slotNumber}</div>
+                {slot.isOwned ? (
+                  <div className="text-[9px] text-green-400 mt-1">Owned</div>
+                ) : slot.prereqMet ? (
+                  <>
+                    <div
+                      className="text-[9px] text-purple-300 mt-1"
+                      data-testid={SLOT_UNLOCK_TEST_IDS.PRICE_DISPLAY(slot.slotNumber)}
+                    >
+                      {slot.price} 💎
+                    </div>
+                    <button
+                      onClick={() => handleSlotUnlockClick(slot.slotNumber)}
+                      disabled={!slot.canUnlock}
+                      className={`
+                        mt-1 px-2 py-0.5 text-[9px] rounded transition-colors
+                        ${slot.canUnlock
+                          ? 'bg-purple-500 hover:bg-purple-600 text-white'
+                          : 'bg-slate-600 text-slate-400 cursor-not-allowed'
+                        }
+                      `}
+                      data-testid={SLOT_UNLOCK_TEST_IDS.UNLOCK_CTA(slot.slotNumber)}
+                    >
+                      {slot.canUnlock ? 'Unlock' : 'Need 💎'}
+                    </button>
+                  </>
+                ) : (
+                  <div
+                    className="text-[9px] text-amber-400 mt-1"
+                    data-testid={SLOT_UNLOCK_TEST_IDS.PREREQ_MESSAGE(slot.slotNumber)}
+                  >
+                    {slot.prereqReason}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* P9-C-SLOTS: Slot Unlock Confirmation Modal */}
+        {pendingSlotUnlock && pendingSlotStatus && (
+          <div
+            className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4"
+            data-testid={SLOT_UNLOCK_TEST_IDS.UNLOCK_MODAL}
+          >
+            <div className="bg-slate-800 rounded-2xl p-6 max-w-sm w-full text-center">
+              <div className="text-4xl mb-4">🔓</div>
+              <h2 className="text-lg font-bold mb-2">Unlock Slot {pendingSlotUnlock}?</h2>
+              <p className="text-sm text-slate-400 mb-4">
+                This will cost <span className="text-purple-400 font-bold">{pendingSlotStatus.price} 💎</span>
+              </p>
+              <p className="text-xs text-slate-500 mb-4">
+                Current balance: {currencies.gems} 💎
+              </p>
+              <div className="flex gap-3">
+                <button
+                  onClick={cancelSlotUnlock}
+                  className="flex-1 py-2 px-4 bg-slate-600 hover:bg-slate-500 rounded-lg transition-colors"
+                  data-testid={SLOT_UNLOCK_TEST_IDS.CANCEL_BUTTON}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmSlotUnlock}
+                  disabled={!pendingSlotStatus.canUnlock}
+                  className={`
+                    flex-1 py-2 px-4 rounded-lg transition-colors font-medium
+                    ${pendingSlotStatus.canUnlock
+                      ? 'bg-purple-500 hover:bg-purple-600 text-white'
+                      : 'bg-slate-600 text-slate-400 cursor-not-allowed'
+                    }
+                  `}
+                  data-testid={SLOT_UNLOCK_TEST_IDS.CONFIRM_BUTTON}
+                >
+                  Unlock
                 </button>
               </div>
             </div>
