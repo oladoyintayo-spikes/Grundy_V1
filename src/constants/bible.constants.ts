@@ -1234,6 +1234,79 @@ export const ALERT_SUPPRESSION = {
   RUNAWAY_BYPASSES: true,
 } as const;
 
+// ============================================================================
+// P10-F: Health Alerts Configuration (Bible v1.8 §11.6.1)
+// ============================================================================
+
+/**
+ * Health alert identifiers.
+ */
+export type HealthAlertId =
+  | 'weight_warning_obese'
+  | 'weight_recovery'
+  | 'sickness_onset'
+  | 'sickness_reminder';
+
+/**
+ * Health alert configuration per Bible v1.8 §11.6.1.
+ */
+export interface HealthAlertConfig {
+  id: HealthAlertId;
+  /** Alert label for display */
+  label: string;
+  /** Toast message (undefined = no toast) */
+  toastMessage?: string;
+  /** Whether badge is shown on pet avatar */
+  showBadge: boolean;
+  /** 'both' | 'classic' - which modes show this alert */
+  modeScope: 'both' | 'classic';
+}
+
+/**
+ * Health alert threshold configuration (Bible v1.8 §11.6.1).
+ */
+export const HEALTH_ALERT_THRESHOLDS = {
+  /** Weight threshold for obese warning (>= triggers alert) */
+  OBESE_WEIGHT: 81,
+  /** Minutes sick before sickness reminder badge shows */
+  SICKNESS_REMINDER_MINUTES: 30,
+} as const;
+
+/**
+ * Health alert configurations per Bible v1.8 §11.6.1.
+ * Used by computeHealthAlerts() pure function.
+ */
+export const HEALTH_ALERT_CONFIGS: Record<HealthAlertId, HealthAlertConfig> = {
+  weight_warning_obese: {
+    id: 'weight_warning_obese',
+    label: 'Obese',
+    toastMessage: 'Your Grundy is overweight! Try some diet food.',
+    showBadge: false, // Toast only per Bible
+    modeScope: 'both',
+  },
+  weight_recovery: {
+    id: 'weight_recovery',
+    label: 'Healthy Weight',
+    toastMessage: 'Your Grundy is back to a healthy weight!',
+    showBadge: false, // Toast only, one-time
+    modeScope: 'both',
+  },
+  sickness_onset: {
+    id: 'sickness_onset',
+    label: 'Sick',
+    toastMessage: 'Your Grundy got sick! Give them some medicine.',
+    showBadge: true, // Toast + badge
+    modeScope: 'classic',
+  },
+  sickness_reminder: {
+    id: 'sickness_reminder',
+    label: 'Still Sick',
+    // No toast for reminder - badge only per Bible
+    showBadge: true,
+    modeScope: 'classic',
+  },
+} as const;
+
 /**
  * Alert badge types per Bible §11.6.1
  */

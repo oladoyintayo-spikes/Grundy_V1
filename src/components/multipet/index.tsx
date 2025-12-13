@@ -16,29 +16,39 @@ import type { OfflineReturnSummary, PetStatusBadge, PetInstanceId } from '../../
 // ============================================
 
 interface PetStatusBadgeIconProps {
-  badge: '⚠️' | '💔' | '🔒' | null;
+  badge: '⚠️' | '💔' | '🔒' | '🏥' | null;
   size?: 'sm' | 'md';
   className?: string;
 }
 
 /**
  * Renders the appropriate badge icon for a pet's status.
- * Bible §11.6.1: ⚠️ Warning, 💔 Urgent, 🔒 Locked
+ * Bible §11.6.1: ⚠️ Warning, 💔 Urgent, 🔒 Locked, 🏥 Sick
  */
 export function PetStatusBadgeIcon({ badge, size = 'sm', className = '' }: PetStatusBadgeIconProps) {
   if (!badge) return null;
 
   const sizeClasses = size === 'sm' ? 'text-xs' : 'text-sm';
-  const bgClasses = {
+  const bgClasses: Record<string, string> = {
     [ALERT_BADGES.WARNING]: 'bg-yellow-500/20 text-yellow-400',
     [ALERT_BADGES.URGENT]: 'bg-red-500/20 text-red-400',
     [ALERT_BADGES.LOCKED]: 'bg-gray-500/20 text-gray-400',
+    '🏥': 'bg-pink-500/20 text-pink-400', // P10-F: Medical badge for sickness
+  };
+
+  // P10-F: Added aria-label for medical badge
+  const getAriaLabel = () => {
+    if (badge === ALERT_BADGES.WARNING) return 'Needs attention';
+    if (badge === ALERT_BADGES.URGENT) return 'Urgent attention needed';
+    if (badge === ALERT_BADGES.LOCKED) return 'Locked - Runaway';
+    if (badge === '🏥') return 'Pet is sick';
+    return 'Status badge';
   };
 
   return (
     <span
       className={`inline-flex items-center justify-center rounded-full px-1.5 py-0.5 ${sizeClasses} ${bgClasses[badge]} ${className}`}
-      aria-label={badge === ALERT_BADGES.WARNING ? 'Needs attention' : badge === ALERT_BADGES.URGENT ? 'Urgent attention needed' : 'Locked - Runaway'}
+      aria-label={getAriaLabel()}
     >
       {badge}
     </span>

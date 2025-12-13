@@ -586,10 +586,19 @@ export type AlertType =
   | 'neglect_stage_transition'
   | 'hunger_critical'
   | 'mood_critical'
-  | 'runaway';
+  | 'runaway'
+  // P10-F: Weight and sickness alerts (Bible v1.8 §11.6.1)
+  | 'weight_warning_obese'
+  | 'weight_recovery'
+  | 'sickness_onset'
+  | 'sickness_reminder';
+
+// P10-F: Import health alert types from bible.constants
+import type { HealthAlertId } from '../constants/bible.constants';
+export type { HealthAlertId };
 
 /** Alert badge type per Bible §11.6.1 */
-export type AlertBadge = '⚠️' | '💔' | '🔒';
+export type AlertBadge = '⚠️' | '💔' | '🔒' | '🏥';
 
 /** Individual pet alert for routing */
 export interface PetAlert {
@@ -607,6 +616,25 @@ export interface PetAlert {
   timestamp: number;
   /** Whether this alert has been shown to user */
   shown: boolean;
+}
+
+/**
+ * P10-F: Health alert for weight/sickness (Bible v1.8 §11.6.1).
+ * Pure data structure - no side effects.
+ */
+export interface HealthAlert {
+  /** Alert type identifier */
+  id: HealthAlertId;
+  /** Pet instance ID this alert is for */
+  petId: PetInstanceId;
+  /** Human-readable label for badge/tag */
+  label: string;
+  /** Toast message if alert should show toast */
+  toastMessage?: string;
+  /** Whether this alert shows a badge on pet icon */
+  showBadge: boolean;
+  /** Whether this alert shows a toast notification */
+  showToast: boolean;
 }
 
 /** Alert suppression state per Bible §11.6.1 */
