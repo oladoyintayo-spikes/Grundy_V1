@@ -1,7 +1,7 @@
 # TASKS.md
 ## Grundy Development Task List
 
-**Last Updated:** December 13, 2025 (P9-GOV-SWEEP — Phase 9 P9-A/P9-B/P9-B-UI DevStatus COMPLETE)
+**Last Updated:** December 13, 2025 (P9-C-GOV-SWEEP — Post-CE patch: P9-C Slot Unlock `930be64`)
 **Design SoT:** `docs/GRUNDY_MASTER_BIBLE.md`
 **Pre-Flight Report:** December 9, 2024 ✅
 
@@ -455,11 +455,25 @@ P1-CORE-4, P1-DOC-1,2 ── Can run in parallel
 | ID | Task | Status | Bible | Acceptance Criteria |
 |----|------|--------|-------|---------------------|
 | P9-SLOTS-01 | Add pet slots to state | ✅ | §11.6 | `unlockedSlots`, selectors/actions |
-| P9-SLOTS-02 | Implement slot purchase | ⬜ | §11.6 | 100/150/200 gems |
+| P9-SLOTS-02 | Implement slot purchase | ✅ | §11.6 | 100/150/200 gems — commit `930be64` |
 | P9-SLOTS-03 | Update pet selector | ⬜ | §11.6 | Assign/swap slots |
 | P9-SLOTS-04 | Implement parallel decay | ⬜ | §11.6 | All slotted pets decay |
 | P9-SLOTS-05 | Update notifications | ⬜ | §11.6 | Any pet can trigger |
-| P9-SLOTS-06 | Add slot UI | ⬜ | §11.6 | Active indicator, quick-switch |
+| P9-SLOTS-06 | Add slot UI | ✅ | §11.6 | Settings → Pet Slots section — commit `930be64` |
+
+### P9-C Slot Unlock (Post-CE Patch)
+
+> **Commit:** `930be64` — feat(P9-C-SLOTS): Implement slot unlock purchase + UI + prereqs (Bible v1.7 / BCT v2.3)
+>
+> **What Landed:**
+> - Slot unlock model: Slot 1 always owned, slots 2-4 unlockable with gem purchase
+> - Sequential prerequisites: Slot 2 requires Level 5+, Slot 3 requires Slot 2, Slot 4 requires Slot 3
+> - Gem pricing: 100/150/200 💎 for slots 2/3/4 with atomic purchase (no partial mutation on failure)
+> - Settings UI: Pet Slots section with unlock CTA, prereq display, and confirmation modal
+> - BCT tests: 40 tests in `src/__tests__/bct-slot-unlock.spec.ts`
+>
+> **Deferral:**
+> - Plus discount logic present but Plus detection is not implemented on Web (`hasPlusSubscription=false`) — discount remains effectively deferred until Plus detection exists.
 
 ---
 

@@ -2,7 +2,7 @@
 
 # Grundy Web Prototype — Development Status
 
-**Last Updated:** December 13, 2025 (P9-CEQA-STATUS-FLIP — Phase 9 CE/QA APPROVED)
+**Last Updated:** December 13, 2025 (P9-C-GOV-SWEEP — Post-CE patch: P9-C Slot Unlock `930be64`)
 **Current Phase:** Web Phase 9 — **CE/QA APPROVED** (Pet Slots / Multi-Pet)
 **Next Phase:** P9-C (Weight/Sickness) or Phase 10 (Lore Journal)
 
@@ -631,6 +631,25 @@ All QA S3/S4 issues from Web 1.0 are mapped to Phase 6 tasks:
 | DevStatus | ✅ COMPLETE | P9-A + P9-B + P9-B-UI all complete |
 | CEStatus | ✅ **APPROVED** | Approved 2025-12-12 |
 | QAStatus | ✅ **APPROVED** | Approved 2025-12-12 |
+
+### Phase 9 Post-CE Patches
+
+| Patch | Commit | Status | Notes |
+|-------|--------|--------|-------|
+| P9-C Slot Unlock Purchase + UI + Prereqs | `930be64` | Dev Complete | Slot unlock (100/150/200💎), prereqs, Settings UI, 40 BCT tests |
+
+> **Note:** Phase 9 CE/QA remains APPROVED. This is a post-approval extension.
+>
+> **Deferral:** Plus subscription discount logic present but Plus detection not implemented on Web (`hasPlusSubscription=false`).
+
+---
+
+## Test Baselines (Informational)
+
+| Metric | Current | Previous | Notes |
+|--------|---------|----------|-------|
+| Unit tests | ~1547 | 1507 | +40 from P9-C Slot Unlock |
+| BCT tests | ~891 | 851 | +40 from `bct-slot-unlock.spec.ts` |
 
 ---
 

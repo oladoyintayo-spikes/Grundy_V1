@@ -89,8 +89,10 @@ npm run test:bible
 |---------|----------|
 | `npx tsc --noEmit` | ✅ 0 errors |
 | `npm run build` | ✅ Built successfully |
-| `npm test -- --run` | ✅ 1507 tests passing |
-| `npm run test:bible` | ✅ 851 BCT tests passing |
+| `npm test -- --run` | ✅ ~1547 tests passing |
+| `npm run test:bible` | ✅ ~891 BCT tests passing |
+
+> **Note:** Test counts updated after P9-C Slot Unlock post-CE patch (+40 tests). Previous baseline: 1507 unit / 851 BCT.
 
 ### Phase 9 Specific Tests
 
@@ -103,6 +105,9 @@ npm test -- --run src/__tests__/bct-multipet.spec.ts
 
 # P9-B-UI tests (21 tests)
 npm test -- --run src/__tests__/bct-multipet-ui.spec.ts
+
+# P9-C Slot Unlock tests (40 tests) — Post-CE patch
+npm test -- --run src/__tests__/bct-slot-unlock.spec.ts
 ```
 
 ---
@@ -128,11 +133,17 @@ npm test -- --run src/__tests__/bct-multipet-ui.spec.ts
 
 | ID | Task | Status |
 |----|------|--------|
-| P9-SLOTS-02 | Implement slot purchase (100/150/200 gems) | ⬜ Pending |
+| P9-SLOTS-02 | Implement slot purchase (100/150/200 gems) | ✅ Done (`930be64`) |
 | P9-SLOTS-03 | Update pet selector (assign/swap slots) | ⬜ Pending |
 | P9-SLOTS-04 | Implement parallel decay (all slotted pets) | ⬜ Pending |
 | P9-SLOTS-05 | Update notifications (any pet can trigger) | ⬜ Pending |
-| P9-SLOTS-06 | Add slot UI (active indicator, quick-switch) | ⬜ Pending |
+| P9-SLOTS-06 | Add slot UI (active indicator, quick-switch) | ✅ Done (`930be64`) |
+
+### Post-CE Patch: P9-C Slot Unlock
+
+> Post-CE patch P9-C Slot Unlock shipped in commit `930be64`; see delta addendum at `docs/P9C_SLOTS_DELTA_AUDIT_ADDENDUM.md` (if created).
+>
+> **Deferral:** Plus subscription discount logic present but Plus detection not implemented on Web (`hasPlusSubscription=false`).
 
 ---
 
@@ -143,7 +154,8 @@ npm test -- --run src/__tests__/bct-multipet-ui.spec.ts
 | BCT-PETSLOTS (P9-A) | 11 | ✅ All passing |
 | BCT-MULTIPET (P9-B) | 14 + 5 | ✅ All passing |
 | BCT-MULTIPET-UI (P9-B-UI) | 21 | ✅ All passing |
-| **Total Phase 9 BCT** | **51** | ✅ All passing |
+| BCT-SLOT-UNLOCK (P9-C post-CE) | 40 | ✅ All passing |
+| **Total Phase 9 BCT** | **91** | ✅ All passing |
 
 ---
 
