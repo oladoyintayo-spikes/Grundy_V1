@@ -1192,6 +1192,37 @@ export const POOP_MOOD_DECAY = {
 } as const;
 
 /**
+ * P10-E: Recovery item effects (Bible v1.8 §9.4.7.4, §11.5)
+ * Effect values only - prices are in SHOP_CATALOG.
+ */
+export const RECOVERY_EFFECTS = {
+  /** Diet Food 🥗: -20 weight, +5 hunger (Bible §11.5) */
+  DIET_FOOD: {
+    WEIGHT_REDUCTION: 20,
+    HUNGER_GAIN: 5,
+  },
+  /** Medicine 💊: Instant cure (effect is binary, no numeric values) */
+  // Medicine effect is handled in action logic (set isSick=false, sickStartTimestamp=null)
+} as const;
+
+/**
+ * P10-E: Diet Food visibility threshold (Bible §11.5, §14.7)
+ * Diet Food button/shop item shown when weight >= this value (Chubby+).
+ */
+export const DIET_FOOD_THRESHOLD = 31;
+
+/**
+ * P10-E: Ad recovery stub config (Bible §9.4.7.4)
+ * Ads are [Unity Later] - Web Edition returns stub failure.
+ */
+export const AD_RECOVERY = {
+  /** Whether ad recovery is enabled on this platform */
+  WEB_ENABLED: false,
+  /** Ad cooldown period in hours (for future Unity implementation) */
+  COOLDOWN_HOURS: 24,
+} as const;
+
+/**
  * Bible §11.6.1: Alert Suppression Rules
  */
 export const ALERT_SUPPRESSION = {
