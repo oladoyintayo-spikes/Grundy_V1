@@ -9,7 +9,8 @@
 | **Title** | Bible v1.8 Patch: Weight & Sickness Multi-Pet Rules |
 | **Date** | December 12, 2025 |
 | **Applies-to** | `docs/GRUNDY_MASTER_BIBLE.md` v1.7 |
-| **Status** | Proposed |
+| **Status** | Adopted |
+| **Adopted** | December 13, 2025 |
 | **Author** | Documentation Steward Agent |
 
 ---
