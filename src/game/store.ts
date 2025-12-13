@@ -95,6 +95,8 @@ import {
   type SlotPurchaseResult,
   type SlotPurchaseState,
   type SlotStatus,
+  // P10-B1.5: Poop frequency constants
+  POOP_FREQUENCY,
 } from '../constants/bible.constants';
 // P8-SHOP-PURCHASE: Shop purchase engine
 import { purchaseShopItem as executePurchase } from './shopPurchase';
@@ -200,6 +202,10 @@ function createOwnedPet(speciesId: string, suffix: string = 'starter'): OwnedPet
     hungerZeroMinutesAccum: 0,
     poopDirtyMinutesAccum: 0,
     offlineSickCareMistakesAccruedThisSession: 0,
+    // P10-B1.5: Poop state (Bible v1.8 §9.5)
+    isPoopDirty: false,
+    poopDirtyStartTimestamp: null,
+    feedingsSinceLastPoop: 0,
   };
 }
 
@@ -526,6 +532,50 @@ export const useGameStore = create<GameStore>()(
             },
           };
 
+          // P10-B1.5: Handle poop spawn on feeding (Bible v1.8 §9.5)
+          // Update petsById directly for poop state (OwnedPetState fields)
+          const activePetId = state.activePetId;
+          const currentOwnedPet = state.petsById[activePetId];
+          let updatedPetsById = state.petsById;
+
+          if (currentOwnedPet) {
+            const speciesId = currentOwnedPet.speciesId;
+            const poopThreshold = POOP_FREQUENCY[speciesId] ?? 4; // Default to 4 if unknown
+            const newFeedingCount = (currentOwnedPet.feedingsSinceLastPoop ?? 0) + 1;
+
+            let newIsPoopDirty = currentOwnedPet.isPoopDirty ?? false;
+            let newPoopDirtyStartTimestamp = currentOwnedPet.poopDirtyStartTimestamp ?? null;
+            let newFeedingsSinceLastPoop = newFeedingCount;
+
+            // Check if poop should spawn (only if no existing poop)
+            if (!newIsPoopDirty && newFeedingCount >= poopThreshold) {
+              newIsPoopDirty = true;
+              newPoopDirtyStartTimestamp = feedTime;
+              newFeedingsSinceLastPoop = 0; // Reset counter after spawn
+            }
+
+            updatedPetsById = {
+              ...state.petsById,
+              [activePetId]: {
+                ...currentOwnedPet,
+                // Sync core pet fields
+                level: newPet.level,
+                xp: newPet.xp,
+                bond: newPet.bond,
+                mood: newPet.mood,
+                moodValue: newPet.moodValue,
+                hunger: newPet.hunger,
+                evolutionStage: newPet.evolutionStage,
+                transientPose: newPet.transientPose,
+                lastMoodUpdate: newPet.lastMoodUpdate,
+                // P10-B1.5: Poop state updates
+                isPoopDirty: newIsPoopDirty,
+                poopDirtyStartTimestamp: newPoopDirtyStartTimestamp,
+                feedingsSinceLastPoop: newFeedingsSinceLastPoop,
+              },
+            };
+          }
+
           // Handle level up (with adjusted XP)
           let leveledUp = false;
           let newLevel = state.pet.level;
@@ -570,6 +620,8 @@ export const useGameStore = create<GameStore>()(
             currencies: newCurrencies,
             inventory: newInventory,
             stats: newStats,
+            // P10-B1.5: Include updated petsById with poop state
+            petsById: updatedPetsById,
           };
         });
 
@@ -626,7 +678,47 @@ export const useGameStore = create<GameStore>()(
           wasBlocked: false,
         };
       },
-      
+
+      // ========================================
+      // P10-B1.5: POOP CLEANING (Bible v1.8 §9.5)
+      // ========================================
+
+      /**
+       * Clean poop for the specified pet.
+       * Bible v1.8 §9.5: Sets isPoopDirty = false, clears timestamp.
+       * Does NOT reset feedingsSinceLastPoop counter.
+       * Does NOT award rewards (that's P10-B2).
+       */
+      cleanPoop: (petId: PetInstanceId) => {
+        const state = get();
+        const pet = state.petsById[petId];
+
+        if (!pet) {
+          console.warn(`[cleanPoop] Pet not found: ${petId}`);
+          return;
+        }
+
+        if (!pet.isPoopDirty) {
+          console.log(`[cleanPoop] No poop to clean for ${petId}`);
+          return;
+        }
+
+        set({
+          petsById: {
+            ...state.petsById,
+            [petId]: {
+              ...pet,
+              isPoopDirty: false,
+              poopDirtyStartTimestamp: null,
+              // Do NOT reset feedingsSinceLastPoop per Bible §9.5
+              // Do NOT reset poopDirtyMinutesAccum here (handled by sickness trigger)
+            },
+          },
+        });
+
+        console.log(`[cleanPoop] Cleaned poop for ${petId}`);
+      },
+
       // ========================================
       // CURRENCY
       // ========================================
@@ -1975,10 +2067,8 @@ export const useGameStore = create<GameStore>()(
             gameMode: state.playMode,
             // For sickness triggers: check if hunger was 0 at save time
             hungerWasZeroAtSave: pet.hunger === 0,
-            // For poop trigger: check room state (if poop exists, it's uncleaned)
-            // Note: poop state would need to be tracked per-pet for full accuracy
-            // For now, assume poop was uncleaned if hunger was critical (conservative)
-            poopWasUncleanedAtSave: pet.hunger < 20,
+            // P10-B1.5: Use actual poop state instead of hunger proxy (Bible v1.8 §9.5)
+            poopWasUncleanedAtSave: pet.isPoopDirty ?? false,
             currentTimestamp,
           });
 
@@ -2182,6 +2272,10 @@ export const useGameStore = create<GameStore>()(
           evolutionStage: legacyPet.evolutionStage,
           transientPose: legacyPet.transientPose,
           lastMoodUpdate: legacyPet.lastMoodUpdate,
+          // P10-B1.5: Sync poop state fields (Bible v1.8 §9.5)
+          isPoopDirty: (legacyPet as OwnedPetState).isPoopDirty ?? currentPet.isPoopDirty,
+          poopDirtyStartTimestamp: (legacyPet as OwnedPetState).poopDirtyStartTimestamp ?? currentPet.poopDirtyStartTimestamp,
+          feedingsSinceLastPoop: (legacyPet as OwnedPetState).feedingsSinceLastPoop ?? currentPet.feedingsSinceLastPoop,
         };
 
         set({
@@ -2208,7 +2302,7 @@ export const useGameStore = create<GameStore>()(
     }),
     {
       name: 'grundy-save',
-      version: 3, // P10-A: Bumped for weight/sickness state fields
+      version: 4, // P10-B1.5: Bumped for poop state fields
       migrate: (persistedState: unknown, version: number) => {
         let state = persistedState as Record<string, unknown>;
 
@@ -2296,6 +2390,24 @@ export const useGameStore = create<GameStore>()(
               }
             }
             console.log(`[Migration] Injected weight/sickness defaults into ${Object.keys(petsById).length} pets`);
+          }
+        }
+
+        // P10-B1.5: Migration from v3 to v4 - inject poop state fields
+        // Bible v1.8 §9.5: Poop state tracking
+        if (version < 4) {
+          console.log('[Migration] Migrating save from v3 to v4 (poop state fields)');
+
+          const petsById = state.petsById as Record<string, Record<string, unknown>> | undefined;
+          if (petsById) {
+            // Inject default poop state fields into each pet
+            for (const petId of Object.keys(petsById)) {
+              const pet = petsById[petId];
+              if (pet.isPoopDirty === undefined) pet.isPoopDirty = false;
+              if (pet.poopDirtyStartTimestamp === undefined) pet.poopDirtyStartTimestamp = null;
+              if (pet.feedingsSinceLastPoop === undefined) pet.feedingsSinceLastPoop = 0;
+            }
+            console.log(`[Migration] Injected poop state defaults into ${Object.keys(petsById).length} pets`);
           }
         }
 

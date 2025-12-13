@@ -270,6 +270,27 @@ export interface OwnedPetState extends PetState {
    * Reset on app open / offline session start.
    */
   offlineSickCareMistakesAccruedThisSession: number;
+
+  // --- P10-B1.5: Poop State (Bible v1.8 §9.5) ---
+
+  /**
+   * Whether uncleaned poop exists for this pet. Default false.
+   * Bible §9.5: Poop spawns after N feedings per pet type.
+   */
+  isPoopDirty: boolean;
+
+  /**
+   * Timestamp (ms) when poop appeared. Null if no poop.
+   * Bible §9.5: For tracking poop duration toward sickness trigger.
+   */
+  poopDirtyStartTimestamp: number | null;
+
+  /**
+   * Counter of feedings since last poop spawn.
+   * Bible §9.5: Poop spawns after N feedings per pet type table.
+   * Reset to 0 when poop spawns.
+   */
+  feedingsSinceLastPoop: number;
 }
 
 // --- Food Definition ---
@@ -401,6 +422,8 @@ export interface GameStore {
 
   // Actions
   feed: (foodId: string) => FeedResult | null;
+  /** P10-B1.5: Clean poop for specified pet (Bible v1.8 §9.5) */
+  cleanPoop: (petId: PetInstanceId) => void;
   addCurrency: (type: CurrencyType, amount: number, source: string) => void;
   spendCurrency: (type: CurrencyType, amount: number, sink: string) => boolean;
   buyFood: (foodId: string, quantity: number) => boolean;

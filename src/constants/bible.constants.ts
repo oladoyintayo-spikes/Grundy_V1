@@ -1119,6 +1119,22 @@ export const SICKNESS_CONFIG = {
 } as const;
 
 /**
+ * P10-B1.5: Poop frequency by pet type (Bible v1.8 §9.5)
+ * Values extracted directly from Bible "Poop Frequency by Pet" table.
+ * Key = species ID, Value = number of feedings before poop spawns.
+ */
+export const POOP_FREQUENCY: Record<string, number> = {
+  munchlet: 4,  // Average
+  grib: 3,      // Messy
+  plompo: 5,    // Efficient
+  fizz: 3,      // Hyper digestion
+  ember: 4,     // Average
+  chomper: 2,   // Constant eating = constant pooping
+  whisp: 6,     // Ethereal, minimal waste
+  luxe: 4,      // Average (but complains more)
+} as const;
+
+/**
  * Bible §11.6.1: Alert Suppression Rules
  */
 export const ALERT_SUPPRESSION = {
