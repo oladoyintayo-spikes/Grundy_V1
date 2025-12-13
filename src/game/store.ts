@@ -187,6 +187,13 @@ function createOwnedPet(speciesId: string, suffix: string = 'starter'): OwnedPet
     ...basePet,
     instanceId,
     speciesId: speciesId as OwnedPetState['speciesId'],
+    // P10-A: Weight & Sickness foundations (Bible v1.8 §9.4.7)
+    weight: 0,
+    isSick: false,
+    sickStartTimestamp: null,
+    hungerZeroMinutesAccum: 0,
+    poopDirtyMinutesAccum: 0,
+    offlineSickCareMistakesAccruedThisSession: 0,
   };
 }
 
@@ -2166,76 +2173,98 @@ export const useGameStore = create<GameStore>()(
     }),
     {
       name: 'grundy-save',
-      version: 2, // P9-A: Bumped version for multi-pet migration
+      version: 3, // P10-A: Bumped for weight/sickness state fields
       migrate: (persistedState: unknown, version: number) => {
+        let state = persistedState as Record<string, unknown>;
+
         // P9-A: Migration from v1 (single-pet) to v2 (multi-pet)
         if (version < 2) {
           console.log('[Migration] Migrating save from v1 to v2 (multi-pet)');
 
-          const oldState = persistedState as Record<string, unknown>;
-
           // Check if already has multi-pet fields (partial migration)
-          if (oldState.petsById && oldState.ownedPetIds && oldState.activePetId) {
+          if (state.petsById && state.ownedPetIds && state.activePetId) {
             console.log('[Migration] Save already has multi-pet fields, skipping');
-            return persistedState;
-          }
+          } else {
+            // Get legacy pet data
+            const legacyPet = state.pet as PetState | undefined;
+            if (!legacyPet || !legacyPet.id) {
+              console.warn('[Migration] No legacy pet found, using fresh state');
+              const freshMultiPet = createInitialMultiPetState();
+              state = {
+                ...state,
+                petsById: freshMultiPet.petsById,
+                ownedPetIds: freshMultiPet.ownedPetIds,
+                activePetId: freshMultiPet.activePetId,
+                unlockedSlots: PET_SLOTS_CONFIG.FREE_PLAYER_SLOTS,
+              };
+            } else {
+              // Create instance ID for legacy pet
+              const legacySpeciesId = legacyPet.id as string;
+              const legacyInstanceId = `${legacySpeciesId}-legacy`;
 
-          // Get legacy pet data
-          const legacyPet = oldState.pet as PetState | undefined;
-          if (!legacyPet || !legacyPet.id) {
-            console.warn('[Migration] No legacy pet found, using fresh state');
-            const freshMultiPet = createInitialMultiPetState();
-            return {
-              ...oldState,
-              petsById: freshMultiPet.petsById,
-              ownedPetIds: freshMultiPet.ownedPetIds,
-              activePetId: freshMultiPet.activePetId,
-              unlockedSlots: PET_SLOTS_CONFIG.FREE_PLAYER_SLOTS,
-            };
-          }
+              // Convert legacy pet to owned pet (preserve all progress)
+              // Type assertion needed for migration from untyped legacy data
+              const legacyOwnedPet = {
+                ...legacyPet,
+                instanceId: legacyInstanceId,
+                speciesId: legacySpeciesId,
+              } as OwnedPetState;
 
-          // Create instance ID for legacy pet
-          const legacySpeciesId = legacyPet.id as string;
-          const legacyInstanceId = `${legacySpeciesId}-legacy`;
+              // Build petsById with legacy pet and other starters
+              const petsById: Record<PetInstanceId, OwnedPetState> = {};
+              const ownedPetIds: PetInstanceId[] = [];
 
-          // Convert legacy pet to owned pet (preserve all progress)
-          // Type assertion needed for migration from untyped legacy data
-          const legacyOwnedPet = {
-            ...legacyPet,
-            instanceId: legacyInstanceId,
-            speciesId: legacySpeciesId,
-          } as OwnedPetState;
+              // Add legacy pet first (preserves progress)
+              petsById[legacyInstanceId] = legacyOwnedPet;
+              ownedPetIds.push(legacyInstanceId);
 
-          // Build petsById with legacy pet and other starters
-          const petsById: Record<PetInstanceId, OwnedPetState> = {};
-          const ownedPetIds: PetInstanceId[] = [];
+              // Add other starters (fresh state)
+              for (const speciesId of STARTER_PET_IDS) {
+                if (speciesId !== legacySpeciesId) {
+                  const starterInstanceId = `${speciesId}-starter`;
+                  petsById[starterInstanceId] = createOwnedPet(speciesId, 'starter');
+                  ownedPetIds.push(starterInstanceId);
+                }
+              }
 
-          // Add legacy pet first (preserves progress)
-          petsById[legacyInstanceId] = legacyOwnedPet;
-          ownedPetIds.push(legacyInstanceId);
+              console.log(`[Migration] Migrated pet ${legacySpeciesId} to multi-pet structure`);
+              console.log(`[Migration] Owned pets: ${ownedPetIds.join(', ')}`);
 
-          // Add other starters (fresh state)
-          for (const speciesId of STARTER_PET_IDS) {
-            if (speciesId !== legacySpeciesId) {
-              const starterInstanceId = `${speciesId}-starter`;
-              petsById[starterInstanceId] = createOwnedPet(speciesId, 'starter');
-              ownedPetIds.push(starterInstanceId);
+              state = {
+                ...state,
+                petsById,
+                ownedPetIds,
+                activePetId: legacyInstanceId, // Keep playing the same pet
+                unlockedSlots: PET_SLOTS_CONFIG.FREE_PLAYER_SLOTS,
+              };
             }
           }
-
-          console.log(`[Migration] Migrated pet ${legacySpeciesId} to multi-pet structure`);
-          console.log(`[Migration] Owned pets: ${ownedPetIds.join(', ')}`);
-
-          return {
-            ...oldState,
-            petsById,
-            ownedPetIds,
-            activePetId: legacyInstanceId, // Keep playing the same pet
-            unlockedSlots: PET_SLOTS_CONFIG.FREE_PLAYER_SLOTS,
-          };
         }
 
-        return persistedState;
+        // P10-A: Migration from v2 to v3 - inject weight/sickness fields
+        // Bible v1.8 §9.4.7: Weight & Sickness Multi-Pet Rules
+        if (version < 3) {
+          console.log('[Migration] Migrating save from v2 to v3 (weight/sickness fields)');
+
+          const petsById = state.petsById as Record<string, Record<string, unknown>> | undefined;
+          if (petsById) {
+            // Inject default weight/sickness fields into each pet
+            for (const petId of Object.keys(petsById)) {
+              const pet = petsById[petId];
+              if (pet.weight === undefined) pet.weight = 0;
+              if (pet.isSick === undefined) pet.isSick = false;
+              if (pet.sickStartTimestamp === undefined) pet.sickStartTimestamp = null;
+              if (pet.hungerZeroMinutesAccum === undefined) pet.hungerZeroMinutesAccum = 0;
+              if (pet.poopDirtyMinutesAccum === undefined) pet.poopDirtyMinutesAccum = 0;
+              if (pet.offlineSickCareMistakesAccruedThisSession === undefined) {
+                pet.offlineSickCareMistakesAccruedThisSession = 0;
+              }
+            }
+            console.log(`[Migration] Injected weight/sickness defaults into ${Object.keys(petsById).length} pets`);
+          }
+        }
+
+        return state;
       },
     }
   )
