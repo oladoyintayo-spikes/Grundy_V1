@@ -89,6 +89,12 @@ import {
   ALERT_BADGES,
   type NeglectStageId,
   type PetInstanceId as BiblePetInstanceId,
+  // P9-C-SLOTS: Slot unlock system
+  purchaseSlot as purchaseSlotFn,
+  getAllSlotStatuses,
+  type SlotPurchaseResult,
+  type SlotPurchaseState,
+  type SlotStatus,
 } from '../constants/bible.constants';
 // P8-SHOP-PURCHASE: Shop purchase engine
 import { purchaseShopItem as executePurchase } from './shopPurchase';
@@ -1826,6 +1832,71 @@ export const useGameStore = create<GameStore>()(
           return null;
         }
         return state.petsById[petId] ?? null;
+      },
+
+      // ========================================
+      // P9-C-SLOTS: PET SLOT UNLOCK
+      // Bible §11.6: Pet Slot pricing and prerequisites
+      // ========================================
+
+      /**
+       * Purchase a pet slot.
+       * Bible §11.6: Slot 2 requires Level 5+, Slot 3 requires Slot 2, Slot 4 requires Slot 3.
+       * Atomic: No state changes on failure.
+       *
+       * @param slotNumber The slot to purchase (2, 3, or 4)
+       * @returns SlotPurchaseResult with success status and new state values
+       */
+      purchasePetSlot: (slotNumber: number): SlotPurchaseResult => {
+        const state = get();
+
+        // Build purchase state
+        // Note: Plus subscription detection not implemented on Web - always false
+        // DEFERRED: Plus slot pricing requires Plus detection
+        const purchaseState: SlotPurchaseState = {
+          gems: state.currencies.gems,
+          unlockedSlots: state.unlockedSlots,
+          playerLevel: state.pet.level,
+          hasPlusSubscription: false, // DEFERRED: Plus subscription not detected on Web
+        };
+
+        // Use pure function to validate and calculate
+        const result = purchaseSlotFn(purchaseState, slotNumber);
+
+        if (!result.success) {
+          console.log(`[Slots] Purchase failed for slot ${slotNumber}: ${result.error}`);
+          return result;
+        }
+
+        // Atomic state update
+        set((s) => ({
+          currencies: {
+            ...s.currencies,
+            gems: result.newGems!,
+          },
+          unlockedSlots: result.newUnlockedSlots!,
+        }));
+
+        console.log(
+          `[Slots] Purchased slot ${slotNumber} for ${result.cost} gems. ` +
+          `New total: ${result.newUnlockedSlots} slots, ${result.newGems} gems remaining.`
+        );
+
+        return result;
+      },
+
+      /**
+       * Get slot status for all slots.
+       * For UI display of owned/locked/unlock-able states.
+       */
+      getSlotStatuses: (): SlotStatus[] => {
+        const state = get();
+        return getAllSlotStatuses(
+          state.unlockedSlots,
+          state.pet.level,
+          state.currencies.gems,
+          false // DEFERRED: Plus subscription not detected on Web
+        );
       },
 
       // ========================================

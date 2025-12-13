@@ -2,6 +2,12 @@
 // GRUNDY WEB PROTOTYPE — TYPE DEFINITIONS
 // ============================================
 
+// P9-C-SLOTS: Import slot types from bible.constants
+import type { SlotPurchaseResult, SlotStatus } from '../constants/bible.constants';
+
+// Re-export for convenience
+export type { SlotPurchaseResult, SlotStatus };
+
 // --- App View (Navigation) ---
 export type AppView = 'home' | 'games' | 'settings';
 
@@ -464,6 +470,12 @@ export interface GameStore {
   syncActivePetToStore: () => void;
   /** Update lastSeenTimestamp (call on app focus/activity) */
   updateLastSeen: () => void;
+
+  // P9-C-SLOTS: Slot unlock actions (Bible §11.6)
+  /** Purchase a pet slot with gems. Returns result with success/error status. */
+  purchasePetSlot: (slotNumber: number) => SlotPurchaseResult;
+  /** Get status for all slots (1-4) for UI display. */
+  getSlotStatuses: () => SlotStatus[];
 }
 
 // --- Shop Purchase Types (P8-SHOP-PURCHASE) ---
