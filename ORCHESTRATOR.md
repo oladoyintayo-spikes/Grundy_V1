@@ -115,7 +115,9 @@ These documents form the **governance triad** for all Grundy development:
 
 > **Note:** Phase 9 CE/QA remains APPROVED. Post-CE patches are extensions that do not require re-approval of previously approved sub-phases.
 >
-> **Delta Addendum:** [`docs/P9C_SLOTS_DELTA_AUDIT_ADDENDUM.md`](docs/P9C_SLOTS_DELTA_AUDIT_ADDENDUM.md) (placeholder — to be created if CE review needed)
+> **Commits:** Implementation `930be64` · Delta Audit `207facc`
+>
+> **Delta Addendum:** [`docs/P9C_SLOTS_DELTA_AUDIT_ADDENDUM.md`](docs/P9C_SLOTS_DELTA_AUDIT_ADDENDUM.md)
 
 | Phase | Status |
 |-------|--------|

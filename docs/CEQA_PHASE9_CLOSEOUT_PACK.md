@@ -141,7 +141,9 @@ npm test -- --run src/__tests__/bct-slot-unlock.spec.ts
 
 ### Post-CE Patch: P9-C Slot Unlock
 
-> Post-CE patch P9-C Slot Unlock shipped in commit `930be64`; see delta addendum at `docs/P9C_SLOTS_DELTA_AUDIT_ADDENDUM.md` (if created).
+> **Commits:** Implementation `930be64` · Delta Audit `207facc`
+>
+> **Delta Addendum:** [`docs/P9C_SLOTS_DELTA_AUDIT_ADDENDUM.md`](P9C_SLOTS_DELTA_AUDIT_ADDENDUM.md)
 >
 > **Deferral:** Plus subscription discount logic present but Plus detection not implemented on Web (`hasPlusSubscription=false`).
 
