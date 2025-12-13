@@ -34,6 +34,8 @@ import {
   moodStateToValue,
   getMoodTier,
   MODE_CONFIG,
+  // P10-B2: Poop mood decay acceleration
+  POOP_MOOD_DECAY,
   type FullnessState,
   type MoodTier,
   type GameMode
@@ -400,22 +402,51 @@ export function getMoodChangeFromReaction(reaction: ReactionType, petId?: string
 }
 
 /**
+ * P10-B2: Options for poop-related mood decay acceleration.
+ */
+export interface PoopDecayOptions {
+  /** Is poop currently dirty? */
+  isPoopDirty: boolean;
+  /** Timestamp when poop became dirty (null if not dirty) */
+  poopDirtyStartTimestamp: number | null;
+  /** Current timestamp for calculating dirty duration */
+  currentTimestamp?: number;
+}
+
+/**
  * Calculate mood decay over time.
  * Applies Plompo's ability: -20% mood decay rate.
  * P6-FTUE-MODES: Applies mode decay multiplier.
+ * P10-B2: Applies 2× multiplier when poop dirty for 60+ minutes.
  * @param currentMood - Current mood value (0-100)
  * @param minutesElapsed - Minutes since last update
  * @param petId - Pet ID for ability application
  * @param gameMode - Game mode for decay multiplier
+ * @param poopOptions - Optional poop state for decay acceleration
  * @returns New mood value
  */
-export function decayMood(currentMood: number, minutesElapsed: number, petId?: string, gameMode?: GameMode): number {
+export function decayMood(
+  currentMood: number,
+  minutesElapsed: number,
+  petId?: string,
+  gameMode?: GameMode,
+  poopOptions?: PoopDecayOptions
+): number {
   let decay = minutesElapsed * MOOD_MODIFIERS.DECAY_PER_MINUTE;
 
   // P6-FTUE-MODES: Apply mode decay multiplier (Cozy = slower decay)
   if (gameMode) {
     const modeConfig = MODE_CONFIG[gameMode];
     decay = decay * modeConfig.moodDecayMultiplier;
+  }
+
+  // P10-B2: Apply poop mood decay acceleration (2× when dirty 60+ minutes)
+  if (poopOptions?.isPoopDirty && poopOptions.poopDirtyStartTimestamp !== null) {
+    const currentTs = poopOptions.currentTimestamp ?? Date.now();
+    const dirtyMinutes = (currentTs - poopOptions.poopDirtyStartTimestamp) / (1000 * 60);
+    if (dirtyMinutes >= POOP_MOOD_DECAY.ACCELERATION_THRESHOLD_MINUTES) {
+      decay = decay * POOP_MOOD_DECAY.ACCELERATION_MULTIPLIER;
+    }
   }
 
   // Apply Plompo's ability: -20% mood decay rate
