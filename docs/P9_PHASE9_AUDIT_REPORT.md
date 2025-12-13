@@ -539,7 +539,9 @@ Phase 9 implementation is **COMPLETE** and **BIBLE-COMPLIANT**:
 | P9-B-UI: UI Wiring | ✅ Complete | 21 BCT tests |
 | P9-C: Weight/Sickness | ⏳ Deferred | Per Bible §9.4.7 |
 
-**Total Phase 9 Tests:** 51 BCT tests, all passing
+> **Post-CE Patch:** P9-C Slot Unlock (impl `930be64`, audit `207facc`) — see [`docs/P9C_SLOTS_DELTA_AUDIT_ADDENDUM.md`](P9C_SLOTS_DELTA_AUDIT_ADDENDUM.md)
+
+**Total Phase 9 Tests:** 51 BCT tests, all passing (+40 from P9-C Slot Unlock = 91 total)
 
 ---
 
