@@ -72,7 +72,7 @@ These documents form the **governance triad** for all Grundy development:
 | Bible | `docs/GRUNDY_MASTER_BIBLE.md` | **v1.8** |
 | BCT Spec | `docs/BIBLE_COMPLIANCE_TEST.md` | **v2.4** |
 | Locked Constants | `src/constants/bible.constants.ts` | Single source for locked values |
-| Weight/Sickness Patch | `docs/patches/BIBLE_v1.8_PATCH_WEIGHT_SICKNESS_MULTIPET.md` | **Proposed** |
+| Weight/Sickness Patch | `docs/patches/BIBLE_v1.8_PATCH_WEIGHT_SICKNESS_MULTIPET.md` | **Adopted** |
 
 > **Note:** Patch artifacts in `docs/patches/` are non-canonical reference material only. Always use the canonical docs above.
 
