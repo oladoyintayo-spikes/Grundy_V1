@@ -1048,6 +1048,72 @@ export const GLOBAL_RESOURCES = {
   INVENTORY_GLOBAL: true,
 } as const;
 
+// ============================================================================
+// P9-B: Multi-Pet Runtime Constants (Bible v1.7)
+// ============================================================================
+
+/**
+ * Bible §8.2.1: Energy Scope (Multi-Pet)
+ * Energy is GLOBAL across all owned pets.
+ */
+export const MULTI_PET_ENERGY = {
+  /** Energy is global (shared pool across all pets) */
+  SCOPE: 'global' as const,
+  /** First-free daily is global (one per day total, not per pet) */
+  FIRST_FREE_GLOBAL: true,
+  /** Daily cap (3 plays) is global across all pets */
+  DAILY_CAP_GLOBAL: true,
+} as const;
+
+/**
+ * Bible §9.4.6: Multi-Pet Offline Rules
+ * Stat decay rates per 24 hours offline.
+ */
+export const OFFLINE_DECAY_RATES = {
+  /** Mood decay per 24h offline */
+  MOOD_PER_24H: 5,
+  /** Mood floor (minimum value) */
+  MOOD_FLOOR: 30,
+  /** Bond decay per 24h offline (standard) */
+  BOND_PER_24H: 2,
+  /** Bond decay per 24h offline (Grundy Plus: 50% slower) */
+  BOND_PER_24H_PLUS: 1,
+  /** Bond floor (minimum value) */
+  BOND_FLOOR: 0,
+  /** Hunger decay per 24h offline */
+  HUNGER_PER_24H: 10,
+  /** Hunger floor (minimum value) */
+  HUNGER_FLOOR: 0,
+  /** Neglect cap (maximum days) */
+  NEGLECT_CAP_DAYS: 14,
+  /** Welcome back threshold (show summary if offline longer than this) */
+  WELCOME_BACK_THRESHOLD_HOURS: 24,
+} as const;
+
+/**
+ * Bible §11.6.1: Alert Suppression Rules
+ */
+export const ALERT_SUPPRESSION = {
+  /** Minimum minutes between alerts for same pet (except runaway) */
+  COOLDOWN_MINUTES: 30,
+  /** Maximum non-critical alerts per session */
+  SESSION_LIMIT: 5,
+  /** Runaway alerts bypass suppression */
+  RUNAWAY_BYPASSES: true,
+} as const;
+
+/**
+ * Alert badge types per Bible §11.6.1
+ */
+export const ALERT_BADGES = {
+  /** Warning badge for Worried/Sad state */
+  WARNING: '⚠️',
+  /** Urgent badge for Withdrawn/Critical state */
+  URGENT: '💔',
+  /** Locked badge for Runaway state */
+  LOCKED: '🔒',
+} as const;
+
 /**
  * Pet slot test IDs for BCT tests.
  */
