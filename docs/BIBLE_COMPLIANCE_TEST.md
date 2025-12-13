@@ -1,10 +1,11 @@
 # Grundy — Bible Compliance Test (BCT)
 
-**Version:** 2.3
-**Last Updated:** December 2025 (Bible v1.7 Update)
-**Bible Reference:** `docs/GRUNDY_MASTER_BIBLE.md` v1.7
+**Version:** 2.4
+**Last Updated:** December 2025 (Bible v1.8 Update)
+**Bible Reference:** `docs/GRUNDY_MASTER_BIBLE.md` v1.8
 
 **Changelog:**
+- v2.4: Weight & Sickness test suites (planned) — Added BCT-WEIGHT (12 tests), BCT-SICKNESS (18 tests), BCT-SICKNESS-OFFLINE (8 tests), BCT-ALERT-HEALTH (8 tests), BCT-COZY-IMMUNITY (6 tests) specifications for P10 Weight/Sickness runtime. Bible v1.8 alignment. See `docs/patches/BIBLE_v1.8_PATCH_WEIGHT_SICKNESS_MULTIPET.md`.
 - v2.3: Multi-Pet Runtime tests — Added BCT-MULTIPET (14 tests) for P9-B runtime integration: energy scope, runaway auto-switch, switching constraints, offline rules, alert routing/suppression. Bible v1.7 alignment.
 - v2.2: Shop + Inventory spec tests — Added BCT-SHOP (25 tests), BCT-INV (17 tests), BCT-ECON starting resources tests (5 tests). Total: 47 new specifications for Web Phase 8.
 - v2.1: Bible v1.5 Neglect & Withdrawal tests (BCT-NEGLECT-001 through 023)
@@ -56,6 +57,11 @@ npm test -- --run
 | Inventory | BCT-INV-* | §11.7, §14.8 | Capacity, stacking, decomposition, UI |
 | Multi-Pet | BCT-MULTIPET-* | §8.2.1, §9.4.4–9.4.6, §14.6 | Energy scope, runaway handling, switching, offline, alerts |
 | Pet Slots | BCT-PETSLOTS-* | §11.6, §6 | Multi-pet ownership, slots, global resources |
+| Weight | BCT-WEIGHT-* | §5.7, §9.4.7.1 | Weight states, gain, decay, offline (PLANNED) |
+| Sickness | BCT-SICKNESS-* | §9.4.2, §9.4.7.2 | Sickness triggers, effects, recovery (PLANNED) |
+| Sickness Offline | BCT-SICKNESS-OFFLINE-* | §9.4.7.3 | Offline timer accumulation, 2× decay (PLANNED) |
+| Alert Health | BCT-ALERT-HEALTH-* | §11.6.1 | Weight/Sickness alert routing (PLANNED) |
+| Cozy Immunity | BCT-COZY-IMMUNITY-* | §9.3 | Sickness/Obese immunity in Cozy (PLANNED) |
 
 ---
 
@@ -989,6 +995,203 @@ Run **at minimum** the BCT tests for the affected area:
 | FAIL | Implementation deviates from Bible; fix required |
 | N/A | Test not applicable to this phase/patch |
 | BLOCKED | Cannot test (dependency missing) |
+
+---
+
+## Weight Tests (BCT-WEIGHT-*) — PLANNED (P10)
+
+> **Status:** Planned for P10 Weight/Sickness runtime implementation.
+> **Bible Reference:** §5.7, §9.4.7.1
+
+### BCT-WEIGHT-001: Per-Pet Weight Tracking
+
+**Bible:** §9.4.7.1
+**Requirement:** Each pet tracks independent weight 0-100.
+
+| Check | Expected |
+|-------|----------|
+| Weight is per-pet | Each pet has independent weight value |
+| Weight persists | Saved and restored on reload |
+| Starting weight | 0 for new pets |
+
+### BCT-WEIGHT-002: Weight Gain from Snacks
+
+**Bible:** §5.7, §9.4.7.1
+**Requirement:** Snack risk % adds absolute points to weight.
+
+| Check | Expected |
+|-------|----------|
+| Cookie adds +5 | Weight increases by 5 points |
+| Candy adds +10 | Weight increases by 10 points |
+| Ice Cream adds +10 | Weight increases by 10 points |
+| Non-snack foods add 0 | No weight change from regular food |
+
+### BCT-WEIGHT-003: Weight Decay
+
+**Bible:** §9.4.7.1
+**Requirement:** Weight decays -1 per hour.
+
+| Check | Expected |
+|-------|----------|
+| Online decay | -1 per hour while playing |
+| Offline decay | -1 per hour while away |
+| Floor at 0 | Cannot go negative |
+| 14-day cap | Max -336 points from offline |
+
+### BCT-WEIGHT-004 through BCT-WEIGHT-012
+
+*Additional planned tests for weight states, visual changes, Obese mini-game blocking, and weight recovery.*
+
+---
+
+## Sickness Tests (BCT-SICKNESS-*) — PLANNED (P10)
+
+> **Status:** Planned for P10 Weight/Sickness runtime implementation.
+> **Bible Reference:** §9.4.2, §9.4.7.2
+
+### BCT-SICKNESS-001: Classic Mode Only
+
+**Bible:** §9.4.7.2
+**Requirement:** Sickness is disabled in Cozy Mode.
+
+| Check | Expected |
+|-------|----------|
+| Cozy Mode | `isSick` always false |
+| Classic Mode | Sickness can trigger normally |
+
+### BCT-SICKNESS-002: Hunger Timer Trigger
+
+**Bible:** §9.4.7.2
+**Requirement:** Hunger=0 for 30min triggers 20% sickness chance.
+
+| Check | Expected |
+|-------|----------|
+| Timer starts | When hunger reaches 0 |
+| Timer pauses | When hunger > 0 |
+| Roll chance | 20% on timer completion |
+
+### BCT-SICKNESS-003: Poop Timer Trigger
+
+**Bible:** §9.4.7.2
+**Requirement:** Uncleaned poop for 2hr triggers 15% sickness chance.
+
+| Check | Expected |
+|-------|----------|
+| Timer starts | When poop appears |
+| Timer pauses | When poop cleaned |
+| Roll chance | 15% on timer completion |
+
+### BCT-SICKNESS-004 through BCT-SICKNESS-018
+
+*Additional planned tests for sick state effects, 2× decay, mini-game blocking, care mistakes, medicine recovery.*
+
+---
+
+## Sickness Offline Tests (BCT-SICKNESS-OFFLINE-*) — PLANNED (P10)
+
+> **Status:** Planned for P10 Weight/Sickness runtime implementation.
+> **Bible Reference:** §9.4.7.3
+
+### BCT-SICKNESS-OFFLINE-001: Timer Accumulation
+
+**Bible:** §9.4.7.3
+**Requirement:** Sickness trigger timers accumulate during offline.
+
+| Check | Expected |
+|-------|----------|
+| Hunger=0 at save | 30-min timer accumulates |
+| Poop uncleaned at save | 2-hr timer accumulates |
+| Timer > threshold | Roll sickness on return |
+
+### BCT-SICKNESS-OFFLINE-002: Sick Effects Run Offline
+
+**Bible:** §9.4.7.3
+**Requirement:** If sick during offline, 2× stat decay applies.
+
+| Check | Expected |
+|-------|----------|
+| Mood decay | 2× normal rate |
+| Hunger decay | 2× normal rate |
+| Bond decay | 2× normal rate |
+
+### BCT-SICKNESS-OFFLINE-003 through BCT-SICKNESS-OFFLINE-008
+
+*Additional planned tests for care mistake accumulation (1/hr, cap 4), multi-pet offline sickness.*
+
+---
+
+## Alert Health Tests (BCT-ALERT-HEALTH-*) — PLANNED (P10)
+
+> **Status:** Planned for P10 Weight/Sickness runtime implementation.
+> **Bible Reference:** §11.6.1
+
+### BCT-ALERT-HEALTH-001: Obese Weight Warning
+
+**Bible:** §11.6.1
+**Requirement:** Toast when pet enters Obese state.
+
+| Check | Expected |
+|-------|----------|
+| Weight >= 81 | Toast: "{Pet} is getting too heavy!" |
+| Routing | Per-pet |
+
+### BCT-ALERT-HEALTH-002: Weight Recovery Alert
+
+**Bible:** §11.6.1
+**Requirement:** Toast when pet returns to Normal weight.
+
+| Check | Expected |
+|-------|----------|
+| Weight < 31 | Toast: "{Pet} is back to healthy weight!" |
+| Routing | Per-pet |
+
+### BCT-ALERT-HEALTH-003: Sickness Onset Alert
+
+**Bible:** §11.6.1
+**Requirement:** Toast and badge when pet becomes sick.
+
+| Check | Expected |
+|-------|----------|
+| Pet becomes sick | Toast: "{Pet} is sick!" + badge |
+| Classic only | Alert only in Classic Mode |
+
+### BCT-ALERT-HEALTH-004 through BCT-ALERT-HEALTH-008
+
+*Additional planned tests for sickness reminder, priority ordering, suppression rules.*
+
+---
+
+## Cozy Immunity Tests (BCT-COZY-IMMUNITY-*) — PLANNED (P10)
+
+> **Status:** Planned for P10 Weight/Sickness runtime implementation.
+> **Bible Reference:** §9.3
+
+### BCT-COZY-IMMUNITY-001: No Sickness in Cozy
+
+**Bible:** §9.3
+**Requirement:** Sickness system completely disabled in Cozy Mode.
+
+| Check | Expected |
+|-------|----------|
+| Hunger=0 trigger | Does not fire |
+| Poop trigger | Does not fire |
+| Snack trigger | Does not fire |
+| `isSick` | Always false |
+
+### BCT-COZY-IMMUNITY-002: Obese Visual Only
+
+**Bible:** §9.3
+**Requirement:** Obese state in Cozy is visual only — no gameplay effects.
+
+| Check | Expected |
+|-------|----------|
+| Weight >= 81 | Visual change (30% wider) |
+| Happiness decay | Normal (not 2×) |
+| Mini-games | **Not blocked** |
+
+### BCT-COZY-IMMUNITY-003 through BCT-COZY-IMMUNITY-006
+
+*Additional planned tests for neglect immunity, care mistakes immunity, evolution always positive.*
 
 ---
 

@@ -1,8 +1,8 @@
 # TASKS.md
 ## Grundy Development Task List
 
-**Last Updated:** December 13, 2025 (P9-C-GOV-SWEEP — Post-CE patch: P9-C Slot Unlock `930be64`)
-**Design SoT:** `docs/GRUNDY_MASTER_BIBLE.md`
+**Last Updated:** December 13, 2025 (Bible v1.8 Governance Sweep — Weight & Sickness Multi-Pet Rules)
+**Design SoT:** `docs/GRUNDY_MASTER_BIBLE.md` v1.8
 **Pre-Flight Report:** December 9, 2024 ✅
 
 ---
@@ -417,14 +417,115 @@ P1-CORE-4, P1-DOC-1,2 ── Can run in parallel
 | P9-B-UI-02 | Welcome back modal | ✅ | §9.4.6 | Summary of offline events per pet |
 | P9-B-UI-03 | BCT-MULTIPET-UI tests | ✅ | — | 21 BCT-MULTIPET-UI compliance tests |
 
-### P9-C: Weight & Sickness Runtime (DEFERRED)
+### P9-C: Weight & Sickness Specification (COMPLETE)
 
-> **DEFERRED:** Weight & Sickness runtime deferred per Bible §9.4.7 — future phase.
+> **SPEC COMPLETE:** Weight & Sickness specified in Bible v1.8 §9.4.7. Runtime implementation moves to Phase 10.
 
 | ID | Task | Status | Bible | Notes |
 |----|------|--------|-------|-------|
-| P9-C-01 | Weight runtime | ⬜ DEFERRED | §5.7, §9.4.7 | Per-pet weight system |
-| P9-C-02 | Sickness runtime | ⬜ DEFERRED | §5.4, §9.4.7 | Per-pet sickness (Classic) |
+| P9-C-SPEC | Bible v1.8 patch applied | ✅ DONE | §9.4.7 | Patch artifact in `docs/patches/` |
+| P9-C-BCT | BCT v2.4 planned suites | ✅ DONE | — | ~52 new tests specified |
+
+> See [`docs/patches/BIBLE_v1.8_PATCH_WEIGHT_SICKNESS_MULTIPET.md`](docs/patches/BIBLE_v1.8_PATCH_WEIGHT_SICKNESS_MULTIPET.md) for full specification.
+
+---
+
+## PHASE 10: Weight & Sickness Runtime
+
+> Bible v1.8: §5.7, §9.4.7, §11.6.1 — Per-pet weight and sickness systems.
+> BCT v2.4: BCT-WEIGHT-*, BCT-SICKNESS-*, BCT-SICKNESS-OFFLINE-*, BCT-ALERT-HEALTH-*, BCT-COZY-IMMUNITY-*
+
+### P10-DOC: Documentation (COMPLETE)
+
+| ID | Task | Status | Bible | Notes |
+|----|------|--------|-------|-------|
+| P10-DOC-01 | Bible v1.8 patch applied | ✅ DONE | §9.4.7 | Full §9.4.7 subsections |
+| P10-DOC-02 | BCT v2.4 test suites defined | ✅ DONE | — | ~52 planned tests |
+| P10-DOC-03 | Governance sweep | ✅ DONE | — | ORCHESTRATOR, TASKS, DEV_STATUS updated |
+
+### P10-A: Weight State Model
+
+| ID | Task | Status | Bible | Notes |
+|----|------|--------|-------|-------|
+| P10-A-01 | Per-pet weight state (0-100) | ⬜ TODO | §9.4.7.1 | Independent tracking per pet |
+| P10-A-02 | Weight constants in bible.constants.ts | ⬜ TODO | §9.4.7.1 | WEIGHT_THRESHOLDS, WEIGHT_EFFECTS, WEIGHT_GAIN |
+| P10-A-03 | BCT-WEIGHT-001 tests | ⬜ TODO | — | Per-pet tracking, persistence |
+
+### P10-B: Weight Gain & Decay
+
+| ID | Task | Status | Bible | Notes |
+|----|------|--------|-------|-------|
+| P10-B-01 | Weight gain on feeding | ⬜ TODO | §5.7, §9.4.7.1 | Cookie +5, Candy +10, etc. |
+| P10-B-02 | Weight decay runtime | ⬜ TODO | §9.4.7.1 | -1/hr online and offline |
+| P10-B-03 | BCT-WEIGHT-002..003 tests | ⬜ TODO | — | Gain and decay verification |
+
+### P10-C: Sickness State Model
+
+| ID | Task | Status | Bible | Notes |
+|----|------|--------|-------|-------|
+| P10-C-01 | Per-pet sickness state | ⬜ TODO | §9.4.7.2 | isSick boolean, Classic only |
+| P10-C-02 | Sickness constants in bible.constants.ts | ⬜ TODO | §9.4.7.2 | SICKNESS_TRIGGERS, SICKNESS_EFFECTS |
+| P10-C-03 | Trigger timers (hunger=0, poop) | ⬜ TODO | §9.4.7.2 | 30min/2hr timers with chance rolls |
+| P10-C-04 | BCT-SICKNESS-001..003 tests | ⬜ TODO | — | Classic only, trigger verification |
+
+### P10-D: Sickness Offline Accumulation
+
+| ID | Task | Status | Bible | Notes |
+|----|------|--------|-------|-------|
+| P10-D-01 | Timer accumulation offline | ⬜ TODO | §9.4.7.3 | Timers run during absence |
+| P10-D-02 | 2× stat decay offline | ⬜ TODO | §9.4.7.3 | If sick, apply 2× decay |
+| P10-D-03 | Care mistake offline cap | ⬜ TODO | §9.4.7.2 | +1/hr, max 4 per session |
+| P10-D-04 | BCT-SICKNESS-OFFLINE-* tests | ⬜ TODO | — | 8 tests for offline behavior |
+
+### P10-E: Sickness Recovery
+
+| ID | Task | Status | Bible | Notes |
+|----|------|--------|-------|-------|
+| P10-E-01 | Medicine item | ⬜ TODO | §9.4.7.4 | 50🪙, instant cure |
+| P10-E-02 | Shop integration (Care tab) | ⬜ TODO | §9.4.7.4 | Classic only, hidden in Cozy |
+| P10-E-03 | BCT-SICKNESS-004..006 tests | ⬜ TODO | — | Recovery verification |
+
+### P10-F: Alert Wiring
+
+| ID | Task | Status | Bible | Notes |
+|----|------|--------|-------|-------|
+| P10-F-01 | Weight Warning alert (Obese) | ⬜ TODO | §11.6.1 | Toast: "{Pet} is getting too heavy!" |
+| P10-F-02 | Weight Recovery alert | ⬜ TODO | §11.6.1 | Toast: "{Pet} is back to healthy weight!" |
+| P10-F-03 | Sickness Onset alert | ⬜ TODO | §11.6.1 | Toast + badge: "{Pet} is sick!" |
+| P10-F-04 | BCT-ALERT-HEALTH-* tests | ⬜ TODO | — | 8 tests for alert routing |
+
+### P10-G: Cozy Mode Immunity
+
+| ID | Task | Status | Bible | Notes |
+|----|------|--------|-------|-------|
+| P10-G-01 | Sickness disabled in Cozy | ⬜ TODO | §9.3, §9.4.7.2 | isSick always false |
+| P10-G-02 | Obese visual only in Cozy | ⬜ TODO | §9.3 | No gameplay effects |
+| P10-G-03 | BCT-COZY-IMMUNITY-* tests | ⬜ TODO | — | 6 tests for immunity |
+
+### P10-H: Integration & Edge Cases
+
+| ID | Task | Status | Bible | Notes |
+|----|------|--------|-------|-------|
+| P10-H-01 | Multi-pet sickness scenarios | ⬜ TODO | §9.4.7.6 | All pets sick handling |
+| P10-H-02 | Weight + Sickness interaction | ⬜ TODO | §9.4.7.5 | Overweight snack → 5% sick chance |
+| P10-H-03 | Sickness + Neglect co-existence | ⬜ TODO | §9.4.3 | Both can progress simultaneously |
+| P10-H-04 | Final integration tests | ⬜ TODO | — | End-to-end verification |
+
+### Phase 10 Implementation Sequence
+
+```
+P10-A (Weight model) ──┬──▶ P10-B (Weight gain/decay)
+                       │
+P10-C (Sickness model) ┴──▶ P10-D (Offline accumulation)
+                              │
+                              └──▶ P10-E (Recovery)
+                                      │
+                                      └──▶ P10-F (Alerts)
+                                              │
+                                              └──▶ P10-G (Cozy immunity)
+                                                      │
+                                                      └──▶ P10-H (Integration)
+```
 
 ### Phase 9 DevStatus Summary
 

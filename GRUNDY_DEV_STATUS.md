@@ -2,9 +2,9 @@
 
 # Grundy Web Prototype — Development Status
 
-**Last Updated:** December 13, 2025 (P9-C-GOV-SWEEP — Post-CE patch: P9-C Slot Unlock `930be64`)
+**Last Updated:** December 13, 2025 (Bible v1.8 Governance Sweep — Weight & Sickness Multi-Pet Rules)
 **Current Phase:** Web Phase 9 — **CE/QA APPROVED** (Pet Slots / Multi-Pet)
-**Next Phase:** P9-C (Weight/Sickness) or Phase 10 (Lore Journal)
+**Next Phase:** Phase 10 (Weight & Sickness Runtime)
 
 ---
 
@@ -12,18 +12,19 @@
 
 | Resource | Location |
 |----------|----------|
-| **Design SoT** | `docs/GRUNDY_MASTER_BIBLE.md` v1.7 |
+| **Design SoT** | `docs/GRUNDY_MASTER_BIBLE.md` v1.8 |
 | **Task List** | `TASKS.md` |
 | **Agent Workflow** | `ORCHESTRATOR.md` |
 | **Bible Update Log** | `BIBLE_UPDATE_BACKLOG.md` |
-| **BCT Specs** | `docs/BIBLE_COMPLIANCE_TEST.md` v2.3 |
+| **BCT Specs** | `docs/BIBLE_COMPLIANCE_TEST.md` v2.4 |
+| **Weight/Sickness Patch** | `docs/patches/BIBLE_v1.8_PATCH_WEIGHT_SICKNESS_MULTIPET.md` |
 
 ### Canonical Versions (December 2025)
 
 | Artifact | Version | Notes |
 |----------|---------|-------|
-| Bible | **v1.7** | Multi-Pet Runtime Clarifications (§8.2.1, §9.4.4–9.4.7, §14.6) |
-| BCT | **v2.3** | Multi-Pet tests (BCT-MULTIPET-001 thru 014, BCT-PETSLOTS-001 thru 011) |
+| Bible | **v1.8** | Weight & Sickness Multi-Pet Rules (§9.4.7, §9.4.6, §11.6.1, §9.3) |
+| BCT | **v2.4** | Weight/Sickness planned suites (~52 tests), Multi-Pet tests |
 | Locked Constants | `src/constants/bible.constants.ts` | Single source for locked values |
 
 ---
