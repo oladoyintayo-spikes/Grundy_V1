@@ -222,12 +222,54 @@ export type { PetInstanceId, SpeciesId };
  * Owned pet instance state (extends PetState with instance tracking).
  * Bible §11.6: Each pet has SEPARATE: Level, XP, Bond, Mood, Hunger.
  * P9-A: Minimal foundation for multi-pet ownership.
+ * P10-A: Weight & Sickness state fields (Bible v1.8 §9.4.7).
  */
 export interface OwnedPetState extends PetState {
   /** Unique instance ID for this owned pet (format: {speciesId}-{suffix}) */
   instanceId: PetInstanceId;
   /** Species ID (one of 8 canonical species) - duplicates 'id' for clarity */
   speciesId: SpeciesId;
+
+  // --- P10-A: Weight & Sickness Foundations (Bible v1.8 §9.4.7) ---
+
+  /**
+   * Pet weight value (0-100). Default 0 for new pets.
+   * Bible §5.7, §9.4.7.1: Per-pet weight tracking.
+   */
+  weight: number;
+
+  /**
+   * Whether the pet is currently sick. Default false.
+   * Bible §9.4.7.2: Sickness state (Classic Mode only).
+   */
+  isSick: boolean;
+
+  /**
+   * Timestamp (ms) when the pet became sick. Null if not sick.
+   * Bible §9.4.7.2: For tracking sickness duration and effects.
+   */
+  sickStartTimestamp: number | null;
+
+  /**
+   * Accumulated minutes at hunger=0 for offline sickness trigger calc.
+   * Bible §9.4.7.3: Timer accumulation for offline triggers.
+   * Default 0, reset on feeding.
+   */
+  hungerZeroMinutesAccum: number;
+
+  /**
+   * Accumulated minutes with uncleaned poop for offline sickness trigger calc.
+   * Bible §9.4.7.3: Timer accumulation for offline triggers.
+   * Default 0, reset on cleaning.
+   */
+  poopDirtyMinutesAccum: number;
+
+  /**
+   * Care mistakes accrued during current offline session while sick.
+   * Bible §9.4.7.2: Care mistake offline cap (+1/hr, max 4 per session).
+   * Reset on app open / offline session start.
+   */
+  offlineSickCareMistakesAccruedThisSession: number;
 }
 
 // --- Food Definition ---
