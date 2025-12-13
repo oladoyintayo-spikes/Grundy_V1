@@ -690,14 +690,18 @@ All QA S3/S4 issues from Web 1.0 are mapped to Phase 6 tasks:
 
 **Offline 60m Note:** Current implementation checks dirty duration at save time only. If threshold is crossed during offline, multiplier is not applied. This is an intentional approximation for simplicity.
 
+**Offline 60m Poop Threshold:** This save-time-anchored behavior is an intentional approximation for Web Edition v1.x. Accepted unless CE requests parity later.
+
 ---
 
 ## Test Baselines (Informational)
 
 | Metric | Current | Previous | Notes |
 |--------|---------|----------|-------|
-| Unit tests | ~1565 | 1547 | +18 from P10-B2 poop tests |
-| BCT tests | ~909 | 891 | +18 from `bct-p10b2-poop-ui-rewards.spec.ts` |
+| Unit tests (full) | **1634** | 1616 | `npm test -- --run` |
+| BCT tests | **891** | 873 | `npm run test:bible` (filters by "BCT-" pattern) |
+
+**Note:** BCT tests are a subset of the full suite. The `test:bible` command skips non-BCT tests (743 skipped).
 
 ---
 
@@ -717,17 +721,27 @@ All QA S3/S4 issues from Web 1.0 are mapped to Phase 6 tasks:
 
 ---
 
-## Verification Commands
+## Verification Commands (Canonical)
+
+| Command | Purpose | Count |
+|---------|---------|-------|
+| `npm test -- --run` | Full unit test suite | ~1634 tests |
+| `npm run test:bible` | BCT tests only (filters by "BCT-" name) | ~891 tests |
+| `npm run build` | Production build (includes tsc) | — |
+| `npx tsc --noEmit` | Type checking only | — |
+| `npm run test:all` | Full suite + BCT + E2E | — |
+
+**Test Count Explanation:**
+- `npm test -- --run` runs ALL tests (unit + BCT + integration)
+- `npm run test:bible` filters to only BCT-prefixed tests, skipping ~743 non-BCT tests
+- Both commands use the same Vitest runner; difference is in test name filtering
 
 ```bash
-# Build
-npm run build
-
-# Test
+# Standard verification sequence
+npx tsc --noEmit
 npm test -- --run
-
-# Development
-npm run dev
+npm run test:bible
+npm run build
 ```
 
 ---
