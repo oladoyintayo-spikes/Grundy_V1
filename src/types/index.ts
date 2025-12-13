@@ -343,6 +343,13 @@ export interface GameStore {
   activePetId: PetInstanceId;
   /** Number of pet slots unlocked (1-4). Bible §11.6: starts at 1. */
   unlockedSlots: number;
+  // P9-B: Multi-pet runtime state
+  /** Alert suppression state for preventing spam. Bible §11.6.1 */
+  alertSuppression: AlertSuppressionState;
+  /** Timestamp of last app activity (for offline fanout calculation) */
+  lastSeenTimestamp: number;
+  /** True if all pets are in runaway state. Bible §9.4.4 */
+  allPetsAway: boolean;
 
   // Actions
   feed: (foodId: string) => FeedResult | null;
@@ -433,12 +440,30 @@ export interface GameStore {
   // P9-A: Multi-pet foundation actions
   /** Get the currently active pet. Returns null if no pets owned (should never happen). */
   getActivePet: () => OwnedPetState | null;
-  /** Switch to a different owned pet. Bible §11.6: "Switching between slotted pets is instant" */
-  setActivePet: (petId: PetInstanceId) => void;
+  /** Switch to a different owned pet. Bible §11.6, §9.4.5: Switching with constraints */
+  setActivePet: (petId: PetInstanceId) => { success: boolean; warning?: string };
   /** Get all owned pets in acquisition order */
   getOwnedPets: () => OwnedPetState[];
   /** Get owned pet by instance ID */
   getOwnedPetById: (petId: PetInstanceId) => OwnedPetState | null;
+
+  // P9-B: Multi-pet runtime actions (Bible §8.2.1, §9.4.4-9.4.6, §11.6.1)
+  /** Apply offline stat decay to all owned pets. Bible §9.4.6 */
+  applyOfflineFanout: (now?: Date) => OfflineReturnSummary | null;
+  /** Auto-switch to next available pet when current pet enters runaway. Bible §9.4.4 */
+  autoSwitchOnRunaway: () => { newPetId: PetInstanceId | null; allPetsAway: boolean };
+  /** Get status badges for all owned pets. Bible §11.6.1 */
+  getPetStatusBadges: () => PetStatusBadge[];
+  /** Get count of pets needing attention. Bible §11.6.1 */
+  getAggregatedBadgeCount: () => number;
+  /** Record that an alert was shown (for suppression tracking). Bible §11.6.1 */
+  recordAlertShown: (petId: PetInstanceId, isRunaway?: boolean) => void;
+  /** Check if alert can be shown for a pet. Bible §11.6.1 */
+  canShowAlertForPet: (petId: PetInstanceId) => boolean;
+  /** Sync changes from legacy pet field to petsById */
+  syncActivePetToStore: () => void;
+  /** Update lastSeenTimestamp (call on app focus/activity) */
+  updateLastSeen: () => void;
 }
 
 // --- Shop Purchase Types (P8-SHOP-PURCHASE) ---
@@ -455,6 +480,80 @@ export interface ShopPurchaseResult {
 export interface ShopPurchaseOptions {
   /** For random bundles, inject a selector for deterministic testing */
   randomSelector?: (choices: string[]) => string;
+}
+
+// --- P9-B: Multi-Pet Alert Types (Bible §11.6.1) ---
+
+/** Alert severity levels per Bible §11.6.1 */
+export type AlertSeverity = 'low' | 'medium' | 'high' | 'critical';
+
+/** Alert types that can be routed */
+export type AlertType =
+  | 'neglect_stage_transition'
+  | 'hunger_critical'
+  | 'mood_critical'
+  | 'runaway';
+
+/** Alert badge type per Bible §11.6.1 */
+export type AlertBadge = '⚠️' | '💔' | '🔒';
+
+/** Individual pet alert for routing */
+export interface PetAlert {
+  /** Pet instance ID this alert is for */
+  petId: PetInstanceId;
+  /** Species name for display */
+  petName: string;
+  /** Type of alert */
+  type: AlertType;
+  /** Severity level */
+  severity: AlertSeverity;
+  /** Human-readable message */
+  message: string;
+  /** Timestamp when alert was generated */
+  timestamp: number;
+  /** Whether this alert has been shown to user */
+  shown: boolean;
+}
+
+/** Alert suppression state per Bible §11.6.1 */
+export interface AlertSuppressionState {
+  /** Last alert timestamp per pet (for cooldown) */
+  lastAlertByPet: Record<PetInstanceId, number>;
+  /** Count of non-critical alerts shown this session */
+  sessionAlertCount: number;
+  /** Session start timestamp */
+  sessionStart: number;
+}
+
+/** Pet status badge info for UI */
+export interface PetStatusBadge {
+  petId: PetInstanceId;
+  badge: AlertBadge | null;
+  needsAttention: boolean;
+  neglectStage: string;
+}
+
+/** Offline return summary for "Welcome Back" UI */
+export interface OfflineReturnSummary {
+  /** Time offline in hours */
+  hoursOffline: number;
+  /** Changes per pet */
+  petChanges: Array<{
+    petId: PetInstanceId;
+    petName: string;
+    moodChange: number;
+    bondChange: number;
+    hungerChange: number;
+    neglectDaysAdded: number;
+    newNeglectStage: string | null;
+    becameRunaway: boolean;
+  }>;
+  /** Whether auto-switch occurred */
+  autoSwitchOccurred: boolean;
+  /** New active pet after auto-switch (if applicable) */
+  newActivePetId: PetInstanceId | null;
+  /** Whether all pets are runaway */
+  allPetsAway: boolean;
 }
 
 // --- Legacy Currencies interface (for compatibility) ---

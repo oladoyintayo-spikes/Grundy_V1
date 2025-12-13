@@ -31,6 +31,11 @@ import {
   DEFAULT_NEGLECT_STATE,
   ShopPurchaseResult,
   ShopPurchaseOptions,
+  // P9-B: Multi-pet alert types
+  AlertSuppressionState,
+  OfflineReturnSummary,
+  PetStatusBadge,
+  AlertBadge,
 } from '../types';
 import {
   DEFAULT_ENVIRONMENT,
@@ -68,6 +73,7 @@ import {
 // Bible §14.4: Activity-to-room mapping
 // Bible §9.4.3: Neglect system constants
 // Bible §11.6: Pet Slots constants (P9-A)
+// Bible §8.2.1, §9.4.6, §11.6.1: Multi-pet runtime constants (P9-B)
 import {
   ROOM_ACTIVITY_MAP,
   MODE_CONFIG,
@@ -78,6 +84,9 @@ import {
   INVENTORY_CONFIG,
   PET_SLOTS_CONFIG,
   STARTER_PET_IDS,
+  OFFLINE_DECAY_RATES,
+  ALERT_SUPPRESSION,
+  ALERT_BADGES,
   type NeglectStageId,
   type PetInstanceId as BiblePetInstanceId,
 } from '../constants/bible.constants';
@@ -201,6 +210,151 @@ function createInitialMultiPetState(): {
   return { petsById, ownedPetIds, activePetId };
 }
 
+// ============================================
+// P9-B: MULTI-PET RUNTIME HELPERS
+// Bible §8.2.1, §9.4.4-9.4.6, §11.6.1
+// ============================================
+
+/**
+ * Create initial alert suppression state.
+ * Bible §11.6.1: Alert suppression rules.
+ */
+function createInitialAlertSuppressionState(): AlertSuppressionState {
+  return {
+    lastAlertByPet: {},
+    sessionAlertCount: 0,
+    sessionStart: Date.now(),
+  };
+}
+
+/**
+ * Calculate offline stat decay for a single pet.
+ * Bible §9.4.6: Offline decay rates per 24 hours.
+ * @param hoursOffline Number of hours the player was offline
+ * @param hasPlusSubscription Whether player has Grundy Plus
+ * @returns Decay amounts to apply
+ */
+function calculateOfflineDecay(
+  hoursOffline: number,
+  hasPlusSubscription: boolean = false
+): { moodDecay: number; bondDecay: number; hungerDecay: number } {
+  // Calculate number of 24h periods (use full periods for deterministic behavior)
+  const periods24h = Math.floor(hoursOffline / 24);
+
+  // Bible §9.4.6 rates: per 24h offline
+  const moodDecay = periods24h * OFFLINE_DECAY_RATES.MOOD_PER_24H;
+  const bondDecayRate = hasPlusSubscription
+    ? OFFLINE_DECAY_RATES.BOND_PER_24H_PLUS
+    : OFFLINE_DECAY_RATES.BOND_PER_24H;
+  const bondDecay = periods24h * bondDecayRate;
+  const hungerDecay = periods24h * OFFLINE_DECAY_RATES.HUNGER_PER_24H;
+
+  return { moodDecay, bondDecay, hungerDecay };
+}
+
+/**
+ * Apply offline decay to a single pet's state.
+ * Bible §9.4.6: Floor values for mood (30), bond (0), hunger (0).
+ */
+function applyOfflineDecayToPet(
+  pet: OwnedPetState,
+  decay: { moodDecay: number; bondDecay: number; hungerDecay: number }
+): OwnedPetState {
+  return {
+    ...pet,
+    moodValue: Math.max(
+      OFFLINE_DECAY_RATES.MOOD_FLOOR,
+      (pet.moodValue ?? 50) - decay.moodDecay
+    ),
+    bond: Math.max(
+      OFFLINE_DECAY_RATES.BOND_FLOOR,
+      pet.bond - decay.bondDecay
+    ),
+    hunger: Math.max(
+      OFFLINE_DECAY_RATES.HUNGER_FLOOR,
+      pet.hunger - decay.hungerDecay
+    ),
+  };
+}
+
+/**
+ * Find the first non-runaway pet in ownedPetIds order.
+ * Bible §9.4.4: Auto-switch to next available pet in slot order.
+ * @returns PetInstanceId of first available pet, or null if all are runaway
+ */
+function findFirstAvailablePet(
+  ownedPetIds: PetInstanceId[],
+  neglectByPetId: Record<string, NeglectState>
+): PetInstanceId | null {
+  for (const petId of ownedPetIds) {
+    const neglectState = neglectByPetId[petId];
+    // Pet is available if no neglect state or not runaway
+    if (!neglectState || !neglectState.isRunaway) {
+      return petId;
+    }
+  }
+  return null; // All pets are runaway
+}
+
+/**
+ * Get the pet's display name from instance ID.
+ * Extracts species name and capitalizes first letter.
+ */
+function getPetDisplayName(instanceId: PetInstanceId): string {
+  // instanceId format: "{speciesId}-{suffix}" e.g., "munchlet-starter"
+  const speciesId = instanceId.split('-')[0];
+  return speciesId.charAt(0).toUpperCase() + speciesId.slice(1);
+}
+
+/**
+ * Get alert badge for a pet based on neglect state.
+ * Bible §11.6.1: ⚠️ (Worried/Sad), 💔 (Withdrawn/Critical), 🔒 (Runaway)
+ */
+function getAlertBadgeForPet(neglectState: NeglectState | null): AlertBadge | null {
+  if (!neglectState) return null;
+
+  if (neglectState.isRunaway) {
+    return ALERT_BADGES.LOCKED;
+  }
+  if (neglectState.currentStage === 'withdrawn' || neglectState.currentStage === 'critical') {
+    return ALERT_BADGES.URGENT;
+  }
+  if (neglectState.currentStage === 'worried' || neglectState.currentStage === 'sad') {
+    return ALERT_BADGES.WARNING;
+  }
+  return null;
+}
+
+/**
+ * Check if an alert can be shown based on suppression rules.
+ * Bible §11.6.1: 30-min cooldown per pet, 5 non-critical per session, runaway bypasses.
+ */
+function canShowAlert(
+  petId: PetInstanceId,
+  isRunaway: boolean,
+  suppression: AlertSuppressionState,
+  now: number = Date.now()
+): boolean {
+  // Runaway always bypasses suppression
+  if (isRunaway) {
+    return true;
+  }
+
+  // Check session limit
+  if (suppression.sessionAlertCount >= ALERT_SUPPRESSION.SESSION_LIMIT) {
+    return false;
+  }
+
+  // Check per-pet cooldown
+  const lastAlert = suppression.lastAlertByPet[petId] ?? 0;
+  const cooldownMs = ALERT_SUPPRESSION.COOLDOWN_MINUTES * 60 * 1000;
+  if (now - lastAlert < cooldownMs) {
+    return false;
+  }
+
+  return true;
+}
+
 // Initial state factory
 function createInitialState() {
   // P9-A: Initialize multi-pet state
@@ -254,6 +408,12 @@ function createInitialState() {
     ownedPetIds: multiPetState.ownedPetIds,
     activePetId: multiPetState.activePetId,
     unlockedSlots: PET_SLOTS_CONFIG.FREE_PLAYER_SLOTS, // Bible §11.6: starts with 1 slot
+    // P9-B: Alert suppression state (Bible §11.6.1)
+    alertSuppression: createInitialAlertSuppressionState(),
+    // P9-B: Last seen timestamp for offline fanout calculation
+    lastSeenTimestamp: Date.now(),
+    // P9-B: All pets away state
+    allPetsAway: false,
   };
 }
 
@@ -1605,17 +1765,33 @@ export const useGameStore = create<GameStore>()(
       /**
        * Switch to a different owned pet.
        * Bible §11.6: "Switching between slotted pets is instant"
+       * Bible §9.4.5: Switching constraints during neglect states
+       * @returns Object with success status and optional warning message
        */
-      setActivePet: (petId: PetInstanceId) => {
+      setActivePet: (petId: PetInstanceId): { success: boolean; warning?: string } => {
         const state = get();
 
         // Validate pet exists in owned pets
         if (!state.petsById || !state.petsById[petId]) {
           console.warn(`[MultiPet] Cannot switch to unknown pet: ${petId}`);
-          return;
+          return { success: false };
         }
 
         const newActivePet = state.petsById[petId];
+        const neglectState = state.neglectByPetId[petId];
+
+        // Bible §9.4.5: Check if switching to runaway pet
+        // Runaway pets can be selected to view recovery UI, but player can't interact
+        let warning: string | undefined;
+        if (neglectState?.isRunaway) {
+          // Allow selection for recovery UI viewing
+          console.log(`[MultiPet] Selected runaway pet ${petId} for recovery view`);
+          warning = `${getPetDisplayName(petId)} has run away. You can only view recovery options.`;
+        } else if (neglectState?.currentStage === 'withdrawn' || neglectState?.currentStage === 'critical') {
+          // Bible §9.4.5: Show warning for withdrawn/critical pets
+          warning = `${getPetDisplayName(petId)} needs extra care to recover`;
+          console.log(`[MultiPet] Warning: ${warning}`);
+        }
 
         // Update both activePetId and legacy pet field for backward compat
         set({
@@ -1625,6 +1801,7 @@ export const useGameStore = create<GameStore>()(
         });
 
         console.log(`[MultiPet] Switched active pet to ${newActivePet.speciesId} (${petId})`);
+        return { success: true, warning };
       },
 
       /**
@@ -1649,6 +1826,264 @@ export const useGameStore = create<GameStore>()(
           return null;
         }
         return state.petsById[petId] ?? null;
+      },
+
+      // ========================================
+      // P9-B: MULTI-PET RUNTIME
+      // Bible §8.2.1, §9.4.4-9.4.6, §11.6.1
+      // ========================================
+
+      /**
+       * Apply offline fanout to all owned pets.
+       * Bible §9.4.6: Stats change for ALL owned pets simultaneously when offline.
+       * @param now Current timestamp
+       * @returns OfflineReturnSummary with all changes applied
+       */
+      applyOfflineFanout: (now: Date = new Date()): OfflineReturnSummary | null => {
+        const state = get();
+
+        // Skip if FTUE not complete (Bible §9.4.6: FTUE protection)
+        if (!state.ftue.hasCompletedFtue) {
+          return null;
+        }
+
+        // Skip if neglect disabled (Cozy mode)
+        if (!MODE_CONFIG[state.playMode].neglectEnabled) {
+          // Still update lastSeenTimestamp even in Cozy mode
+          set({ lastSeenTimestamp: now.getTime() });
+          return null;
+        }
+
+        const lastSeen = state.lastSeenTimestamp ?? now.getTime();
+        const hoursOffline = (now.getTime() - lastSeen) / (1000 * 60 * 60);
+
+        // Skip if not enough time has passed
+        if (hoursOffline < 1) {
+          set({ lastSeenTimestamp: now.getTime() });
+          return null;
+        }
+
+        console.log(`[P9-B] Applying offline fanout: ${hoursOffline.toFixed(1)}h offline`);
+
+        // Calculate decay amounts (TODO: check for Plus subscription)
+        const decay = calculateOfflineDecay(hoursOffline, false);
+
+        const petChanges: OfflineReturnSummary['petChanges'] = [];
+        const updatedPetsById: Record<PetInstanceId, OwnedPetState> = {};
+
+        // Apply decay to ALL owned pets
+        for (const petId of state.ownedPetIds) {
+          const pet = state.petsById[petId];
+          if (!pet) continue;
+
+          const originalMood = pet.moodValue ?? 50;
+          const originalBond = pet.bond;
+          const originalHunger = pet.hunger;
+
+          // Apply stat decay
+          const updatedPet = applyOfflineDecayToPet(pet, decay);
+          updatedPetsById[petId] = updatedPet;
+
+          // Get neglect state changes (already handled by updateNeglectOnLogin)
+          const neglectState = state.neglectByPetId[petId];
+          const neglectDaysAdded = neglectState?.neglectDays ?? 0;
+          const newNeglectStage = neglectState?.currentStage ?? null;
+          const becameRunaway = neglectState?.isRunaway ?? false;
+
+          petChanges.push({
+            petId,
+            petName: getPetDisplayName(petId),
+            moodChange: (updatedPet.moodValue ?? 50) - originalMood,
+            bondChange: updatedPet.bond - originalBond,
+            hungerChange: updatedPet.hunger - originalHunger,
+            neglectDaysAdded,
+            newNeglectStage,
+            becameRunaway,
+          });
+        }
+
+        // Check if active pet is now runaway and needs auto-switch
+        const activeNeglect = state.neglectByPetId[state.activePetId];
+        let autoSwitchOccurred = false;
+        let newActivePetId: PetInstanceId | null = null;
+
+        if (activeNeglect?.isRunaway) {
+          // Find first available pet
+          newActivePetId = findFirstAvailablePet(state.ownedPetIds, state.neglectByPetId);
+          autoSwitchOccurred = newActivePetId !== null && newActivePetId !== state.activePetId;
+        }
+
+        // Check if all pets are away
+        const allPetsAway = findFirstAvailablePet(state.ownedPetIds, state.neglectByPetId) === null;
+
+        // Apply updates
+        set({
+          petsById: { ...state.petsById, ...updatedPetsById },
+          lastSeenTimestamp: now.getTime(),
+          allPetsAway,
+          ...(autoSwitchOccurred && newActivePetId ? {
+            activePetId: newActivePetId,
+            pet: { ...updatedPetsById[newActivePetId], id: updatedPetsById[newActivePetId].speciesId },
+          } : {}),
+        });
+
+        // Also sync the legacy pet field if it's the active pet
+        if (updatedPetsById[state.activePetId] && !autoSwitchOccurred) {
+          set((s) => ({
+            pet: { ...updatedPetsById[s.activePetId], id: updatedPetsById[s.activePetId].speciesId },
+          }));
+        }
+
+        const summary: OfflineReturnSummary = {
+          hoursOffline,
+          petChanges,
+          autoSwitchOccurred,
+          newActivePetId,
+          allPetsAway,
+        };
+
+        console.log(`[P9-B] Offline fanout complete:`, summary);
+        return summary;
+      },
+
+      /**
+       * Auto-switch to next available pet when current pet enters runaway.
+       * Bible §9.4.4: Auto-switch to first non-runaway pet in slot order.
+       * @returns New active pet ID, or null if all pets are runaway
+       */
+      autoSwitchOnRunaway: (): { newPetId: PetInstanceId | null; allPetsAway: boolean } => {
+        const state = get();
+
+        // Find first available pet
+        const newPetId = findFirstAvailablePet(state.ownedPetIds, state.neglectByPetId);
+        const allPetsAway = newPetId === null;
+
+        if (allPetsAway) {
+          console.log('[P9-B] All pets are runaway - entering "All Pets Away" state');
+          set({ allPetsAway: true });
+          return { newPetId: null, allPetsAway: true };
+        }
+
+        if (newPetId && newPetId !== state.activePetId) {
+          const newPet = state.petsById[newPetId];
+          console.log(`[P9-B] Auto-switching from runaway pet to ${newPet?.speciesId} (${newPetId})`);
+
+          set({
+            activePetId: newPetId,
+            pet: newPet ? { ...newPet, id: newPet.speciesId } : state.pet,
+            allPetsAway: false,
+          });
+        }
+
+        return { newPetId, allPetsAway: false };
+      },
+
+      /**
+       * Get status badges for all owned pets.
+       * Bible §11.6.1: Badge system for pet selector.
+       */
+      getPetStatusBadges: (): PetStatusBadge[] => {
+        const state = get();
+
+        return state.ownedPetIds.map((petId) => {
+          const neglectState = state.neglectByPetId[petId] ?? null;
+          const badge = getAlertBadgeForPet(neglectState);
+          const needsAttention = badge !== null;
+          const neglectStage = neglectState?.currentStage ?? 'normal';
+
+          return {
+            petId,
+            badge,
+            needsAttention,
+            neglectStage,
+          };
+        });
+      },
+
+      /**
+       * Get count of pets needing attention (for aggregate badge).
+       * Bible §11.6.1: Aggregate badge count on pet selector.
+       */
+      getAggregatedBadgeCount: (): number => {
+        const badges = get().getPetStatusBadges();
+        return badges.filter((b) => b.needsAttention).length;
+      },
+
+      /**
+       * Record that an alert was shown (for suppression tracking).
+       * Bible §11.6.1: Alert suppression rules.
+       */
+      recordAlertShown: (petId: PetInstanceId, isRunaway: boolean = false) => {
+        const state = get();
+        const now = Date.now();
+
+        set({
+          alertSuppression: {
+            ...state.alertSuppression,
+            lastAlertByPet: {
+              ...state.alertSuppression.lastAlertByPet,
+              [petId]: now,
+            },
+            // Only increment session count for non-runaway alerts
+            sessionAlertCount: isRunaway
+              ? state.alertSuppression.sessionAlertCount
+              : state.alertSuppression.sessionAlertCount + 1,
+          },
+        });
+      },
+
+      /**
+       * Check if alert can be shown for a pet.
+       * Bible §11.6.1: Alert suppression rules.
+       */
+      canShowAlertForPet: (petId: PetInstanceId): boolean => {
+        const state = get();
+        const neglectState = state.neglectByPetId[petId];
+        const isRunaway = neglectState?.isRunaway ?? false;
+        return canShowAlert(petId, isRunaway, state.alertSuppression);
+      },
+
+      /**
+       * Sync changes from legacy pet field to petsById.
+       * Called after feeding/playing to keep multi-pet state in sync.
+       */
+      syncActivePetToStore: () => {
+        const state = get();
+        const activePetId = state.activePetId;
+        const legacyPet = state.pet;
+
+        if (!activePetId || !state.petsById[activePetId]) {
+          return;
+        }
+
+        // Sync relevant fields from legacy pet to petsById
+        const currentPet = state.petsById[activePetId];
+        const updatedPet: OwnedPetState = {
+          ...currentPet,
+          level: legacyPet.level,
+          xp: legacyPet.xp,
+          bond: legacyPet.bond,
+          mood: legacyPet.mood,
+          moodValue: legacyPet.moodValue,
+          hunger: legacyPet.hunger,
+          evolutionStage: legacyPet.evolutionStage,
+          transientPose: legacyPet.transientPose,
+          lastMoodUpdate: legacyPet.lastMoodUpdate,
+        };
+
+        set({
+          petsById: {
+            ...state.petsById,
+            [activePetId]: updatedPet,
+          },
+        });
+      },
+
+      /**
+       * Update lastSeenTimestamp (call on app focus/activity).
+       */
+      updateLastSeen: () => {
+        set({ lastSeenTimestamp: Date.now() });
       },
 
       // ========================================
