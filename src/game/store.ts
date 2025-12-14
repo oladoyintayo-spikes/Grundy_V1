@@ -109,6 +109,8 @@ import {
   MINIGAME_GATING,
   // P10-E: Recovery effects
   RECOVERY_EFFECTS,
+  // P10-H: Sickness config (for offline sick decay multiplier)
+  SICKNESS_CONFIG,
 } from '../constants/bible.constants';
 // P10-C: Deterministic RNG for sickness chance rolls
 import { randomFloat } from './rng';
@@ -295,27 +297,43 @@ function calculateOfflineDecay(
  * Apply offline decay to a single pet's state.
  * Bible §9.4.6: Floor values for mood (30), bond (0), hunger (0).
  * P10-B2: Applies 2× mood decay multiplier when poop was dirty for 60+ minutes.
+ * P10-H: Applies 2× decay to mood/bond/hunger when sick in Classic mode (Bible §9.4.7.3).
  *
  * @param pet - The pet state to update
  * @param decay - Decay amounts to apply
  * @param offlineMinutes - Total minutes offline (for poop dirty duration check)
  * @param lastSeenTimestamp - When player was last active (for calculating dirty duration)
+ * @param gameMode - Current game mode (for sick decay multiplier)
  */
 function applyOfflineDecayToPet(
   pet: OwnedPetState,
   decay: { moodDecay: number; bondDecay: number; hungerDecay: number },
   offlineMinutes?: number,
-  lastSeenTimestamp?: number
+  lastSeenTimestamp?: number,
+  gameMode?: PlayMode
 ): OwnedPetState {
   let effectiveMoodDecay = decay.moodDecay;
+  let effectiveBondDecay = decay.bondDecay;
+  let effectiveHungerDecay = decay.hungerDecay;
+
+  // P10-H: Apply 2× decay multiplier for sick pets in Classic mode (Bible §9.4.7.3)
+  // "If sick: apply 2× stat decay for sick duration (Classic)"
+  const isSickClassic = gameMode === 'classic' && pet.isSick;
+  if (isSickClassic) {
+    const sickMultiplier = SICKNESS_CONFIG.SICK_DECAY_MULTIPLIER;
+    effectiveMoodDecay *= sickMultiplier;
+    effectiveBondDecay *= sickMultiplier;
+    effectiveHungerDecay *= sickMultiplier;
+  }
 
   // P10-B2: Apply 2× mood decay multiplier if poop was dirty for 60+ minutes
+  // Note: This stacks with sickness multiplier if both conditions apply
   if (pet.isPoopDirty && pet.poopDirtyStartTimestamp !== null && lastSeenTimestamp !== undefined) {
     // Calculate how long poop was dirty at save time
     const dirtyMinutesAtSave = (lastSeenTimestamp - pet.poopDirtyStartTimestamp) / (1000 * 60);
     // If poop was dirty for 60+ minutes at save time, apply 2× multiplier to offline mood decay
     if (dirtyMinutesAtSave >= POOP_MOOD_DECAY.ACCELERATION_THRESHOLD_MINUTES) {
-      effectiveMoodDecay = decay.moodDecay * POOP_MOOD_DECAY.ACCELERATION_MULTIPLIER;
+      effectiveMoodDecay = effectiveMoodDecay * POOP_MOOD_DECAY.ACCELERATION_MULTIPLIER;
     }
   }
 
@@ -327,11 +345,11 @@ function applyOfflineDecayToPet(
     ),
     bond: Math.max(
       OFFLINE_DECAY_RATES.BOND_FLOOR,
-      pet.bond - decay.bondDecay
+      pet.bond - effectiveBondDecay
     ),
     hunger: Math.max(
       OFFLINE_DECAY_RATES.HUNGER_FLOOR,
-      pet.hunger - decay.hungerDecay
+      pet.hunger - effectiveHungerDecay
     ),
   };
 }
@@ -2363,7 +2381,8 @@ export const useGameStore = create<GameStore>()(
 
           // Apply base stat decay (mood/bond/hunger)
           // P10-B2: Pass lastSeen timestamp for poop mood decay acceleration calculation
-          let updatedPet = applyOfflineDecayToPet(pet, decay, offlineMinutes, lastSeen);
+          // P10-H: Pass gameMode for sick decay multiplier (2× in Classic)
+          let updatedPet = applyOfflineDecayToPet(pet, decay, offlineMinutes, lastSeen, state.playMode);
 
           // P10-B: Apply weight decay + sickness order-of-application
           // Bible §9.4.6, §9.4.7: Weight decays in both modes; sickness Classic only
