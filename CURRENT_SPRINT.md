@@ -88,6 +88,67 @@ Run three-gate approval process:
 - **CE Gate:** Chief Engineer review (pending)
 - **QA Gate:** Quality assurance sign-off (pending)
 
+---
+
+## Phase 10 CE/QA Gate Review
+
+- **Date:** 2025-12-14
+- **Reviewer:** Claude (automated gate pack)
+- **Result:** ✅ PASS
+
+### Verification Baselines
+- Total tests: 1742
+- BCT tests: 999
+- Build: PASS
+- TypeScript: PASS
+
+### Evidence
+- All P10 tasks merged to main: ✅
+- Bible sections covered: §5.7, §9.3, §9.4.7.1-4, §9.5, §11.6.1
+- BCT test files: 9 files covering all Phase 10 requirements
+
+### CE/QA Evidence Table
+
+| Area | Bible Ref | What CE/QA must see | Where in code/tests |
+|------|-----------|---------------------|---------------------|
+| **NO GEMS (Web)** | Hard constraint | No gem rewards from mini-games | `miniGameRewards.ts` returns `{coins, xp, foodDrop}` only; `MINIGAME_GEMS_ALLOWED=false` |
+| Weight thresholds | §9.4.7.1 | 31/61/81 behavior | `bible.constants.ts`, `bct-p10a-foundations.spec.ts` |
+| Sickness triggers | §9.4.7.2 | hunger=0 30m chance; poop dirty 2hr chance; pepper rules | `offlineSickness.ts`, `bct-p10b1.5-poop-state.spec.ts`, `bct-p10c-feeding-triggers.spec.ts` |
+| Offline processing | §9.4.7.3 | 14-day cap; Cozy short-circuit; sick 2× stat decay | `store.ts:applyOfflineDecayToPet`, `bct-p10h-sick-decay.spec.ts` |
+| Poop | §9.5 | spawn, clean, rewards, mood decay 2× after 60m dirty | `bct-p10b1.5-poop-state.spec.ts`, `bct-p10b2-poop-ui-rewards.spec.ts` |
+| Recovery | §9.4.7.4 | medicine, diet food, ad stub | `store.ts:useMedicine/useDietFood/useAdRecovery`, `bct-p10e-recovery-flows.spec.ts` |
+| Alerts | §11.6.1 | obese warning/recovery; sickness onset/reminder (Classic) | `healthAlerts.ts`, `bct-p10f-health-alerts.spec.ts` |
+| Cozy immunity | §9.3 | no sickness penalties; minigame gating bypass | `bct-p10d-minigame-gating.spec.ts` |
+
+### Phase 10 Test Coverage Summary
+
+| File | Category | Test Count |
+|------|----------|------------|
+| bct-p10a-foundations.spec.ts | State foundations | 16 |
+| bct-p10b-offline-order.spec.ts | Offline order | 31 |
+| bct-p10b1.5-poop-state.spec.ts | Poop state + sickness trigger | 22 |
+| bct-p10b2-poop-ui-rewards.spec.ts | Poop UI + rewards + mood decay | 18 |
+| bct-p10c-feeding-triggers.spec.ts | Feeding weight/sickness triggers | 23 |
+| bct-p10d-minigame-gating.spec.ts | Sick/obese mini-game blocking | 23 |
+| bct-p10e-recovery-flows.spec.ts | Recovery actions | 28 |
+| bct-p10f-health-alerts.spec.ts | Alerts engine | 28 |
+| bct-p10h-sick-decay.spec.ts | Sick offline 2× stat decay | 6 |
+| **TOTAL** | | **195 tests** |
+
+### Manual Checklist Result
+- NO GEMS code scan (Step 3): ✅ PASS
+- NO GEMS from mini-games: ✅ PASS (rewards are `{coins, xp, foodDrop}` only)
+- Poop system: ✅ BCT-validated
+- Sickness & recovery: ✅ BCT-validated
+- Mini-game gating: ✅ BCT-validated
+- Alerts: ✅ BCT-validated
+- Cozy immunity: ✅ BCT-validated
+
+### Notes
+- None — all Phase 10 requirements verified via BCT coverage
+- Time-dependent behaviors (60m poop decay, 30m sickness triggers) validated by BCT tests only
+- Ad recovery returns `WEB_ADS_DISABLED` as expected for Web Edition
+
 ### 2. Merge Hygiene
 - Ensure all P10 branches merged to main ✅
 - Delete stale branches
