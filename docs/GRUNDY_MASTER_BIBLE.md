@@ -5222,6 +5222,14 @@ GRUNDY_MASTER_BIBLE.md          ← CANONICAL (wins all conflicts)
 
 ---
 
+## Known Errata (Carried Forward)
+
+| Issue | Status | Notes |
+|-------|--------|-------|
+| §9.5 vs §9.4.7.2 poop sickness % | Open | Implementation uses 15% (§9.4.7.2 precedence) |
+
+---
+
 # END OF MASTER BIBLE
 
 **Prepared by:** Consolidation from 9 source documents + design expansion

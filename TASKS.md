@@ -1,8 +1,8 @@
 # TASKS.md
 ## Grundy Development Task List
 
-**Last Updated:** December 13, 2025 (Bible v1.8 Governance Sweep — Weight & Sickness Multi-Pet Rules)
-**Design SoT:** `docs/GRUNDY_MASTER_BIBLE.md` v1.8
+**Last Updated:** December 14, 2025 (Bible v1.9 Cosmetics Closeout)
+**Design SoT:** `docs/GRUNDY_MASTER_BIBLE.md` v1.9
 **Pre-Flight Report:** December 9, 2024 ✅
 
 ---
