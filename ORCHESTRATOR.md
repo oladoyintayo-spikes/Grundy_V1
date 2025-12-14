@@ -3,7 +3,7 @@
 **Version:** 2.2
 **Owner:** Chief Engineer (Amos)
 **Scope:** Grundy web prototype (React + TS + Zustand)
-**Last Updated:** December 14, 2025 (Bible v1.9 Cosmetics Closeout)
+**Last Updated:** December 14, 2025 (Bible v1.10 Update)
 
 ---
 
@@ -69,7 +69,7 @@ These documents form the **governance triad** for all Grundy development:
 
 | Artifact | Path | Version |
 |----------|------|---------|
-| Bible | `docs/GRUNDY_MASTER_BIBLE.md` | **v1.9** |
+| Bible | `docs/GRUNDY_MASTER_BIBLE.md` | **v1.10** |
 | BCT Spec | `docs/BIBLE_COMPLIANCE_TEST.md` | **v2.4** |
 | Locked Constants | `src/constants/bible.constants.ts` | Single source for locked values |
 | Weight/Sickness Patch | `docs/patches/BIBLE_v1.8_PATCH_WEIGHT_SICKNESS_MULTIPET.md` | **Adopted** |
