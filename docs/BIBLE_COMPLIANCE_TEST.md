@@ -1,10 +1,11 @@
 # Grundy — Bible Compliance Test (BCT)
 
 **Version:** 2.4
-**Last Updated:** December 2025 (Bible v1.8 Update)
-**Bible Reference:** `docs/GRUNDY_MASTER_BIBLE.md` v1.8
+**Last Updated:** December 2025 (Bible v1.9 Update)
+**Bible Reference:** `docs/GRUNDY_MASTER_BIBLE.md` v1.9
 
 **Changelog:**
+- v2.4 (P11 Pending): Bible v1.9 alignment — Phase 11 Cosmetics tests pending (~52 specs planned). Test IDs will be assigned when P11-0/P11 implementation begins. See `docs/patches/BIBLE_v1_9_PATCH_FINAL.md`.
 - v2.4: Weight & Sickness test suites (planned) — Added BCT-WEIGHT (12 tests), BCT-SICKNESS (18 tests), BCT-SICKNESS-OFFLINE (8 tests), BCT-ALERT-HEALTH (8 tests), BCT-COZY-IMMUNITY (6 tests) specifications for P10 Weight/Sickness runtime. Bible v1.8 alignment. See `docs/patches/BIBLE_v1.8_PATCH_WEIGHT_SICKNESS_MULTIPET.md`.
 - v2.3: Multi-Pet Runtime tests — Added BCT-MULTIPET (14 tests) for P9-B runtime integration: energy scope, runaway auto-switch, switching constraints, offline rules, alert routing/suppression. Bible v1.7 alignment.
 - v2.2: Shop + Inventory spec tests — Added BCT-SHOP (25 tests), BCT-INV (17 tests), BCT-ECON starting resources tests (5 tests). Total: 47 new specifications for Web Phase 8.
@@ -1192,6 +1193,62 @@ Run **at minimum** the BCT tests for the affected area:
 ### BCT-COZY-IMMUNITY-003 through BCT-COZY-IMMUNITY-006
 
 *Additional planned tests for neglect immunity, care mistakes immunity, evolution always positive.*
+
+---
+
+## Phase 11 — Cosmetics (Pending)
+
+> **Status:** Pending implementation. Bible v1.9 defines the spec; test IDs will be assigned when P11-0/P11 implementation begins.
+
+### Planned Test Categories
+
+| Category | Count | Coverage |
+|----------|-------|----------|
+| **BCT-GEM-SOURCES** | ~10 | Level-up, first-feed, login streak gem awards (Phase 11-0) |
+| **BCT-COSMETICS-OWNERSHIP** | ~8 | Pet-bound model, ownership persistence, multi-pet same SKU |
+| **BCT-COSMETICS-PURCHASE** | ~12 | Gems deducted, bound to active pet, duplicate blocked, "owned by other" flow |
+| **BCT-COSMETICS-EQUIP** | ~10 | Slot rules, swap behavior, ownership guard (block if not owned) |
+| **BCT-COSMETICS-INVARIANT** | ~4 | Stats unaffected, abilities unaffected |
+| **BCT-COSMETICS-RENDER** | ~4 | Layer order, fallback on missing asset |
+| **BCT-COSMETICS-RARITY** | ~4 | Rarity tier → UI mapping |
+| **Total** | **~52** | — |
+
+### Key Test Specifications (Preview)
+
+**BCT-COSMETICS-OWNERSHIP-001** (Planned)
+```
+Given: Pet A has purchased cos_hat_cap_blue
+When: User switches to Pet B and views shop
+Then: cos_hat_cap_blue shows "Owned by [Pet A]"
+And: CTA shows "Buy for [Pet B] — X💎"
+And: Pet B can purchase the same SKU
+```
+
+**BCT-COSMETICS-EQUIP-GUARD-001** (Planned)
+```
+Given: Pet A owns cos_hat_cap_blue
+And: Pet B does NOT own cos_hat_cap_blue
+When: Code attempts equipCosmetic('cos_hat_cap_blue', 'pet_b')
+Then: Action is blocked
+And: Pet B's equipped state is unchanged
+```
+
+**BCT-COSMETICS-INVARIANT-001** (Planned)
+```
+Given: Pet has equipped cos_aura_rainbow (Legendary)
+When: Pet gains XP from feeding
+Then: XP gain is unchanged from baseline (no cosmetic bonus)
+```
+
+**BCT-GEM-SOURCES-001** (Planned)
+```
+Given: Pet is level 4
+When: Pet reaches level 5
+Then: Player receives +5 gems
+And: Toast displays "+5💎 Level Up!"
+```
+
+> **Note:** ~52 specs planned per Bible v1.9. IDs TBD when P11-0/P11 implementation begins. No fabricated IDs.
 
 ---
 

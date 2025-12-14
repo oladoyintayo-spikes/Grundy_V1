@@ -4,7 +4,7 @@
 
 **Last Updated:** December 14, 2025 (Phase 10 Complete — All Tasks Done)
 **Current Phase:** Web Phase 10 — ✅ COMPLETE (Weight & Sickness Systems)
-**Next Phase:** Phase 10 CE/QA Review → Phase 11 Planning
+**Next Phase:** Phase 10 CE/QA Review → Phase 10.5 (Lore Journal) / Phase 11-0 (Gem Sources) → Phase 11 (Cosmetics)
 
 ---
 
@@ -12,7 +12,7 @@
 
 | Resource | Location |
 |----------|----------|
-| **Design SoT** | `docs/GRUNDY_MASTER_BIBLE.md` v1.8 |
+| **Design SoT** | `docs/GRUNDY_MASTER_BIBLE.md` v1.9 |
 | **Task List** | `TASKS.md` |
 | **Agent Workflow** | `ORCHESTRATOR.md` |
 | **Bible Update Log** | `BIBLE_UPDATE_BACKLOG.md` |
@@ -23,7 +23,7 @@
 
 | Artifact | Version | Notes |
 |----------|---------|-------|
-| Bible | **v1.8** | Weight & Sickness Multi-Pet Rules (§9.4.7, §9.4.6, §11.6.1, §9.3) |
+| Bible | **v1.9** | Cosmetics System (§11.5.2–4, §14.7.3, §14.8.3), Currency Consistency (§11.1), Gem Sources (§11.4), Phase Numbering (§15.6) |
 | BCT | **v2.4** | Weight/Sickness planned suites (~52 tests), Multi-Pet tests |
 | Locked Constants | `src/constants/bible.constants.ts` | Single source for locked values |
 
@@ -787,10 +787,12 @@ All Phase 10 tasks complete. Weight system, sickness mechanics, poop system, min
 
 ### Later Web Phases
 
-- **Phase 9-C:** Weight/Sickness runtime (Bible §9.4.7)
-- **Phase 10:** Lore Journal (fragment collection)
-- **Phase 11:** Cosmetics System
-- **Phase 12:** Season Pass, Ads, LiveOps
+- **Phase 9-C:** Weight/Sickness runtime (Bible §9.4.7) → ✅ Shipped as Phase 10
+- **Phase 10:** Weight & Sickness Systems → ✅ Bible v1.8
+- **Phase 10.5:** Lore Journal (fragment collection, Bible §6.4)
+- **Phase 11-0:** Gem Sources (prerequisite for cosmetics, Bible §11.4)
+- **Phase 11:** Cosmetics System (pet-bound, gems-only, Bible §11.5.2–4, §14.7.3, §14.8.3)
+- **Phase 12:** Season Pass, Achievements, Ads, LiveOps
 
 ---
 

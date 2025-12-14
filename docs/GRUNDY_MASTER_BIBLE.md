@@ -1,13 +1,14 @@
 # GRUNDY — MASTER BIBLE
 ## Single Source of Truth
 
-**Version:** 1.8
-**Last Updated:** December 12, 2025
+**Version:** 1.9
+**Last Updated:** December 14, 2025
 **Status:** Production Reference
 **Platforms:** Web (First Light 1.0) [Current], Android/iOS [Unity Later]
 **Engine:** Web (Vite + React + TypeScript) [Current], Unity 2022 LTS [Planned Mobile]
 
 **Changelog:**
+- v1.9: Cosmetics System (Pet-Bound Ownership) + Currency Consistency — Fixed §11.1 currency hierarchy (coins = food/care only; cosmetics = gems-only). Added §11.5.2 pet-bound ownership model, §11.5.3 slots/equip rules/non-transfer, §11.5.4 rarity display specs. Added §14.7.3 cosmetics shop tab UI, §14.8.3 cosmetics inventory UI. Updated §11.4 gem sources with implementation tags + Phase 11-0 prerequisite gating. Updated §15.6 gap table (P8/P9/P10 → ✅) and phase numbering clarification (Phase 10.5, Phase 11-0, Phase 11). Added §9.3 Cozy mode cosmetics note. See `docs/patches/BIBLE_v1_9_PATCH_FINAL.md` for full patch details.
 - v1.8: Weight & Sickness Multi-Pet Rules — Added §9.4.7 Weight & Sickness Multi-Pet Rules (complete per-pet weight/sickness systems), updated §9.4.6 offline rules table and order of application, clarified §5.7 weight risk calculation, extended §11.6.1 alert routing for weight/sickness alerts, updated §9.3 Cozy Mode immunity list, updated §9.4 care mistakes for offline accumulation, reconciled §9.4.3 Sickness/Neglect co-existence (PATCH 7 critical fix). See `docs/patches/BIBLE_v1.8_PATCH_WEIGHT_SICKNESS_MULTIPET.md` for full patch details.
 - v1.7: Multi-Pet Runtime Clarifications (P9-B) — Added §8.2.1 Energy Scope (global), §9.4.4 Multi-Pet Runaway Handling (auto-switch + slot rules), §9.4.5 Switching During Neglect States, §9.4.6 Multi-Pet Offline Rules (mood/bond/neglect fanout), §11.6.1 Multi-Pet Notifications (routing + suppression). Deferred Weight/Sickness runtime to P9-C.
 - v1.6: Shop + Inventory (Web Phase 8) — Added starter resources (§5.8), individual food purchase rules (§11.5.1), inventory stacking semantics (§11.7.1), and UI specs for Shop/Inventory (§14.7–§14.8). Updated §15.6 gaps to match current Web state.
@@ -2087,6 +2088,17 @@ Rewards are determined by tier (see §8.3). No gems from mini-games.
 - Notifications are gentle and optional
 - Neglect system disabled (no Worried → Runaway progression)
 
+### Cosmetics in Cozy Mode [Phase 11]
+
+| Aspect | Cozy Behavior | Notes |
+|--------|---------------|-------|
+| Cosmetic purchases | ✅ Allowed | Gems-only, same as Classic |
+| Cosmetic equipping | ✅ Allowed | Full functionality |
+| Cosmetic rendering | ✅ Full support | No difference from Classic |
+| Pet-bound ownership | ✅ Same rules | No mode-specific exceptions |
+
+**Rationale:** Cosmetics are purely visual and have no gameplay effects. They work identically in both Cozy and Classic modes. Cozy players can enjoy full cosmetic customization without any mode-related restrictions.
+
 ## 9.4 Classic Mode Specifics
 
 ### Care Mistakes System
@@ -3006,17 +3018,22 @@ On account anniversary (or set date):
 
 | Currency | Icon | Earn From | Spend On |
 |----------|------|-----------|----------|
-| Coins | 🪙 | Feeding, mini-games, daily login, achievements | Food, care items, common cosmetics |
+| Coins | 🪙 | Feeding, mini-games, daily login, achievements | Food, Care items |
 | Gems | 💎 | Level up, achievements, IAP, daily (Plus) | Pet unlocks, premium cosmetics, utility items |
 | Event Currency | Varies by season | Event activities, event mini-games | Event-exclusive items (event shop only) |
 
 ### Currency Hierarchy
 
-```
-Coins → Common/Uncommon items, Care items, Food
-Gems → Rare+ cosmetics, Pet unlocks, Premium bundles, Utility
-Event Tokens → Event-exclusive items only (cannot mix)
-```
+| Currency | Can Purchase | Cannot Purchase |
+|----------|--------------|-----------------|
+| **Coins 🪙** | Food, Care items | All cosmetics, Pet unlocks, Utility, Premium bundles |
+| **Gems 💎** | All cosmetics, Pet unlocks, Utility, Premium bundles | Common food/care (no gem-dumping into basics) |
+| **Event Tokens** | Event-exclusive items only | Cannot convert to coins/gems |
+
+**Design Intent:**
+- Coins = everyday gameplay currency (feeding, care)
+- Gems = aspirational currency (cosmetics, unlocks, premium)
+- Clear separation prevents confusion and supports monetization
 
 ### Currency Protection Rules
 
@@ -3103,15 +3120,36 @@ Play free → See cool cosmetics → Buy 1 small cosmetic (10-20💎)
 
 ### Gem Income Sources
 
-| Source | Gems | Frequency | Notes |
-|--------|------|-----------|-------|
-| Level up | 5 | Per level | Reliable progression |
-| First feed daily | 1 | Daily | Free players: 1/day |
-| First feed daily (Plus) | 3 | Daily | Plus subscribers: 3/day |
-| Mini-game Rainbow tier | 1-3 | Per achievement | **Unity only**; Web Edition awards 0 gems (see §8.3) |
-| Daily login (Day 7) | 10 | Weekly | Streak reward |
-| Achievements | 5-50 | One-time | Milestone rewards |
-| Season Pass (Premium) | ~100 | Per season | Spread across tiers |
+| Source | Gems | Frequency | Implementation | Notes |
+|--------|------|-----------|----------------|-------|
+| Level up | 5 | Per level | **[Phase 11-0]** | Primary free player income |
+| First feed daily | 1 | Daily | **[Phase 11-0]** | Free players: 1💎/day |
+| First feed daily (Plus) | 3 | Daily | **[Unity Later]** | Plus subscribers: 3💎/day |
+| Mini-game Rainbow tier | 1-3 | Per achievement | **[Unity Only]** | Web Edition awards 0 gems (§8.3) |
+| Daily login (Day 7) | 10 | Weekly | **[Phase 11-0]** | Streak reward |
+| Achievements | 5-50 | One-time | **[Phase 12]** | Requires Achievements system |
+| Season Pass (Premium) | ~100 | Per season | **[Phase 12]** | Spread across tiers |
+
+### Phase 11-0: Gem Source Prerequisites
+
+**Before implementing cosmetics purchase (P11-C), these gem sources MUST be implemented:**
+
+| Source | Gems | Why Required |
+|--------|------|--------------|
+| Level up | +5💎 | Primary free player progression reward |
+| First feed daily | +1💎 | Daily engagement incentive |
+| Daily login Day 7 | +10💎 | Weekly streak bonus |
+
+**Free Player Gem Math (with P11-0):**
+
+| Timeframe | Gems Earned | Can Afford |
+|-----------|-------------|------------|
+| Daily | 1 (first feed) | — |
+| Weekly | 7 (feeds) + 10 (streak) = 17 | 1 Common |
+| Monthly | ~75 | 3-4 Common or 1-2 Uncommon |
+| 3 months | ~225 | 1 Rare + extras |
+
+**Rationale:** Without gem sources, cosmetics are paid-only, which violates the "grind OR pay" promise in §11.3. Players must have an earnable path to cosmetics.
 
 ### Free Player Gem Math
 
@@ -3199,8 +3237,8 @@ Play free → See cool cosmetics → Buy 1 small cosmetic (10-20💎)
 
 | Currency | Can Buy | Cannot Buy |
 |----------|---------|------------|
-| **Coins** 🪙 | Food, Care items | Rare+ cosmetics, Pet unlocks |
-| **Gems** 💎 | Cosmetics, Pet unlocks, Utility, Premium bundles | Common items, Event exclusives |
+| **Coins** 🪙 | Food, Care items | All cosmetics, Pet unlocks, Utility |
+| **Gems** 💎 | All cosmetics, Pet unlocks, Utility, Premium bundles | Common food/care items, Event exclusives |
 | **Event Tokens** | Event shop items only | Anything outside event shop |
 
 ### Item Visibility Rules
@@ -3309,6 +3347,194 @@ Individual food prices match §5.4 "Complete Food Table" **Cost** column and are
 | Rare | 40-70 💎 | Blue border, subtle glow |
 | Epic | 70-120 💎 | Purple border, glow |
 | Legendary | 120-300 💎 | Gold gradient, sparkle |
+
+### §11.5.2 Cosmetic Ownership Model [Phase 11]
+
+#### Core Principle: Pet-Bound Purchase
+
+**A cosmetic purchase is bound to exactly one pet, permanently, from the moment of purchase. The same cosmetic SKU may be purchased separately for multiple pets.**
+
+This is a deliberate monetization and design decision:
+- Each purchase is bound to the active pet at time of purchase
+- Purchases cannot be transferred, traded, or reassigned between pets
+- If a player wants the same cosmetic on multiple pets, they purchase it separately for each pet
+- This creates meaningful gem sinks while keeping cosmetics purely visual (no pay-to-win)
+
+**Clarification:** The unit of ownership is the *purchase*, not the SKU. Pet A owning `cos_hat_cap_blue` does not prevent Pet B from purchasing `cos_hat_cap_blue` — these are separate purchases bound to separate pets.
+
+#### Ownership Rules
+
+| Rule | Behavior |
+|------|----------|
+| **Purchase binding** | Cosmetic is bound to the active pet at time of purchase |
+| **Permanent ownership** | Once purchased, pet owns it forever (no expiration) |
+| **Non-transferable** | Cannot move cosmetic to another pet under any circumstance |
+| **Per-pet inventory** | Each pet has its own cosmetic inventory |
+| **No trading** | Cosmetics cannot be traded between accounts or pets |
+
+#### Multi-Pet Purchase Scenarios
+
+| Scenario | Behavior |
+|----------|----------|
+| Buy Blue Cap for Pet A | Pet A owns Blue Cap |
+| Want Blue Cap on Pet B too | Must purchase Blue Cap again for Pet B |
+| Pet A already owns Blue Cap | Cannot repurchase for Pet A (show "Owned ✓") |
+| Pet B wants Pet A's Blue Cap | Cannot transfer; must buy separately |
+
+#### Ownership State Schema
+
+```typescript
+interface CosmeticsState {
+  // Ownership is per-pet (NOT global)
+  cosmeticsOwnedByPetId: Record<string, string[]>;  // petId → array of owned cosmetic IDs
+
+  // Equipped state is also per-pet
+  cosmeticsEquippedByPetId: Record<string, {
+    hat: string | null;
+    accessory: string | null;
+    outfit: string | null;
+    aura: string | null;
+    skin: string | null;
+  }>;
+}
+
+// Example state
+{
+  cosmeticsOwnedByPetId: {
+    'munchlet': ['cos_hat_cap_blue', 'cos_aura_sparkle'],
+    'grib': ['cos_hat_bow_pink'],
+    'plompo': []  // No cosmetics purchased yet
+  },
+  cosmeticsEquippedByPetId: {
+    'munchlet': { hat: 'cos_hat_cap_blue', accessory: null, outfit: null, aura: 'cos_aura_sparkle', skin: null },
+    'grib': { hat: 'cos_hat_bow_pink', accessory: null, outfit: null, aura: null, skin: null },
+    'plompo': { hat: null, accessory: null, outfit: null, aura: null, skin: null }
+  }
+}
+```
+
+#### Why Pet-Bound (Not Global)?
+
+| Alternative | Problem |
+|-------------|---------|
+| Global ownership (account-wide) | One purchase covers all pets → weak gem sink |
+| Transferable (swap between pets) | Same issue + complex UX for "who has it now?" |
+| **Pet-bound (chosen)** | Clear ownership, meaningful purchases, simple UX |
+
+**Player Psychology:** Players naturally think of each pet as an individual. "Dressing up Munchlet" is different from "dressing up Grib." Pet-bound ownership aligns with this mental model.
+
+---
+
+### §11.5.3 Cosmetic Slots & Equip Rules [Phase 11]
+
+#### Cosmetic Types & Slots
+
+| Slot | Accepted Item Prefixes | Visual Layer | Limit |
+|------|------------------------|--------------|-------|
+| **Hat** | `cos_hat_*` | Top of head | 1 per pet |
+| **Accessory** | `cos_scarf_*`, `cos_accessory_*` | Neck/body accent | 1 per pet |
+| **Outfit** | `cos_outfit_*` | Body covering | 1 per pet |
+| **Aura** | `cos_aura_*` | Background effect | 1 per pet |
+| **Skin** | `cos_skin_*` | Full body replacement | 1 per pet |
+
+#### Equip Rules
+
+| Rule | Behavior |
+|------|----------|
+| **Equip** | Place owned cosmetic into its slot |
+| **Unequip** | Remove from slot; cosmetic remains owned by pet |
+| **Swap (same slot)** | Equipping new item auto-unequips previous in that slot |
+| **Ownership required** | Cannot equip cosmetic not owned by this pet |
+| **Cross-pet block** | Cannot equip another pet's cosmetic (hard block) |
+
+#### Equip Attempt on Non-Owned Cosmetic
+
+If user attempts to equip a cosmetic not owned by the active pet:
+
+1. **Block the action** — do not equip
+2. **Show message:** "This cosmetic belongs to [Pet Name] and can't be transferred."
+3. **Offer CTA:** "Buy for [Active Pet]?" → navigates to shop purchase flow
+
+#### Render Layer Order
+
+When rendering pet with cosmetics, apply layers bottom-to-top:
+
+```
+1. Base sprite (pet body + current expression/state)
+2. Skin (if equipped — replaces base body texture)
+3. Outfit (body covering, on top of skin/base)
+4. Aura (background particle effect, renders behind pet but above room)
+5. Accessory (neck/body accent)
+6. Hat (on top of head, topmost layer)
+```
+
+**Fallback:** If any cosmetic asset is missing, render without it (no crash). Log warning for debugging.
+
+#### Cosmetics and Gameplay (Invariants)
+
+| Question | Answer | Enforcement |
+|----------|--------|-------------|
+| Do cosmetics affect stats? | **Never** | BCT-COSMETICS-INVARIANT-001 |
+| Do cosmetics affect abilities? | **No** | BCT-COSMETICS-INVARIANT-002 |
+| Do cosmetics affect evolution? | **No** | BCT-COSMETICS-INVARIANT-003 |
+| Do cosmetics affect XP/bond gain? | **No** | BCT-COSMETICS-INVARIANT-004 |
+| Can cosmetics expire? | **No** — permanent | — |
+| Can cosmetics be transferred? | **No** — pet-bound | BCT-COSMETICS-NONTRANSFER-001 |
+
+---
+
+### §11.5.4 Cosmetic Rarity Display [Phase 11]
+
+#### Rarity Tiers (Reference: §11.5 Category 2)
+
+| Rarity | Gem Range | Notes |
+|--------|-----------|-------|
+| Common | 10-20 💎 | Entry-level cosmetics |
+| Uncommon | 20-40 💎 | Slight visual flair |
+| Rare | 40-70 💎 | Noticeable quality |
+| Epic | 70-120 💎 | Standout pieces |
+| Legendary | 120-300 💎 | Ultimate flex items |
+
+#### Visual Presentation (UI Layer)
+
+**Note:** The following visual specifications are for the UI layer only. `bible.constants.ts` stores rarity tiers and gem ranges; the UI maps these to presentation styles.
+
+| Rarity | Border Style | Glow Effect | Badge |
+|--------|--------------|-------------|-------|
+| Common | Gray solid | None | — |
+| Uncommon | Green solid | None | — |
+| Rare | Blue solid | Subtle pulse | ✦ |
+| Epic | Purple solid | Medium pulse | ✦✦ |
+| Legendary | Gold gradient | Sparkle animation | ✦✦✦ |
+
+**Recommended Colors (UI reference, not in constants):**
+- Common: `#9CA3AF`
+- Uncommon: `#22C55E`
+- Rare: `#3B82F6`
+- Epic: `#A855F7`
+- Legendary: `#F59E0B` → `#EAB308` (gradient)
+
+#### Where Rarity Indicators Appear
+
+| UI Surface | Border | Glow | Badge | Notes |
+|------------|--------|------|-------|-------|
+| Shop → Cosmetics tab | ✅ | ✅ | ✅ | Full treatment |
+| Inventory → Cosmetics | ✅ | ✅ | ✅ | Full treatment |
+| Equipped slot preview | ✅ | ❌ | ❌ | Simplified |
+| Pet avatar (gameplay) | ❌ | ❌ | ❌ | No indicator (clean look) |
+| Cosmetic detail modal | ✅ | ✅ | ✅ | Full treatment + rarity label |
+
+#### Rarity Label Text
+
+| Rarity | Label | Color |
+|--------|-------|-------|
+| Common | "Common" | Gray |
+| Uncommon | "Uncommon" | Green |
+| Rare | "Rare" | Blue |
+| Epic | "Epic" | Purple |
+| Legendary | "Legendary" | Gold |
+
+---
 
 ### Category 3: Utility Items (Gems Only)
 
@@ -4473,6 +4699,96 @@ When selecting an item to buy:
 - Failure (coins): "Not enough coins!"
 - Failure (inventory): "Inventory full!"
 
+### §14.7.3 Cosmetics Tab [Phase 11]
+
+#### Tab Position & Access
+
+- **Position:** 3rd tab (after Food, Care)
+- **Unlock:** Available after Bond ≥ 1 (same as shop unlock)
+- **Mode:** Available in both Cozy and Classic (cosmetics are visual-only)
+
+#### Pet Context
+
+**Critical:** Cosmetics tab always operates in context of the **active pet**.
+
+- Header shows: "Cosmetics for [Pet Name]" or pet avatar indicator
+- All ownership checks are against active pet
+- Switching pets updates the tab view
+
+#### Layout
+
+| Element | Specification |
+|---------|---------------|
+| Filter bar | All / Hat / Accessory / Outfit / Aura / Skin |
+| Sort | Rarity (default), Price, Name |
+| Grid | 2 columns (mobile), 3-4 columns (tablet/desktop) |
+| Item card size | 80x80px minimum touch target |
+
+#### Item Card States
+
+| State | Visual | Action |
+|-------|--------|--------|
+| **Available** | Price badge (💎), rarity border | Tap → Purchase flow |
+| **Owned by active pet** | "Owned ✓" badge, rarity border | Tap → Equip flow |
+| **Owned by other pet** | "Owned by [Pet]" label, dimmed | Tap → "Buy for [Active Pet]?" |
+| **Locked** | Lock icon, unlock requirement | Tap → Show requirement |
+
+#### Purchase Flow
+
+```
+1. Tap available cosmetic
+   ↓
+2. Detail modal opens:
+   - Full preview on active pet (live render)
+   - Name, rarity badge, description
+   - Price: "X 💎"
+   - Active pet name confirmation
+   ↓
+3. Tap "Buy for [Pet Name]"
+   ↓
+4. Confirmation (required for 50+ gems per §11.4):
+   "Spend X💎 on [Item] for [Pet]?"
+   [Cancel] [Confirm]
+   ↓
+5. On confirm:
+   - Deduct gems
+   - Add to pet's cosmeticsOwnedByPetId
+   - Toast: "[Item] purchased for [Pet]!"
+   - Card updates to "Owned ✓"
+```
+
+#### "Owned by Other Pet" Flow
+
+```
+1. Tap cosmetic owned by different pet
+   ↓
+2. Detail modal opens:
+   - Preview on active pet
+   - "This cosmetic belongs to [Other Pet]"
+   - "Cosmetics are pet-bound and cannot be transferred."
+   ↓
+3. CTA: "Buy for [Active Pet] — X💎"
+   ↓
+4. Standard purchase flow continues
+```
+
+#### Unlock Requirements Display
+
+For cosmetics with unlock gates (e.g., "Level 10+", "Bond ≥ 5"):
+
+```
+┌─────────────────┐
+│   🔒 Locked     │
+│                 │
+│  [Item Icon]    │
+│                 │
+│  Level 10+      │
+│  (You: Lv 7)    │
+└─────────────────┘
+```
+
+---
+
 ## 14.8 Inventory UI Structure [Web Phase 8]
 
 ### Inventory Tabs
@@ -4508,6 +4824,90 @@ On click:
 If inventory is empty:
 - Show a friendly empty message
 - Show CTA button: "Go to Shop"
+
+### §14.8.3 Cosmetics Inventory [Phase 11]
+
+#### Access & Organization
+
+- **Location:** New section/tab within Inventory (after Food items)
+- **Context:** Shows cosmetics owned by **active pet only**
+- **Empty state:** "No cosmetics yet. Visit the Shop!"
+
+#### Layout
+
+| Element | Specification |
+|---------|---------------|
+| Filter bar | All / Hat / Accessory / Outfit / Aura / Skin / Equipped |
+| Grid | Matches shop grid (2-3 columns) |
+| Sort | Equipped first, then by rarity |
+
+#### Item Card Display
+
+Each card shows:
+- Cosmetic icon with rarity border
+- Name
+- Slot type indicator (hat/accessory/etc.)
+- "Equipped" badge if currently equipped
+
+#### Detail Modal
+
+Tapping a cosmetic opens detail modal:
+
+```
+┌────────────────────────────────┐
+│        [Cosmetic Name]         │
+│      ✦✦ Epic • Hat             │
+├────────────────────────────────┤
+│                                │
+│     [Live Preview on Pet]      │
+│                                │
+├────────────────────────────────┤
+│  Owned by: [Pet Name]          │
+│  Status: Equipped / Not Equipped│
+├────────────────────────────────┤
+│  [Equip]  or  [Unequip]        │
+└────────────────────────────────┘
+```
+
+#### Equip Flow
+
+```
+1. Tap owned cosmetic (not equipped)
+   ↓
+2. Detail modal shows "Equip" button
+   ↓
+3. Tap "Equip"
+   ↓
+4. If slot occupied:
+   - Previous item auto-unequips
+   - Toast: "Swapped [Old] for [New]"
+   ↓
+5. If slot empty:
+   - Item equipped
+   - Toast: "Equipped [Item]!"
+   ↓
+6. Pet avatar updates immediately
+```
+
+#### Unequip Flow
+
+```
+1. Tap equipped cosmetic
+   ↓
+2. Detail modal shows "Unequip" button
+   ↓
+3. Tap "Unequip"
+   ↓
+4. Item removed from slot, remains in inventory
+   ↓
+5. Toast: "Unequipped [Item]"
+```
+
+#### Viewing Other Pets' Cosmetics
+
+- Inventory shows **only active pet's cosmetics**
+- To see another pet's cosmetics: switch active pet first
+- No "browse all pets' cosmetics" view (keeps UX simple)
 
 ---
 
@@ -4689,28 +5089,46 @@ interface GameState {
 ### Known Prototype Gaps (Updated December 2025)
 
 | Feature | Bible Spec | Web Status | Target Phase |
-|---------|------------|-----------:|--------------|
-| Shop (Food/Care) | §11.5, §11.5.1, §14.7 | ❌ Not implemented | Phase 8 |
-| Inventory (slots + stacking) | §11.7, §11.7.1, §14.8 | ❌ Not implemented | Phase 8 |
-| Pet Slots (multi-pet) | §11.7 + Utility / slot specs | ❌ Not implemented | Phase 9 |
-| Sickness System (Classic) | §5.4 risk + Classic systems | ❌ Not implemented | Phase 9 |
-| Weight consequences (beyond meter) | §5.7 | ⚠️ Design-defined; runtime TBD | Phase 9 |
-| Care Mistakes (Classic) | Classic-only systems | ❌ Not implemented | Phase 9+ |
-| Lore Journal | Phase 10 | ❌ Not implemented | Phase 10 |
-| Cosmetics system | §11.5 Category 2 + Phase 11 | ❌ Not implemented | Phase 11 |
-| LiveOps layer | Phase 12+ | ❌ Not implemented | Phase 12+ |
+|---------|------------|------------|--------------|
+| Shop (Food/Care) | §11.5, §11.5.1, §14.7 | ✅ **Implemented** | Phase 8 ✓ |
+| Inventory (slots + stacking) | §11.7, §11.7.1, §14.8 | ✅ **Implemented** | Phase 8 ✓ |
+| Pet Slots (multi-pet) | §11.6 + Utility specs | ✅ **Implemented** | Phase 9 ✓ |
+| Sickness System (Classic) | §9.4.7.2, §9.4.7.3 | ✅ **Implemented** | Phase 10 ✓ |
+| Weight System | §9.4.7.1, §5.7 | ✅ **Implemented** | Phase 10 ✓ |
+| Poop System | §9.5 | ✅ **Implemented** | Phase 10 ✓ |
+| Care Mistakes (Classic) | §9.4 | ✅ **Implemented** | Phase 10 ✓ |
+| Health Alerts | §11.6.1 | ✅ **Implemented** | Phase 10 ✓ |
+| Gem Sources (free player) | §11.4 | ❌ Not implemented | **Phase 11-0** |
+| Cosmetics (pet-bound) | §11.5.2, §11.5.3, §11.5.4 | ❌ Not implemented | **Phase 11** |
+| Lore Journal | §6.4 | ❌ Not implemented | Phase 10.5 |
+| Achievements | — | ❌ Not implemented | Phase 12 |
+| Season Pass | §11.9 | ❌ Not implemented | Phase 12 |
+| LiveOps layer | §10 | ❌ Not implemented | Phase 12+ |
+| Ads (rewarded/interstitial) | §11.10 | ❌ Not implemented | [Unity Later] |
 
-### Critical Gaps (Next Priority)
+### Critical Gaps (Phase 11 Blockers)
 
-The following gaps block Phase 8 delivery:
+| Gap | Bible Section | Why It Blocks Phase 11 |
+|-----|---------------|------------------------|
+| Gem sources | §11.4 | Free players need earnable gems before cosmetics |
 
-| Gap | Bible Section | Why it matters |
-|-----|--------------|----------------|
-| No Shop runtime | §11.5–§11.5.1, §14.7 | Players can't acquire items intentionally |
-| No Inventory runtime | §11.7–§11.7.1, §14.8 | Shop has nowhere to put purchases |
-| No bundle decomposition | §11.7.1 | Bundles must become real consumables |
+> **Note:** Phase 8/9/10 gaps have been resolved. Update this table as implementations land.
 
-> Earlier Phase 6 "critical gaps" (cooldowns, fullness, HUD separation, room mapping, etc.) have been addressed in Web 1.x and should not be listed here as pending.
+### Phase Numbering Clarification (December 2025)
+
+| Phase | Theme | Status | Notes |
+|-------|-------|--------|-------|
+| Phase 8 | Shop + Inventory | ✅ CE/QA Approved | Merged to main |
+| Phase 9 | Pet Slots / Multi-Pet | ✅ CE/QA Approved | Merged to main |
+| Phase 10 | Weight & Sickness Systems | ✅ CE/QA Approved | Bible v1.8 |
+| **Phase 10.5** | Lore Journal | ⬜ Not started | Originally "Phase 10" in TASKS.md |
+| **Phase 11-0** | Gem Sources | ⬜ Not started | Prerequisite for cosmetics |
+| **Phase 11** | Cosmetics System | ⬜ Not started | Bible v1.9 |
+| Phase 12 | Achievements, Season Pass, Ads, LiveOps | ⬜ Deferred | — |
+
+**Why Phase 10.5?** TASKS.md originally labeled Lore Journal as "Phase 10". Since Weight & Sickness shipped as Phase 10 (Bible v1.8), Lore Journal is renumbered to Phase 10.5 to avoid confusion.
+
+**Why Phase 11-0?** Gem sources are a hard prerequisite for cosmetics. Without them, free players cannot earn gems, making cosmetics paid-only (violates §11.3 "grind OR pay").
 
 ---
 
@@ -4809,7 +5227,7 @@ GRUNDY_MASTER_BIBLE.md          ← CANONICAL (wins all conflicts)
 **Prepared by:** Consolidation from 9 source documents + design expansion
 **For:** Development, Art, QA, and Production Teams
 **Status:** Single Source of Truth
-**Last Updated:** December 2025 (v1.6)
+**Last Updated:** December 2025 (v1.9)
 
 ---
 

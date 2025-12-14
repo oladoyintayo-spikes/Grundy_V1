@@ -129,9 +129,11 @@ These documents form the **governance triad** for all Grundy development:
 
 | Phase | Status |
 |-------|--------|
-| Phase 10 | **NEXT** — Weight & Sickness Runtime (Bible v1.8 §9.4.7, BCT v2.4 planned tests) |
-| Phase 11 | Lore Journal |
-| Phase 12 | Cosmetics |
+| Phase 10 | ✅ Weight & Sickness Runtime (Bible v1.8 §9.4.7, BCT v2.4) — COMPLETE |
+| Phase 10.5 | Lore Journal (Bible §6.4) — Not started |
+| Phase 11-0 | **PREREQ** — Gem Sources (Bible v1.9 §11.4) — Required before Phase 11 |
+| Phase 11 | Cosmetics (pet-bound, gems-only, Bible v1.9 §11.5.2–4, §14.7.3, §14.8.3) |
+| Phase 12 | Achievements, Season Pass, Ads |
 | Phase 12+ | LiveOps |
 
 ### Agent Constraints
