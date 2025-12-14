@@ -1100,9 +1100,9 @@ P8-TEST
 
 ---
 
-## PHASE 10: Lore Journal
+## PHASE 10.5: Lore Journal
 
-> Bible Section 6.4 — Fragment collection system.
+> Bible Section 6.4 — Fragment collection system. (Renumbered from Phase 10; Weight & Sickness shipped as Phase 10 in Bible v1.8)
 
 | ID | Task | Status | Bible | Acceptance Criteria |
 |----|------|--------|-------|---------------------|
@@ -1115,18 +1115,34 @@ P8-TEST
 
 ---
 
-## PHASE 11: Cosmetics System
+## PHASE 11-0: Gem Sources (Prerequisite)
 
-> Bible Section 11.5 (Cosmetics category).
+> Bible Section 11.4 — Gem source implementations required before cosmetics. **Must complete before Phase 11.**
 
 | ID | Task | Status | Bible | Acceptance Criteria |
 |----|------|--------|-------|---------------------|
-| P11-1 | Add cosmetics to state | ⬜ | 11.5 | owned, equipped |
+| P11-0-1 | Level-up gem award | ⬜ | 11.4 | +5💎 on level up |
+| P11-0-2 | First feed daily gem | ⬜ | 11.4 | +1💎 on first feed each day |
+| P11-0-3 | Login streak Day 7 gem | ⬜ | 11.4 | +10💎 on 7-day streak |
+| P11-0-4 | Gem sources BCT tests | ⬜ | 11.4 | ~10 specs pass |
+
+---
+
+## PHASE 11: Cosmetics System
+
+> Bible Section 11.5.2–11.5.4, §14.7.3, §14.8.3 (Pet-bound cosmetics). **Depends on Phase 11-0.**
+
+| ID | Task | Status | Bible | Acceptance Criteria |
+|----|------|--------|-------|---------------------|
+| P11-1 | Add cosmetics to state | ⬜ | 11.5.2 | Per-pet ownership (cosmeticsOwnedByPetId) |
 | P11-2 | Create cosmetics data | ⬜ | 11.5 | All items with rarity |
-| P11-3 | Implement purchase | ⬜ | 11.5 | Gems only |
-| P11-4 | Implement equip | ⬜ | 11.5 | Hat, accessory, aura |
-| P11-5 | Render cosmetics | ⬜ | 11.5 | Overlay on sprite |
-| P11-6 | Implement rarity badges | ⬜ | 11.5 | Common→Legendary borders |
+| P11-3 | Implement purchase | ⬜ | 11.5.2, 14.7.3 | Pet-bound, gems only, no cross-pet transfer |
+| P11-4 | Implement equip | ⬜ | 11.5.3 | Hat, accessory, outfit, aura, skin slots |
+| P11-5 | Render cosmetics | ⬜ | 11.5.3 | Overlay on sprite per layer order |
+| P11-6 | Implement rarity badges | ⬜ | 11.5.4 | Common→Legendary borders/badges |
+| P11-7 | Shop cosmetics tab UI | ⬜ | 14.7.3 | "Owned by other pet" flow |
+| P11-8 | Inventory cosmetics UI | ⬜ | 14.8.3 | Equip/unequip flows |
+| P11-9 | Cosmetics BCT tests | ⬜ | 11.5.2-4 | ~42 specs pass (ownership, equip, invariants)
 
 ---
 
