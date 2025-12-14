@@ -2,9 +2,9 @@
 
 # Grundy Web Prototype — Development Status
 
-**Last Updated:** December 13, 2025 (P10-D Mini-Game Gating Complete)
-**Current Phase:** Web Phase 10 — 🟡 P10-D COMPLETE (Feeding Triggers + Mini-Game Gating)
-**Next Phase:** P10-E/F/G/H (Weight & Sickness Remaining Tasks)
+**Last Updated:** December 14, 2025 (P10-H Sick Offline Decay Multiplier Complete)
+**Current Phase:** Web Phase 10 — 🟡 P10-H COMPLETE (Sick Offline 2× Decay)
+**Next Phase:** P10-E/F/G (Weight & Sickness Remaining Tasks)
 
 ---
 
@@ -45,7 +45,7 @@
 | **Web Phase 7** | Classic Mode | 🟡 P7-NEGLECT ✅ | Neglect & Withdrawal runtime ✅; 49 BCT-NEGLECT tests; Sickness ⬜; Weight ⬜ |
 | **Web Phase 8** | Shop + Inventory | ✅ CE/QA APPROVED | Audit: `947e1b9`; Sign-off: 2025-12-12; See [`docs/CEQA_PHASE8_SIGNOFF_NOTES.md`](docs/CEQA_PHASE8_SIGNOFF_NOTES.md) |
 | **Web Phase 9** | Pet Slots / Multi-Pet | ✅ CE/QA APPROVED | Audit: `83ce657`; Sign-off: 2025-12-12; See [`docs/CEQA_PHASE9_SIGNOFF_NOTES.md`](docs/CEQA_PHASE9_SIGNOFF_NOTES.md) |
-| **Web Phase 10** | Weight & Sickness Runtime | 🟡 P10-D COMPLETE | P10-B2 (Poop UI) + P10-C/D (Feeding+Gating); commit `ce23fd7` |
+| **Web Phase 10** | Weight & Sickness Runtime | 🟡 P10-H COMPLETE | P10-B2 (Poop UI) + P10-C/D (Feeding+Gating) + P10-H (Sick 2× decay); commit `c5e58cf` |
 
 ### Post-Web 1.0
 
@@ -650,11 +650,11 @@ All QA S3/S4 issues from Web 1.0 are mapped to Phase 6 tasks:
 
 ---
 
-## Web Phase 10 — P10-D COMPLETE (Feeding Triggers + Mini-Game Gating)
+## Web Phase 10 — P10-H COMPLETE (Sick Offline 2× Decay)
 
 **Theme:** Bible v1.8 §5.7, §9.4.7, §9.5 — Weight & Sickness runtime, Poop system.
 
-**Status:** 🟡 P10-D COMPLETE (2025-12-13)
+**Status:** 🟡 P10-H COMPLETE (2025-12-14)
 
 ### P10-B/B1.5/B2 Summary
 
@@ -701,14 +701,33 @@ All QA S3/S4 issues from Web 1.0 are mapped to Phase 6 tasks:
 
 **Traceability:** P10-D work originated from branch `claude/p10-b2-merge-readiness-01V13tp3PSDSWFZKxeQbuT5Z` (branch name mismatch). Canonical commit on main: `ce23fd7`.
 
+### P10-H: Sick Offline Decay Multiplier
+
+- **Status:** ✅ COMPLETE
+- **Branch:** `claude/p10-b2-merge-readiness-01V13tp3PSDSWFZKxeQbuT5Z`
+- **Commit:** `c5e58cf866adabacbc9a3fc9153dc900fd5fe052`
+- **What:** Implements BCT-SICKNESS-OFFLINE-002 — 2× stat decay (mood/bond/hunger) when sick during offline processing
+- **Mode:** Classic only (Cozy immunity preserved)
+- **Excluded:** Weight decay is NOT multiplied (separate mechanic per §9.4.7.1)
+- **Tests:** +6 tests in `src/__tests__/bct-p10h-sick-decay.spec.ts`
+- **Baselines:** 1742 total tests, 999 BCT tests
+
+**Implementation Details:**
+| Feature | Implementation | Notes |
+|---------|----------------|-------|
+| Sick multiplier | `SICKNESS_CONFIG.SICK_DECAY_MULTIPLIER` (2) | Bible §9.4.7.3 |
+| Affected stats | mood, bond, hunger | Weight excluded |
+| Mode check | `gameMode === 'classic' && pet.isSick` | Cozy bypasses |
+| Stacking | Stacks with poop dirty 2× mood multiplier | When both conditions apply |
+
 ---
 
 ## Test Baselines (Informational)
 
 | Metric | Current | Previous | Notes |
 |--------|---------|----------|-------|
-| Unit tests (full) | **1680** | 1634 | `npm test -- --run` |
-| BCT tests | **914** | 891 | `npm run test:bible` (filters by "BCT-" pattern) |
+| Unit tests (full) | **1742** | 1680 | `npm test -- --run` |
+| BCT tests | **999** | 914 | `npm run test:bible` (filters by "BCT-" pattern) |
 
 **Note:** BCT tests are a subset of the full suite. The `test:bible` command skips non-BCT tests (743 skipped).
 
