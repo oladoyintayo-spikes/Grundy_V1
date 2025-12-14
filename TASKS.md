@@ -541,6 +541,12 @@ P1-CORE-4, P1-DOC-1,2 ── Can run in parallel
 | P10-H-02 | Weight + Sickness interaction | ⬜ TODO | §9.4.7.5 | Overweight snack → 5% sick chance |
 | P10-H-03 | Sickness + Neglect co-existence | ⬜ TODO | §9.4.3 | Both can progress simultaneously |
 | P10-H-04 | Final integration tests | ⬜ TODO | — | End-to-end verification |
+| P10-H-05 | 2× offline stat decay when sick | ✅ COMPLETE | §9.4.7.3 | BCT-SICKNESS-OFFLINE-002: mood/bond/hunger 2× (Classic only) |
+
+**P10-H-05 Implementation:**
+- **Branch:** `claude/p10-b2-merge-readiness-01V13tp3PSDSWFZKxeQbuT5Z`
+- **Commit:** `c5e58cf866adabacbc9a3fc9153dc900fd5fe052`
+- **Tests:** +6 tests in `src/__tests__/bct-p10h-sick-decay.spec.ts`
 
 ### Phase 10 Implementation Sequence
 
