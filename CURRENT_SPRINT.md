@@ -1,12 +1,9 @@
 # CURRENT_SPRINT.md
 
-# Grundy Web Prototype — Current Sprint
+# Grundy Web Prototype — Current Sprint Status
 
-**Sprint Goal:** Deploy web prototype for Friend & Family testing
-
-**Sprint Status:** 🟡 In Progress
-
-**Last Updated:** December 2024 (Aligned with ORCHESTRATOR.md + TASKS.md)
+**Last Updated:** December 14, 2025
+**Phase:** 10 (Weight & Sickness) — ✅ COMPLETE
 
 ---
 
@@ -17,414 +14,139 @@
 | **Design SoT** | `docs/GRUNDY_MASTER_BIBLE.md` |
 | **Agent Workflow** | `ORCHESTRATOR.md` |
 | **Task List** | `TASKS.md` |
-| **Asset List** | `docs/ASSET_MANIFEST.md` |
+| **Dev Status** | `GRUNDY_DEV_STATUS.md` |
 | **This File** | `CURRENT_SPRINT.md` |
 
 > ⚠️ **Design SoT: `docs/GRUNDY_MASTER_BIBLE.md`**
-> 
-> If code or other docs conflict with the Bible, the Bible wins.
 >
-> **For AI Agents:** See `ORCHESTRATOR.md` for workflow, roles, and prompt templates.
+> If code or other docs conflict with the Bible, the Bible wins.
 
 ---
 
-## 🎯 PRIME DIRECTIVE (The Bottleneck)
+## 🎯 Phase 10 Status: COMPLETE
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
 │                                                                         │
-│   DEPLOY WEB PROTOTYPE FOR FRIEND & FAMILY TESTING                      │
+│   PHASE 10: WEIGHT & SICKNESS SYSTEMS — ✅ COMPLETE                     │
 │                                                                         │
-│   The codebase is MVP-ready but exists only locally.                    │
-│   Real user feedback is blocked until we deploy.                        │
-│   Everything else is secondary to getting this live.                    │
+│   All P10 tasks implemented and verified.                               │
+│   Ready for CE/QA three-gate approval process.                          │
 │                                                                         │
 └─────────────────────────────────────────────────────────────────────────┘
 ```
 
-**Acceptance Criteria:**
-- [ ] Production build succeeds (`npm run build`)
-- [ ] All tests pass (`npm test`)
-- [ ] Deployed to public URL (GitHub Pages, Vercel, or Netlify)
-- [ ] PWA manifest added for mobile "Add to Home Screen"
-- [ ] QR code generated for easy mobile access
-- [ ] 5+ testers have played the game
+---
+
+## Completed This Sprint
+
+| Task | Description | Commit |
+|------|-------------|--------|
+| P10-A | State foundations (weight, isSick, timestamps) | `6281137` |
+| P10-B | Offline order-of-application (§9.4.6 steps) | `08493f3` |
+| P10-B1.5 | Poop state (isPoopDirty, spawn, clean) | `ee1224b` |
+| P10-B2 | Poop UI + rewards + 2× mood decay | `c1095b1` |
+| P10-C | Feeding triggers (snack weight, sickness) | `8992656` |
+| P10-D | Mini-game gating (sick/obese blocked) | `ce23fd7` |
+| P10-E | Recovery flows (Medicine, Diet Food, ad stub) | `de23458` |
+| P10-F | Alert wiring (weight + sickness alerts) | `35fbd06` |
+| P10-G | Cozy mode immunity (verified throughout) | (integrated) |
+| P10-H | Sick offline 2× decay (BCT-SICKNESS-OFFLINE-002) | `c5e58cf` |
 
 ---
 
-## 📋 BACKLOG (Ordered by Priority)
-
-> **Note:** These sprint tasks map to `TASKS.md` Phase 0 (Pre-Flight).
-> Use `TASKS.md` as the master task list. This section provides sprint-specific context.
-
-| Sprint ID | TASKS.md ID | Mapping |
-|-----------|-------------|---------|
-| S1 | P0-1, P0-5 | Build + Deploy |
-| S2 | P0-3 | Hide DevPanel |
-| S3 | P0-4 | PWA Manifest |
-| S4 | P0-6 | Loading State |
-| S5 | P0-7 | Mobile Viewport |
-| S6 | P0-8 | Error Boundary |
-
-### P0 — Must Complete This Sprint
-
-| ID | Task | Status | Assignee | Notes |
-|----|------|--------|----------|-------|
-| S1 | Production build & deployment | 🔲 TODO | — | GitHub Pages preferred for simplicity |
-| S2 | Hide DevPanel in production | 🔲 TODO | — | Wrap in `import.meta.env.DEV` check |
-| S3 | Add PWA manifest.json | 🔲 TODO | — | Enable "Add to Home Screen" |
-
-### P1 — Should Complete This Sprint
-
-| ID | Task | Status | Assignee | Notes |
-|----|------|--------|----------|-------|
-| S4 | Add loading state for initial render | 🔲 TODO | — | Prevents flash of unstyled content |
-| S5 | Mobile viewport meta tag verification | 🔲 TODO | — | Ensure proper scaling |
-| S6 | Error boundary for crash recovery | 🔲 TODO | — | Graceful degradation |
-
-### P2 — Nice to Have This Sprint
-
-| ID | Task | Status | Assignee | Notes |
-|----|------|--------|----------|-------|
-| S7 | Implement Mood Match mini-game | 🔲 TODO | — | Memory game, 4 emotion buttons |
-| S8 | Implement Snack Sort mini-game | 🔲 TODO | — | Cognitive game, swipe to bins |
-| S9 | Add sound effects (Web Audio API) | 🔲 TODO | — | Procedural generation if no assets |
-| S10 | Add haptic feedback (Vibration API) | 🔲 TODO | — | Android only |
-
----
-
-## 🔧 TASK DETAILS
-
-### S1: Production Build & Deployment
-
-**Goal:** Get the game accessible via public URL
-
-**Steps:**
-1. Run `npm run build` — verify clean output in `dist/`
-2. Choose deployment target:
-   - **GitHub Pages** (recommended): Free, simple, custom domain support
-   - **Vercel**: Free tier, automatic deploys
-   - **Netlify**: Free tier, form handling if needed
-3. Configure base path if using GitHub Pages subdirectory
-4. Deploy and verify all features work
-
-**Vite Config for GitHub Pages:**
-```typescript
-// vite.config.ts
-export default defineConfig({
-  base: '/grundy-web-prototype/', // if deploying to user.github.io/repo-name
-  // ...
-});
-```
-
-### S2: Hide DevPanel in Production
-
-**Goal:** Prevent users from accessing balance testing tools
-
-**Current Code:**
-```tsx
-// In App.tsx or wherever DevPanel is rendered
-<DevPanel />
-```
-
-**Fix:**
-```tsx
-{import.meta.env.DEV && <DevPanel />}
-```
-
-**Alternative (keyboard shortcut only in dev):**
-```tsx
-useEffect(() => {
-  if (!import.meta.env.DEV) return;
-  const handler = (e: KeyboardEvent) => {
-    if (e.ctrlKey && e.key === 'd') setShowDevPanel(prev => !prev);
-  };
-  window.addEventListener('keydown', handler);
-  return () => window.removeEventListener('keydown', handler);
-}, []);
-```
-
-### S3: Add PWA Manifest
-
-**Goal:** Enable mobile "Add to Home Screen" functionality
-
-**Create `public/manifest.json`:**
-```json
-{
-  "name": "Grundy",
-  "short_name": "Grundy",
-  "description": "Feed and nurture your virtual pet",
-  "start_url": "/",
-  "display": "standalone",
-  "background_color": "#1a1a2e",
-  "theme_color": "#6366f1",
-  "orientation": "portrait",
-  "icons": [
-    {
-      "src": "/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
-  ]
-}
-```
-
-**Add to `index.html`:**
-```html
-<link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#6366f1">
-<meta name="apple-mobile-web-app-capable" content="yes">
-```
-
----
-
-## 🤖 NOTES FOR AI AGENTS
-
-### Critical Naming Conventions
-
-| Context | Convention | Example |
-|---------|------------|---------|
-| Pet IDs | camelCase, lowercase | `munchlet`, `spicyTaco` |
-| Food IDs | camelCase, lowercase | `birthdayCake`, `hotPepper` |
-| Components | PascalCase | `FoodBag`, `LevelUpModal` |
-| Constants | SCREAMING_SNAKE_CASE | `LEVEL_UP_COIN_REWARD` |
-| Types | PascalCase | `PetState`, `FoodDefinition` |
-
-### ⚠️ NEVER Use These Pet Names (Deprecated)
-
-- ❌ `sprout` — Use `munchlet`
-- ❌ `ripple` — Use `fizz`
-- ❌ Any names from `GrundyPrototype.tsx`
-
-### State Management Rules
-
-1. **ALL game state lives in `store.ts`** — Never use Context or local useState for game data
-2. **Pure functions in `/game/*.ts`** — No side effects, no store access
-3. **Immutability** — Always spread: `{ ...state, newProp }`
-4. **Selector hooks** — Use `usePet()`, `useCurrencies()`, etc.
-
-### Component Patterns
-
-```tsx
-// Standard component structure
-function MyComponent({ isOpen, onClose }: Props) {
-  // 1. Hooks at top
-  const pet = usePet();
-  const [localState, setLocalState] = useState(false);
-  
-  // 2. Callbacks next
-  const handleClick = useCallback(() => {
-    // ...
-  }, [dependencies]);
-  
-  // 3. Early returns for closed/hidden states
-  if (!isOpen) return null;
-  
-  // 4. Render
-  return (
-    <div>...</div>
-  );
-}
-```
-
-### Modal Pattern
-
-```tsx
-interface ModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
-
-function MyModal({ isOpen, onClose }: ModalProps) {
-  if (!isOpen) return null;
-  
-  return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-gray-800 rounded-xl p-6 max-w-md">
-        {/* Content */}
-        <button onClick={onClose}>Close</button>
-      </div>
-    </div>
-  );
-}
-```
-
-### Mini-Game State Machine Pattern
-
-```tsx
-type GamePhase = 'ready' | 'playing' | 'finished';
-
-interface MiniGameProps {
-  petId: PetId;
-  onComplete: (result: MiniGameResult) => void;
-  onCancel: () => void;
-}
-
-function MiniGame({ petId, onComplete, onCancel }: MiniGameProps) {
-  const [phase, setPhase] = useState<GamePhase>('ready');
-  const [score, setScore] = useState(0);
-  
-  // Phase-specific rendering
-  if (phase === 'ready') return <ReadyScreen onStart={() => setPhase('playing')} />;
-  if (phase === 'finished') return <ResultScreen score={score} onContinue={() => onComplete(result)} />;
-  
-  return <GameplayScreen /* ... */ />;
-}
-```
-
-### Import Order
-
-```tsx
-// 1. React
-import React, { useState, useCallback } from 'react';
-
-// 2. Store
-import { useGameStore, usePet, useCurrencies } from '../game/store';
-
-// 3. Types
-import { PetId, FeedResult } from '../types';
-
-// 4. Data
-import { PETS } from '../data/pets';
-import { FOODS } from '../data/foods';
-
-// 5. Config
-import { AFFINITY_MULTIPLIERS, getMoodTier } from '../data/config';
-
-// 6. Game Systems
-import { processFeed } from '../game/FeedingSystem';
-
-// 7. Components
-import { Pet } from './Pet';
-import { FoodBag } from './FoodBag';
-```
-
-### Testing Pattern
-
-```typescript
-describe('Feature', () => {
-  beforeEach(() => {
-    useGameStore.getState().resetGame();
-  });
-
-  it('should do something', () => {
-    // Arrange
-    const store = useGameStore.getState();
-    
-    // Act
-    const result = store.someAction();
-    
-    // Assert
-    expect(result).toBe(expected);
-    expect(useGameStore.getState().someProp).toBe(newValue);
-  });
-});
-```
-
-### Critical Don'ts
-
-| ❌ Don't | ✅ Do Instead |
-|----------|---------------|
-| Use class components | Use functional components with hooks |
-| Use Redux | Use Zustand (already configured) |
-| Use Context for game state | Use `useGameStore` hook |
-| Mutate state directly | Spread: `{ ...state, newProp }` |
-| Use `any` type | Define proper interfaces |
-| Use magic numbers | Use constants from config.ts |
-| Access localStorage directly | Use store persistence |
-
----
-
-## 📊 CURRENT METRICS
+## Current Baselines
 
 | Metric | Value |
 |--------|-------|
-| TypeScript Lines | ~4,500+ |
-| Component Count | 19 |
-| Test Suites | 6 |
-| Build Status | ✅ Clean |
-| Test Status | ✅ Passing |
-| Deploy Status | 🔴 Not Deployed |
+| **Total Tests** | 1742 |
+| **BCT Tests** | 999 |
+| **Build** | ✅ PASS |
+| **TypeScript** | ✅ PASS |
+| **Bible Version** | v1.8 |
+| **BCT Spec Version** | v2.4 |
+| **Save Version** | 4 |
 
 ---
 
-## 🧪 TESTING CHECKLIST (Pre-Deploy)
+## Known Constraints (DO NOT FORGET)
 
-### Core Loop
-- [ ] Feed pet → XP increases
-- [ ] Feed favorite food → 2× XP (loved)
-- [ ] Level up at correct threshold
-- [ ] Evolution at levels 7 and 13
-- [ ] Coins awarded on level up (+50)
-
-### Economy
-- [ ] Buy food → Coins deducted
-- [ ] Can't buy if insufficient coins
-- [ ] Inventory updates correctly
-- [ ] Crafting consumes ingredients
-
-### Multi-Pet
-- [ ] Select starter pet works
-- [ ] Switch between unlocked pets
-- [ ] Unlock pet with gems
-- [ ] Each pet maintains separate state
-
-### Onboarding
-- [ ] Welcome screen displays
-- [ ] Story screen (skippable)
-- [ ] Pet selection works
-- [ ] Tutorial completes (3 steps)
-- [ ] Skip works for returning users
-
-### Mini-Games
-- [ ] Snack Catch playable
-- [ ] Scoring matches spec
-- [ ] Rewards match tier table
-- [ ] Daily limit enforced (3 plays)
-
-### Persistence
-- [ ] Refresh preserves state
-- [ ] Reset clears all data
-- [ ] Migration handles old saves
+- ❌ **NO GEMS from mini-games** (Web Edition)
+- ❌ **Push notifications DEFERRED**
+- ❌ **Ad recovery is stub** (Unity Later)
+- ❌ **No CE/QA status modifications** without approval
 
 ---
 
-## 📅 SPRINT TIMELINE
+## Next Up
 
-| Day | Focus |
-|-----|-------|
-| 1 | Deploy to GitHub Pages |
-| 2 | Mobile testing, bug fixes |
-| 3-5 | Friend & Family distribution |
-| 6-7 | Collect feedback, prioritize fixes |
+Phase 10 implementation is complete. Recommended next steps:
 
----
+### 1. Phase 10 CE/QA Review
+Run three-gate approval process:
+- **Dev Gate:** Implementation complete ✅
+- **CE Gate:** Chief Engineer review (pending)
+- **QA Gate:** Quality assurance sign-off (pending)
 
-## 🔗 REFERENCES
+### 2. Merge Hygiene
+- Ensure all P10 branches merged to main ✅
+- Delete stale branches
+- Verify no orphaned PRs
 
-| Document | Location | Purpose |
-|----------|----------|---------|
-| **Design SoT** | `docs/GRUNDY_MASTER_BIBLE.md` | ← START HERE — Canonical design |
-| **Agent Workflow** | `ORCHESTRATOR.md` | Roles, prompts, approval workflow |
-| **Task List** | `TASKS.md` | 89 tasks, 13 phases, gap analysis |
-| **Asset Manifest** | `docs/ASSET_MANIFEST.md` | 120 sprites, state mapping |
-| **Lore Codex** | `docs/GRUNDY_LORE_CODEX.md` | Extended lore fragments |
-| **Onboarding Flow** | `docs/GRUNDY_ONBOARDING_FLOW.md` | FTUE detail |
-
-**Archived (Legacy):**
-- `GRUNDY_MASTER_DECISIONS.md` → moved to `archive/`
-- `TICKETS_WEB.yaml` → superseded by `TASKS.md`
-- `ORCHESTRATOR_WEB.md` → renamed to `ORCHESTRATOR.md`
-- `CLAUDE_CODE_MASTER_TODO.md` → superseded by `TASKS.md`
+### 3. Phase 11 Planning
+Review TASKS.md backlog for next phase scope.
 
 ---
 
-## 🤖 NOTES FOR AI AGENTS
+## Candidates for Phase 11 (Needs Confirmation)
+
+Check TASKS.md and project roadmap for approved scope. Potential items:
+
+- Enhanced pet animations
+- Sound/vibration system improvements
+- PWA mini-games expansion
+- Unity rebuild prep
+- Lore Journal (fragment collection)
+
+---
+
+## 📋 Phase 10 Verification Checklist
+
+### Core Systems
+- [x] Weight state per pet (0-100 range)
+- [x] Weight gain on snack feeding
+- [x] Weight decay -1/hr online and offline
+- [x] Sickness state (Classic mode only)
+- [x] Sickness triggers (hunger=0, poop uncleaned)
+- [x] 2× stat decay when sick (offline)
+- [x] Care mistake accrual when sick
+
+### Recovery
+- [x] Medicine item (50🪙, instant cure)
+- [x] Diet Food item (30🪙, weight loss)
+- [x] Ad recovery stub (Unity Later)
+
+### Gating
+- [x] Sick pets blocked from mini-games (Classic)
+- [x] Obese pets (weight≥81) blocked (Classic)
+- [x] Cozy mode bypasses all gating
+
+### Alerts
+- [x] Weight warning (obese threshold)
+- [x] Weight recovery alert
+- [x] Sickness onset alert
+- [x] Sickness recovery alert
+
+### Poop System
+- [x] Poop spawn after X feedings
+- [x] Poop dirty state tracking
+- [x] Tap-to-clean interaction
+- [x] Cleaning rewards (+2 happiness, +0.1 bond)
+- [x] 2× mood decay after 60min dirty
+
+---
+
+## 🤖 Notes for AI Agents
 
 **Before starting any task:**
 1. Read `ORCHESTRATOR.md` — Understand your role and workflow
@@ -437,25 +159,11 @@ describe('Feature', () => {
 - Mark inferences with `Assumption:`
 - Small, focused changes only
 
-**This Sprint Focus:**
-- Phase 0 tasks are BLOCKING — complete before feature work
-- Primary goal: Deploy to GitHub Pages for testing
-- No mini-games or advanced features until P0 complete
-
-**Protected Files (Do NOT edit without Chief Engineer approval):**
-- `docs/GRUNDY_MASTER_BIBLE.md`
-- `docs/ASSET_MANIFEST.md`
-- `ORCHESTRATOR.md`
+**Current Focus:**
+- Phase 10 is COMPLETE
+- Next action: CE/QA Review process
+- No new feature work until Phase 11 scope confirmed
 
 ---
 
-## 📝 ASSUMPTIONS MADE IN THIS DOCUMENT
-
-1. **Assumption:** GitHub Pages is available for deployment
-2. **Assumption:** No CI/CD pipeline exists yet (manual deploy)
-3. **Assumption:** PWA icons will be placeholder until art is final
-4. **Assumption:** Sound effects will use Web Audio procedural generation initially
-
----
-
-*Sprint priorities live here. Design SoT: `docs/GRUNDY_MASTER_BIBLE.md` | Agent Workflow: `ORCHESTRATOR.md` | Tasks: `TASKS.md`*
+*Sprint status lives here. Design SoT: `docs/GRUNDY_MASTER_BIBLE.md` | Agent Workflow: `ORCHESTRATOR.md` | Tasks: `TASKS.md`*

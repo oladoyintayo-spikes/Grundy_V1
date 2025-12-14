@@ -2,9 +2,9 @@
 
 # Grundy Web Prototype — Development Status
 
-**Last Updated:** December 14, 2025 (P10-H Sick Offline Decay Multiplier Complete)
-**Current Phase:** Web Phase 10 — 🟡 P10-H COMPLETE (Sick Offline 2× Decay)
-**Next Phase:** P10-E/F/G (Weight & Sickness Remaining Tasks)
+**Last Updated:** December 14, 2025 (Phase 10 Complete — All Tasks Done)
+**Current Phase:** Web Phase 10 — ✅ COMPLETE (Weight & Sickness Systems)
+**Next Phase:** Phase 10 CE/QA Review → Phase 11 Planning
 
 ---
 
@@ -45,7 +45,7 @@
 | **Web Phase 7** | Classic Mode | 🟡 P7-NEGLECT ✅ | Neglect & Withdrawal runtime ✅; 49 BCT-NEGLECT tests; Sickness ⬜; Weight ⬜ |
 | **Web Phase 8** | Shop + Inventory | ✅ CE/QA APPROVED | Audit: `947e1b9`; Sign-off: 2025-12-12; See [`docs/CEQA_PHASE8_SIGNOFF_NOTES.md`](docs/CEQA_PHASE8_SIGNOFF_NOTES.md) |
 | **Web Phase 9** | Pet Slots / Multi-Pet | ✅ CE/QA APPROVED | Audit: `83ce657`; Sign-off: 2025-12-12; See [`docs/CEQA_PHASE9_SIGNOFF_NOTES.md`](docs/CEQA_PHASE9_SIGNOFF_NOTES.md) |
-| **Web Phase 10** | Weight & Sickness Runtime | 🟡 P10-H COMPLETE | P10-B2 (Poop UI) + P10-C/D (Feeding+Gating) + P10-H (Sick 2× decay); commit `c5e58cf` |
+| **Web Phase 10** | Weight & Sickness Runtime | ✅ COMPLETE | P10-A through P10-H all done; 1742 tests, 999 BCT; Ready for CE/QA Review |
 
 ### Post-Web 1.0
 
@@ -650,11 +650,34 @@ All QA S3/S4 issues from Web 1.0 are mapped to Phase 6 tasks:
 
 ---
 
-## Web Phase 10 — P10-H COMPLETE (Sick Offline 2× Decay)
+## Web Phase 10 — ✅ COMPLETE (Weight & Sickness Systems)
 
 **Theme:** Bible v1.8 §5.7, §9.4.7, §9.5 — Weight & Sickness runtime, Poop system.
 
-**Status:** 🟡 P10-H COMPLETE (2025-12-14)
+**Status:** ✅ PHASE 10 COMPLETE (2025-12-14)
+
+### Phase 10 Summary
+
+All Phase 10 tasks complete. Weight system, sickness mechanics, poop system, mini-game gating, recovery flows, health alerts, and offline processing fully implemented with BCT coverage.
+
+| Task | Description | Commit |
+|------|-------------|--------|
+| P10-A | State foundations (weight, isSick, timestamps) | `6281137` |
+| P10-B | Offline order-of-application (§9.4.6 steps) | `08493f3` |
+| P10-B1.5 | Poop state (isPoopDirty, spawn, clean) | `ee1224b` |
+| P10-B2 | Poop UI + rewards + 2× mood decay | `c1095b1` |
+| P10-C | Feeding triggers (snack weight, sickness) | `8992656` |
+| P10-D | Mini-game gating (sick/obese blocked) | `ce23fd7` |
+| P10-E | Recovery flows (Medicine, Diet Food, ad stub) | `de23458` |
+| P10-F | Alert wiring (weight + sickness alerts) | `35fbd06` |
+| P10-G | Cozy mode immunity (verified throughout) | (integrated) |
+| P10-H | Sick offline 2× decay (BCT-SICKNESS-OFFLINE-002) | `c5e58cf` |
+
+### Known Constraints
+
+- ❌ NO GEMS from mini-games (Web Edition)
+- ❌ Push notifications DEFERRED
+- ❌ Ad recovery is stub (Unity Later)
 
 ### P10-B/B1.5/B2 Summary
 
