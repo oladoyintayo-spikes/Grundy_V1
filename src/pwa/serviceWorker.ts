@@ -133,5 +133,6 @@ export async function unregisterServiceWorker(): Promise<boolean> {
  * Checks if a service worker is currently active
  */
 export function isServiceWorkerActive(): boolean {
+  if (typeof navigator === 'undefined') return false;
   return 'serviceWorker' in navigator && navigator.serviceWorker.controller !== null;
 }
