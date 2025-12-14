@@ -54,6 +54,9 @@ export function applyServiceWorkerUpdate(): void {
  * This is a progressive enhancement - failures are silent
  */
 export function registerServiceWorker(): void {
+  // Guard for Node.js test environments
+  if (typeof navigator === 'undefined') return;
+
   // Check if service workers are supported
   if (!('serviceWorker' in navigator)) {
     console.log('[SW] Service workers not supported');
@@ -114,6 +117,9 @@ export function registerServiceWorker(): void {
  * Useful for debugging or forcing a clean state
  */
 export async function unregisterServiceWorker(): Promise<boolean> {
+  // Guard for Node.js test environments
+  if (typeof navigator === 'undefined') return false;
+
   if (!('serviceWorker' in navigator)) {
     return false;
   }
