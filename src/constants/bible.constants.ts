@@ -477,11 +477,43 @@ export const MOBILE_VIEWPORT = {
 } as const;
 
 export const TEST_IDS = {
-  // Navigation - P6-NAV-GROUNDWORK
+  // Navigation - P6-NAV-GROUNDWORK (legacy bottom nav)
   GLOBAL_NAV: 'global-nav',
   NAV_HOME: 'nav-home',
   NAV_GAMES: 'nav-games',
   NAV_SETTINGS: 'nav-settings',
+  // Bible v1.10: Action Bar (replaces legacy bottom nav)
+  ACTION_BAR: 'action-bar',
+  ACTION_BAR_FEED: 'action-bar-feed',
+  ACTION_BAR_GAMES: 'action-bar-games',
+  ACTION_BAR_MENU: 'action-bar-menu',
+  // Bible v1.10: Menu Overlay
+  MENU_OVERLAY: 'menu-overlay',
+  MENU_OVERLAY_PANEL: 'menu-overlay-panel',
+  MENU_OVERLAY_SCRIM: 'menu-overlay-scrim',
+  MENU_OVERLAY_CLOSE: 'menu-overlay-close',
+  MENU_OPTION_SWITCH_PET: 'menu-option-switch-pet',
+  MENU_OPTION_SHOP: 'menu-option-shop',
+  MENU_OPTION_INVENTORY: 'menu-option-inventory',
+  MENU_OPTION_GAMES: 'menu-option-games',
+  MENU_OPTION_SETTINGS: 'menu-option-settings',
+  MENU_OPTION_HOME: 'menu-option-home',
+  MENU_PET_BADGE: 'menu-pet-badge',
+  // Bible v1.10: Food Drawer
+  FOOD_DRAWER: 'food-drawer',
+  FOOD_DRAWER_PANEL: 'food-drawer-panel',
+  FOOD_DRAWER_SCRIM: 'food-drawer-scrim',
+  FOOD_DRAWER_GRID: 'food-drawer-grid',
+  FOOD_DRAWER_FIRST_ITEM: 'food-drawer-first-item',
+  FOOD_DRAWER_STUFFED: 'food-drawer-stuffed',
+  FOOD_DRAWER_COOLDOWN: 'food-drawer-cooldown',
+  // Bible v1.10: Header menu
+  APP_HEADER: 'app-header',
+  HEADER_MENU_BUTTON: 'header-menu-button',
+  // Bible v1.10: Cooldown Banner
+  COOLDOWN_BANNER_STUFFED: 'cooldown-banner-stuffed',
+  COOLDOWN_BANNER_ACTIVE: 'cooldown-banner-active',
+  COOLDOWN_TIMER: 'cooldown-timer',
   // View containers - P6-NAV-GROUNDWORK
   HOME_VIEW: 'home-view',
   GAMES_VIEW: 'games-view',
