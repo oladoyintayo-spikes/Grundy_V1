@@ -1,13 +1,14 @@
 # GRUNDY — MASTER BIBLE
 ## Single Source of Truth
 
-**Version:** 1.9
+**Version:** 1.10
 **Last Updated:** December 14, 2025
 **Status:** Production Reference
 **Platforms:** Web (First Light 1.0) [Current], Android/iOS [Unity Later]
 **Engine:** Web (Vite + React + TypeScript) [Current], Unity 2022 LTS [Planned Mobile]
 
 **Changelog:**
+- v1.10: UI Navigation & Layout Update — Adopted Menu-first + Action Bar as canonical navigation (§14.5), replacing "future" language. Approved Food Drawer as alternative to Food Tray with ≥4 foods visible constraint (§14.6). Standardized "Games" terminology, deprecated "Play" as nav label. Added UI Overlay Safety Rules protecting Poop, Cooldown, Currency, and TOD visibility. No game design changes.
 - v1.9: Cosmetics System (Pet-Bound Ownership) + Currency Consistency — Fixed §11.1 currency hierarchy (coins = food/care only; cosmetics = gems-only). Added §11.5.2 pet-bound ownership model, §11.5.3 slots/equip rules/non-transfer, §11.5.4 rarity display specs. Added §14.7.3 cosmetics shop tab UI, §14.8.3 cosmetics inventory UI. Updated §11.4 gem sources with implementation tags + Phase 11-0 prerequisite gating. Updated §15.6 gap table (P8/P9/P10 → ✅) and phase numbering clarification (Phase 10.5, Phase 11-0, Phase 11). Added §9.3 Cozy mode cosmetics note. See `docs/patches/BIBLE_v1_9_PATCH_FINAL.md` for full patch details.
 - v1.8: Weight & Sickness Multi-Pet Rules — Added §9.4.7 Weight & Sickness Multi-Pet Rules (complete per-pet weight/sickness systems), updated §9.4.6 offline rules table and order of application, clarified §5.7 weight risk calculation, extended §11.6.1 alert routing for weight/sickness alerts, updated §9.3 Cozy Mode immunity list, updated §9.4 care mistakes for offline accumulation, reconciled §9.4.3 Sickness/Neglect co-existence (PATCH 7 critical fix). See `docs/patches/BIBLE_v1.8_PATCH_WEIGHT_SICKNESS_MULTIPET.md` for full patch details.
 - v1.7: Multi-Pet Runtime Clarifications (P9-B) — Added §8.2.1 Energy Scope (global), §9.4.4 Multi-Pet Runaway Handling (auto-switch + slot rules), §9.4.5 Switching During Neglect States, §9.4.6 Multi-Pet Offline Rules (mood/bond/neglect fanout), §11.6.1 Multi-Pet Notifications (routing + suppression). Deferred Weight/Sickness runtime to P9-C.
@@ -4536,7 +4537,10 @@ Not navigable. Context switches automatically based on activity.
 
 ## 14.5 Navigation Structure [Web Phase 6+]
 
-> **Current State:** Web 1.0 uses a bottom navigation bar (Home / Games / Settings). This section describes the **future menu-based structure** that will replace it in Phase 6+.
+> **Current State (Canonical):** Web uses a **Menu Overlay + Action Bar** navigation model.
+> - Menu Overlay is the primary router to "Switch Pet / Shop / Inventory / Games / Settings / Home"
+> - Action Bar provides one-tap access to core loop actions (Feed + Games + Menu)
+> - This replaces the older bottom-tab navigation pattern.
 
 ### Main Screen Layout
 
@@ -4544,21 +4548,44 @@ Not navigable. Context switches automatically based on activity.
 - No "pet bar" showing all 8 pets simultaneously
 - Pet selector accessed via Menu only
 
-### Menu Button
+### Menu Entry Point
 
-- Hamburger icon (☰) in top-left corner
-- Always visible during gameplay
-- Tap to open slide-out menu
+- Menu icon in the header (top bar) is allowed and recommended
+- A "Menu" (or "More") button in the Action Bar is also allowed
+- **At least one Menu entry point must be always visible during gameplay**
+- Tapping opens a slide-up overlay panel (mobile-friendly)
 
-### Menu Options
+### Menu Options (Canonical)
 
 | Option | Icon | Action |
 |--------|------|--------|
 | Switch Pet | 🐾 | Opens Pet Selector modal |
 | Shop | 🛒 | Opens Shop screen |
-| Mini-Games | 🎮 | Opens Mini-Game Hub |
+| Inventory | 🎒 | Opens Inventory screen |
+| Games | 🎮 | Opens Mini-Game Hub |
 | Settings | ⚙️ | Opens Settings panel |
 | Home | 🏠 | Return to welcome (with confirmation) |
+
+> **Note:** If Cosmetics is surfaced in UI before fully unlocked, it must be clearly marked "Coming Soon" and must not imply purchasable cosmetics beyond the current phase gating rules (see §11.5.2).
+
+### Action Bar (Bottom)
+
+The Action Bar is a bottom-anchored row providing quick access to core actions:
+
+| Button | Icon | Action | Required |
+|--------|------|--------|----------|
+| Feed | 🍎 | Opens Food Drawer | ✅ Yes |
+| Games | 🎮 | Opens Mini-Game Hub | ✅ Yes |
+| Menu | ⋯ | Opens Menu Overlay | ✅ Yes |
+
+> **Design Intent:** The Action Bar keeps the core loop (feed, play, navigate) within thumb reach. It does not replace the Menu; it complements it for speed.
+
+### Action Bar Constraints
+
+- Action Bar buttons must not introduce navigation destinations beyond what the Menu defines
+- Feed button opens the Food Drawer (not a navigation destination)
+- Games button routes to the same destination as Menu → Games
+- Menu button opens the same overlay as the header Menu icon
 
 ### Pet Switching UX
 
@@ -4620,10 +4647,21 @@ On a typical phone viewport (360×640 to 414×896), the following must be visibl
 | Element | Required | Notes |
 |---------|----------|-------|
 | Pet (main display) | ✅ Yes | Large, centered, 40-50% of viewport height |
-| Primary actions | ✅ Yes | Feed button, at least one mini-game entry |
+| Primary actions | ✅ Yes | Feed button (opens Food Drawer) + Games button (opens Mini-Game Hub) |
 | Global nav | ✅ Yes | Home / Games / Settings accessible |
 | Currency display | ✅ Yes | Coins and gems visible |
-| Food tray | ✅ Yes | At least 4 food items visible |
+| Food access (Tray or Drawer) | ✅ Yes | Player must be able to feed in ≤1 tap from main view. If using a Drawer, opening it must immediately show ≥4 food items without scrolling. |
+
+### Food Drawer Clarification (Allowed)
+
+A **Food Drawer** is an approved replacement for an always-visible Food Tray if **ALL** of the following are true:
+
+1. **Feed is available from the main view** — One tap opens the drawer (Feed button in Action Bar)
+2. **≥4 food items visible immediately** — Drawer contents show at least 4 food items without scrolling
+3. **Empty foods may show** — Disabled state is allowed, but must not hide the player's available foods
+4. **Does not obscure required indicators** — Drawer must not permanently block Poop, Cooldown, or Currency displays (see "UI Overlay Safety Rules")
+
+> **Design Intent:** The Food Drawer modernizes the feeding UI while preserving the "quick check-in" philosophy. Players can still feed their pet in ≤2 interactions (tap Feed → tap food item).
 
 ### Prohibited in Main View
 
@@ -4641,6 +4679,48 @@ The following must **NOT** appear in the main scrollable area:
 > Grundy is designed for **one-handed, quick check-in** mobile play. If the user has to scroll to see their pet or tap a button, the layout has failed.
 >
 > Extra dashboards, stats, and logs are welcome — but they must live in **drawers, panels, or secondary screens**, not the main column.
+
+### Terminology: "Games" vs "Mini-Games" vs "Play"
+
+| Term | Usage |
+|------|-------|
+| **Games** | Canonical UI label for buttons and menu items |
+| **Mini-Games** | Canonical Bible/design term (functionally equivalent to "Games") |
+| **Play** | ❌ Not a canonical navigation label — ambiguous with "play with pet" |
+
+> When the Bible says "Mini-Games," implementations may use the shorter label "Games" in UI. Both refer to the same destination (Mini-Game Hub per §8).
+
+### UI Overlay Safety Rules (Required)
+
+Overlays (Food Drawer, Menu Overlay, Inventory, Shop sheets) must **NOT** break critical feedback loops:
+
+#### 1. Poop Cleaning Must Remain Possible
+
+- If poop is dirty (see §9.5 Poop System, §9.4.2 Sickness Triggers), the player must have a clear, tappable affordance to clean it
+- Overlays must not permanently cover or block the Poop Indicator / Clean action
+- Acceptable: Overlay covers poop temporarily; dismissing overlay reveals poop indicator
+- Unacceptable: Overlay has no dismiss path, or poop indicator is never visible when dirty
+
+#### 2. Feeding Cooldown Must Be Clear
+
+- If feeding is on cooldown (see §4.3), the UI must clearly communicate this state
+- Recommended: Disabled feed state + remaining time visible (e.g., "⏱️ Digesting... 24:32")
+- Required: UI must not allow spam-feeding attempts without feedback
+- Cooldown timer, when active, should be visible on the main view (not hidden behind overlays)
+
+#### 3. Currency Display Must Persist
+
+- Coins AND Gems must remain visible on the main view header (see §14.6 Viewport Rule)
+- Overlays may have their own currency display, but the header must not be permanently hidden
+- Exception: Full-screen modals (e.g., Mini-Game active play) may hide header temporarily
+
+#### 4. Time-of-Day Context Must Persist
+
+- Time-of-day tint/background cues (see §14.4) must continue to render in the home experience
+- Even if Rooms Lite is simplified, TOD gradients must apply to the main view background
+- Overlays may have their own backgrounds, but dismissing them must return to TOD-appropriate view
+
+> **Design Philosophy:** UI polish is encouraged; breaking gameplay clarity is not. Every overlay must have a clear dismiss path, and critical affordances must be reachable within 1-2 taps of dismissing any overlay.
 
 ## 14.7 Shop UI Structure [Web Phase 8]
 

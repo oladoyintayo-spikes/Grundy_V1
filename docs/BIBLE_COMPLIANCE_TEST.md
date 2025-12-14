@@ -1,10 +1,11 @@
 # Grundy — Bible Compliance Test (BCT)
 
 **Version:** 2.4
-**Last Updated:** December 2025 (Bible v1.9 Update)
-**Bible Reference:** `docs/GRUNDY_MASTER_BIBLE.md` v1.9
+**Last Updated:** December 2025 (Bible v1.10 Update)
+**Bible Reference:** `docs/GRUNDY_MASTER_BIBLE.md` v1.10
 
 **Changelog:**
+- v2.4 (P11 Pending): Bible v1.10 updated §14.5 (Menu-first + Action Bar) and §14.6 (Food Drawer, Terminology, Overlay Safety Rules). Navigation and layout BCT tests (BCT-NAV-*, BCT-LAYOUT-*) will be updated when UI implementation PR lands. No new test IDs until implementation.
 - v2.4 (P11 Pending): Bible v1.9 alignment — Phase 11 Cosmetics tests pending (~52 specs planned). Test IDs will be assigned when P11-0/P11 implementation begins. See `docs/patches/BIBLE_v1_9_PATCH_FINAL.md`.
 - v2.4: Weight & Sickness test suites (planned) — Added BCT-WEIGHT (12 tests), BCT-SICKNESS (18 tests), BCT-SICKNESS-OFFLINE (8 tests), BCT-ALERT-HEALTH (8 tests), BCT-COZY-IMMUNITY (6 tests) specifications for P10 Weight/Sickness runtime. Bible v1.8 alignment. See `docs/patches/BIBLE_v1.8_PATCH_WEIGHT_SICKNESS_MULTIPET.md`.
 - v2.3: Multi-Pet Runtime tests — Added BCT-MULTIPET (14 tests) for P9-B runtime integration: energy scope, runaway auto-switch, switching constraints, offline rules, alert routing/suppression. Bible v1.7 alignment.

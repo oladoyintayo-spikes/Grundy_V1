@@ -12,7 +12,7 @@
 
 | Resource | Location |
 |----------|----------|
-| **Design SoT** | `docs/GRUNDY_MASTER_BIBLE.md` v1.9 |
+| **Design SoT** | `docs/GRUNDY_MASTER_BIBLE.md` v1.10 |
 | **Task List** | `TASKS.md` |
 | **Agent Workflow** | `ORCHESTRATOR.md` |
 | **Bible Update Log** | `BIBLE_UPDATE_BACKLOG.md` |
@@ -23,7 +23,7 @@
 
 | Artifact | Version | Notes |
 |----------|---------|-------|
-| Bible | **v1.9** | Cosmetics System (§11.5.2–4, §14.7.3, §14.8.3), Currency Consistency (§11.1), Gem Sources (§11.4), Phase Numbering (§15.6) |
+| Bible | **v1.10** | UI Navigation & Layout (§14.5 Menu+Action Bar, §14.6 Food Drawer, Terminology, Overlay Safety) |
 | BCT | **v2.4** | Weight/Sickness planned suites (~52 tests), Multi-Pet tests |
 | Locked Constants | `src/constants/bible.constants.ts` | Single source for locked values |
 
