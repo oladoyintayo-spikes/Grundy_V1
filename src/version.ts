@@ -11,7 +11,7 @@
  * - MINOR: New features, backwards compatible
  * - PATCH: Bug fixes, backwards compatible
  */
-export const GRUNDY_WEB_VERSION = '1.0.0';
+export const GRUNDY_WEB_VERSION = '1.1.0';
 
 /**
  * Version metadata
@@ -19,6 +19,6 @@ export const GRUNDY_WEB_VERSION = '1.0.0';
 export const VERSION_INFO = {
   version: GRUNDY_WEB_VERSION,
   edition: 'Web',
-  codename: 'First Light',
-  releaseDate: '2024-12-10',
+  codename: 'Phase 10 Complete',
+  releaseDate: '2025-12-14',
 } as const;
