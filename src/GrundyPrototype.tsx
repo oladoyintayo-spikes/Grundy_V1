@@ -6,7 +6,11 @@ import { ReactionType, FoodDefinition, FeedResult, MiniGameId, MiniGameResult, A
 import { getXPForLevel } from './data/config';
 import { DEFAULT_VIEW } from './game/navigation';
 import { AppHeader } from './components/layout/AppHeader';
-import { BottomNav } from './components/layout/BottomNav';
+// Bible v1.10: ActionBar replaces BottomNav for Menu-first + Action Bar model
+import { ActionBar } from './components/layout/ActionBar';
+import { MenuOverlay, MenuAction } from './components/layout/MenuOverlay';
+import { FoodDrawer } from './components/layout/FoodDrawer';
+import { CooldownBanner } from './components/layout/CooldownBanner';
 import { DebugHud } from './components/layout/DebugHud';
 import { getBackgroundClass, ENVIRONMENT_REFRESH_INTERVAL_MS, ROOM_LABELS } from './game/environment';
 import type { RoomId } from './types';
@@ -390,6 +394,17 @@ function HomeView({ onOpenShop, pendingFeedFoodId, onClearPendingFeed }: HomeVie
         <div className="mb-2">
           <RoomSelector currentRoom={environment.room} onSelectRoom={setRoom} />
         </div>
+
+        {/* Bible v1.10 §14.6: Cooldown banner - player-facing visibility (not dev-only) */}
+        {(petStuffed || petOnCooldown) && (
+          <div className="mb-2 shrink-0">
+            <CooldownBanner
+              isOnCooldown={petOnCooldown}
+              isStuffed={petStuffed}
+              cooldownRemaining={getCooldownRemaining(stats.lastFeedCooldownStart)}
+            />
+          </div>
+        )}
 
         {/* Pet Display Area - Bible §14.6: Pet visible, 40-50% of viewport height */}
         <div
@@ -1046,6 +1061,7 @@ export default function GrundyPrototype() {
 // ============================================
 // MAIN APP (Post-FTUE)
 // P6-PWA-UPDATE: Added SW update toast
+// Bible v1.10: Menu-first + Action Bar navigation model
 // ============================================
 function MainApp() {
   // Navigation state
@@ -1055,11 +1071,17 @@ function MainApp() {
   const [showShop, setShowShop] = useState(false);
   // P8-INV-CORE: Inventory modal state
   const [showInventory, setShowInventory] = useState(false);
+  // Bible v1.10: Menu Overlay and Food Drawer state
+  const [showMenuOverlay, setShowMenuOverlay] = useState(false);
+  const [showFoodDrawer, setShowFoodDrawer] = useState(false);
   // P8-INV-CORE: Track food to pre-select for feeding
   const [pendingFeedFoodId, setPendingFeedFoodId] = useState<string | null>(null);
   const currencies = useGameStore((state) => state.currencies);
   const inventory = useGameStore((state) => state.inventory);
   const buyFood = useGameStore((state) => state.buyFood);
+  // Bible v1.10: Get stats for cooldown calculation
+  const stats = useGameStore((state) => state.stats);
+  const feed = useGameStore((state) => state.feed);
   // P8-SHOP-PURCHASE: Shop purchase action
   const purchaseShopItem = useGameStore((state) => state.purchaseShopItem);
   // P8-SHOP-CATALOG: Shop requires pet + mode for recommendations
@@ -1213,10 +1235,108 @@ function MainApp() {
     setPendingFeedFoodId(foodId);
   }, []);
 
+  // ============================================
+  // Bible v1.10: Menu Overlay and Action Bar Handlers
+  // ============================================
+
+  // Get badge count for menu (pets needing attention)
+  const getAggregatedBadgeCount = useGameStore((state) => state.getAggregatedBadgeCount);
+  const badgeCount = getAggregatedBadgeCount();
+
+  // Pet switcher modal state (triggered from menu)
+  const [showPetSelector, setShowPetSelector] = useState(false);
+  const getPetStatusBadges = useGameStore((state) => state.getPetStatusBadges);
+  const petStatusBadges = getPetStatusBadges();
+  const activePetId = useGameStore((state) => state.activePetId);
+
+  // Cooldown state for Action Bar and Food Drawer
+  const petStuffed = isStuffed(pet.hunger);
+  const petOnCooldown = isOnCooldown(stats.lastFeedCooldownStart);
+  const cooldownRemaining = getCooldownRemaining(stats.lastFeedCooldownStart);
+
+  // All foods for Food Drawer
+  const allFoods = getAllFoods();
+
+  // Menu overlay handlers
+  const handleOpenMenu = useCallback(() => {
+    setShowMenuOverlay(true);
+  }, []);
+
+  const handleCloseMenu = useCallback(() => {
+    setShowMenuOverlay(false);
+  }, []);
+
+  const handleMenuAction = useCallback((action: MenuAction) => {
+    setShowMenuOverlay(false);
+    switch (action) {
+      case 'switch-pet':
+        setShowPetSelector(true);
+        break;
+      case 'shop':
+        setShowShop(true);
+        break;
+      case 'inventory':
+        setShowInventory(true);
+        break;
+      case 'games':
+        setCurrentView('games');
+        break;
+      case 'settings':
+        setCurrentView('settings');
+        break;
+      case 'home':
+        // TODO: Add confirmation dialog before returning to welcome screen
+        // For now, just go to home view
+        setCurrentView('home');
+        break;
+    }
+  }, []);
+
+  // Food drawer handlers
+  const handleOpenFoodDrawer = useCallback(() => {
+    if (currentView !== 'home') {
+      setCurrentView('home');
+    }
+    setShowFoodDrawer(true);
+  }, [currentView]);
+
+  const handleCloseFoodDrawer = useCallback(() => {
+    setShowFoodDrawer(false);
+  }, []);
+
+  const handleFeedFromDrawer = useCallback((foodId: string) => {
+    const result = feed(foodId);
+    if (result?.success) {
+      // Close drawer after successful feed
+      setShowFoodDrawer(false);
+    }
+  }, [feed]);
+
+  // Action bar handlers
+  const handleActionBarFeed = useCallback(() => {
+    handleOpenFoodDrawer();
+  }, [handleOpenFoodDrawer]);
+
+  const handleActionBarGames = useCallback(() => {
+    setShowFoodDrawer(false);
+    setShowMenuOverlay(false);
+    setCurrentView('games');
+  }, []);
+
+  const handleActionBarMenu = useCallback(() => {
+    setShowFoodDrawer(false);
+    handleOpenMenu();
+  }, [handleOpenMenu]);
+
   return (
     <div className={`h-screen w-screen flex flex-col bg-gradient-to-b ${bgClass} overflow-hidden`}>
-      {/* App Header (Bible §14.6: Shop button in top-corner, P8-INV-CORE: Inventory button) */}
-      <AppHeader onOpenShop={handleOpenShop} onOpenInventory={handleOpenInventory} />
+      {/* App Header (Bible v1.10: Menu icon in header, Bible §14.6: currencies visible) */}
+      <AppHeader
+        onOpenShop={handleOpenShop}
+        onOpenInventory={handleOpenInventory}
+        onOpenMenu={handleOpenMenu}
+        isMenuOpen={showMenuOverlay}
+      />
 
       {/* Main Content (P5-ART-ROOMS: RoomScene wraps home view) */}
       <main className="flex-1 overflow-hidden flex flex-col">
@@ -1252,8 +1372,16 @@ function MainApp() {
         )}
       </main>
 
-      {/* Bottom Navigation */}
-      <BottomNav currentView={currentView} onChangeView={handleChangeView} />
+      {/* Bible v1.10: Action Bar (Feed, Games, Menu) replaces legacy BottomNav */}
+      <ActionBar
+        onFeedTap={handleActionBarFeed}
+        onGamesTap={handleActionBarGames}
+        onMenuTap={handleActionBarMenu}
+        isFoodDrawerOpen={showFoodDrawer}
+        isMenuOpen={showMenuOverlay}
+        isOnCooldown={petOnCooldown}
+        isStuffed={petStuffed}
+      />
 
       {/* P8-SHOP-CATALOG + P8-SHOP-PURCHASE: Shop Modal */}
       <ShopView
@@ -1285,6 +1413,75 @@ function MainApp() {
           onNavigateToShop={handleInventoryToShop}
           onNavigateToFeed={handleInventoryToFeed}
         />
+      )}
+
+      {/* Bible v1.10: Menu Overlay (slide-up navigation panel) */}
+      <MenuOverlay
+        isOpen={showMenuOverlay}
+        onClose={handleCloseMenu}
+        onAction={handleMenuAction}
+        badgeCount={badgeCount}
+      />
+
+      {/* Bible v1.10: Food Drawer (≥4 items visible without scrolling) */}
+      <FoodDrawer
+        isOpen={showFoodDrawer}
+        onClose={handleCloseFoodDrawer}
+        foods={allFoods}
+        inventory={inventory}
+        onFeed={handleFeedFromDrawer}
+        isFeeding={false}
+        isStuffed={petStuffed}
+        isOnCooldown={petOnCooldown}
+        cooldownRemaining={cooldownRemaining}
+      />
+
+      {/* Bible v1.10: Pet Selector Modal (triggered from Menu → Switch Pet) */}
+      {showPetSelector && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" data-testid="pet-selector-modal-main">
+          <div className="bg-slate-800 rounded-2xl p-6 max-w-sm w-full">
+            <h2 className="text-lg font-bold mb-4 text-white">Select Your Grundy</h2>
+            <div className="space-y-2 max-h-60 overflow-y-auto" data-testid="pet-switcher-main">
+              {petStatusBadges.map((badge) => {
+                const petData = getPetById(badge.petId.split('-')[0]);
+                const isActive = activePetId === badge.petId;
+                return (
+                  <button
+                    key={badge.petId}
+                    onClick={() => {
+                      if (!isActive) {
+                        setActivePet(badge.petId);
+                      }
+                      setShowPetSelector(false);
+                    }}
+                    className={`w-full flex items-center gap-3 p-3 rounded-xl transition-colors ${
+                      isActive
+                        ? 'bg-amber-500/20 border-2 border-amber-400'
+                        : 'bg-slate-700/50 hover:bg-slate-600/50 border-2 border-transparent'
+                    }`}
+                  >
+                    <span className="text-2xl">{petData?.emoji || '🐾'}</span>
+                    <div className="flex-1 text-left">
+                      <span className="font-medium text-white">{petData?.name || 'Unknown'}</span>
+                      {badge.needsAttention && badge.badge && (
+                        <span className="ml-2">{badge.badge}</span>
+                      )}
+                    </div>
+                    {isActive && (
+                      <span className="text-xs text-amber-400">Active</span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+            <button
+              onClick={() => setShowPetSelector(false)}
+              className="w-full mt-4 py-2 px-4 bg-slate-600 hover:bg-slate-500 rounded-lg transition-colors text-white"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
       )}
 
       {/* Debug HUD - only visible in dev builds (BCT-HUD-002) */}
