@@ -1121,28 +1121,48 @@ P8-TEST
 
 | ID | Task | Status | Bible | Acceptance Criteria |
 |----|------|--------|-------|---------------------|
-| P11-0-1 | Level-up gem award | ⬜ | 11.4 | +5💎 on level up |
-| P11-0-2 | First feed daily gem | ⬜ | 11.4 | +1💎 on first feed each day |
-| P11-0-3 | Login streak Day 7 gem | ⬜ | 11.4 | +10💎 on 7-day streak |
-| P11-0-4 | Gem sources BCT tests | ⬜ | 11.4 | ~10 specs pass |
+| P11-0-1 | Level-up gem award | ✅ | 11.4 | +5💎 on level up |
+| P11-0-2 | First feed daily gem | ✅ | 11.4 | +1💎 on first feed each day |
+| P11-0-3 | Login streak Day 7 gem | ✅ | 11.4 | +10💎 on 7-day streak |
+| P11-0-4 | Gem sources BCT tests | ✅ | 11.4 | ~10 specs pass |
+
+> **P11-0 Status:** ✅ COMPLETE — Branch: `claude/apply-bible-patch-3PPHc`, Commit: `3f319a4`
 
 ---
 
-## PHASE 11: Cosmetics System
+## PHASE 11-A: Cosmetics Foundations
 
-> Bible Section 11.5.2–11.5.4, §14.7.3, §14.8.3 (Pet-bound cosmetics). **Depends on Phase 11-0.**
+> Bible Section 11.5.2–11.5.4. **Data layer + equip/unequip logic. No UI, no purchase, no render.**
 
 | ID | Task | Status | Bible | Acceptance Criteria |
 |----|------|--------|-------|---------------------|
-| P11-1 | Add cosmetics to state | ⬜ | 11.5.2 | Per-pet ownership (cosmeticsOwnedByPetId) |
-| P11-2 | Create cosmetics data | ⬜ | 11.5 | All items with rarity |
-| P11-3 | Implement purchase | ⬜ | 11.5.2, 14.7.3 | Pet-bound, gems only, no cross-pet transfer |
-| P11-4 | Implement equip | ⬜ | 11.5.3 | Hat, accessory, outfit, aura, skin slots |
-| P11-5 | Render cosmetics | ⬜ | 11.5.3 | Overlay on sprite per layer order |
-| P11-6 | Implement rarity badges | ⬜ | 11.5.4 | Common→Legendary borders/badges |
-| P11-7 | Shop cosmetics tab UI | ⬜ | 14.7.3 | "Owned by other pet" flow |
-| P11-8 | Inventory cosmetics UI | ⬜ | 14.8.3 | Equip/unequip flows |
-| P11-9 | Cosmetics BCT tests | ⬜ | 11.5.2-4 | ~42 specs pass (ownership, equip, invariants)
+| P11-A-1 | Add cosmetics to state | ✅ | 11.5.2 | Per-pet ownedCosmeticIds[], equippedCosmetics{} |
+| P11-A-2 | Create stub catalog | ✅ | 11.5 | COSMETIC_CATALOG with test items |
+| P11-A-3 | Implement equip/unequip | ✅ | 11.5.3 | equipCosmetic, unequipCosmetic actions |
+| P11-A-4 | Ownership helpers | ✅ | 11.5.2 | petOwnsCosmetic, getPetCosmeticIds |
+| P11-A-5 | Save migration v5→v6 | ✅ | — | Inject cosmetic fields into existing pets |
+| P11-A-6 | P11-A BCT tests | ✅ | 11.5.2-4 | 7 BCT specs (OWN, EQ, UNEQ, MULTI, GEMS, NOSTAT) |
+
+> **P11-A Status:** ✅ COMPLETE — Branch: `claude/apply-bible-patch-3PPHc`, Commit: `0ab4531`
+>
+> **BCT Specs Added:** BCT-COS-OWN-001, BCT-COS-EQ-001, BCT-COS-EQ-002, BCT-COS-UNEQ-001, BCT-COS-MULTI-001, BCT-COS-GEMS-001, BCT-COS-NOSTAT-001
+>
+> **Notes:** Catalog contains stub items for testing; real catalog population deferred to P11-B.
+
+---
+
+## PHASE 11-B/C: Cosmetics UI & Render (Pending)
+
+> Bible Section 11.5.2–11.5.4, §14.7.3, §14.8.3 (Pet-bound cosmetics). **Depends on Phase 11-A.**
+
+| ID | Task | Status | Bible | Acceptance Criteria |
+|----|------|--------|-------|---------------------|
+| P11-B-1 | Implement purchase flow | ⬜ | 11.5.2, 14.7.3 | Pet-bound, gems only, no cross-pet transfer |
+| P11-B-2 | Shop cosmetics tab UI | ⬜ | 14.7.3 | "Owned by other pet" flow |
+| P11-B-3 | Inventory cosmetics UI | ⬜ | 14.8.3 | Equip/unequip flows |
+| P11-B-4 | Implement rarity badges | ⬜ | 11.5.4 | Common→Legendary borders/badges |
+| P11-C-1 | Render cosmetics | ⬜ | 11.5.3 | Overlay on sprite per layer order |
+| P11-BC-2 | Full cosmetics BCT tests | ⬜ | 11.5.2-4 | ~42 additional specs (purchase, render)
 
 ---
 

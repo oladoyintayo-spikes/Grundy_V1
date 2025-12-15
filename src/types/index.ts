@@ -3,10 +3,11 @@
 // ============================================
 
 // P9-C-SLOTS: Import slot types from bible.constants
-import type { SlotPurchaseResult, SlotStatus } from '../constants/bible.constants';
+// P11-A: Import CosmeticSlot for single-source compliance
+import type { SlotPurchaseResult, SlotStatus, CosmeticSlot } from '../constants/bible.constants';
 
 // Re-export for convenience
-export type { SlotPurchaseResult, SlotStatus };
+export type { SlotPurchaseResult, SlotStatus, CosmeticSlot };
 
 // --- App View (Navigation) ---
 export type AppView = 'home' | 'games' | 'settings';
@@ -45,12 +46,7 @@ export type Affinity = 'loved' | 'liked' | 'neutral' | 'disliked';
 export type Rarity = 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary';
 
 // --- Cosmetic Types (P11-A: Bible §11.5.2-§11.5.4) ---
-
-/**
- * Cosmetic slot types per Bible §11.5.3.
- * Each slot accepts specific item prefixes and allows 1 item per pet.
- */
-export type CosmeticSlot = 'hat' | 'accessory' | 'outfit' | 'aura' | 'skin';
+// CosmeticSlot is imported from bible.constants.ts (COSMETIC_SLOTS single-source)
 
 /**
  * Cosmetic definition - catalog item (static data).

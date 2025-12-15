@@ -2,9 +2,9 @@
 
 # Grundy Web Prototype — Development Status
 
-**Last Updated:** December 14, 2025 (Phase 10 Complete — All Tasks Done)
-**Current Phase:** Web Phase 10 — ✅ COMPLETE (Weight & Sickness Systems)
-**Next Phase:** Phase 10 CE/QA Review → Phase 10.5 (Lore Journal) / Phase 11-0 (Gem Sources) → Phase 11 (Cosmetics)
+**Last Updated:** December 15, 2025 (Phase 11-A Cosmetics Foundations Complete)
+**Current Phase:** Web Phase 11-A — ✅ COMPLETE (Cosmetics Foundations)
+**Next Phase:** Phase 11-B (Cosmetics UI/Purchase) / Phase 11-C (Cosmetics Render)
 
 ---
 
@@ -46,6 +46,8 @@
 | **Web Phase 8** | Shop + Inventory | ✅ CE/QA APPROVED | Audit: `947e1b9`; Sign-off: 2025-12-12; See [`docs/CEQA_PHASE8_SIGNOFF_NOTES.md`](docs/CEQA_PHASE8_SIGNOFF_NOTES.md) |
 | **Web Phase 9** | Pet Slots / Multi-Pet | ✅ CE/QA APPROVED | Audit: `83ce657`; Sign-off: 2025-12-12; See [`docs/CEQA_PHASE9_SIGNOFF_NOTES.md`](docs/CEQA_PHASE9_SIGNOFF_NOTES.md) |
 | **Web Phase 10** | Weight & Sickness Runtime | ✅ COMPLETE | P10-A through P10-H all done; 1742 tests, 999 BCT; Ready for CE/QA Review |
+| **Web Phase 11-0** | Gem Sources | ✅ COMPLETE | Level-up (+5💎), first-feed (+1💎), Day 7 streak (+10💎); 8 BCT-GEM specs; Commit: `3f319a4` |
+| **Web Phase 11-A** | Cosmetics Foundations | ✅ COMPLETE | Save v5→v6 migration; equipCosmetic/unequipCosmetic/ownership helpers; 7 BCT-COS specs; Commit: `0ab4531` |
 
 ### Post-Web 1.0
 
@@ -790,8 +792,10 @@ All Phase 10 tasks complete. Weight system, sickness mechanics, poop system, min
 - **Phase 9-C:** Weight/Sickness runtime (Bible §9.4.7) → ✅ Shipped as Phase 10
 - **Phase 10:** Weight & Sickness Systems → ✅ Bible v1.8
 - **Phase 10.5:** Lore Journal (fragment collection, Bible §6.4)
-- **Phase 11-0:** Gem Sources (prerequisite for cosmetics, Bible §11.4)
-- **Phase 11:** Cosmetics System (pet-bound, gems-only, Bible §11.5.2–4, §14.7.3, §14.8.3)
+- **Phase 11-0:** Gem Sources → ✅ Bible v1.10 (Level-up/first-feed/Day 7 streak)
+- **Phase 11-A:** Cosmetics Foundations → ✅ Bible v1.10 (Save migration, equip/unequip, ownership helpers)
+- **Phase 11-B:** Cosmetics UI + Purchase (shop tab, inventory, purchase flow)
+- **Phase 11-C:** Cosmetics Render (sprite overlays, layer order)
 - **Phase 12:** Season Pass, Achievements, Ads, LiveOps
 
 ---
