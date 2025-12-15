@@ -80,6 +80,20 @@ export interface CosmeticEquipResult {
   previousCosmeticId?: string | null;
 }
 
+/**
+ * P11-D: Result of buying a cosmetic.
+ * Bible §11.5.2: Pet-bound purchase with gems-only currency.
+ */
+export interface BuyCosmeticResult {
+  success: boolean;
+  /** Error code if failed */
+  error?: 'INSUFFICIENT_GEMS' | 'ALREADY_OWNED' | 'INVALID_COSMETIC' | 'INVALID_PET';
+  /** Gems spent (only on success) */
+  gemsSpent?: number;
+  /** Remaining gems after purchase (only on success) */
+  remainingGems?: number;
+}
+
 // --- Inventory Types (Bible §11.7, §14.8) ---
 // P11-B: Added 'cosmetics' tab for cosmetics section
 export type InventoryTab = 'food' | 'care' | 'cosmetics';
@@ -667,6 +681,14 @@ export interface GameStore {
    * Get equipped cosmetics for a pet.
    */
   getPetEquippedCosmetics: (petId: PetInstanceId) => Partial<Record<CosmeticSlot, string>>;
+
+  // P11-D: Cosmetic Purchase (Bible §11.5.2)
+  /**
+   * Purchase a cosmetic with gems for a specific pet.
+   * Bible §11.5.2: Pet-bound ownership, gems-only currency.
+   * Does NOT auto-equip after purchase.
+   */
+  buyCosmetic: (petId: PetInstanceId, cosmeticId: string) => BuyCosmeticResult;
 }
 
 // --- Shop Purchase Types (P8-SHOP-PURCHASE) ---

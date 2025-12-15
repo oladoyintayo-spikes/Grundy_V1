@@ -1482,17 +1482,21 @@ it('BCT-COS-UI-SHOP-002: Owned show controls, non-owned locked', () => {
 });
 ```
 
-### BCT-COS-UI-SHOP-003: Price shown is informational only; no buy CTA
-**Bible Reference:** §14.7.3 (No Purchase in P11-B)
+### BCT-COS-UI-SHOP-003: Price display with gem balance (SUPERSEDED)
+**Bible Reference:** §11.5.2 (Gems-Only Currency)
+**Status:** ⚠️ SUPERSEDED by P11-D — Purchase capability now implemented
 ```typescript
-// Scenario: Price display without purchase
+// HISTORICAL NOTE: P11-B originally had "no buy CTA".
+// P11-D adds purchase capability — see BCT-COS-BUY-* specs below.
+// This spec is retained for price display validation.
+
+// Scenario: Price display with gem balance
 // Given: Shop Cosmetics panel is visible
 // When: User views any cosmetic item
 // Then: priceGems is displayed (e.g., "💎 15")
-// And: No "Buy" button or purchase CTA exists
-// Note: Purchase flow deferred to future phase
+// And: Current gem balance is shown in header
 
-it('BCT-COS-UI-SHOP-003: Price informational, no buy CTA', () => {
+it('BCT-COS-UI-SHOP-003: Price display with gem balance', () => {
   expect(true).toBe(true); // Actual test in bct-p11b-cosmetics-ui.spec.tsx
 });
 ```
@@ -1549,8 +1553,8 @@ it('BCT-COS-UI-INV-003: Empty state when no cosmetics owned', () => {
 | BCT ID | Required Test IDs |
 |--------|-------------------|
 | BCT-COS-UI-SHOP-001 | `shop-cosmetics-panel`, `shop-cosmetic-card-${id}`, `shop-cosmetic-rarity-${id}` |
-| BCT-COS-UI-SHOP-002 | `shop-cosmetic-owned-${id}`, `shop-cosmetic-equipped-${id}`, `shop-cosmetic-equip-${id}`, `shop-cosmetic-unequip-${slot}`, `shop-cosmetic-locked-${id}` |
-| BCT-COS-UI-SHOP-003 | `shop-cosmetic-price-${id}` |
+| BCT-COS-UI-SHOP-002 | `shop-cosmetic-owned-${id}`, `shop-cosmetic-equipped-${id}`, `shop-cosmetic-equip-${id}`, `shop-cosmetic-unequip-${slot}` |
+| BCT-COS-UI-SHOP-003 | `shop-cosmetic-price-${id}` (P11-D adds `shop-cosmetic-buy-${id}`, `shop-cosmetic-buy-disabled-${id}`) |
 | BCT-COS-UI-INV-001 | `inventory-cosmetics-section`, `inventory-cosmetics-slot-${slot}`, `inventory-cosmetic-row-${id}` |
 | BCT-COS-UI-INV-002 | `inventory-cosmetic-equipped-${slot}`, `inventory-cosmetic-equip-${id}`, `inventory-cosmetic-unequip-${slot}` |
 | BCT-COS-UI-INV-003 | `inventory-cosmetics-empty` |
@@ -1664,6 +1668,105 @@ When cosmetic assets are not available (dev build), placeholder badges are shown
 ### P11-C Skin Slot Clarification
 
 **Skin slot renders placeholder until dedicated sprite variants exist.** Full sprite replacement for skin cosmetics is asset-blocked — no skin sprite variants currently exist in the repository. When skin assets are added, `PetRender` will render actual skin overlays/replacements.
+
+---
+
+## Phase 11 — P11-D: Cosmetics Purchase Plumbing
+
+**Scope:** Enable buying cosmetics with gems in Shop UI, granting pet-bound ownership.
+**Bible Reference:** §11.5.2 (Pet-Bound Ownership), §11.1 (Gems-Only Currency for Cosmetics)
+
+### P11-D Test Categories
+
+| Category | Test Count | Description | Status |
+|----------|------------|-------------|--------|
+| **BCT-COS-BUY** | **4** | Cosmetic purchase: buy button, disabled state, deduction, no auto-equip | ✅ Implemented |
+
+### BCT-COS-BUY-001: Buy button shown for non-owned cosmetics
+
+**Bible §11.5.2:** Pet-bound ownership — cosmetics must be purchased.
+
+```typescript
+// Scenario: Buy button for non-owned cosmetic with sufficient gems
+// Given: Active pet does not own a cosmetic
+// And: Player has >= priceGems for that cosmetic
+// When: Shop Cosmetics panel renders
+// Then: Buy button is enabled with test ID shop-cosmetic-buy-${cosmeticId}
+
+it('BCT-COS-BUY-001: Buy button shown for non-owned cosmetics', () => {
+  expect(true).toBe(true); // Actual test in bct-p11d-cosmetics-purchase.spec.tsx
+});
+```
+
+### BCT-COS-BUY-002: Disabled button when insufficient gems
+
+**Bible §11.5.2:** Gems-only currency — cannot purchase without sufficient gems.
+
+```typescript
+// Scenario: Disabled buy button when gems insufficient
+// Given: Active pet does not own a cosmetic
+// And: Player has < priceGems for that cosmetic
+// When: Shop Cosmetics panel renders
+// Then: Buy button is disabled with test ID shop-cosmetic-buy-disabled-${cosmeticId}
+// And: Shows "Need X more" text
+
+it('BCT-COS-BUY-002: Disabled button when insufficient gems', () => {
+  expect(true).toBe(true); // Actual test in bct-p11d-cosmetics-purchase.spec.tsx
+});
+```
+
+### BCT-COS-BUY-003: Purchase deducts gems and grants pet-bound ownership
+
+**Bible §11.5.2:** Pet-bound ownership. Gems deducted atomically with ownership grant.
+
+```typescript
+// Scenario: Successful cosmetic purchase
+// Given: Active pet does not own cos_hat_cap_blue
+// And: Player has 50 gems
+// And: cos_hat_cap_blue costs 15 gems
+// When: User clicks Buy button for cos_hat_cap_blue
+// Then: gems = 50 - 15 = 35
+// And: Active pet's ownedCosmeticIds includes cos_hat_cap_blue
+// And: Other pets do NOT own cos_hat_cap_blue
+
+it('BCT-COS-BUY-003: Purchase deducts gems and grants pet-bound ownership', () => {
+  expect(true).toBe(true); // Actual test in bct-p11d-cosmetics-purchase.spec.tsx
+});
+```
+
+### BCT-COS-BUY-004: No auto-equip after purchase
+
+**Design Rule:** Purchase grants ownership only; equipping is a separate action.
+
+```typescript
+// Scenario: No auto-equip after purchase
+// Given: Active pet purchases cos_hat_cap_blue
+// When: Purchase completes successfully
+// Then: pet.equippedCosmetics.hat is unchanged (undefined or previous value)
+// And: User must manually equip via Equip button
+
+it('BCT-COS-BUY-004: No auto-equip after purchase', () => {
+  expect(true).toBe(true); // Actual test in bct-p11d-cosmetics-purchase.spec.tsx
+});
+```
+
+### P11-D Test ID Mapping
+
+| BCT ID | Required Test IDs |
+|--------|-------------------|
+| BCT-COS-BUY-001 | `shop-cosmetic-buy-${id}` |
+| BCT-COS-BUY-002 | `shop-cosmetic-buy-disabled-${id}` |
+| BCT-COS-BUY-003 | `shop-cosmetic-buy-${id}`, gems balance update |
+| BCT-COS-BUY-004 | `shop-cosmetic-equip-${id}` (visible after purchase, not auto-triggered) |
+
+### P11-D Error Codes
+
+| Error | Condition |
+|-------|-----------|
+| `INSUFFICIENT_GEMS` | Player gems < priceGems |
+| `ALREADY_OWNED` | Pet already owns this cosmetic |
+| `INVALID_COSMETIC` | cosmeticId not in COSMETIC_CATALOG |
+| `INVALID_PET` | petId not found in petsById |
 
 ---
 
