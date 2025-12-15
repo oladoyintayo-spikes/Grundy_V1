@@ -1620,12 +1620,20 @@ it('BCT-COS-RENDER-003: Switching active pet updates cosmetic layers', () => {
 
 ### BCT-COS-RENDER-004: Multi-surface consistency — shared component
 
-**Design Rule:** All pet display surfaces should use the same shared rendering component.
+**Design Rule:** All pet sprite surfaces use the shared `PetRender` component.
+
+**Clarifications (P11-C1):**
+- **PetDisplay** (main home view): Uses `PetRender` with `variant='display'` and `showCosmeticPlaceholders=true`
+- **PetAvatar** (header, compact avatars): Uses `PetRender` with `variant='avatar'` and `showCosmeticPlaceholders=false`
+- **Compact mode behavior:** Suppresses dev placeholders only. When real cosmetic assets exist, compact avatars WILL render scaled cosmetic layers.
+- **Intent:** `compact != "hide cosmetics"`; `compact == "smaller + no dev placeholders"`
 
 ```typescript
-// Given: PetRender component is shared across surfaces
+// Given: PetRender component is shared across all pet sprite surfaces
+// And: PetAvatar and PetDisplay both use PetRender internally
 // When: Cosmetics are equipped
-// Then: All surfaces using PetRender show consistent cosmetic layers
+// Then: All surfaces render cosmetic layers consistently
+// And: Compact avatars suppress placeholders but will show real assets
 
 it('BCT-COS-RENDER-004: Shared PetRender component used for all surfaces', () => {
   expect(true).toBe(true); // Actual test in bct-p11c-cosmetics-render.spec.tsx
@@ -1639,15 +1647,23 @@ it('BCT-COS-RENDER-004: Shared PetRender component used for all surfaces', () =>
 | BCT-COS-RENDER-001 | `pet-render-root`, `pet-render-base`, `pet-render-layer-${slot}` |
 | BCT-COS-RENDER-002 | `pet-render-layer-${slot}` (z-index order), data-cosmetic-id attribute |
 | BCT-COS-RENDER-003 | `pet-render-layer-${slot}` (presence/absence on pet switch) |
-| BCT-COS-RENDER-004 | `pet-render-root` (shared component usage) |
+| BCT-COS-RENDER-004 | `pet-render-root` (shared component usage across PetDisplay + PetAvatar) |
 
-### P11-C Placeholder Test IDs
+### P11-C Placeholder Behavior
+
+**Dev placeholders permitted per Bible §13.7** ("Emoji/orb are placeholders only" — OK for dev/testing builds).
 
 When cosmetic assets are not available (dev build), placeholder badges are shown:
 
 | Test ID | Description |
 |---------|-------------|
 | `pet-render-layer-placeholder-${slot}` | Placeholder badge with emoji + [DEV] indicator |
+
+**Placeholder suppression:** Compact avatars (`variant='avatar'` + `showCosmeticPlaceholders=false`) suppress placeholder badges to avoid visual clutter. This does NOT suppress real cosmetic assets when they exist.
+
+### P11-C Skin Slot Clarification
+
+**Skin slot renders placeholder until dedicated sprite variants exist.** Full sprite replacement for skin cosmetics is asset-blocked — no skin sprite variants currently exist in the repository. When skin assets are added, `PetRender` will render actual skin overlays/replacements.
 
 ---
 

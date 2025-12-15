@@ -299,10 +299,14 @@ export interface PetAvatarProps {
   animated?: boolean;
   /** Display name for accessibility (P5-A11Y-LABELS) */
   petDisplayName?: string;
+  /** P11-C1: Equipped cosmetics (optional, for future real asset support) */
+  equippedCosmetics?: EquippedCosmeticsState;
+  /** P11-C1: Whether to show cosmetic placeholders (default: false for compact avatars) */
+  showCosmeticPlaceholders?: boolean;
 }
 
 // ============================================
-// SIZE CLASSES
+// SIZE CLASSES (kept for reference, now handled by PetRender)
 // ============================================
 
 const sizeClassMap = {
@@ -329,6 +333,10 @@ const imageSizeMap = {
  * Uses real art from assets/pets/<petId>/*.png via the petSprites config.
  * Falls back to munchlet's idle sprite if pet is not found.
  *
+ * P11-C1: Now uses shared PetRender component internally for multi-surface consistency.
+ * Compact avatars suppress placeholders by default but will render real cosmetic assets
+ * when they become available.
+ *
  * @example
  * ```tsx
  * <PetAvatar petId="munchlet" pose="happy" size="lg" />
@@ -343,36 +351,29 @@ export function PetAvatar({
   className = '',
   animated = false,
   petDisplayName,
+  equippedCosmetics,
+  showCosmeticPlaceholders = false, // Default false for compact avatars
 }: PetAvatarProps) {
-  // Use stage-aware resolution when stage is provided (P6-ART-PRODUCTION)
-  const src = stage
-    ? getStageAwarePetSprite(petId, stage, pose)
-    : getPetSprite(petId, pose);
-  const containerClass = sizeClassMap[size];
-  const imageClass = imageSizeMap[size];
-
-  // Generate accessible alt text (P5-A11Y-LABELS)
-  const displayName = petDisplayName || petId;
-  const poseDescription = POSE_LABELS[pose] || pose;
-  const altText = `${displayName}, ${poseDescription}`;
-
+  // P11-C1: Use shared PetRender for multi-surface consistency (BCT-COS-RENDER-004)
+  // Compact avatars suppress placeholders but will show real assets when available
   return (
     <div
       className={[
-        'rounded-full bg-black/20 flex items-center justify-center shadow-md overflow-hidden',
-        containerClass,
         animated && 'animate-pulse-slow',
-        className,
       ]
         .filter(Boolean)
         .join(' ')}
     >
-      <img
-        src={src}
-        alt={altText}
-        className={`${imageClass} object-contain`}
-        loading="lazy"
-        draggable={false}
+      <PetRender
+        petId={petId}
+        pose={pose}
+        stage={stage}
+        className={className}
+        petDisplayName={petDisplayName}
+        equippedCosmetics={equippedCosmetics}
+        variant="avatar"
+        avatarSize={size}
+        showCosmeticPlaceholders={showCosmeticPlaceholders}
       />
     </div>
   );

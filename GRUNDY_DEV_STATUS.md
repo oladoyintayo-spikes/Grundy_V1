@@ -2,9 +2,9 @@
 
 # Grundy Web Prototype — Development Status
 
-**Last Updated:** December 15, 2025 (Phase 11-A Cosmetics Foundations Complete)
-**Current Phase:** Web Phase 11-A — ✅ COMPLETE (Cosmetics Foundations)
-**Next Phase:** Phase 11-B (Cosmetics UI/Purchase) / Phase 11-C (Cosmetics Render)
+**Last Updated:** December 15, 2025 (Phase 11-C1 Render Closeout Complete)
+**Current Phase:** Web Phase 11-C1 — ✅ COMPLETE (Cosmetics Render Closeout)
+**Next Phase:** Phase 11 Purchase Flow (gem deduction, buy CTA)
 
 ---
 
@@ -48,6 +48,9 @@
 | **Web Phase 10** | Weight & Sickness Runtime | ✅ COMPLETE | P10-A through P10-H all done; 1742 tests, 999 BCT; Ready for CE/QA Review |
 | **Web Phase 11-0** | Gem Sources | ✅ COMPLETE | Level-up (+5💎), first-feed (+1💎), Day 7 streak (+10💎); 8 BCT-GEM specs; Commit: `3f319a4` |
 | **Web Phase 11-A** | Cosmetics Foundations | ✅ COMPLETE | Save v5→v6 migration; equipCosmetic/unequipCosmetic/ownership helpers; 7 BCT-COS specs; Commit: `0ab4531` |
+| **Web Phase 11-B** | Cosmetics UI Wiring | ✅ COMPLETE | Shop Cosmetics Tab (view only), Inventory Cosmetics Section; 6 BCT-COS-UI specs; Commit: `73f4e20` |
+| **Web Phase 11-C** | Cosmetics Render Layering | ✅ COMPLETE | PetRender component; layer order per Bible §11.5.3; placeholder badges (dev); 4 BCT-COS-RENDER specs; Commit: `0746627` |
+| **Web Phase 11-C1** | Render Closeout | ✅ COMPLETE | PetAvatar→PetRender migration; multi-surface consistency; BCT wording tightened; compact mode tests |
 
 ### Post-Web 1.0
 
@@ -794,8 +797,10 @@ All Phase 10 tasks complete. Weight system, sickness mechanics, poop system, min
 - **Phase 10.5:** Lore Journal (fragment collection, Bible §6.4)
 - **Phase 11-0:** Gem Sources → ✅ Bible v1.10 (Level-up/first-feed/Day 7 streak)
 - **Phase 11-A:** Cosmetics Foundations → ✅ Bible v1.10 (Save migration, equip/unequip, ownership helpers)
-- **Phase 11-B:** Cosmetics UI + Purchase (shop tab, inventory, purchase flow)
-- **Phase 11-C:** Cosmetics Render (sprite overlays, layer order)
+- **Phase 11-B:** Cosmetics UI Wiring → ✅ Bible v1.10 (Shop tab view-only, Inventory cosmetics section)
+- **Phase 11-C:** Cosmetics Render → ✅ Bible v1.10 (PetRender shared component, layer order, dev placeholders per §13.7)
+- **Phase 11-C1:** Render Closeout → ✅ (PetAvatar migration, multi-surface consistency, skin slot asset-blocked)
+- **Phase 11-D:** Cosmetics Purchase (gem deduction, buy CTA, shop flow) — PLANNED
 - **Phase 12:** Season Pass, Achievements, Ads, LiveOps
 
 ---
