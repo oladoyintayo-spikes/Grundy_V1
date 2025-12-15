@@ -5188,7 +5188,8 @@ interface GameState {
 | Poop System | §9.5 | ✅ **Implemented** | Phase 10 ✓ |
 | Care Mistakes (Classic) | §9.4 | ✅ **Implemented** | Phase 10 ✓ |
 | Health Alerts | §11.6.1 | ✅ **Implemented** | Phase 10 ✓ |
-| Gem Sources (free player) | §11.4 | ❌ Not implemented | **Phase 11-0** |
+| Gem Sources (free player) | §11.4 | ✅ **Implemented** | Phase 11-0 ✓ |
+| Login Streak Days 1–6 | §10.3 | ❌ Not implemented | Web Later |
 | Cosmetics (pet-bound) | §11.5.2, §11.5.3, §11.5.4 | ❌ Not implemented | **Phase 11** |
 | Lore Journal | §6.4 | ❌ Not implemented | Phase 10.5 |
 | Achievements | — | ❌ Not implemented | Phase 12 |
@@ -5198,11 +5199,11 @@ interface GameState {
 
 ### Critical Gaps (Phase 11 Blockers)
 
-| Gap | Bible Section | Why It Blocks Phase 11 |
-|-----|---------------|------------------------|
-| Gem sources | §11.4 | Free players need earnable gems before cosmetics |
+| Gap | Bible Section | Status |
+|-----|---------------|--------|
+| ~~Gem sources~~ | §11.4 | ✅ Resolved (Phase 11-0) |
 
-> **Note:** Phase 8/9/10 gaps have been resolved. Update this table as implementations land.
+> **Note:** Phase 8/9/10/11-0 gaps have been resolved. Phase 11 (Cosmetics) can now proceed.
 
 ### Phase Numbering Clarification (December 2025)
 
@@ -5212,7 +5213,7 @@ interface GameState {
 | Phase 9 | Pet Slots / Multi-Pet | ✅ CE/QA Approved | Merged to main |
 | Phase 10 | Weight & Sickness Systems | ✅ CE/QA Approved | Bible v1.8 |
 | **Phase 10.5** | Lore Journal | ⬜ Not started | Originally "Phase 10" in TASKS.md |
-| **Phase 11-0** | Gem Sources | ⬜ Not started | Prerequisite for cosmetics |
+| **Phase 11-0** | Gem Sources | ✅ Implemented | Prerequisite for cosmetics |
 | **Phase 11** | Cosmetics System | ⬜ Not started | Bible v1.9 |
 | Phase 12 | Achievements, Season Pass, Ads, LiveOps | ⬜ Deferred | — |
 
