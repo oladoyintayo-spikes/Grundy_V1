@@ -1770,6 +1770,67 @@ it('BCT-COS-BUY-004: No auto-equip after purchase', () => {
 
 ---
 
+## Phase 11 — P11-D1: Cosmetics Purchase UX Polish
+
+**Scope:** Improve cosmetics purchase UX without changing economics/rules.
+**Bible Reference:** §11.5.2 (Pet-Bound Ownership)
+
+### P11-D1 Test Categories
+
+| Category | Test Count | Description | Status |
+|----------|------------|-------------|--------|
+| **BCT-COS-BUY-UI** | **2** | Purchase UX: immediate UI update, double-tap protection | ✅ Implemented |
+
+### BCT-COS-BUY-UI-001: After purchase, Shop updates immediately
+
+**Design Rule:** Gems decrease and item becomes Owned with equip controls available (no auto-equip).
+
+```typescript
+// Scenario: Immediate UI update after successful purchase
+// Given: Active pet does not own a cosmetic
+// And: Player has sufficient gems
+// When: User clicks Buy button
+// Then: gems decrease by priceGems immediately
+// And: Item shows Owned state with equip controls
+// And: No auto-equip occurs
+
+it('BCT-COS-BUY-UI-001: After purchase, owned state appears immediately', () => {
+  expect(true).toBe(true); // Actual test in bct-p11d1-cosmetics-purchase-ui.spec.ts
+});
+```
+
+### BCT-COS-BUY-UI-002: Double-tap protection prevents multiple deductions
+
+**Design Rule:** Button disables during purchase and prevents multiple deductions.
+
+```typescript
+// Scenario: Double-tap protection
+// Given: User clicks Buy button
+// When: Buy action is in progress
+// Then: Button shows disabled "Purchasing..." state
+// And: Additional clicks are ignored
+// And: Only one gem deduction occurs
+
+it('BCT-COS-BUY-UI-002: Double-tap protection prevents multiple deductions', () => {
+  expect(true).toBe(true); // Actual test in bct-p11d1-cosmetics-purchase-ui.spec.ts
+});
+```
+
+### P11-D1 Test ID Mapping
+
+| BCT ID | Required Test IDs |
+|--------|-------------------|
+| BCT-COS-BUY-UI-001 | `shop-cosmetic-buy-${id}`, `shop-cosmetic-owned-${id}`, `shop-gems-balance` |
+| BCT-COS-BUY-UI-002 | `shop-cosmetic-buy-${id}` (disabled attribute during purchase) |
+
+### P11-D1 UX Notes
+
+- **Disabled state text:** Shows deterministic "Need {X} more" where X = priceGems - currentGems
+- **Error feedback:** INSUFFICIENT_GEMS shows disabled button; impossible errors (INVALID_*) logged to console only
+- **Purchase-in-progress:** Button shows "💎 Purchasing..." with cursor-wait
+
+---
+
 ### Key Test Specifications (Preview - P11-C/Purchase)
 
 **BCT-COSMETICS-OWNERSHIP-001** (Planned - Purchase Phase)
