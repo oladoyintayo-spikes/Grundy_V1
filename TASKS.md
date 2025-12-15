@@ -1,7 +1,7 @@
 # TASKS.md
 ## Grundy Development Task List
 
-**Last Updated:** December 14, 2025 (Bible v1.10 Update)
+**Last Updated:** December 15, 2025 (Phase 11 Closeout Audit Complete)
 **Design SoT:** `docs/GRUNDY_MASTER_BIBLE.md` v1.10
 **Pre-Flight Report:** December 9, 2024 ✅
 
@@ -18,6 +18,11 @@
 | Web Phase 4 | FTUE / Onboarding | ✅ COMPLETE |
 | Web Phase 5 | Polish / Web 1.0 | ✅ COMPLETE |
 | Web Phase 6 | Bible v1.4 Compliance | ✅ TIER 1 COMPLETE |
+| Web Phase 7 | Classic Mode | ✅ CE/QA APPROVED |
+| Web Phase 8 | Shop + Inventory | ✅ CE/QA APPROVED |
+| Web Phase 9 | Pet Slots / Multi-Pet | ✅ CE/QA APPROVED |
+| Web Phase 10 | Weight & Sickness | ✅ COMPLETE |
+| Web Phase 11 | Cosmetics System | ✅ COMPLETE |
 
 ---
 
@@ -1151,18 +1156,79 @@ P8-TEST
 
 ---
 
-## PHASE 11-B/C: Cosmetics UI & Render (Pending)
+## PHASE 11-B: Cosmetics UI Wiring ✅
 
-> Bible Section 11.5.2–11.5.4, §14.7.3, §14.8.3 (Pet-bound cosmetics). **Depends on Phase 11-A.**
+> Bible Section 11.5.2–11.5.4, §14.7.3, §14.8.3 (Pet-bound cosmetics). **Completed.**
 
 | ID | Task | Status | Bible | Acceptance Criteria |
 |----|------|--------|-------|---------------------|
-| P11-B-1 | Implement purchase flow | ⬜ | 11.5.2, 14.7.3 | Pet-bound, gems only, no cross-pet transfer |
-| P11-B-2 | Shop cosmetics tab UI | ⬜ | 14.7.3 | "Owned by other pet" flow |
-| P11-B-3 | Inventory cosmetics UI | ⬜ | 14.8.3 | Equip/unequip flows |
-| P11-B-4 | Implement rarity badges | ⬜ | 11.5.4 | Common→Legendary borders/badges |
-| P11-C-1 | Render cosmetics | ⬜ | 11.5.3 | Overlay on sprite per layer order |
-| P11-BC-2 | Full cosmetics BCT tests | ⬜ | 11.5.2-4 | ~42 additional specs (purchase, render)
+| P11-B-1 | Shop cosmetics tab UI | ✅ | 14.7.3 | View cosmetics in shop |
+| P11-B-2 | Inventory cosmetics UI | ✅ | 14.8.3 | Equip/unequip flows |
+| P11-B-3 | BCT-COS-UI tests | ✅ | 11.5.2-4 | 6 BCT specs |
+
+> **P11-B Status:** ✅ COMPLETE — Commit: `73f4e20`
+
+---
+
+## PHASE 11-C: Cosmetics Render Layering ✅
+
+> Bible Section 11.5.3, §13.7 (Layer rendering). **Completed.**
+
+| ID | Task | Status | Bible | Acceptance Criteria |
+|----|------|--------|-------|---------------------|
+| P11-C-1 | PetRender shared component | ✅ | 11.5.3 | Single render component for all surfaces |
+| P11-C-2 | Layer z-order | ✅ | 11.5.3 | base < hat < accessory < outfit < aura |
+| P11-C-3 | Placeholder badges | ✅ | 13.7 | Dev mode slot indicators |
+| P11-C-4 | BCT-COS-RENDER tests | ✅ | 11.5.3 | 4 BCT specs |
+
+> **P11-C Status:** ✅ COMPLETE — Commit: `0746627`
+
+---
+
+## PHASE 11-C1: Render Closeout ✅
+
+> Multi-surface consistency. **Completed.**
+
+| ID | Task | Status | Bible | Acceptance Criteria |
+|----|------|--------|-------|---------------------|
+| P11-C1-1 | PetAvatar→PetRender migration | ✅ | 11.5.3 | Delegates to shared component |
+| P11-C1-2 | Multi-surface consistency | ✅ | 14.5 | HomeView, Inventory, Shop |
+| P11-C1-3 | Compact mode placeholder suppression | ✅ | 13.7 | No placeholders in small avatars |
+
+> **P11-C1 Status:** ✅ COMPLETE — Commit: `9dd71ac`
+
+---
+
+## PHASE 11-D: Cosmetics Purchase Plumbing ✅
+
+> Bible Section 11.5.2 (Gem deduction, ownership grant). **Completed.**
+
+| ID | Task | Status | Bible | Acceptance Criteria |
+|----|------|--------|-------|---------------------|
+| P11-D-1 | buyCosmetic store action | ✅ | 11.5.2 | Atomic gem deduction + ownership |
+| P11-D-2 | ALREADY_OWNED error handling | ✅ | 11.5.2 | Prevents duplicate purchase |
+| P11-D-3 | INSUFFICIENT_GEMS error | ✅ | 11.5.2 | Blocks when gems < price |
+| P11-D-4 | No auto-equip | ✅ | 11.5.2 | Purchase != equip |
+| P11-D-5 | BCT-COS-BUY tests | ✅ | 11.5.2 | 4 BCT specs |
+
+> **P11-D Status:** ✅ COMPLETE — Commit: `9a61c92`
+
+---
+
+## PHASE 11-D1: Purchase UX Polish ✅
+
+> Bible Section 11.5.2 (UX safety). **Completed.**
+
+| ID | Task | Status | Bible | Acceptance Criteria |
+|----|------|--------|-------|---------------------|
+| P11-D1-1 | purchasingIds double-tap protection | ✅ | 11.5.2 | Prevents duplicate deductions |
+| P11-D1-2 | shop-gems-balance test ID | ✅ | 14.7 | Visible balance in shop |
+| P11-D1-3 | Immediate ownership feedback | ✅ | 11.5.2 | Sync state update |
+| P11-D1-4 | BCT-COS-BUY-UI tests | ✅ | 11.5.2 | 2 BCT specs |
+
+> **P11-D1 Status:** ✅ COMPLETE — Commit: `3032d9a`
+>
+> **Phase 11 Total BCT:** 31 specs (P11-0: 8, P11-A: 7, P11-B: 6, P11-C: 4, P11-D: 4, P11-D1: 2)
 
 ---
 
