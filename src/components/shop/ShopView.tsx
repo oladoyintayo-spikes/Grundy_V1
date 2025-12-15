@@ -468,10 +468,13 @@ const CareTabContent = ({
 };
 
 /**
- * P11-B: Cosmetics Tab Content
+ * P11-B/D: Cosmetics Tab Content with Purchase Support
  * BCT-COS-UI-SHOP-001: Shows catalog items with slot/rarity/priceGems
- * BCT-COS-UI-SHOP-002: Owned cosmetics show equip/unequip; non-owned are locked
- * BCT-COS-UI-SHOP-003: Price shown is informational only; no buy CTA
+ * BCT-COS-UI-SHOP-002: Owned cosmetics show equip/unequip
+ * BCT-COS-BUY-001: Buy button shown for non-owned cosmetics
+ * BCT-COS-BUY-002: Disabled button when insufficient gems
+ * BCT-COS-BUY-003: Purchase deducts gems, grants pet-bound ownership
+ * BCT-COS-BUY-004: No auto-equip after purchase
  */
 const CosmeticsTabContent = ({
   activePetId,
@@ -482,6 +485,8 @@ const CosmeticsTabContent = ({
   const getPetEquippedCosmetics = useGameStore((s) => s.getPetEquippedCosmetics);
   const equipCosmetic = useGameStore((s) => s.equipCosmetic);
   const unequipCosmetic = useGameStore((s) => s.unequipCosmetic);
+  const buyCosmetic = useGameStore((s) => s.buyCosmetic);
+  const gems = useGameStore((s) => s.currencies.gems);
   const storeActivePetId = useGameStore((s) => s.activePetId);
 
   // Use passed activePetId or fallback to store
@@ -525,6 +530,15 @@ const CosmeticsTabContent = ({
     }
   };
 
+  // P11-D: Handle cosmetic purchase with gems
+  const handleBuy = (cosmeticId: string) => {
+    if (!petId) return;
+    const result = buyCosmetic(petId, cosmeticId);
+    if (!result.success) {
+      console.warn(`[P11-D] Purchase failed: ${result.error}`);
+    }
+  };
+
   // Group cosmetics by slot for display (using COSMETIC_SLOTS order)
   const cosmeticsBySlot = useMemo(() => {
     const grouped: Record<CosmeticSlot, CosmeticDefinition[]> = {
@@ -544,7 +558,9 @@ const CosmeticsTabContent = ({
     <div data-testid="shop-cosmetics-panel">
       <h3 className="text-sm font-bold text-slate-300 mb-3 flex items-center gap-1">
         <span>✨</span> Cosmetics
-        <span className="text-xs text-slate-500 ml-2">(View Only — No Purchase)</span>
+        <span className="text-xs text-purple-400 ml-auto flex items-center gap-1">
+          💎 {gems}
+        </span>
       </h3>
 
       {/* Render cosmetics grouped by slot in COSMETIC_SLOTS order */}
@@ -643,12 +659,28 @@ const CosmeticsTabContent = ({
                           )}
                         </div>
                       ) : (
-                        <div
-                          className="w-full py-1.5 px-2 rounded-lg text-xs font-medium text-center bg-slate-700 text-slate-400"
-                          data-testid={`shop-cosmetic-locked-${cosmetic.id}`}
-                        >
-                          🔒 Not Owned
-                        </div>
+                        /* P11-D: Buy button for non-owned cosmetics */
+                        gems >= cosmetic.priceGems ? (
+                          <button
+                            onClick={() => handleBuy(cosmetic.id)}
+                            className={`
+                              w-full py-1.5 px-2 rounded-lg text-xs font-medium transition-all
+                              bg-purple-600 text-white hover:bg-purple-500 active:scale-95
+                              ${FOCUS_RING_CLASS}
+                            `}
+                            data-testid={`shop-cosmetic-buy-${cosmetic.id}`}
+                          >
+                            💎 Buy for {cosmetic.priceGems}
+                          </button>
+                        ) : (
+                          <button
+                            disabled
+                            className="w-full py-1.5 px-2 rounded-lg text-xs font-medium bg-slate-700 text-slate-500 cursor-not-allowed"
+                            data-testid={`shop-cosmetic-buy-disabled-${cosmetic.id}`}
+                          >
+                            💎 {cosmetic.priceGems} (Need {cosmetic.priceGems - gems} more)
+                          </button>
+                        )
                       )}
                     </div>
                   );

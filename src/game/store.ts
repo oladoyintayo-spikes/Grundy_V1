@@ -43,6 +43,8 @@ import {
   LoginStreakResult,
   // P11-A: Cosmetic types
   CosmeticEquipResult,
+  // P11-D: Cosmetic purchase types
+  BuyCosmeticResult,
 } from '../types';
 // P11-0: Deterministic date key utility for gem sources
 import { getLocalDateKey, isYesterday, isSameDay } from '../utils/dateKey';
@@ -2492,6 +2494,66 @@ export const useGameStore = create<GameStore>()(
         const pet = state.petsById[petId];
         if (!pet) return {};
         return { ...pet.equippedCosmetics };
+      },
+
+      /**
+       * Purchase a cosmetic with gems for a specific pet.
+       * Bible §11.5.2: Pet-bound ownership, gems-only currency.
+       * Does NOT auto-equip after purchase.
+       */
+      buyCosmetic: (petId: PetInstanceId, cosmeticId: string): BuyCosmeticResult => {
+        const state = get();
+
+        // Validate pet exists
+        const pet = state.petsById[petId];
+        if (!pet) {
+          console.warn(`[P11-D] buyCosmetic: Pet not found: ${petId}`);
+          return { success: false, error: 'INVALID_PET' };
+        }
+
+        // Validate cosmetic exists in catalog
+        const cosmeticDef = getCosmeticById(cosmeticId);
+        if (!cosmeticDef) {
+          console.warn(`[P11-D] buyCosmetic: Cosmetic not found in catalog: ${cosmeticId}`);
+          return { success: false, error: 'INVALID_COSMETIC' };
+        }
+
+        // Check if pet already owns this cosmetic (Bible §11.5.2: pet-bound ownership)
+        if (pet.ownedCosmeticIds.includes(cosmeticId)) {
+          console.warn(`[P11-D] buyCosmetic: Pet ${petId} already owns cosmetic ${cosmeticId}`);
+          return { success: false, error: 'ALREADY_OWNED' };
+        }
+
+        // Check sufficient gems (Bible §11.5.2: gems-only currency)
+        const priceGems = cosmeticDef.priceGems;
+        if (state.currencies.gems < priceGems) {
+          console.warn(`[P11-D] buyCosmetic: Insufficient gems (have ${state.currencies.gems}, need ${priceGems})`);
+          return { success: false, error: 'INSUFFICIENT_GEMS' };
+        }
+
+        // Execute purchase: deduct gems and add to pet's owned cosmetics
+        set((s) => ({
+          currencies: {
+            ...s.currencies,
+            gems: s.currencies.gems - priceGems,
+          },
+          petsById: {
+            ...s.petsById,
+            [petId]: {
+              ...s.petsById[petId],
+              ownedCosmeticIds: [...s.petsById[petId].ownedCosmeticIds, cosmeticId],
+            },
+          },
+        }));
+
+        const remainingGems = state.currencies.gems - priceGems;
+        console.log(`[P11-D] Purchased cosmetic ${cosmeticId} for pet ${petId} (spent ${priceGems} gems, remaining: ${remainingGems})`);
+
+        return {
+          success: true,
+          gemsSpent: priceGems,
+          remainingGems,
+        };
       },
 
       // ========================================
