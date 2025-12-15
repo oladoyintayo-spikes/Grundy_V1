@@ -1325,8 +1325,9 @@ it('BCT-GEM-NOMINIGAME-001: Mini-games award 0 gems', () => {
 | **BCT-COS-NOSTAT** | **1** | Equip/unequip doesn't affect stats | ✅ Implemented |
 | **BCT-COS-UI-SHOP** | **3** | Shop cosmetics panel: catalog, controls, price | ✅ Implemented (P11-B) |
 | **BCT-COS-UI-INV** | **3** | Inventory cosmetics: slot grouping, equip, empty | ✅ Implemented (P11-B) |
+| **BCT-COS-RENDER** | **4** | Cosmetic layer rendering: visibility, order, pet switching, multi-surface | ✅ Implemented (P11-C) |
 
-### Planned Test Categories (P11-C, Purchase)
+### Planned Test Categories (Purchase)
 
 | Category | Count | Coverage | Status |
 |----------|-------|----------|--------|
@@ -1553,6 +1554,100 @@ it('BCT-COS-UI-INV-003: Empty state when no cosmetics owned', () => {
 | BCT-COS-UI-INV-001 | `inventory-cosmetics-section`, `inventory-cosmetics-slot-${slot}`, `inventory-cosmetic-row-${id}` |
 | BCT-COS-UI-INV-002 | `inventory-cosmetic-equipped-${slot}`, `inventory-cosmetic-equip-${id}`, `inventory-cosmetic-unequip-${slot}` |
 | BCT-COS-UI-INV-003 | `inventory-cosmetics-empty` |
+
+---
+
+## Phase 11 — P11-C: Cosmetics Render Layering
+
+**Scope:** Render equipped cosmetics as visible layers on pet display surfaces.
+**Bible Reference:** §11.5.3 (Cosmetic Slots & Equip Rules — Render Layer Order)
+
+### P11-C Test Categories
+
+| Category | Test Count | Description | Status |
+|----------|------------|-------------|--------|
+| **BCT-COS-RENDER** | **4** | Cosmetic layer rendering: visibility, order, pet switching, multi-surface | ✅ Implemented |
+
+### BCT-COS-RENDER-001: Equipped cosmetics render as visible layers
+
+**Bible §11.5.3:** Equipped cosmetics appear as visible layers on the pet.
+
+```typescript
+// Given: Active pet has equipped cosmetics
+// When: Pet is displayed (HomeView PetDisplay)
+// Then: Cosmetic layers render with test IDs pet-render-layer-${slot}
+
+it('BCT-COS-RENDER-001: Equipped cosmetics render as visible layers', () => {
+  expect(true).toBe(true); // Actual test in bct-p11c-cosmetics-render.spec.tsx
+});
+```
+
+### BCT-COS-RENDER-002: Layering respects canonical order
+
+**Bible §11.5.3 Render Layer Order (back to front):**
+```
+1. Aura (background effect behind pet)
+2. Base sprite (pet body + current expression/state)
+3. Skin (body replacement/overlay)
+4. Outfit (body covering)
+5. Accessory (neck/body accent)
+6. Hat (topmost layer)
+```
+
+```typescript
+// Given: Pet has multiple cosmetics equipped (e.g., hat + accessory + aura)
+// When: Pet is rendered
+// Then: Layers have correct z-index order per Bible §11.5.3
+
+it('BCT-COS-RENDER-002: Layering respects canonical order', () => {
+  expect(true).toBe(true); // Actual test in bct-p11c-cosmetics-render.spec.tsx
+});
+```
+
+### BCT-COS-RENDER-003: Switching active pet updates rendered cosmetic layers
+
+**Bible §11.5.2:** Per-pet ownership. Each pet has its own equipped cosmetics.
+
+```typescript
+// Given: Pet A has hat equipped, Pet B has no cosmetics
+// When: User switches from Pet A to Pet B
+// Then: Hat layer disappears (Pet B has no equipped hat)
+
+it('BCT-COS-RENDER-003: Switching active pet updates cosmetic layers', () => {
+  expect(true).toBe(true); // Actual test in bct-p11c-cosmetics-render.spec.tsx
+});
+```
+
+### BCT-COS-RENDER-004: Multi-surface consistency — shared component
+
+**Design Rule:** All pet display surfaces should use the same shared rendering component.
+
+```typescript
+// Given: PetRender component is shared across surfaces
+// When: Cosmetics are equipped
+// Then: All surfaces using PetRender show consistent cosmetic layers
+
+it('BCT-COS-RENDER-004: Shared PetRender component used for all surfaces', () => {
+  expect(true).toBe(true); // Actual test in bct-p11c-cosmetics-render.spec.tsx
+});
+```
+
+### P11-C Test ID Mapping
+
+| BCT ID | Required Test IDs |
+|--------|-------------------|
+| BCT-COS-RENDER-001 | `pet-render-root`, `pet-render-base`, `pet-render-layer-${slot}` |
+| BCT-COS-RENDER-002 | `pet-render-layer-${slot}` (z-index order), data-cosmetic-id attribute |
+| BCT-COS-RENDER-003 | `pet-render-layer-${slot}` (presence/absence on pet switch) |
+| BCT-COS-RENDER-004 | `pet-render-root` (shared component usage) |
+
+### P11-C Placeholder Test IDs
+
+When cosmetic assets are not available (dev build), placeholder badges are shown:
+
+| Test ID | Description |
+|---------|-------------|
+| `pet-render-layer-placeholder-${slot}` | Placeholder badge with emoji + [DEV] indicator |
 
 ---
 
