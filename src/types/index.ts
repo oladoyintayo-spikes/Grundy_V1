@@ -351,6 +351,30 @@ export interface GameSettings {
   autoSave: boolean;
 }
 
+// --- Login Streak State (Phase 11-0: Bible §10.3, §11.4) ---
+export interface LoginStreakState {
+  /** Last login date key (YYYY-MM-DD local time), or null if never logged in */
+  lastLoginDateKey: string | null;
+  /** Current streak day (1-7). Resets to 1 after Day 7 or missed day. */
+  loginStreakDay: number;
+}
+
+// --- Login Streak Result (Phase 11-0) ---
+export interface LoginStreakResult {
+  /** Whether this was a new-day login (streak processed) */
+  newDayLogin: boolean;
+  /** Previous streak day before processing */
+  previousStreakDay: number;
+  /** New streak day after processing */
+  newStreakDay: number;
+  /** Gems awarded (10 on Day 7, 0 otherwise) */
+  gemsAwarded: number;
+  /** Whether streak was reset due to missed day */
+  streakReset: boolean;
+  /** Whether Day 7 reward was claimed */
+  day7Claimed: boolean;
+}
+
 // --- Game Config ---
 export interface GameConfig {
   maxLevel: number;
@@ -419,6 +443,12 @@ export interface GameStore {
   lastSeenTimestamp: number;
   /** True if all pets are in runaway state. Bible §9.4.4 */
   allPetsAway: boolean;
+
+  // P11-0: Gem source state (Bible §10.3, §11.4)
+  /** Login streak state for Day 7 gem bonus. Bible §10.3 */
+  loginStreak: LoginStreakState;
+  /** Last date key when first-feed-daily gem was awarded. Bible §11.4 */
+  lastFirstFeedDateKey: string | null;
 
   // Actions
   feed: (foodId: string) => FeedResult | null;
@@ -501,6 +531,15 @@ export interface GameStore {
   callBackRunawayPet: (petId: string, now?: Date) => boolean;
   /** Check if pet can be interacted with (not locked out) */
   canInteractWithPet: (petId: string) => boolean;
+
+  // P11-0: Gem source actions (Bible §10.3, §11.4)
+  /**
+   * Process login streak on app initialization.
+   * Call once per app session during hydration.
+   * Awards +10💎 on Day 7, resets streak immediately after.
+   * Bible §10.3, §11.4
+   */
+  processLoginStreak: () => LoginStreakResult;
 
   // Shop UI actions (P8-SHOP-CATALOG, Shop-A: UI only)
   openShop: () => void;

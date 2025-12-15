@@ -38,7 +38,12 @@ import {
   AlertBadge,
   // P10-E: Recovery action types
   RecoveryResult,
+  // P11-0: Gem source types
+  LoginStreakState,
+  LoginStreakResult,
 } from '../types';
+// P11-0: Deterministic date key utility for gem sources
+import { getLocalDateKey, isYesterday, isSameDay } from '../utils/dateKey';
 import {
   DEFAULT_ENVIRONMENT,
   getTimeOfDay,
@@ -527,6 +532,12 @@ function createInitialState() {
     lastSeenTimestamp: Date.now(),
     // P9-B: All pets away state
     allPetsAway: false,
+    // P11-0: Gem source state (Bible §10.3, §11.4)
+    loginStreak: {
+      lastLoginDateKey: null,
+      loginStreakDay: 1,
+    } as LoginStreakState,
+    lastFirstFeedDateKey: null as string | null,
   };
 }
 
@@ -730,12 +741,13 @@ export const useGameStore = create<GameStore>()(
           // Level up bonus
           if (leveledUp) {
             newCurrencies.coins += 20; // Level up coin bonus
-            if (newLevel % 5 === 0) {
-              // Apply Luxe's Golden Touch ability: +100% gem drops
-              const baseGems = 5;
-              const finalGems = applyGemMultiplier(state.pet.id, baseGems);
-              newCurrencies.gems += finalGems;
-            }
+            // P11-0: Award +5💎 per level gained (Bible §11.4)
+            // Luxe's Golden Touch ability: +100% gem drops
+            const levelsGained = newLevel - state.pet.level;
+            const baseGems = 5 * levelsGained;
+            const finalGems = applyGemMultiplier(state.pet.id, baseGems);
+            newCurrencies.gems += finalGems;
+            console.log(`[P11-0] Level up! +${finalGems}💎 (${levelsGained} level${levelsGained > 1 ? 's' : ''} × 5)`);
           }
 
           // Update stats - Bible §4.3: Each feeding restarts the cooldown timer
@@ -748,6 +760,17 @@ export const useGameStore = create<GameStore>()(
             lastFeedCooldownStart: now, // Reset cooldown on each feed
           };
 
+          // P11-0: First feed daily gem source (Bible §11.4)
+          // Award +1💎 on the first successful feed per local calendar day
+          const todayKey = getLocalDateKey();
+          let newLastFirstFeedDateKey = state.lastFirstFeedDateKey;
+          if (!isSameDay(state.lastFirstFeedDateKey, todayKey)) {
+            // First feed of the day - award +1💎
+            newCurrencies.gems += 1;
+            newLastFirstFeedDateKey = todayKey;
+            console.log(`[P11-0] First feed daily! +1💎 (date: ${todayKey})`);
+          }
+
           return {
             pet: newPet,
             currencies: newCurrencies,
@@ -755,6 +778,8 @@ export const useGameStore = create<GameStore>()(
             stats: newStats,
             // P10-B1.5: Include updated petsById with poop state
             petsById: updatedPetsById,
+            // P11-0: Update last first feed date
+            lastFirstFeedDateKey: newLastFirstFeedDateKey,
           };
         });
 
@@ -2619,6 +2644,84 @@ export const useGameStore = create<GameStore>()(
       },
 
       // ========================================
+      // P11-0: GEM SOURCE ACTIONS (Bible §10.3, §11.4)
+      // ========================================
+
+      /**
+       * Process login streak on app initialization.
+       * Call once per app session during hydration.
+       * Bible §10.3, §11.4: Awards +10💎 on Day 7, resets streak immediately after.
+       */
+      processLoginStreak: (): LoginStreakResult => {
+        const state = get();
+        const todayKey = getLocalDateKey();
+        const { lastLoginDateKey, loginStreakDay } = state.loginStreak;
+
+        // Same-day re-open: no processing needed
+        if (isSameDay(lastLoginDateKey, todayKey)) {
+          console.log(`[P11-0] Same-day login, no streak processing (day ${loginStreakDay})`);
+          return {
+            newDayLogin: false,
+            previousStreakDay: loginStreakDay,
+            newStreakDay: loginStreakDay,
+            gemsAwarded: 0,
+            streakReset: false,
+            day7Claimed: false,
+          };
+        }
+
+        // New day login - process streak
+        const previousStreakDay = loginStreakDay;
+        let newStreakDay: number;
+        let streakReset = false;
+        let gemsAwarded = 0;
+        let day7Claimed = false;
+
+        // Check if yesterday (consecutive) or missed day(s)
+        if (isYesterday(lastLoginDateKey, todayKey)) {
+          // Consecutive day - increment streak
+          newStreakDay = loginStreakDay + 1;
+          console.log(`[P11-0] Consecutive day! Streak: ${loginStreakDay} → ${newStreakDay}`);
+        } else {
+          // Missed day(s) or first login - reset to Day 1
+          newStreakDay = 1;
+          streakReset = lastLoginDateKey !== null;
+          console.log(`[P11-0] Streak reset to Day 1 ${lastLoginDateKey ? '(missed day)' : '(first login)'}`);
+        }
+
+        // Check for Day 7 reward
+        if (newStreakDay >= 7) {
+          // Award +10💎 for Day 7
+          gemsAwarded = 10;
+          day7Claimed = true;
+          // Reset to Day 1 immediately after claiming
+          newStreakDay = 1;
+          console.log(`[P11-0] Day 7 reached! +10💎, streak reset to Day 1`);
+        }
+
+        // Update state
+        set((s) => ({
+          currencies: {
+            ...s.currencies,
+            gems: s.currencies.gems + gemsAwarded,
+          },
+          loginStreak: {
+            lastLoginDateKey: todayKey,
+            loginStreakDay: newStreakDay,
+          },
+        }));
+
+        return {
+          newDayLogin: true,
+          previousStreakDay,
+          newStreakDay,
+          gemsAwarded,
+          streakReset,
+          day7Claimed,
+        };
+      },
+
+      // ========================================
       // RESET
       // ========================================
       resetGame: () => {
@@ -2627,7 +2730,7 @@ export const useGameStore = create<GameStore>()(
     }),
     {
       name: 'grundy-save',
-      version: 4, // P10-B1.5: Bumped for poop state fields
+      version: 5, // P11-0: Bumped for gem source state fields
       migrate: (persistedState: unknown, version: number) => {
         let state = persistedState as Record<string, unknown>;
 
@@ -2733,6 +2836,27 @@ export const useGameStore = create<GameStore>()(
               if (pet.feedingsSinceLastPoop === undefined) pet.feedingsSinceLastPoop = 0;
             }
             console.log(`[Migration] Injected poop state defaults into ${Object.keys(petsById).length} pets`);
+          }
+        }
+
+        // P11-0: Migration from v4 to v5 - inject gem source state fields
+        // Bible v1.10 §10.3, §11.4: Login streak and daily feed gem tracking
+        if (version < 5) {
+          console.log('[Migration] Migrating save from v4 to v5 (gem source state fields)');
+
+          // Inject login streak state with safe defaults
+          if (state.loginStreak === undefined) {
+            state.loginStreak = {
+              lastLoginDateKey: null,
+              loginStreakDay: 1,
+            };
+            console.log('[Migration] Injected loginStreak default state');
+          }
+
+          // Inject lastFirstFeedDateKey
+          if (state.lastFirstFeedDateKey === undefined) {
+            state.lastFirstFeedDateKey = null;
+            console.log('[Migration] Injected lastFirstFeedDateKey = null');
           }
         }
 
