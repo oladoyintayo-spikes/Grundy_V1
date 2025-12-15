@@ -899,7 +899,7 @@ function onDailyLogin() {
 | Phase | Scope | Prereq | Tests | Deliverables |
 |-------|-------|--------|-------|--------------|
 | **P11-0** | Gem Sources | None | 10 | Level-up, first-feed, login streak gems |
-| **P11-A** | Cosmetics State | P11-0 | 8 | State shape, save migration v5 |
+| **P11-A** | Cosmetics State | P11-0 | 8 | State shape, save migration v6 |
 | **P11-B** | Cosmetics Data | P11-A | 4 | All items from §11.5 Category 2 |
 | **P11-C** | Purchase Flow | P11-B | 12 | Pet-bound purchase, duplicate block, "Buy for [Pet]" when owned by other |
 | **P11-D** | Equip System | P11-C | 10 | Slot rules, ownership guard (block if not owned by active pet) |
