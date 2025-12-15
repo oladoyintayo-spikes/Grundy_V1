@@ -41,6 +41,8 @@ import {
   // P11-0: Gem source types
   LoginStreakState,
   LoginStreakResult,
+  // P11-A: Cosmetic types
+  CosmeticEquipResult,
 } from '../types';
 // P11-0: Deterministic date key utility for gem sources
 import { getLocalDateKey, isYesterday, isSameDay } from '../utils/dateKey';
@@ -116,6 +118,10 @@ import {
   RECOVERY_EFFECTS,
   // P10-H: Sickness config (for offline sick decay multiplier)
   SICKNESS_CONFIG,
+  // P11-A: Cosmetics system
+  getCosmeticSlot,
+  getCosmeticById,
+  type CosmeticSlot,
 } from '../constants/bible.constants';
 // P10-C: Deterministic RNG for sickness chance rolls
 import { randomFloat } from './rng';
@@ -227,6 +233,9 @@ function createOwnedPet(speciesId: string, suffix: string = 'starter'): OwnedPet
     isPoopDirty: false,
     poopDirtyStartTimestamp: null,
     feedingsSinceLastPoop: 0,
+    // P11-A: Cosmetic state (Bible §11.5.2-§11.5.4)
+    ownedCosmeticIds: [],
+    equippedCosmetics: {},
   };
 }
 
@@ -2353,6 +2362,139 @@ export const useGameStore = create<GameStore>()(
       },
 
       // ========================================
+      // P11-A: COSMETICS SYSTEM (Bible §11.5.2-§11.5.4)
+      // Pet-bound ownership + equip/unequip logic
+      // ========================================
+
+      /**
+       * Equip a cosmetic on a pet.
+       * Bible §11.5.3: Requires ownership, replaces existing in same slot.
+       */
+      equipCosmetic: (petId: PetInstanceId, cosmeticId: string): CosmeticEquipResult => {
+        const state = get();
+        const pet = state.petsById[petId];
+
+        // Validate pet exists
+        if (!pet) {
+          console.warn(`[P11-A] equipCosmetic: Pet not found: ${petId}`);
+          return { success: false, error: 'INVALID_PET' };
+        }
+
+        // Validate cosmetic exists in catalog
+        const cosmeticDef = getCosmeticById(cosmeticId);
+        if (!cosmeticDef) {
+          console.warn(`[P11-A] equipCosmetic: Cosmetic not found in catalog: ${cosmeticId}`);
+          return { success: false, error: 'NOT_FOUND' };
+        }
+
+        // Validate pet owns this cosmetic (Bible §11.5.2: pet-bound ownership)
+        if (!pet.ownedCosmeticIds.includes(cosmeticId)) {
+          console.warn(`[P11-A] equipCosmetic: Pet ${petId} does not own cosmetic ${cosmeticId}`);
+          return { success: false, error: 'NOT_OWNED' };
+        }
+
+        // Determine slot from cosmetic ID prefix
+        const slot = getCosmeticSlot(cosmeticId);
+        if (!slot) {
+          console.warn(`[P11-A] equipCosmetic: Could not determine slot for ${cosmeticId}`);
+          return { success: false, error: 'SLOT_MISMATCH' };
+        }
+
+        // Verify slot matches definition
+        if (slot !== cosmeticDef.slot) {
+          console.warn(`[P11-A] equipCosmetic: Slot mismatch - ID suggests ${slot}, catalog says ${cosmeticDef.slot}`);
+          return { success: false, error: 'SLOT_MISMATCH' };
+        }
+
+        // Get previous cosmetic in slot (if any) for return value
+        const previousCosmeticId = pet.equippedCosmetics[slot] ?? null;
+
+        // Bible §11.5.3: One cosmetic per slot; equipping replaces previous
+        set((s) => ({
+          petsById: {
+            ...s.petsById,
+            [petId]: {
+              ...s.petsById[petId],
+              equippedCosmetics: {
+                ...s.petsById[petId].equippedCosmetics,
+                [slot]: cosmeticId,
+              },
+            },
+          },
+        }));
+
+        console.log(`[P11-A] Equipped ${cosmeticId} on ${petId} (slot: ${slot})${previousCosmeticId ? `, replaced ${previousCosmeticId}` : ''}`);
+        return { success: true, previousCosmeticId };
+      },
+
+      /**
+       * Unequip a cosmetic slot on a pet.
+       * Bible §11.5.3: Cosmetic remains owned by pet after unequip.
+       */
+      unequipCosmetic: (petId: PetInstanceId, slot: CosmeticSlot): CosmeticEquipResult => {
+        const state = get();
+        const pet = state.petsById[petId];
+
+        // Validate pet exists
+        if (!pet) {
+          console.warn(`[P11-A] unequipCosmetic: Pet not found: ${petId}`);
+          return { success: false, error: 'INVALID_PET' };
+        }
+
+        // Get previous cosmetic in slot (if any)
+        const previousCosmeticId = pet.equippedCosmetics[slot] ?? null;
+
+        // Clear the slot
+        set((s) => {
+          const newEquipped = { ...s.petsById[petId].equippedCosmetics };
+          delete newEquipped[slot];
+          return {
+            petsById: {
+              ...s.petsById,
+              [petId]: {
+                ...s.petsById[petId],
+                equippedCosmetics: newEquipped,
+              },
+            },
+          };
+        });
+
+        console.log(`[P11-A] Unequipped slot ${slot} on ${petId}${previousCosmeticId ? ` (was: ${previousCosmeticId})` : ''}`);
+        return { success: true, previousCosmeticId };
+      },
+
+      /**
+       * Check if a pet owns a specific cosmetic.
+       * Bible §11.5.2: Pet-bound ownership check.
+       */
+      petOwnsCosmetic: (petId: PetInstanceId, cosmeticId: string): boolean => {
+        const state = get();
+        const pet = state.petsById[petId];
+        if (!pet) return false;
+        return pet.ownedCosmeticIds.includes(cosmeticId);
+      },
+
+      /**
+       * Get all cosmetic IDs owned by a pet.
+       */
+      getPetOwnedCosmetics: (petId: PetInstanceId): string[] => {
+        const state = get();
+        const pet = state.petsById[petId];
+        if (!pet) return [];
+        return [...pet.ownedCosmeticIds];
+      },
+
+      /**
+       * Get equipped cosmetics for a pet.
+       */
+      getPetEquippedCosmetics: (petId: PetInstanceId): Partial<Record<CosmeticSlot, string>> => {
+        const state = get();
+        const pet = state.petsById[petId];
+        if (!pet) return {};
+        return { ...pet.equippedCosmetics };
+      },
+
+      // ========================================
       // P9-B: MULTI-PET RUNTIME
       // Bible §8.2.1, §9.4.4-9.4.6, §11.6.1
       // ========================================
@@ -2730,7 +2872,7 @@ export const useGameStore = create<GameStore>()(
     }),
     {
       name: 'grundy-save',
-      version: 5, // P11-0: Bumped for gem source state fields
+      version: 6, // P11-A: Bumped for cosmetic state fields
       migrate: (persistedState: unknown, version: number) => {
         let state = persistedState as Record<string, unknown>;
 
@@ -2857,6 +2999,26 @@ export const useGameStore = create<GameStore>()(
           if (state.lastFirstFeedDateKey === undefined) {
             state.lastFirstFeedDateKey = null;
             console.log('[Migration] Injected lastFirstFeedDateKey = null');
+          }
+        }
+
+        // P11-A: Migration from v5 to v6 (cosmetic state fields)
+        if (version < 6) {
+          console.log('[Migration] Migrating save from v5 to v6 (cosmetic state fields)');
+
+          const petsById = state.petsById as Record<string, Record<string, unknown>> | undefined;
+          if (petsById) {
+            // Inject cosmetic state fields into each pet
+            for (const petId of Object.keys(petsById)) {
+              const pet = petsById[petId];
+              if (pet.ownedCosmeticIds === undefined) {
+                pet.ownedCosmeticIds = [];
+              }
+              if (pet.equippedCosmetics === undefined) {
+                pet.equippedCosmetics = {};
+              }
+            }
+            console.log(`[Migration] Injected cosmetic state into ${Object.keys(petsById).length} pets`);
           }
         }
 

@@ -44,6 +44,46 @@ export type Affinity = 'loved' | 'liked' | 'neutral' | 'disliked';
 // --- Rarity ---
 export type Rarity = 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary';
 
+// --- Cosmetic Types (P11-A: Bible §11.5.2-§11.5.4) ---
+
+/**
+ * Cosmetic slot types per Bible §11.5.3.
+ * Each slot accepts specific item prefixes and allows 1 item per pet.
+ */
+export type CosmeticSlot = 'hat' | 'accessory' | 'outfit' | 'aura' | 'skin';
+
+/**
+ * Cosmetic definition - catalog item (static data).
+ * Bible §11.5.2: Cosmetics are gems-only, pet-bound, visual-only.
+ */
+export interface CosmeticDefinition {
+  /** Unique ID (e.g., "cos_hat_cap_blue") */
+  id: string;
+  /** Player-facing display name */
+  displayName: string;
+  /** Slot this cosmetic occupies (Bible §11.5.3) */
+  slot: CosmeticSlot;
+  /** Rarity tier affecting price and visual treatment (Bible §11.5.4) */
+  rarity: Rarity;
+  /** Price in gems - cosmetics are GEMS-ONLY (Bible §11.1, §11.5.2) */
+  priceGems: number;
+  /** Optional sprite key for P11-C rendering layer */
+  spriteKey?: string;
+  /** Optional level requirement for unlock (Bible §11.5 Category 3) */
+  unlockLevel?: number;
+}
+
+/**
+ * Result of equip/unequip cosmetic action.
+ */
+export interface CosmeticEquipResult {
+  success: boolean;
+  /** Error code if failed */
+  error?: 'NOT_OWNED' | 'NOT_FOUND' | 'SLOT_MISMATCH' | 'INVALID_PET';
+  /** Previous cosmetic ID that was unequipped from slot (if any) */
+  previousCosmeticId?: string | null;
+}
+
 // --- Inventory Types (Bible §11.7, §14.8) ---
 export type InventoryTab = 'food' | 'care';
 export type InventoryMap = Record<string, number>;
@@ -291,6 +331,24 @@ export interface OwnedPetState extends PetState {
    * Reset to 0 when poop spawns.
    */
   feedingsSinceLastPoop: number;
+
+  // --- P11-A: Cosmetic State (Bible §11.5.2-§11.5.4) ---
+
+  /**
+   * Cosmetic IDs owned by THIS pet (pet-bound ownership).
+   * Bible §11.5.2: Each purchase is bound to one pet permanently.
+   * Same cosmetic ID can appear in multiple pets' lists (separate purchases).
+   * Default: [] (no cosmetics owned).
+   */
+  ownedCosmeticIds: string[];
+
+  /**
+   * Currently equipped cosmetics per slot.
+   * Bible §11.5.3: One cosmetic per slot; equipping replaces previous.
+   * Only owned cosmetics can be equipped.
+   * Default: {} (no cosmetics equipped).
+   */
+  equippedCosmetics: Partial<Record<CosmeticSlot, string>>;
 }
 
 // --- Food Definition ---
@@ -586,6 +644,32 @@ export interface GameStore {
   purchasePetSlot: (slotNumber: number) => SlotPurchaseResult;
   /** Get status for all slots (1-4) for UI display. */
   getSlotStatuses: () => SlotStatus[];
+
+  // P11-A: Cosmetic Foundation Actions (Bible §11.5.2-§11.5.4)
+  /**
+   * Equip a cosmetic on the active pet.
+   * Requires ownership; replaces any existing cosmetic in that slot.
+   * Bible §11.5.3: One cosmetic per slot.
+   */
+  equipCosmetic: (petId: PetInstanceId, cosmeticId: string) => CosmeticEquipResult;
+  /**
+   * Unequip a cosmetic slot on a pet.
+   * Bible §11.5.3: Cosmetic remains owned by pet after unequip.
+   */
+  unequipCosmetic: (petId: PetInstanceId, slot: CosmeticSlot) => CosmeticEquipResult;
+  /**
+   * Check if a pet owns a specific cosmetic.
+   * Bible §11.5.2: Pet-bound ownership check.
+   */
+  petOwnsCosmetic: (petId: PetInstanceId, cosmeticId: string) => boolean;
+  /**
+   * Get all cosmetic IDs owned by a pet.
+   */
+  getPetOwnedCosmetics: (petId: PetInstanceId) => string[];
+  /**
+   * Get equipped cosmetics for a pet.
+   */
+  getPetEquippedCosmetics: (petId: PetInstanceId) => Partial<Record<CosmeticSlot, string>>;
 }
 
 // --- Shop Purchase Types (P8-SHOP-PURCHASE) ---

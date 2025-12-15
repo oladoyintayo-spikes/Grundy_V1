@@ -46,6 +46,9 @@ const createTestPet = (speciesId: string, overrides?: Partial<OwnedPetState>): O
   isPoopDirty: false,
   poopDirtyStartTimestamp: null,
   feedingsSinceLastPoop: 0,
+  // P11-A: Cosmetic state fields
+  ownedCosmeticIds: [],
+  equippedCosmetics: {},
   ...overrides,
 });
 

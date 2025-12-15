@@ -304,6 +304,9 @@ describe('P10-B-005: Cozy Mode Short-Circuit', () => {
     isPoopDirty: false,
     poopDirtyStartTimestamp: null,
     feedingsSinceLastPoop: 0,
+    // P11-A: Cosmetic state fields
+    ownedCosmeticIds: [],
+    equippedCosmetics: {},
     ...overrides,
   });
 
@@ -407,6 +410,9 @@ describe('P10-B-006: Classic Mode Full Order', () => {
     isPoopDirty: false,
     poopDirtyStartTimestamp: null,
     feedingsSinceLastPoop: 0,
+    // P11-A: Cosmetic state fields
+    ownedCosmeticIds: [],
+    equippedCosmetics: {},
     ...overrides,
   });
 

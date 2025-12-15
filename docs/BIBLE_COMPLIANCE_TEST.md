@@ -1308,26 +1308,139 @@ it('BCT-GEM-NOMINIGAME-001: Mini-games award 0 gems', () => {
 
 ---
 
-## Phase 11 — Cosmetics (Pending)
+## Phase 11 — Cosmetics
 
-> **Status:** Pending implementation. Bible v1.9 defines the spec; test IDs will be assigned when P11-0/P11 implementation begins.
+> **Status:** P11-A Foundations implemented. P11-B UI and P11-C Render pending.
 
-### Planned Test Categories
+### Implemented Test Categories (P11-A)
 
-| Category | Count | Coverage |
-|----------|-------|----------|
-| **BCT-GEM-SOURCES** | **8** | Level-up, first-feed, login streak gem awards (Phase 11-0) — **Implemented** |
-| **BCT-COSMETICS-OWNERSHIP** | ~8 | Pet-bound model, ownership persistence, multi-pet same SKU |
-| **BCT-COSMETICS-PURCHASE** | ~12 | Gems deducted, bound to active pet, duplicate blocked, "owned by other" flow |
-| **BCT-COSMETICS-EQUIP** | ~10 | Slot rules, swap behavior, ownership guard (block if not owned) |
-| **BCT-COSMETICS-INVARIANT** | ~4 | Stats unaffected, abilities unaffected |
-| **BCT-COSMETICS-RENDER** | ~4 | Layer order, fallback on missing asset |
-| **BCT-COSMETICS-RARITY** | ~4 | Rarity tier → UI mapping |
-| **Total** | **~52** | — |
+| Category | Count | Coverage | Status |
+|----------|-------|----------|--------|
+| **BCT-GEM-SOURCES** | **8** | Level-up, first-feed, login streak gem awards (Phase 11-0) | ✅ Implemented |
+| **BCT-COS-OWN** | **1** | Pet-bound ownership (no cross-pet equip) | ✅ Implemented |
+| **BCT-COS-EQ** | **2** | Equip requires ownership + one-per-slot | ✅ Implemented |
+| **BCT-COS-UNEQ** | **1** | Unequip clears slot | ✅ Implemented |
+| **BCT-COS-MULTI** | **1** | Same SKU multi-pet allowed | ✅ Implemented |
+| **BCT-COS-GEMS** | **1** | Cosmetics gems-only (coins not permitted) | ✅ Implemented |
+| **BCT-COS-NOSTAT** | **1** | Equip/unequip doesn't affect stats | ✅ Implemented |
 
-### Key Test Specifications (Preview)
+### Planned Test Categories (P11-B, P11-C)
 
-**BCT-COSMETICS-OWNERSHIP-001** (Planned)
+| Category | Count | Coverage | Status |
+|----------|-------|----------|--------|
+| **BCT-COSMETICS-PURCHASE** | ~12 | Gems deducted, bound to active pet, duplicate blocked | Pending (P11-B) |
+| **BCT-COSMETICS-RENDER** | ~4 | Layer order, fallback on missing asset | Pending (P11-C) |
+| **BCT-COSMETICS-RARITY** | ~4 | Rarity tier → UI mapping | Pending (P11-B) |
+
+---
+
+### Phase 11 P11-A Foundations — Implemented Specs
+
+### BCT-COS-OWN-001: Cosmetics are pet-bound (no cross-pet equip)
+**Bible Reference:** §11.5.2 (Pet-Bound Ownership Model)
+```typescript
+// Scenario: Pet B tries to equip cosmetic owned by Pet A
+// Given: Pet A owns cos_hat_cap_blue
+// And: Pet B does NOT own cos_hat_cap_blue
+// When: Code attempts equipCosmetic(petB_id, 'cos_hat_cap_blue')
+// Then: Action fails with error 'NOT_OWNED'
+// And: Pet B's equipped state is unchanged
+
+it('BCT-COS-OWN-001: Cannot equip cosmetic owned by different pet', () => {
+  expect(true).toBe(true); // Actual test in bct-p11a-cosmetics-foundations.spec.ts
+});
+```
+
+### BCT-COS-EQ-001: Equip requires ownership + matching slot
+**Bible Reference:** §11.5.3 (Equip Rules)
+```typescript
+// Scenario: Equip cosmetic pet doesn't own
+// Given: Pet has empty inventory
+// When: Code attempts equipCosmetic(petId, 'cos_hat_cap_blue')
+// Then: Action fails with error 'NOT_OWNED'
+
+it('BCT-COS-EQ-001: Equip requires ownership', () => {
+  expect(true).toBe(true); // Actual test in bct-p11a-cosmetics-foundations.spec.ts
+});
+```
+
+### BCT-COS-EQ-002: One cosmetic per slot; equipping replaces previous
+**Bible Reference:** §11.5.3 (Equip Rules - Swap)
+```typescript
+// Scenario: Equip second hat replaces first
+// Given: Pet owns cos_hat_cap_blue AND cos_hat_bow_pink
+// And: Pet has cos_hat_cap_blue equipped in 'hat' slot
+// When: Code calls equipCosmetic(petId, 'cos_hat_bow_pink')
+// Then: 'hat' slot contains cos_hat_bow_pink
+// And: cos_hat_cap_blue is NOT equipped (but still owned)
+
+it('BCT-COS-EQ-002: One-per-slot replacement', () => {
+  expect(true).toBe(true); // Actual test in bct-p11a-cosmetics-foundations.spec.ts
+});
+```
+
+### BCT-COS-UNEQ-001: Unequip clears slot
+**Bible Reference:** §11.5.3 (Unequip)
+```typescript
+// Scenario: Unequip cosmetic
+// Given: Pet has cos_hat_cap_blue equipped in 'hat' slot
+// When: Code calls unequipCosmetic(petId, 'hat')
+// Then: 'hat' slot is empty (null/undefined)
+// And: cos_hat_cap_blue remains in pet's ownedCosmeticIds
+
+it('BCT-COS-UNEQ-001: Unequip clears slot', () => {
+  expect(true).toBe(true); // Actual test in bct-p11a-cosmetics-foundations.spec.ts
+});
+```
+
+### BCT-COS-MULTI-001: Same cosmetic ID can be owned by multiple pets
+**Bible Reference:** §11.5.2 (Multi-Pet Purchase Scenarios)
+```typescript
+// Scenario: Both pets can own same cosmetic SKU
+// Given: Pet A owns cos_hat_cap_blue
+// When: Pet B also acquires cos_hat_cap_blue (separate purchase)
+// Then: Both Pet A and Pet B have cos_hat_cap_blue in ownedCosmeticIds
+// And: Both can equip it independently
+
+it('BCT-COS-MULTI-001: Same ID multi-pet allowed', () => {
+  expect(true).toBe(true); // Actual test in bct-p11a-cosmetics-foundations.spec.ts
+});
+```
+
+### BCT-COS-GEMS-001: Cosmetics can only be purchased with gems
+**Bible Reference:** §11.1 (Currency Types), §11.5.2 (Cosmetics are gems-only)
+```typescript
+// Scenario: Validate cosmetic pricing is gems-only
+// Given: Cosmetic catalog exists
+// When: Checking any cosmetic definition
+// Then: priceGems > 0
+// And: No coinPrice field exists (gems-only by design)
+
+it('BCT-COS-GEMS-001: Cosmetics are gems-only', () => {
+  expect(true).toBe(true); // Actual test in bct-p11a-cosmetics-foundations.spec.ts
+});
+```
+
+### BCT-COS-NOSTAT-001: Equipping cosmetics does not affect pet stats
+**Bible Reference:** §11.5.3 (Cosmetics and Gameplay Invariants)
+```typescript
+// Scenario: Stats unchanged after equip/unequip
+// Given: Pet with known stat snapshot (hunger/mood/bond/weight/isSick)
+// When: Pet equips a cosmetic
+// Then: All stat fields remain unchanged
+// When: Pet unequips the cosmetic
+// Then: All stat fields remain unchanged
+
+it('BCT-COS-NOSTAT-001: Stats unaffected by cosmetics', () => {
+  expect(true).toBe(true); // Actual test in bct-p11a-cosmetics-foundations.spec.ts
+});
+```
+
+---
+
+### Key Test Specifications (Preview - P11-B/C)
+
+**BCT-COSMETICS-OWNERSHIP-001** (Planned - P11-B)
 ```
 Given: Pet A has purchased cos_hat_cap_blue
 When: User switches to Pet B and views shop
@@ -1336,7 +1449,7 @@ And: CTA shows "Buy for [Pet B] — X💎"
 And: Pet B can purchase the same SKU
 ```
 
-**BCT-COSMETICS-EQUIP-GUARD-001** (Planned)
+**BCT-COSMETICS-EQUIP-GUARD-001** (Planned - P11-B)
 ```
 Given: Pet A owns cos_hat_cap_blue
 And: Pet B does NOT own cos_hat_cap_blue
