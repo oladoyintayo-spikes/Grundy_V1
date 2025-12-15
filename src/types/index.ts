@@ -81,7 +81,8 @@ export interface CosmeticEquipResult {
 }
 
 // --- Inventory Types (Bible §11.7, §14.8) ---
-export type InventoryTab = 'food' | 'care';
+// P11-B: Added 'cosmetics' tab for cosmetics section
+export type InventoryTab = 'food' | 'care' | 'cosmetics';
 export type InventoryMap = Record<string, number>;
 /** Item category for filtering inventory tabs */
 export type ItemCategory = 'food' | 'care';

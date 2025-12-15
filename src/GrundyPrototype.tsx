@@ -1414,6 +1414,7 @@ function MainApp() {
           // Could add toast/feedback here in future
           return result.success;
         }}
+        activePetId={activePetId}
       />
 
       {/* P8-INV-CORE: Inventory Modal (available from any view via header button) */}
