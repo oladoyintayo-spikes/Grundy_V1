@@ -1585,6 +1585,107 @@ export function getAllSlotStatuses(
 }
 
 // ============================================================================
+// §11.5 Cosmetics System (P11-A Foundations)
+// ============================================================================
+
+/**
+ * Cosmetic slot types per Bible §11.5.3.
+ * Each slot accepts specific cosmetic prefixes.
+ */
+export const COSMETIC_SLOTS = ['hat', 'accessory', 'outfit', 'aura', 'skin'] as const;
+export type CosmeticSlot = typeof COSMETIC_SLOTS[number];
+
+/**
+ * Slot to valid prefixes mapping per Bible §11.5.3.
+ */
+export const COSMETIC_SLOT_PREFIXES: Record<CosmeticSlot, string[]> = {
+  hat: ['cos_hat_'],
+  accessory: ['cos_scarf_', 'cos_accessory_'],
+  outfit: ['cos_outfit_'],
+  aura: ['cos_aura_'],
+  skin: ['cos_skin_'],
+};
+
+/**
+ * Rarity tiers and gem price ranges per Bible §11.5.4.
+ * Cosmetics are GEMS-ONLY (Bible §11.1).
+ */
+export type CosmeticRarity = 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary';
+
+export const COSMETIC_RARITY_CONFIG: Record<CosmeticRarity, { minGems: number; maxGems: number }> = {
+  common: { minGems: 10, maxGems: 20 },
+  uncommon: { minGems: 20, maxGems: 40 },
+  rare: { minGems: 40, maxGems: 70 },
+  epic: { minGems: 70, maxGems: 120 },
+  legendary: { minGems: 120, maxGems: 300 },
+};
+
+/**
+ * Cosmetic definition for catalog.
+ * Note: Full catalog is defined elsewhere; this is the schema.
+ */
+export interface CosmeticDefinition {
+  id: string;
+  displayName: string;
+  slot: CosmeticSlot;
+  rarity: CosmeticRarity;
+  priceGems: number;
+  spriteKey?: string;
+  unlockLevel?: number;
+}
+
+/**
+ * Determine the slot for a cosmetic ID based on prefix mapping.
+ * Returns undefined if cosmetic ID doesn't match any known prefix.
+ */
+export function getCosmeticSlot(cosmeticId: string): CosmeticSlot | undefined {
+  for (const [slot, prefixes] of Object.entries(COSMETIC_SLOT_PREFIXES)) {
+    if (prefixes.some(prefix => cosmeticId.startsWith(prefix))) {
+      return slot as CosmeticSlot;
+    }
+  }
+  return undefined;
+}
+
+/**
+ * Validate that a cosmetic ID matches its expected slot.
+ */
+export function validateCosmeticSlot(cosmeticId: string, expectedSlot: CosmeticSlot): boolean {
+  const detectedSlot = getCosmeticSlot(cosmeticId);
+  return detectedSlot === expectedSlot;
+}
+
+/**
+ * STUB: Cosmetic catalog for P11-A foundations.
+ * Real catalog will be populated in P11-B Shop UI phase.
+ * These test cosmetics enable unit testing of equip/unequip logic.
+ */
+export const COSMETIC_CATALOG: CosmeticDefinition[] = [
+  // Test cosmetics for BCT validation
+  { id: 'cos_hat_cap_blue', displayName: 'Blue Cap', slot: 'hat', rarity: 'common', priceGems: 15 },
+  { id: 'cos_hat_bow_pink', displayName: 'Pink Bow', slot: 'hat', rarity: 'uncommon', priceGems: 25 },
+  { id: 'cos_accessory_scarf_red', displayName: 'Red Scarf', slot: 'accessory', rarity: 'common', priceGems: 12 },
+  { id: 'cos_outfit_sweater', displayName: 'Cozy Sweater', slot: 'outfit', rarity: 'rare', priceGems: 50 },
+  { id: 'cos_aura_sparkle', displayName: 'Sparkle Aura', slot: 'aura', rarity: 'epic', priceGems: 85 },
+  { id: 'cos_skin_golden', displayName: 'Golden Skin', slot: 'skin', rarity: 'legendary', priceGems: 200, unlockLevel: 25 },
+];
+
+/**
+ * Get cosmetic definition by ID.
+ */
+export function getCosmeticById(cosmeticId: string): CosmeticDefinition | undefined {
+  return COSMETIC_CATALOG.find(c => c.id === cosmeticId);
+}
+
+/**
+ * Validate cosmetic price is within rarity range (for future shop validation).
+ */
+export function isValidCosmeticPrice(rarity: CosmeticRarity, priceGems: number): boolean {
+  const config = COSMETIC_RARITY_CONFIG[rarity];
+  return priceGems >= config.minGems && priceGems <= config.maxGems;
+}
+
+// ============================================================================
 // Type Exports
 // ============================================================================
 

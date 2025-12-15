@@ -109,6 +109,9 @@ describe('P10-A-002: OwnedPetState Type Compliance', () => {
       isPoopDirty: false,
       poopDirtyStartTimestamp: null,
       feedingsSinceLastPoop: 0,
+      // P11-A: Cosmetic state fields
+      ownedCosmeticIds: [],
+      equippedCosmetics: {},
     };
 
     // Type check: all fields exist and have correct types
