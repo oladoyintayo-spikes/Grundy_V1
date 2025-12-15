@@ -1597,6 +1597,10 @@ export type CosmeticSlot = typeof COSMETIC_SLOTS[number];
 
 /**
  * Slot to valid prefixes mapping per Bible §11.5.3.
+ *
+ * Guardrail: COSMETIC_CATALOG is authoritative.
+ * Slot/rarity/price must come from catalog fields.
+ * Prefixes are optional conveniences; do NOT enforce or infer schema from IDs.
  */
 export const COSMETIC_SLOT_PREFIXES: Record<CosmeticSlot, string[]> = {
   hat: ['cos_hat_'],

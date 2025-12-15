@@ -1394,27 +1394,29 @@ it('BCT-COS-UNEQ-001: Unequip clears slot', () => {
 ```
 
 ### BCT-COS-MULTI-001: Same cosmetic ID can be owned by multiple pets
-**Bible Reference:** §11.5.2 (Multi-Pet Purchase Scenarios)
+**Bible Reference:** §11.5.2 (Multi-Pet Ownership Structure)
 ```typescript
 // Scenario: Both pets can own same cosmetic SKU
 // Given: Pet A owns cos_hat_cap_blue
-// When: Pet B also acquires cos_hat_cap_blue (separate purchase)
+// When: Pet B also has cos_hat_cap_blue in ownedCosmeticIds
 // Then: Both Pet A and Pet B have cos_hat_cap_blue in ownedCosmeticIds
 // And: Both can equip it independently
+// Note: Validates ownership state structure; purchase flow tested in P11-B.
 
 it('BCT-COS-MULTI-001: Same ID multi-pet allowed', () => {
   expect(true).toBe(true); // Actual test in bct-p11a-cosmetics-foundations.spec.ts
 });
 ```
 
-### BCT-COS-GEMS-001: Cosmetics can only be purchased with gems
+### BCT-COS-GEMS-001: Cosmetics catalog is gems-only (no coin pricing)
 **Bible Reference:** §11.1 (Currency Types), §11.5.2 (Cosmetics are gems-only)
 ```typescript
-// Scenario: Validate cosmetic pricing is gems-only
+// Scenario: Validate cosmetic catalog gems-only invariant
 // Given: Cosmetic catalog exists
 // When: Checking any cosmetic definition
 // Then: priceGems > 0
 // And: No coinPrice field exists (gems-only by design)
+// Note: This validates catalog structure; purchase flow is P11-B.
 
 it('BCT-COS-GEMS-001: Cosmetics are gems-only', () => {
   expect(true).toBe(true); // Actual test in bct-p11a-cosmetics-foundations.spec.ts
