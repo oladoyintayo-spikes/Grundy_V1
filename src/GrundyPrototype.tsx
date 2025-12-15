@@ -264,6 +264,9 @@ function HomeView({ onOpenShop, pendingFeedFoodId, onClearPendingFeed }: HomeVie
   const cleanPoop = useGameStore((state) => state.cleanPoop);
   const activePet = petsById[activePetId];
   const isPoopDirty = activePet?.isPoopDirty ?? false;
+  // P11-C: Cosmetics render layering
+  const getPetEquippedCosmetics = useGameStore((state) => state.getPetEquippedCosmetics);
+  const equippedCosmetics = getPetEquippedCosmetics(activePetId);
 
   // UI State (local)
   const [lastReaction, setLastReaction] = useState<ReactionType | null>(null);
@@ -436,7 +439,7 @@ function HomeView({ onOpenShop, pendingFeedFoodId, onClearPendingFeed }: HomeVie
             className={`flex-1 flex items-center justify-center min-h-0 transition-transform duration-300 relative ${isFeeding ? 'scale-110' : ''}`}
             style={{ filter: pet.hunger < 20 ? 'grayscale(50%)' : 'none' }}
           >
-            <PetDisplay petId={pet.id} pose={currentPose} stage={pet.evolutionStage} breathing={!isFeeding} />
+            <PetDisplay petId={pet.id} pose={currentPose} stage={pet.evolutionStage} breathing={!isFeeding} equippedCosmetics={equippedCosmetics} />
             {/* P10-B2: Poop indicator - positioned bottom-right of pet area */}
             <PoopIndicator
               isPoopDirty={isPoopDirty}
