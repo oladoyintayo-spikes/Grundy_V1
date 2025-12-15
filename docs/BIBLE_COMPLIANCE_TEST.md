@@ -1197,6 +1197,117 @@ Run **at minimum** the BCT tests for the affected area:
 
 ---
 
+## Phase 11-0 — Gem Sources
+
+> **Status:** Implemented. Bible v1.10 §10.3, §11.4.
+
+### BCT-GEM-LEVELUP-001: Level-up awards +5 gems per level gained
+**Bible Reference:** §11.4 (Phase 11-0 Gem Source Prerequisites)
+```typescript
+// Scenario: Pet levels up from feeding
+// Given: Pet is level 5, player has 0 gems
+// When: Pet gains enough XP to reach level 6
+// Then: Player is awarded +5💎 (6 if Luxe ability triggers)
+// Assert: gems increased by 5 (or 10 with Golden Touch)
+
+it('BCT-GEM-LEVELUP-001: Level-up awards +5 gems per level', () => {
+  // Implementation validates gem award on level-up in feed action
+  expect(true).toBe(true); // Placeholder - actual test in bct-p110-gem-sources.spec.ts
+});
+```
+
+### BCT-GEM-DAILYFEED-001: First successful feed of day awards +1 gem
+**Bible Reference:** §11.4 (Phase 11-0 Gem Source Prerequisites)
+```typescript
+// Scenario: First feed of a new calendar day
+// Given: lastFirstFeedDateKey is yesterday (or null)
+// When: Player successfully feeds pet
+// Then: +1💎 awarded, lastFirstFeedDateKey updated to today
+
+it('BCT-GEM-DAILYFEED-001: First feed awards +1 gem', () => {
+  expect(true).toBe(true); // Placeholder - actual test in bct-p110-gem-sources.spec.ts
+});
+```
+
+### BCT-GEM-DAILYFEED-002: Second feed same day awards 0 gems
+**Bible Reference:** §11.4 (Phase 11-0 Gem Source Prerequisites)
+```typescript
+// Scenario: Second or later feed on same calendar day
+// Given: lastFirstFeedDateKey equals today
+// When: Player feeds pet again
+// Then: 0💎 awarded (level-up gems still apply separately)
+
+it('BCT-GEM-DAILYFEED-002: Second feed same day awards 0 daily gems', () => {
+  expect(true).toBe(true); // Placeholder - actual test in bct-p110-gem-sources.spec.ts
+});
+```
+
+### BCT-GEM-DAILYFEED-003: STUFFED-blocked feed awards 0 gems
+**Bible Reference:** §4.4 (STUFFED blocking), §11.4
+```typescript
+// Scenario: Pet is STUFFED (91-100 fullness)
+// When: Player attempts to feed
+// Then: Feed blocked (wasBlocked: true), 0💎 awarded
+
+it('BCT-GEM-DAILYFEED-003: STUFFED-blocked feed awards 0 gems', () => {
+  expect(true).toBe(true); // Placeholder - actual test in bct-p110-gem-sources.spec.ts
+});
+```
+
+### BCT-GEM-STREAK-001: Day 7 awards +10 gems and resets streak to Day 1
+**Bible Reference:** §10.3 (Login Streak), §11.4
+```typescript
+// Scenario: Player reaches Day 7 of login streak
+// Given: loginStreakDay is 6, lastLoginDateKey is yesterday
+// When: processLoginStreak() is called on new day
+// Then: +10💎 awarded, loginStreakDay reset to 1
+
+it('BCT-GEM-STREAK-001: Day 7 awards +10 gems and resets to Day 1', () => {
+  expect(true).toBe(true); // Placeholder - actual test in bct-p110-gem-sources.spec.ts
+});
+```
+
+### BCT-GEM-STREAK-002: Missing day resets streak to Day 1
+**Bible Reference:** §10.3 (Login Streak)
+```typescript
+// Scenario: Player misses a day (non-consecutive login)
+// Given: lastLoginDateKey is 2+ days ago
+// When: processLoginStreak() is called
+// Then: loginStreakDay reset to 1, 0💎 awarded (no Day 7)
+
+it('BCT-GEM-STREAK-002: Missing day resets streak to Day 1', () => {
+  expect(true).toBe(true); // Placeholder - actual test in bct-p110-gem-sources.spec.ts
+});
+```
+
+### BCT-GEM-STREAK-003: Same-day reopen does not re-award or advance streak
+**Bible Reference:** §10.3 (Login Streak)
+```typescript
+// Scenario: Player opens app multiple times same day
+// Given: lastLoginDateKey equals today
+// When: processLoginStreak() is called
+// Then: Returns newDayLogin=false, no state change, 0💎 awarded
+
+it('BCT-GEM-STREAK-003: Same-day reopen no-ops streak', () => {
+  expect(true).toBe(true); // Placeholder - actual test in bct-p110-gem-sources.spec.ts
+});
+```
+
+### BCT-GEM-NOMINIGAME-001: Mini-games do not change gems
+**Bible Reference:** §8.3 (Web Edition awards 0 gems), §11.4
+```typescript
+// Scenario: Player completes any mini-game at any tier
+// Given: Player has N gems
+// When: Mini-game completed (any tier including Rainbow)
+// Then: Gems remain N (0 gems from mini-games in Web Edition)
+
+it('BCT-GEM-NOMINIGAME-001: Mini-games award 0 gems', () => {
+  expect(true).toBe(true); // Placeholder - actual test in bct-p110-gem-sources.spec.ts
+});
+```
+
+---
+
 ## Phase 11 — Cosmetics (Pending)
 
 > **Status:** Pending implementation. Bible v1.9 defines the spec; test IDs will be assigned when P11-0/P11 implementation begins.
@@ -1205,7 +1316,7 @@ Run **at minimum** the BCT tests for the affected area:
 
 | Category | Count | Coverage |
 |----------|-------|----------|
-| **BCT-GEM-SOURCES** | ~10 | Level-up, first-feed, login streak gem awards (Phase 11-0) |
+| **BCT-GEM-SOURCES** | **8** | Level-up, first-feed, login streak gem awards (Phase 11-0) — **Implemented** |
 | **BCT-COSMETICS-OWNERSHIP** | ~8 | Pet-bound model, ownership persistence, multi-pet same SKU |
 | **BCT-COSMETICS-PURCHASE** | ~12 | Gems deducted, bound to active pet, duplicate blocked, "owned by other" flow |
 | **BCT-COSMETICS-EQUIP** | ~10 | Slot rules, swap behavior, ownership guard (block if not owned) |

@@ -1162,6 +1162,16 @@ function MainApp() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // P11-0: Process login streak on mount (once per session)
+  // Bible §10.3, §11.4: Awards +10💎 on Day 7, runs only on new-day login
+  useEffect(() => {
+    const result = useGameStore.getState().processLoginStreak();
+    if (result.newDayLogin) {
+      console.log(`[P11-0] Login streak processed: Day ${result.newStreakDay}${result.day7Claimed ? ' (+10💎 Day 7 reward!)' : ''}`);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Sync environment when view changes
   useEffect(() => {
     syncEnvironmentWithView(currentView);
