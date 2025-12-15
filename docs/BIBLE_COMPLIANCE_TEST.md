@@ -1310,9 +1310,9 @@ it('BCT-GEM-NOMINIGAME-001: Mini-games award 0 gems', () => {
 
 ## Phase 11 — Cosmetics
 
-> **Status:** P11-A Foundations implemented. P11-B UI and P11-C Render pending.
+> **Status:** P11-A Foundations + P11-B UI Wiring implemented. P11-C Render + Purchase pending.
 
-### Implemented Test Categories (P11-A)
+### Implemented Test Categories (P11-A, P11-B)
 
 | Category | Count | Coverage | Status |
 |----------|-------|----------|--------|
@@ -1323,8 +1323,10 @@ it('BCT-GEM-NOMINIGAME-001: Mini-games award 0 gems', () => {
 | **BCT-COS-MULTI** | **1** | Same SKU multi-pet allowed | ✅ Implemented |
 | **BCT-COS-GEMS** | **1** | Cosmetics gems-only (coins not permitted) | ✅ Implemented |
 | **BCT-COS-NOSTAT** | **1** | Equip/unequip doesn't affect stats | ✅ Implemented |
+| **BCT-COS-UI-SHOP** | **3** | Shop cosmetics panel: catalog, controls, price | ✅ Implemented (P11-B) |
+| **BCT-COS-UI-INV** | **3** | Inventory cosmetics: slot grouping, equip, empty | ✅ Implemented (P11-B) |
 
-### Planned Test Categories (P11-B, P11-C)
+### Planned Test Categories (P11-C, Purchase)
 
 | Category | Count | Coverage | Status |
 |----------|-------|----------|--------|
@@ -1440,9 +1442,123 @@ it('BCT-COS-NOSTAT-001: Stats unaffected by cosmetics', () => {
 
 ---
 
-### Key Test Specifications (Preview - P11-B/C)
+### Phase 11 P11-B Cosmetics UI Wiring — Implemented Specs
 
-**BCT-COSMETICS-OWNERSHIP-001** (Planned - P11-B)
+> **Status:** P11-B UI Wiring implemented. No purchase plumbing (view + equip/unequip only).
+
+| Category | Count | Coverage | Status |
+|----------|-------|----------|--------|
+| **BCT-COS-UI-SHOP** | **3** | Shop cosmetics panel: catalog display, equip/unequip controls, price display | ✅ Implemented |
+| **BCT-COS-UI-INV** | **3** | Inventory cosmetics section: slot grouping, equip state, empty state | ✅ Implemented |
+
+### BCT-COS-UI-SHOP-001: Shop shows Cosmetics panel listing catalog items
+**Bible Reference:** §14.7.3 (Shop Cosmetics Tab)
+```typescript
+// Scenario: Shop Cosmetics tab shows full catalog
+// Given: Shop is open and Cosmetics tab is selected
+// When: User views the Cosmetics panel
+// Then: All COSMETIC_CATALOG items are displayed
+// And: Each item shows: displayName, slot, rarity, priceGems
+
+it('BCT-COS-UI-SHOP-001: Shop cosmetics panel shows catalog', () => {
+  expect(true).toBe(true); // Actual test in bct-p11b-cosmetics-ui.spec.tsx
+});
+```
+
+### BCT-COS-UI-SHOP-002: Owned cosmetics show equip/unequip; non-owned are locked
+**Bible Reference:** §14.7.3 (Cosmetics Ownership Display)
+```typescript
+// Scenario: Owned vs non-owned cosmetic display
+// Given: Shop Cosmetics panel is visible
+// And: Active pet owns some cosmetics but not all
+// When: User views catalog items
+// Then: Owned items show Equip/Unequip controls
+// And: Non-owned items show locked state ("🔒 Not Owned")
+// And: No buy CTA exists anywhere
+
+it('BCT-COS-UI-SHOP-002: Owned show controls, non-owned locked', () => {
+  expect(true).toBe(true); // Actual test in bct-p11b-cosmetics-ui.spec.tsx
+});
+```
+
+### BCT-COS-UI-SHOP-003: Price shown is informational only; no buy CTA
+**Bible Reference:** §14.7.3 (No Purchase in P11-B)
+```typescript
+// Scenario: Price display without purchase
+// Given: Shop Cosmetics panel is visible
+// When: User views any cosmetic item
+// Then: priceGems is displayed (e.g., "💎 15")
+// And: No "Buy" button or purchase CTA exists
+// Note: Purchase flow deferred to future phase
+
+it('BCT-COS-UI-SHOP-003: Price informational, no buy CTA', () => {
+  expect(true).toBe(true); // Actual test in bct-p11b-cosmetics-ui.spec.tsx
+});
+```
+
+### BCT-COS-UI-INV-001: Inventory includes Cosmetics section grouped by slot
+**Bible Reference:** §14.8.3 (Inventory Cosmetics Tab)
+```typescript
+// Scenario: Inventory cosmetics grouped by slot
+// Given: Inventory is open and Cosmetics tab is selected
+// And: Active pet owns cosmetics in multiple slots
+// When: User views the Cosmetics section
+// Then: Cosmetics are grouped by slot in COSMETIC_SLOTS order
+// And: Each slot shows owned cosmetics with equip controls
+
+it('BCT-COS-UI-INV-001: Inventory groups cosmetics by slot', () => {
+  expect(true).toBe(true); // Actual test in bct-p11b-cosmetics-ui.spec.tsx
+});
+```
+
+### BCT-COS-UI-INV-002: Equipped state visible and consistent with store
+**Bible Reference:** §14.8.3 (Equip State Display)
+```typescript
+// Scenario: Equipped cosmetic display
+// Given: Inventory Cosmetics section is visible
+// And: Pet has cosmetic equipped in a slot
+// When: User views that slot
+// Then: Equipped cosmetic shows "★ Equipped" indicator
+// And: Unequip button is displayed
+// When: User clicks Unequip
+// Then: Slot is cleared in store
+// And: UI updates to show Equip button
+
+it('BCT-COS-UI-INV-002: Equipped state visible and unequip works', () => {
+  expect(true).toBe(true); // Actual test in bct-p11b-cosmetics-ui.spec.tsx
+});
+```
+
+### BCT-COS-UI-INV-003: Inventory empty state when owned cosmetics = 0
+**Bible Reference:** §14.8.3 (Empty State)
+```typescript
+// Scenario: Cosmetics empty state
+// Given: Inventory Cosmetics tab is selected
+// And: Active pet owns 0 cosmetics
+// When: User views the section
+// Then: Empty state is shown with "No cosmetics yet" message
+
+it('BCT-COS-UI-INV-003: Empty state when no cosmetics owned', () => {
+  expect(true).toBe(true); // Actual test in bct-p11b-cosmetics-ui.spec.tsx
+});
+```
+
+### P11-B Test ID Mapping
+
+| BCT ID | Required Test IDs |
+|--------|-------------------|
+| BCT-COS-UI-SHOP-001 | `shop-cosmetics-panel`, `shop-cosmetic-card-${id}`, `shop-cosmetic-rarity-${id}` |
+| BCT-COS-UI-SHOP-002 | `shop-cosmetic-owned-${id}`, `shop-cosmetic-equipped-${id}`, `shop-cosmetic-equip-${id}`, `shop-cosmetic-unequip-${slot}`, `shop-cosmetic-locked-${id}` |
+| BCT-COS-UI-SHOP-003 | `shop-cosmetic-price-${id}` |
+| BCT-COS-UI-INV-001 | `inventory-cosmetics-section`, `inventory-cosmetics-slot-${slot}`, `inventory-cosmetic-row-${id}` |
+| BCT-COS-UI-INV-002 | `inventory-cosmetic-equipped-${slot}`, `inventory-cosmetic-equip-${id}`, `inventory-cosmetic-unequip-${slot}` |
+| BCT-COS-UI-INV-003 | `inventory-cosmetics-empty` |
+
+---
+
+### Key Test Specifications (Preview - P11-C/Purchase)
+
+**BCT-COSMETICS-OWNERSHIP-001** (Planned - Purchase Phase)
 ```
 Given: Pet A has purchased cos_hat_cap_blue
 When: User switches to Pet B and views shop

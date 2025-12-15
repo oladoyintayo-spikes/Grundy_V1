@@ -24,7 +24,13 @@ import {
   getShopRecommendations,
   getShopItemById,
   type RecommendationState,
+  // P11-B: Cosmetics imports
+  COSMETIC_CATALOG,
+  COSMETIC_SLOTS,
+  type CosmeticSlot,
+  type CosmeticDefinition,
 } from '../../constants/bible.constants';
+import { useGameStore } from '../../game/store';
 
 // Focus ring class for accessibility
 const FOCUS_RING_CLASS = 'focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2 focus:ring-offset-slate-900';
@@ -52,6 +58,8 @@ interface ShopViewProps {
   inventory: Record<string, number>;
   /** Optional: placeholder for future purchase handler */
   onPurchase?: (itemId: string, quantity: number) => void;
+  /** P11-B: Active pet ID for cosmetics (optional for backwards compat) */
+  activePetId?: string;
 }
 
 /**
@@ -460,27 +468,223 @@ const CareTabContent = ({
 };
 
 /**
- * Stub Tab Content (Cosmetics, Gems)
+ * P11-B: Cosmetics Tab Content
+ * BCT-COS-UI-SHOP-001: Shows catalog items with slot/rarity/priceGems
+ * BCT-COS-UI-SHOP-002: Owned cosmetics show equip/unequip; non-owned are locked
+ * BCT-COS-UI-SHOP-003: Price shown is informational only; no buy CTA
+ */
+const CosmeticsTabContent = ({
+  activePetId,
+}: {
+  activePetId: string | undefined;
+}) => {
+  const getPetOwnedCosmetics = useGameStore((s) => s.getPetOwnedCosmetics);
+  const getPetEquippedCosmetics = useGameStore((s) => s.getPetEquippedCosmetics);
+  const equipCosmetic = useGameStore((s) => s.equipCosmetic);
+  const unequipCosmetic = useGameStore((s) => s.unequipCosmetic);
+  const storeActivePetId = useGameStore((s) => s.activePetId);
+
+  // Use passed activePetId or fallback to store
+  const petId = activePetId ?? storeActivePetId;
+
+  // Get ownership and equipped state for active pet
+  const ownedCosmeticIds = petId ? getPetOwnedCosmetics(petId) : [];
+  const equippedCosmetics = petId ? getPetEquippedCosmetics(petId) : {};
+
+  // Rarity colors for badges
+  const rarityColors: Record<string, string> = {
+    common: 'bg-slate-500 text-white',
+    uncommon: 'bg-green-600 text-white',
+    rare: 'bg-blue-600 text-white',
+    epic: 'bg-purple-600 text-white',
+    legendary: 'bg-amber-500 text-black',
+  };
+
+  // Slot emoji mapping
+  const slotEmojis: Record<CosmeticSlot, string> = {
+    hat: '🎩',
+    accessory: '🧣',
+    outfit: '👔',
+    aura: '✨',
+    skin: '🎨',
+  };
+
+  const handleEquip = (cosmeticId: string) => {
+    if (!petId) return;
+    const result = equipCosmetic(petId, cosmeticId);
+    if (!result.success) {
+      console.warn(`[P11-B] Equip failed: ${result.error}`);
+    }
+  };
+
+  const handleUnequip = (slot: CosmeticSlot) => {
+    if (!petId) return;
+    const result = unequipCosmetic(petId, slot);
+    if (!result.success) {
+      console.warn(`[P11-B] Unequip failed: ${result.error}`);
+    }
+  };
+
+  // Group cosmetics by slot for display (using COSMETIC_SLOTS order)
+  const cosmeticsBySlot = useMemo(() => {
+    const grouped: Record<CosmeticSlot, CosmeticDefinition[]> = {
+      hat: [],
+      accessory: [],
+      outfit: [],
+      aura: [],
+      skin: [],
+    };
+    for (const cosmetic of COSMETIC_CATALOG) {
+      grouped[cosmetic.slot].push(cosmetic);
+    }
+    return grouped;
+  }, []);
+
+  return (
+    <div data-testid="shop-cosmetics-panel">
+      <h3 className="text-sm font-bold text-slate-300 mb-3 flex items-center gap-1">
+        <span>✨</span> Cosmetics
+        <span className="text-xs text-slate-500 ml-2">(View Only — No Purchase)</span>
+      </h3>
+
+      {/* Render cosmetics grouped by slot in COSMETIC_SLOTS order */}
+      <div className="space-y-4">
+        {COSMETIC_SLOTS.map((slot) => {
+          const slotCosmetics = cosmeticsBySlot[slot];
+          if (slotCosmetics.length === 0) return null;
+
+          const equippedInSlot = equippedCosmetics[slot];
+
+          return (
+            <div key={slot} className="space-y-2">
+              {/* Slot Header */}
+              <div className="flex items-center gap-2 text-sm text-slate-400">
+                <span>{slotEmojis[slot]}</span>
+                <span className="capitalize font-medium">{slot}</span>
+                {equippedInSlot && (
+                  <span className="text-xs text-amber-400" data-testid={`shop-cosmetic-equipped-${equippedInSlot}`}>
+                    ★ Equipped
+                  </span>
+                )}
+              </div>
+
+              {/* Cosmetic Cards */}
+              <div className="grid grid-cols-2 gap-2">
+                {slotCosmetics.map((cosmetic) => {
+                  const isOwned = ownedCosmeticIds.includes(cosmetic.id);
+                  const isEquipped = equippedInSlot === cosmetic.id;
+
+                  return (
+                    <div
+                      key={cosmetic.id}
+                      className={`
+                        p-3 rounded-xl border-2 transition-all
+                        ${isEquipped
+                          ? 'border-amber-500 bg-amber-500/10'
+                          : isOwned
+                            ? 'border-green-500/30 bg-slate-800'
+                            : 'border-slate-700 bg-slate-800/50 opacity-70'}
+                      `}
+                      data-testid={`shop-cosmetic-card-${cosmetic.id}`}
+                    >
+                      {/* Item Header */}
+                      <div className="flex items-start gap-2 mb-2">
+                        <span className="text-xl">{slotEmojis[cosmetic.slot]}</span>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-sm font-medium text-white truncate">
+                            {cosmetic.displayName}
+                          </div>
+                          {/* Rarity Badge */}
+                          <span
+                            className={`text-[10px] px-1.5 py-0.5 rounded-full capitalize ${rarityColors[cosmetic.rarity]}`}
+                            data-testid={`shop-cosmetic-rarity-${cosmetic.id}`}
+                          >
+                            {cosmetic.rarity}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Price Display (informational only - BCT-COS-UI-SHOP-003) */}
+                      <div
+                        className="flex items-center gap-1 text-purple-400 text-sm mb-2"
+                        data-testid={`shop-cosmetic-price-${cosmetic.id}`}
+                      >
+                        <span>💎</span>
+                        <span className="font-bold">{cosmetic.priceGems}</span>
+                      </div>
+
+                      {/* Ownership & Equip State */}
+                      {isOwned ? (
+                        <div data-testid={`shop-cosmetic-owned-${cosmetic.id}`}>
+                          {isEquipped ? (
+                            <button
+                              onClick={() => handleUnequip(cosmetic.slot)}
+                              className={`
+                                w-full py-1.5 px-2 rounded-lg text-xs font-medium transition-all
+                                bg-amber-600 text-white hover:bg-amber-500 active:scale-95
+                                ${FOCUS_RING_CLASS}
+                              `}
+                              data-testid={`shop-cosmetic-unequip-${cosmetic.slot}`}
+                            >
+                              Unequip
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => handleEquip(cosmetic.id)}
+                              className={`
+                                w-full py-1.5 px-2 rounded-lg text-xs font-medium transition-all
+                                bg-green-600 text-white hover:bg-green-500 active:scale-95
+                                ${FOCUS_RING_CLASS}
+                              `}
+                              data-testid={`shop-cosmetic-equip-${cosmetic.id}`}
+                            >
+                              Equip
+                            </button>
+                          )}
+                        </div>
+                      ) : (
+                        <div
+                          className="w-full py-1.5 px-2 rounded-lg text-xs font-medium text-center bg-slate-700 text-slate-400"
+                          data-testid={`shop-cosmetic-locked-${cosmetic.id}`}
+                        >
+                          🔒 Not Owned
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {COSMETIC_CATALOG.length === 0 && (
+        <div className="text-center text-slate-400 py-8">
+          No cosmetics available yet
+        </div>
+      )}
+    </div>
+  );
+};
+
+/**
+ * Stub Tab Content (Gems only now - Cosmetics has full content)
  * BCT-SHOP-018/019: Gems tab locked below Level 5
- * BCT-SHOP-020: Cosmetics tab is "Coming Soon" stub
  */
 const StubTabContent = ({
   tab,
   petLevel,
 }: {
-  tab: 'cosmetics' | 'gems';
+  tab: 'gems';
   petLevel: number;
 }) => {
-  const isGemsLocked = tab === 'gems' && petLevel < 5;
+  const isGemsLocked = petLevel < 5;
 
   return (
     <div className="flex flex-col items-center justify-center py-12 text-center">
-      <span className="text-4xl mb-3">
-        {tab === 'cosmetics' ? '✨' : '💎'}
-      </span>
-      <h3 className="text-lg font-bold text-slate-300 mb-1">
-        {tab === 'cosmetics' ? 'Cosmetics' : 'Gem Shop'}
-      </h3>
+      <span className="text-4xl mb-3">💎</span>
+      <h3 className="text-lg font-bold text-slate-300 mb-1">Gem Shop</h3>
       <p className="text-sm text-slate-400">
         {isGemsLocked
           ? `Unlocks at Level 5 (Currently Level ${petLevel})`
@@ -506,6 +710,7 @@ export function ShopView({
   petState,
   inventory,
   onPurchase,
+  activePetId,
 }: ShopViewProps) {
   const [activeTab, setActiveTab] = useState<ShopTab>('food');
   const [quantities, setQuantities] = useState<Record<string, number>>({});
@@ -589,7 +794,6 @@ export function ShopView({
             tab="cosmetics"
             activeTab={activeTab}
             onClick={() => setActiveTab('cosmetics')}
-            isStub
           />
           <ShopTabButton
             tab="gems"
@@ -635,9 +839,13 @@ export function ShopView({
             />
           )}
 
-          {(activeTab === 'cosmetics' || activeTab === 'gems') && (
+          {activeTab === 'cosmetics' && (
+            <CosmeticsTabContent activePetId={activePetId} />
+          )}
+
+          {activeTab === 'gems' && (
             <StubTabContent
-              tab={activeTab}
+              tab="gems"
               petLevel={petLevel}
             />
           )}
