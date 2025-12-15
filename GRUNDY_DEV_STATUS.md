@@ -2,9 +2,9 @@
 
 # Grundy Web Prototype — Development Status
 
-**Last Updated:** December 15, 2025 (Phase 11-C1 Render Closeout Complete)
-**Current Phase:** Web Phase 11-C1 — ✅ COMPLETE (Cosmetics Render Closeout)
-**Next Phase:** Phase 11 Purchase Flow (gem deduction, buy CTA)
+**Last Updated:** December 15, 2025 (Phase 11 Closeout Audit Complete)
+**Current Phase:** Web Phase 11 — ✅ COMPLETE (Cosmetics System)
+**Next Phase:** Phase 12 (Season Pass, Achievements, Ads, LiveOps)
 
 ---
 
@@ -51,6 +51,8 @@
 | **Web Phase 11-B** | Cosmetics UI Wiring | ✅ COMPLETE | Shop Cosmetics Tab (view only), Inventory Cosmetics Section; 6 BCT-COS-UI specs; Commit: `73f4e20` |
 | **Web Phase 11-C** | Cosmetics Render Layering | ✅ COMPLETE | PetRender component; layer order per Bible §11.5.3; placeholder badges (dev); 4 BCT-COS-RENDER specs; Commit: `0746627` |
 | **Web Phase 11-C1** | Render Closeout | ✅ COMPLETE | PetAvatar→PetRender migration; multi-surface consistency; BCT wording tightened; compact mode tests |
+| **Web Phase 11-D** | Cosmetics Purchase | ✅ COMPLETE | buyCosmetic action; gem deduction; ALREADY_OWNED error handling; no auto-equip; 4 BCT-COS-BUY specs; Commit: `9a61c92` |
+| **Web Phase 11-D1** | Purchase UX Polish | ✅ COMPLETE | purchasingIds double-tap protection; shop-gems-balance test ID; immediate feedback; 2 BCT-COS-BUY-UI specs; Commit: `3032d9a` |
 
 ### Post-Web 1.0
 
@@ -776,10 +778,10 @@ All Phase 10 tasks complete. Weight system, sickness mechanics, poop system, min
 
 | Metric | Current | Previous | Notes |
 |--------|---------|----------|-------|
-| Unit tests (full) | **1742** | 1680 | `npm test -- --run` |
-| BCT tests | **999** | 914 | `npm run test:bible` (filters by "BCT-" pattern) |
+| Unit tests (full) | **1898** | 1742 | `npm test -- --run` |
+| BCT tests | **1129** | 999 | `npm run test:bible` (filters by "BCT-" pattern) |
 
-**Note:** BCT tests are a subset of the full suite. The `test:bible` command skips non-BCT tests (743 skipped).
+**Note:** BCT tests are a subset of the full suite. The `test:bible` command skips non-BCT tests (769 skipped).
 
 ---
 
@@ -800,7 +802,8 @@ All Phase 10 tasks complete. Weight system, sickness mechanics, poop system, min
 - **Phase 11-B:** Cosmetics UI Wiring → ✅ Bible v1.10 (Shop tab view-only, Inventory cosmetics section)
 - **Phase 11-C:** Cosmetics Render → ✅ Bible v1.10 (PetRender shared component, layer order, dev placeholders per §13.7)
 - **Phase 11-C1:** Render Closeout → ✅ (PetAvatar migration, multi-surface consistency, skin slot asset-blocked)
-- **Phase 11-D:** Cosmetics Purchase (gem deduction, buy CTA, shop flow) — PLANNED
+- **Phase 11-D:** Cosmetics Purchase → ✅ (buyCosmetic action, gem deduction, no auto-equip)
+- **Phase 11-D1:** Purchase UX Polish → ✅ (double-tap protection, immediate feedback)
 - **Phase 12:** Season Pass, Achievements, Ads, LiveOps
 
 ---
@@ -809,15 +812,15 @@ All Phase 10 tasks complete. Weight system, sickness mechanics, poop system, min
 
 | Command | Purpose | Count |
 |---------|---------|-------|
-| `npm test -- --run` | Full unit test suite | ~1634 tests |
-| `npm run test:bible` | BCT tests only (filters by "BCT-" name) | ~891 tests |
+| `npm test -- --run` | Full unit test suite | ~1898 tests |
+| `npm run test:bible` | BCT tests only (filters by "BCT-" name) | ~1129 tests |
 | `npm run build` | Production build (includes tsc) | — |
 | `npx tsc --noEmit` | Type checking only | — |
 | `npm run test:all` | Full suite + BCT + E2E | — |
 
 **Test Count Explanation:**
 - `npm test -- --run` runs ALL tests (unit + BCT + integration)
-- `npm run test:bible` filters to only BCT-prefixed tests, skipping ~743 non-BCT tests
+- `npm run test:bible` filters to only BCT-prefixed tests, skipping ~769 non-BCT tests
 - Both commands use the same Vitest runner; difference is in test name filtering
 
 ```bash
