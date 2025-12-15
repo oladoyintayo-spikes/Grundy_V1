@@ -468,13 +468,15 @@ const CareTabContent = ({
 };
 
 /**
- * P11-B/D: Cosmetics Tab Content with Purchase Support
+ * P11-B/D/D1: Cosmetics Tab Content with Purchase Support + UX Polish
  * BCT-COS-UI-SHOP-001: Shows catalog items with slot/rarity/priceGems
  * BCT-COS-UI-SHOP-002: Owned cosmetics show equip/unequip
  * BCT-COS-BUY-001: Buy button shown for non-owned cosmetics
  * BCT-COS-BUY-002: Disabled button when insufficient gems
  * BCT-COS-BUY-003: Purchase deducts gems, grants pet-bound ownership
  * BCT-COS-BUY-004: No auto-equip after purchase
+ * BCT-COS-BUY-UI-001: After purchase, owned state + equip controls appear immediately
+ * BCT-COS-BUY-UI-002: Double-tap protection prevents multiple deductions
  */
 const CosmeticsTabContent = ({
   activePetId,
@@ -488,6 +490,9 @@ const CosmeticsTabContent = ({
   const buyCosmetic = useGameStore((s) => s.buyCosmetic);
   const gems = useGameStore((s) => s.currencies.gems);
   const storeActivePetId = useGameStore((s) => s.activePetId);
+
+  // P11-D1: Double-tap protection - track cosmetics currently being purchased
+  const [purchasingIds, setPurchasingIds] = useState<Set<string>>(new Set());
 
   // Use passed activePetId or fallback to store
   const petId = activePetId ?? storeActivePetId;
@@ -530,13 +535,41 @@ const CosmeticsTabContent = ({
     }
   };
 
-  // P11-D: Handle cosmetic purchase with gems
+  // P11-D/D1: Handle cosmetic purchase with gems + double-tap protection
   const handleBuy = (cosmeticId: string) => {
     if (!petId) return;
-    const result = buyCosmetic(petId, cosmeticId);
-    if (!result.success) {
-      console.warn(`[P11-D] Purchase failed: ${result.error}`);
+
+    // P11-D1: Double-tap protection - prevent multiple clicks
+    if (purchasingIds.has(cosmeticId)) {
+      return;
     }
+
+    // Mark as purchasing (disables button)
+    setPurchasingIds((prev) => new Set(prev).add(cosmeticId));
+
+    const result = buyCosmetic(petId, cosmeticId);
+
+    if (!result.success) {
+      // Clear purchasing state on failure so user can retry
+      setPurchasingIds((prev) => {
+        const next = new Set(prev);
+        next.delete(cosmeticId);
+        return next;
+      });
+
+      // P11-D1: Error feedback policy
+      if (result.error === 'INSUFFICIENT_GEMS') {
+        // Expected state - button should be disabled, but user may have lost gems
+        console.warn(`[P11-D1] Purchase blocked: insufficient gems`);
+      } else if (result.error === 'ALREADY_OWNED') {
+        // Race condition or stale UI - should not happen in normal flow
+        console.warn(`[P11-D1] Purchase blocked: already owned (UI may be stale)`);
+      } else {
+        // INVALID_COSMETIC / INVALID_PET - impossible via UI, log error for debugging
+        console.error(`[P11-D1] Unexpected purchase error: ${result.error}`);
+      }
+    }
+    // On success: purchasingIds cleanup not needed - component re-renders with isOwned=true
   };
 
   // Group cosmetics by slot for display (using COSMETIC_SLOTS order)
@@ -558,7 +591,10 @@ const CosmeticsTabContent = ({
     <div data-testid="shop-cosmetics-panel">
       <h3 className="text-sm font-bold text-slate-300 mb-3 flex items-center gap-1">
         <span>✨</span> Cosmetics
-        <span className="text-xs text-purple-400 ml-auto flex items-center gap-1">
+        <span
+          className="text-xs text-purple-400 ml-auto flex items-center gap-1"
+          data-testid="shop-gems-balance"
+        >
           💎 {gems}
         </span>
       </h3>
@@ -659,28 +695,41 @@ const CosmeticsTabContent = ({
                           )}
                         </div>
                       ) : (
-                        /* P11-D: Buy button for non-owned cosmetics */
-                        gems >= cosmetic.priceGems ? (
-                          <button
-                            onClick={() => handleBuy(cosmetic.id)}
-                            className={`
-                              w-full py-1.5 px-2 rounded-lg text-xs font-medium transition-all
-                              bg-purple-600 text-white hover:bg-purple-500 active:scale-95
-                              ${FOCUS_RING_CLASS}
-                            `}
-                            data-testid={`shop-cosmetic-buy-${cosmetic.id}`}
-                          >
-                            💎 Buy for {cosmetic.priceGems}
-                          </button>
-                        ) : (
-                          <button
-                            disabled
-                            className="w-full py-1.5 px-2 rounded-lg text-xs font-medium bg-slate-700 text-slate-500 cursor-not-allowed"
-                            data-testid={`shop-cosmetic-buy-disabled-${cosmetic.id}`}
-                          >
-                            💎 {cosmetic.priceGems} (Need {cosmetic.priceGems - gems} more)
-                          </button>
-                        )
+                        /* P11-D/D1: Buy button for non-owned cosmetics with double-tap protection */
+                        (() => {
+                          const isPurchasing = purchasingIds.has(cosmetic.id);
+                          const canAfford = gems >= cosmetic.priceGems;
+                          const gemsNeeded = cosmetic.priceGems - gems;
+
+                          if (canAfford) {
+                            return (
+                              <button
+                                onClick={() => handleBuy(cosmetic.id)}
+                                disabled={isPurchasing}
+                                className={`
+                                  w-full py-1.5 px-2 rounded-lg text-xs font-medium transition-all
+                                  ${isPurchasing
+                                    ? 'bg-purple-800 text-purple-300 cursor-wait'
+                                    : 'bg-purple-600 text-white hover:bg-purple-500 active:scale-95'}
+                                  ${FOCUS_RING_CLASS}
+                                `}
+                                data-testid={`shop-cosmetic-buy-${cosmetic.id}`}
+                              >
+                                {isPurchasing ? '💎 Purchasing...' : `💎 Buy for ${cosmetic.priceGems}`}
+                              </button>
+                            );
+                          } else {
+                            return (
+                              <button
+                                disabled
+                                className="w-full py-1.5 px-2 rounded-lg text-xs font-medium bg-slate-700 text-slate-500 cursor-not-allowed"
+                                data-testid={`shop-cosmetic-buy-disabled-${cosmetic.id}`}
+                              >
+                                💎 {cosmetic.priceGems} (Need {gemsNeeded} more)
+                              </button>
+                            );
+                          }
+                        })()
                       )}
                     </div>
                   );
