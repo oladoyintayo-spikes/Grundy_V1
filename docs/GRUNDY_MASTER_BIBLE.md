@@ -2973,6 +2973,14 @@ Benefits:
 | 6 | 1 rare food |
 | 7 | 10 gems + Mystery Box |
 
+### Streak Reset Behavior
+
+- The login streak is based on **consecutive calendar days** (player local time).
+- **Missing any day resets** the streak to **Day 1**.
+-  After claiming the **Day 7** reward, the streak **resets to Day 1** on the next eligible login day.
+-  The Day 7 gem reward is intended to be earned **once per week** via this 7-day cycle.
+
+
 ## 10.4 Monthly Events
 
 | Month | Event | Special Content |
@@ -3140,6 +3148,8 @@ Play free → See cool cosmetics → Buy 1 small cosmetic (10-20💎)
 | Level up | +5💎 | Primary free player progression reward |
 | First feed daily | +1💎 | Daily engagement incentive |
 | Daily login Day 7 | +10💎 | Weekly streak bonus |
+
+>  Streak repeats weekly: the Day 7 reward occurs once per 7-day streak cycle; missing a day resets the streak to Day 1.
 
 **Free Player Gem Math (with P11-0):**
 
