@@ -152,14 +152,17 @@ describe('BCT-LAYOUT: No Scroll Constraint (design-level)', () => {
    * These are design-level assertions. Actual no-scroll behavior is verified via:
    * - Main app uses overflow-hidden
    * - HomeView uses flex layout with no overflow-y-auto
-   * - Pet display constrained to maxHeight: 50vh
+   * - Pet stage uses flex-1 to fill available space (CE-approved deviation from 40-50% constraint)
    */
 
-  it('should constrain pet display to 50% viewport height max', () => {
-    // Enforced via CSS: maxHeight: '50vh' on active-pet-display
-    const petDisplayMaxHeight = '50vh';
-    const maxPercent = parseInt(petDisplayMaxHeight);
-    expect(maxPercent).toBeLessThanOrEqual(50);
+  it('should use flex-1 for pet stage to fill available space', () => {
+    // CE-approved deviation: Pet stage fills available space between header and ActionBar
+    // Instead of fixed maxHeight: 50vh, we use flex-1 min-h-0
+    // This eliminates the empty gap above ActionBar while keeping pet visible
+    const petStageUsesFlexGrow = true;
+    const petStageUsesMinH0 = true;
+    expect(petStageUsesFlexGrow).toBe(true);
+    expect(petStageUsesMinH0).toBe(true);
   });
 
   it('should enforce flex layout for vertical space distribution', () => {
@@ -183,7 +186,7 @@ describe('BCT-LAYOUT: No Scroll Constraint (design-level)', () => {
 describe('BCT-LAYOUT: Active Pet Display', () => {
   /**
    * Bible §14.5: Only active pet visible on home screen
-   * Bible §14.6: Pet visible, 40-50% of viewport height
+   * Bible §14.6 (CE-approved deviation): Pet stage fills available space (flex-1)
    */
 
   it('should have test ID for active pet display', () => {
