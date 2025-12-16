@@ -295,13 +295,12 @@ function HomeView({ onOpenShop, pendingFeedFoodId, onClearPendingFeed }: HomeVie
           </div>
         )}
 
-        {/* Pet Display Area - Bible §14.6: Pet visible, 40-50% of viewport height */}
+        {/* Pet Display Area - Stage fills available space (flex-1), pet centered within */}
         <div
           className="relative rounded-2xl p-3 sm:p-4 text-center flex-1 min-h-0 flex flex-col justify-center"
           style={{
             background: `linear-gradient(135deg, ${petColor}22, ${petColor}11)`,
             border: `2px solid ${petColor}44`,
-            maxHeight: '50vh'
           }}
           data-testid="active-pet-display"
         >
