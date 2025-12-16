@@ -1,6 +1,7 @@
 // ============================================
 // GRUNDY — ROOM PROPS COMPONENT
 // P6-ART-PROPS: Visual props for room differentiation
+// Bible §14.4: Rooms Lite - subtle background decoration
 // ============================================
 
 import React from 'react';
@@ -15,6 +16,19 @@ interface RoomPropsProps {
 }
 
 // ============================================
+// DESIGN NOTES
+// ============================================
+// Props should feel like subtle room atmosphere (furniture shadows)
+// NOT like UI panels or drawers.
+//
+// Key principles:
+// - Low opacity (15-25%) - background decoration only
+// - No hard borders - avoid "sheet edge" appearance
+// - Safe zone: props stay above bottom-16 (Action Bar height)
+// - Non-interactive: pointer-events-none, aria-hidden
+// ============================================
+
+// ============================================
 // KITCHEN PROPS
 // Countertop, cabinet silhouette, warm atmosphere
 // ============================================
@@ -22,20 +36,20 @@ interface RoomPropsProps {
 function KitchenProps() {
   return (
     <>
-      {/* Counter/table surface at bottom */}
+      {/* Counter/table surface - elevated above Action Bar safe zone */}
       <div
         data-testid="room-kitchen-counter"
-        className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-amber-900/60 to-amber-800/30 border-t border-amber-700/30"
+        className="absolute bottom-20 left-4 right-4 h-8 bg-gradient-to-t from-amber-900/20 to-transparent rounded-lg"
         aria-hidden="true"
       />
       {/* Cabinet silhouette on left */}
       <div
-        className="absolute bottom-16 left-4 w-12 h-24 bg-amber-950/40 rounded-t-lg border-x border-t border-amber-800/20"
+        className="absolute bottom-28 left-4 w-10 h-16 bg-amber-950/15 rounded-t-lg"
         aria-hidden="true"
       />
       {/* Fridge silhouette on right */}
       <div
-        className="absolute bottom-16 right-4 w-14 h-32 bg-slate-700/30 rounded-t-md border-x border-t border-slate-600/20"
+        className="absolute bottom-28 right-4 w-12 h-24 bg-slate-700/15 rounded-t-md"
         aria-hidden="true"
       />
     </>
@@ -50,24 +64,24 @@ function KitchenProps() {
 function BedroomProps() {
   return (
     <>
-      {/* Bed platform at bottom */}
+      {/* Bed platform - elevated above Action Bar safe zone */}
       <div
         data-testid="room-bedroom-bed"
-        className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3/4 h-12 bg-gradient-to-t from-indigo-900/50 to-indigo-800/30 rounded-t-xl border-x border-t border-indigo-700/30"
+        className="absolute bottom-20 left-1/2 -translate-x-1/2 w-2/3 h-8 bg-gradient-to-t from-indigo-900/20 to-transparent rounded-xl"
         aria-hidden="true"
       />
       {/* Pillow accent */}
       <div
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 w-16 h-6 bg-slate-300/20 rounded-lg"
+        className="absolute bottom-26 left-1/2 -translate-x-1/2 w-12 h-4 bg-slate-300/10 rounded-lg"
         aria-hidden="true"
       />
-      {/* Bedside lamp on right */}
+      {/* Bedside lamp on right - soft glow */}
       <div
-        className="absolute bottom-16 right-6 flex flex-col items-center"
+        className="absolute bottom-32 right-8 flex flex-col items-center"
         aria-hidden="true"
       >
-        <div className="w-8 h-8 bg-amber-400/30 rounded-full blur-sm" />
-        <div className="w-2 h-6 bg-slate-600/40 -mt-1" />
+        <div className="w-6 h-6 bg-amber-400/15 rounded-full blur-sm" />
+        <div className="w-1.5 h-4 bg-slate-600/20 -mt-1" />
       </div>
     </>
   );
@@ -81,30 +95,30 @@ function BedroomProps() {
 function PlayroomProps() {
   return (
     <>
-      {/* Toy shelf on left */}
+      {/* Toy shelf on left - subtle */}
       <div
         data-testid="room-playroom-shelf"
-        className="absolute bottom-20 left-3 w-16 h-20 bg-pink-900/30 rounded-lg border border-pink-700/20 flex flex-col items-center justify-center gap-1 p-1"
+        className="absolute bottom-24 left-4 w-12 h-14 bg-pink-900/15 rounded-lg flex flex-col items-center justify-center gap-1 p-1"
         aria-hidden="true"
       >
-        {/* Toy blocks */}
+        {/* Toy blocks - very subtle */}
         <div className="flex gap-0.5">
-          <div className="w-3 h-3 bg-red-400/40 rounded-sm" />
-          <div className="w-3 h-3 bg-blue-400/40 rounded-sm" />
+          <div className="w-2.5 h-2.5 bg-red-400/20 rounded-sm" />
+          <div className="w-2.5 h-2.5 bg-blue-400/20 rounded-sm" />
         </div>
         <div className="flex gap-0.5">
-          <div className="w-3 h-3 bg-yellow-400/40 rounded-sm" />
-          <div className="w-3 h-3 bg-green-400/40 rounded-sm" />
+          <div className="w-2.5 h-2.5 bg-yellow-400/20 rounded-sm" />
+          <div className="w-2.5 h-2.5 bg-green-400/20 rounded-sm" />
         </div>
       </div>
-      {/* Rug/play mat at bottom */}
+      {/* Rug/play mat - elevated, softer */}
       <div
-        className="absolute bottom-0 left-1/2 -translate-x-1/2 w-2/3 h-8 bg-gradient-to-t from-purple-800/40 to-purple-700/20 rounded-t-full"
+        className="absolute bottom-20 left-1/2 -translate-x-1/2 w-1/2 h-6 bg-gradient-to-t from-purple-800/15 to-transparent rounded-t-full"
         aria-hidden="true"
       />
       {/* Ball on right */}
       <div
-        className="absolute bottom-8 right-8 w-10 h-10 bg-gradient-to-br from-red-400/40 to-orange-400/40 rounded-full"
+        className="absolute bottom-24 right-10 w-8 h-8 bg-gradient-to-br from-red-400/20 to-orange-400/20 rounded-full"
         aria-hidden="true"
       />
     </>
@@ -119,28 +133,28 @@ function PlayroomProps() {
 function LivingRoomProps() {
   return (
     <>
-      {/* Sofa at bottom */}
+      {/* Sofa - elevated above Action Bar, narrower, softer */}
       <div
         data-testid="room-livingroom-sofa"
-        className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4/5 h-10 bg-gradient-to-t from-slate-700/50 to-slate-600/30 rounded-t-lg border-x border-t border-slate-500/20"
+        className="absolute bottom-20 left-1/2 -translate-x-1/2 w-2/3 h-6 bg-gradient-to-t from-slate-700/20 to-transparent rounded-t-lg"
         aria-hidden="true"
       />
-      {/* Sofa back */}
+      {/* Sofa back - subtle */}
       <div
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 w-3/4 h-6 bg-slate-600/30 rounded-t-md"
+        className="absolute bottom-24 left-1/2 -translate-x-1/2 w-1/2 h-4 bg-slate-600/15 rounded-t-md"
         aria-hidden="true"
       />
       {/* Plant on left */}
       <div
-        className="absolute bottom-14 left-6 flex flex-col items-center"
+        className="absolute bottom-28 left-8 flex flex-col items-center"
         aria-hidden="true"
       >
-        <div className="w-6 h-8 bg-emerald-600/40 rounded-full" />
-        <div className="w-4 h-4 bg-amber-800/40 rounded-sm -mt-1" />
+        <div className="w-5 h-6 bg-emerald-600/20 rounded-full" />
+        <div className="w-3 h-3 bg-amber-800/20 rounded-sm -mt-1" />
       </div>
-      {/* Coffee table */}
+      {/* Coffee table - subtle */}
       <div
-        className="absolute bottom-0 left-1/2 -translate-x-1/2 -translate-y-12 w-20 h-3 bg-amber-900/30 rounded-sm"
+        className="absolute bottom-20 left-1/2 -translate-x-1/2 -translate-y-8 w-14 h-2 bg-amber-900/15 rounded-sm"
         aria-hidden="true"
       />
     </>
@@ -158,20 +172,20 @@ function YardProps() {
       {/* Tree on left */}
       <div
         data-testid="room-yard-tree"
-        className="absolute bottom-0 left-4 flex flex-col items-center"
+        className="absolute bottom-20 left-6 flex flex-col items-center"
         aria-hidden="true"
       >
-        <div className="w-16 h-20 bg-emerald-700/40 rounded-full" />
-        <div className="w-4 h-12 bg-amber-900/40 -mt-2" />
+        <div className="w-12 h-16 bg-emerald-700/20 rounded-full" />
+        <div className="w-3 h-8 bg-amber-900/20 -mt-2" />
       </div>
-      {/* Grass at bottom */}
+      {/* Grass strip - elevated, very subtle */}
       <div
-        className="absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-emerald-800/40 to-emerald-700/20"
+        className="absolute bottom-16 left-0 right-0 h-4 bg-gradient-to-t from-emerald-800/15 to-transparent"
         aria-hidden="true"
       />
       {/* Bush on right */}
       <div
-        className="absolute bottom-4 right-6 w-12 h-10 bg-emerald-600/30 rounded-full"
+        className="absolute bottom-20 right-8 w-10 h-8 bg-emerald-600/15 rounded-full"
         aria-hidden="true"
       />
     </>
@@ -185,9 +199,12 @@ function YardProps() {
 /**
  * RoomProps - Renders room-specific decorative props.
  *
- * These are simple CSS-based shapes that give each room
+ * These are subtle CSS-based shapes that give each room
  * a distinct visual identity without distracting from
- * the pet or HUD.
+ * the pet or looking like UI elements.
+ *
+ * Bible §14.4: Rooms Lite - background decoration only
+ * Bible §14.6: Action Bar is sole bottom UI - props must not look like UI
  */
 export function RoomProps({ room }: RoomPropsProps) {
   switch (room) {
