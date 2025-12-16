@@ -258,7 +258,7 @@ function HomeView({ onOpenShop, pendingFeedFoodId, onClearPendingFeed }: HomeVie
 
   return (
     <div
-      className="h-full flex flex-col text-white p-2 sm:p-4 overflow-hidden"
+      className="h-full w-full flex flex-col text-white p-2 sm:p-4 overflow-hidden"
       data-testid="home-view"
     >
       {/* Bible §14.6: Mobile-first layout - all core loop elements visible without scroll */}
@@ -473,7 +473,7 @@ function GamesView() {
     };
 
     return (
-      <div className="h-full" data-testid="games-view">
+      <div className="h-full w-full" data-testid="games-view">
         <MiniGameWrapper
           gameId={selectedGame}
           onComplete={handleGameComplete}
@@ -487,7 +487,7 @@ function GamesView() {
 
   // Show the hub
   return (
-    <div className="h-full" data-testid="games-view">
+    <div className="h-full w-full" data-testid="games-view">
       <MiniGameHub onSelectGame={handleSelectGame} onBack={handleBackToHub} />
     </div>
   );
