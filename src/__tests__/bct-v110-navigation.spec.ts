@@ -107,18 +107,23 @@ describe('BCT-NAV-003: Menu Options', () => {
   });
 });
 
-describe('BCT-NAV-004: Header Menu Entry Point', () => {
+describe('BCT-NAV-004: Header Structure', () => {
   /**
    * Bible v1.10 §14.5: Menu Entry Point
-   * "Menu icon in the header (top bar) is allowed and recommended"
+   * - Header displays pet info and currencies
+   * - Menu access is via Action Bar only (no duplicate hamburger in header)
+   * - This eliminates duplicate navigation per Bible v1.10 intent
    */
 
   it('should have APP_HEADER test ID for container', () => {
     expect(TEST_IDS.APP_HEADER).toBe('app-header');
   });
 
-  it('should have HEADER_MENU_BUTTON test ID for menu icon', () => {
-    expect(TEST_IDS.HEADER_MENU_BUTTON).toBe('header-menu-button');
+  it('should NOT have menu button in header (menu is in Action Bar)', () => {
+    // Header hamburger menu was removed to eliminate duplicate navigation.
+    // Menu access is now exclusively via Action Bar "Menu" button.
+    // The HEADER_MENU_BUTTON test ID exists in constants but is not rendered.
+    expect(TEST_IDS.ACTION_BAR_MENU).toBe('action-bar-menu');
   });
 });
 
