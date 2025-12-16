@@ -11,7 +11,7 @@ export interface CooldownBannerProps {
   isOnCooldown: boolean;
   /** Whether pet is stuffed (blocks feeding entirely) */
   isStuffed: boolean;
-  /** Remaining cooldown time in seconds */
+  /** Remaining cooldown time in milliseconds (from getCooldownRemaining) */
   cooldownRemaining: number;
   /** Fullness state label (for context) */
   fullnessState?: 'hungry' | 'satisfied' | 'full' | 'stuffed';
@@ -37,9 +37,20 @@ export function CooldownBanner({
   // Don't render if neither cooldown nor stuffed
   if (!isOnCooldown && !isStuffed) return null;
 
-  const formatTime = (seconds: number): string => {
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
+  /**
+   * Format cooldown time as MM:SS
+   * @param ms - Remaining time in milliseconds
+   * @returns Formatted string like "29:15" or "0:00"
+   */
+  const formatTime = (ms: number): string => {
+    // Clamp to 0 (never negative)
+    const clampedMs = Math.max(0, ms);
+    // Convert ms to total seconds
+    const totalSeconds = Math.floor(clampedMs / 1000);
+    // Cap at 59:59 to prevent absurd display values (cooldown max is 30 min anyway)
+    const cappedSeconds = Math.min(totalSeconds, 59 * 60 + 59);
+    const mins = Math.floor(cappedSeconds / 60);
+    const secs = cappedSeconds % 60;
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 

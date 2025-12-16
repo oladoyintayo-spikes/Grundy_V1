@@ -28,7 +28,7 @@ export interface FoodDrawerProps {
   isStuffed?: boolean;
   /** Whether pet is on cooldown (reduced feed value) */
   isOnCooldown?: boolean;
-  /** Cooldown remaining time in seconds (for display) */
+  /** Cooldown remaining time in milliseconds (from getCooldownRemaining) */
   cooldownRemaining?: number;
 }
 
@@ -89,9 +89,20 @@ export function FoodDrawer({
     onClose();
   };
 
-  const formatCooldownTime = (seconds: number): string => {
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
+  /**
+   * Format cooldown time as MM:SS
+   * @param ms - Remaining time in milliseconds
+   * @returns Formatted string like "29:15" or "0:00"
+   */
+  const formatCooldownTime = (ms: number): string => {
+    // Clamp to 0 (never negative)
+    const clampedMs = Math.max(0, ms);
+    // Convert ms to total seconds
+    const totalSeconds = Math.floor(clampedMs / 1000);
+    // Cap at 59:59 to prevent absurd display values (cooldown max is 30 min anyway)
+    const cappedSeconds = Math.min(totalSeconds, 59 * 60 + 59);
+    const mins = Math.floor(cappedSeconds / 60);
+    const secs = cappedSeconds % 60;
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
