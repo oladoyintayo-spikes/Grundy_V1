@@ -262,7 +262,8 @@ function HomeView({ onOpenShop, pendingFeedFoodId, onClearPendingFeed }: HomeVie
       data-testid="home-view"
     >
       {/* Bible §14.6: Mobile-first layout - all core loop elements visible without scroll */}
-      <div className="flex-1 flex flex-col max-w-md mx-auto w-full min-h-0">
+      {/* Mobile: full width | Desktop: max-w-md centered (phone preview) */}
+      <div className="flex-1 flex flex-col w-full md:max-w-md md:mx-auto min-h-0">
 
         {/* Pet Selection - Debug only per BCT-PET-01: Single active pet on Home */}
         {/* Bible §14.5: "Only active pet visible on home screen. No pet bar showing all 8 pets simultaneously." */}
@@ -611,8 +612,9 @@ function SettingsView() {
     : null;
 
   return (
-    <div className="h-full flex flex-col items-center justify-center text-slate-200 p-4" data-testid="settings-view">
-      <div className="max-w-sm w-full space-y-6">
+    <div className="h-full flex flex-col items-center justify-start text-slate-200 p-4 overflow-y-auto pb-20" data-testid="settings-view">
+      {/* Mobile: full width | Desktop: max-w-sm centered (phone preview) */}
+      <div className="w-full md:max-w-sm space-y-6">
         <div className="text-center mb-8">
           <h2 className="text-xl font-semibold mb-2">Settings</h2>
           <p className="text-sm text-slate-400">
