@@ -518,12 +518,14 @@ export const TEST_IDS = {
   HOME_VIEW: 'home-view',
   GAMES_VIEW: 'games-view',
   SETTINGS_VIEW: 'settings-view',
-  // Room selector - P6-ENV-UI
-  ROOM_SELECTOR: 'room-selector',
-  ROOM_TAB_LIVING: 'room-tab-living',
-  ROOM_TAB_KITCHEN: 'room-tab-kitchen',
-  ROOM_TAB_BEDROOM: 'room-tab-bedroom',
-  ROOM_TAB_PLAYROOM: 'room-tab-playroom',
+  // Room selector - REMOVED per Bible §14.4: Rooms are NOT navigable (activity-driven only)
+  // These constants are kept for reference but should NOT be used in production UI
+  // @deprecated Room tabs removed - rooms switch automatically via activity
+  ROOM_SELECTOR: 'room-selector', // DEPRECATED - no longer rendered
+  ROOM_TAB_LIVING: 'room-tab-living', // DEPRECATED
+  ROOM_TAB_KITCHEN: 'room-tab-kitchen', // DEPRECATED
+  ROOM_TAB_BEDROOM: 'room-tab-bedroom', // DEPRECATED
+  ROOM_TAB_PLAYROOM: 'room-tab-playroom', // DEPRECATED
   // HUD
   HUD_BOND: 'hud-bond',
   HUD_COINS: 'hud-coins',
