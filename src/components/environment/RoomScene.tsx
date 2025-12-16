@@ -97,8 +97,8 @@ export function RoomScene({ children, showAccents = false, showProps = true }: R
         </div>
       )}
 
-      {/* Main content */}
-      <div className="relative z-10 flex-1 flex flex-col items-center justify-center">
+      {/* Main content - justify-start to prevent large gap above Action Bar */}
+      <div className="relative z-10 flex-1 flex flex-col items-center">
         {children}
       </div>
     </div>

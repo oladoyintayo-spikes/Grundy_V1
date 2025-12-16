@@ -1208,7 +1208,7 @@ function MainApp() {
   }, [handleOpenMenu]);
 
   return (
-    <div className={`h-screen w-screen flex flex-col bg-gradient-to-b ${bgClass} overflow-hidden`}>
+    <div className={`min-h-[100dvh] h-[100dvh] w-screen flex flex-col bg-gradient-to-b ${bgClass} overflow-hidden`}>
       {/* App Header (Bible v1.10: pet info + wallet only, no shortcut icons) */}
       <AppHeader />
 
