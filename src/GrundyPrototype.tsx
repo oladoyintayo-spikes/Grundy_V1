@@ -258,7 +258,7 @@ function HomeView({ onOpenShop, pendingFeedFoodId, onClearPendingFeed }: HomeVie
 
   return (
     <div
-      className="h-full flex flex-col text-white p-2 sm:p-4 overflow-hidden"
+      className="h-full w-full flex flex-col text-white p-2 sm:p-4 overflow-hidden"
       data-testid="home-view"
     >
       {/* Bible §14.6: Mobile-first layout - all core loop elements visible without scroll */}
@@ -421,7 +421,12 @@ function HomeView({ onOpenShop, pendingFeedFoodId, onClearPendingFeed }: HomeVie
 // VIEW: GAMES (Mini-Game Hub)
 // P6-NAV-GROUNDWORK: Added data-testid="games-view" for BCT coverage
 // ============================================
-function GamesView() {
+interface GamesViewProps {
+  /** Called when user navigates back from the hub to return to Home */
+  onClose?: () => void;
+}
+
+function GamesView({ onClose }: GamesViewProps) {
   const [selectedGame, setSelectedGame] = useState<MiniGameId | null>(null);
 
   const handleSelectGame = (gameId: MiniGameId) => {
@@ -436,8 +441,13 @@ function GamesView() {
     setSelectedGame(null);
   };
 
-  const handleBackToHub = () => {
-    setSelectedGame(null);
+  // When on hub, back goes to Home; when in game, back goes to hub
+  const handleBack = () => {
+    if (selectedGame) {
+      setSelectedGame(null);
+    } else if (onClose) {
+      onClose();
+    }
   };
 
   // If a game is selected, show the game
@@ -473,7 +483,7 @@ function GamesView() {
     };
 
     return (
-      <div className="h-full" data-testid="games-view">
+      <div className="h-full w-full" data-testid="games-view">
         <MiniGameWrapper
           gameId={selectedGame}
           onComplete={handleGameComplete}
@@ -487,8 +497,8 @@ function GamesView() {
 
   // Show the hub
   return (
-    <div className="h-full" data-testid="games-view">
-      <MiniGameHub onSelectGame={handleSelectGame} onBack={handleBackToHub} />
+    <div className="h-full w-full" data-testid="games-view">
+      <MiniGameHub onSelectGame={handleSelectGame} onBack={handleBack} />
     </div>
   );
 }
@@ -861,12 +871,13 @@ function SettingsView() {
         )}
 
         {/* Danger Zone */}
-        <div className="bg-red-900/20 border border-red-500/30 rounded-xl p-4">
+        <div className="bg-red-900/20 border border-red-500/30 rounded-xl p-4" data-testid="danger-zone">
           <h3 className="text-sm font-medium text-red-400 mb-3">Danger Zone</h3>
           {!showResetConfirm ? (
             <button
               onClick={() => setShowResetConfirm(true)}
               className="w-full py-2 px-4 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg transition-colors"
+              data-testid="reset-game-button"
             >
               Reset Game Data
             </button>
@@ -1227,7 +1238,7 @@ function MainApp() {
         )}
         {currentView === 'games' && (
           <RoomScene showAccents={false} showProps={false}>
-            <GamesView />
+            <GamesView onClose={() => setCurrentView('home')} />
           </RoomScene>
         )}
         {currentView === 'settings' && (

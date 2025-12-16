@@ -70,7 +70,7 @@ export function MiniGameHub({ onSelectGame, onBack }: MiniGameHubProps) {
   };
 
   return (
-    <div className="h-full bg-gradient-to-b from-indigo-900 to-purple-900 flex flex-col">
+    <div className="h-full w-full bg-gradient-to-b from-indigo-900 to-purple-900 flex flex-col">
       {/* Header (P5-A11Y-LABELS) */}
       <header className="p-4 flex items-center justify-between" role="banner">
         <button
