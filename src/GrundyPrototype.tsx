@@ -84,60 +84,6 @@ const ProgressBar = ({ value, max, color, label, showText = true }: {
   </div>
 );
 
-// Food Item Component
-// P6-HUD-CLEANUP: Added stuffed/cooldown props for Bible §4.4 feedback
-const FoodItem = ({ food, count, onFeed, disabled, isFirst, stuffed, onCooldown }: {
-  food: FoodDefinition;
-  count: number;
-  onFeed: () => void;
-  disabled: boolean;
-  isFirst?: boolean;
-  stuffed?: boolean;
-  onCooldown?: boolean;
-}) => {
-  // Bible §4.4: Food tray grays out when stuffed (feeding blocked entirely)
-  const isBlocked = stuffed || count <= 0;
-  const isReduced = onCooldown && !stuffed;
-
-  return (
-    <button
-      data-testid={isFirst ? 'feed-button' : `food-item-${food.id}`}
-      onClick={onFeed}
-      disabled={disabled || isBlocked}
-      className={`
-        relative p-3 rounded-xl border-2 transition-all duration-200 flex flex-col items-center min-w-[70px]
-        ${stuffed
-          ? 'border-red-500/30 bg-red-900/20 opacity-40 cursor-not-allowed'
-          : isReduced
-            ? 'border-orange-500/50 bg-orange-500/10 hover:bg-orange-500/20 cursor-pointer'
-            : count > 0 && !disabled
-              ? 'border-amber-500/50 bg-amber-500/10 hover:bg-amber-500/20 hover:scale-105 cursor-pointer'
-              : 'border-gray-700 bg-gray-800/50 opacity-50 cursor-not-allowed'}
-      `}
-      aria-label={stuffed ? `${food.name} - Too full to eat` : onCooldown ? `${food.name} - Reduced value (cooldown)` : food.name}
-    >
-      <span className="text-2xl">{food.emoji}</span>
-      <span className="text-[10px] text-gray-400 mt-1">{food.name}</span>
-      {/* Cooldown indicator */}
-      {onCooldown && !stuffed && (
-        <span className="absolute -top-1 -left-1 text-[8px] px-1 py-0.5 rounded bg-orange-500 text-white">
-          ⏱
-        </span>
-      )}
-      {/* Stuffed indicator */}
-      {stuffed && (
-        <span className="absolute -top-1 -left-1 text-[8px] px-1 py-0.5 rounded bg-red-500 text-white">
-          🚫
-        </span>
-      )}
-      <span className={`absolute -top-2 -right-2 text-xs px-2 py-0.5 rounded-full font-bold
-        ${count > 0 ? 'bg-amber-500 text-black' : 'bg-gray-600 text-gray-300'}`}>
-        {count}
-      </span>
-    </button>
-  );
-};
-
 // Reaction Display Component
 const ReactionDisplay = ({ reaction, message }: { reaction: ReactionType | null; message: string }) => {
   if (!reaction) return null;
@@ -514,36 +460,6 @@ function HomeView({ onOpenShop, pendingFeedFoodId, onClearPendingFeed }: HomeVie
             </div>
           </div>
         )}
-
-        {/* Food Bag - Primary Action Area (Bible §14.6: Feed button visible without scroll) */}
-        <div className="bg-gray-800/50 rounded-xl p-2 sm:p-3 mt-2 shrink-0" data-testid="food-bag">
-          <h3 className="text-xs text-gray-400 mb-2 flex items-center gap-1">
-            <span>🎒</span> Food Bag
-            {/* Bible §4.4: Contextual UI cues for fullness state */}
-            {petStuffed ? (
-              <span className="ml-auto text-[10px] text-red-400">Too full! 🚫</span>
-            ) : petOnCooldown ? (
-              <span className="ml-auto text-[10px] text-orange-400">Cooldown ⏱</span>
-            ) : (
-              <span className="ml-auto text-[10px]">Tap to feed!</span>
-            )}
-          </h3>
-
-          <div className="flex gap-1.5 overflow-x-auto pb-1" data-testid="feed-actions">
-            {allFoods.map((food, index) => (
-              <FoodItem
-                key={food.id}
-                food={food}
-                count={inventory[food.id] || 0}
-                onFeed={() => handleFeed(food.id)}
-                disabled={isFeeding}
-                isFirst={index === 0}
-                stuffed={petStuffed}
-                onCooldown={petOnCooldown}
-              />
-            ))}
-          </div>
-        </div>
 
         {/* Stats Footer - Debug only per Bible §4.4 */}
         {import.meta.env.DEV && (
