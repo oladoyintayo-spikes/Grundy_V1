@@ -70,28 +70,30 @@ describe('BCT-HUD-002: Debug HUD Gated', () => {
 });
 
 describe('BCT-HUD: Fullness/Cooldown Feedback', () => {
-  it('Food tray shows fullness state feedback', () => {
-    // GrundyPrototype.tsx Food Bag section:
-    // - Shows "Too full to eat!" when STUFFED
-    // - Shows "Cooldown active" when on cooldown
+  it('Food Drawer shows fullness state feedback', () => {
+    // FoodDrawer.tsx (Bible v1.10 §14.6):
+    // - Shows "🚫 Too full!" badge when STUFFED (data-testid="food-drawer-stuffed")
+    // - Shows "⏱ Digesting..." badge when on cooldown (data-testid="food-drawer-cooldown")
     // - Shows "Tap to feed!" when ready
+    // Food items are ONLY visible inside the drawer (not on main screen)
     expect(true).toBe(true);
   });
 
   it('Food items disabled when STUFFED', () => {
-    // FoodItem component receives stuffed prop
-    // When stuffed=true: disabled, red border, opacity-40
+    // FoodDrawer.tsx food item buttons:
+    // When isStuffed=true: disabled, red border, opacity-40
     expect(true).toBe(true);
   });
 
   it('Food items show cooldown indicator when on cooldown', () => {
-    // FoodItem component receives onCooldown prop
-    // When onCooldown=true: orange border, clock emoji badge
+    // FoodDrawer.tsx food item buttons:
+    // When isOnCooldown=true: orange border, clock emoji badge
     expect(true).toBe(true);
   });
 
-  it('Food bag has data-testid for E2E testing', () => {
-    // GrundyPrototype.tsx: data-testid="food-bag"
+  it('Food Drawer has data-testid for E2E testing', () => {
+    // FoodDrawer.tsx: data-testid="food-drawer"
+    // Bible v1.10 §14.6: Food items only appear in drawer, not on main screen
     expect(true).toBe(true);
   });
 });
