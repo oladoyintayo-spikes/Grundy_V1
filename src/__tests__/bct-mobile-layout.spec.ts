@@ -83,13 +83,13 @@ describe('BCT-LAYOUT: Shop Placement', () => {
    * Not covering core loop elements
    */
 
-  it('should have shop button moved to AppHeader (top corner)', () => {
-    // This is enforced by code structure:
-    // - AppHeader accepts onOpenShop prop
-    // - HomeView no longer has shop button (deprecated prop)
-    // - Shop button rendered with data-testid="shop-button" in header
-    const shopButtonTestId = 'shop-button';
-    expect(shopButtonTestId).toBe('shop-button');
+  it('should have shop accessible via Menu (no header shortcut)', () => {
+    // Bible v1.10: Shop access via Menu-first navigation
+    // - AppHeader shows wallet only (no shortcut icons)
+    // - Shop is accessed via Action Bar → Menu → Shop
+    // - MenuOverlay contains shop option with data-testid="menu-option-shop"
+    const menuOptionShopTestId = 'menu-option-shop';
+    expect(menuOptionShopTestId).toBe('menu-option-shop');
   });
 });
 

@@ -1,8 +1,8 @@
 // ============================================
 // GRUNDY — APP HEADER
-// Top navigation bar with pet info + currencies
+// Top navigation bar with pet info + wallet (currencies only)
 // P3-NAV-2, P3-ENV-3, P5-ART-PETS, P5-A11Y-LABELS, P6-ART-PRODUCTION
-// Bible v1.10: Menu access via Action Bar only (no header hamburger)
+// Bible v1.10: Menu access via Action Bar only (no header shortcuts)
 // ============================================
 
 import React from 'react';
@@ -26,15 +26,7 @@ function EnvironmentBadge() {
   );
 }
 
-// Focus ring class for accessibility (P5-UX-KEYS)
-const FOCUS_RING_CLASS = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900';
-
-export interface AppHeaderProps {
-  onOpenShop?: () => void;
-  onOpenInventory?: () => void;
-}
-
-export function AppHeader({ onOpenShop, onOpenInventory }: AppHeaderProps) {
+export function AppHeader() {
   const pet = useGameStore((state) => state.pet);
   const currencies = useGameStore((state) => state.currencies);
   // Energy removed from main HUD per BCT-HUD-001
@@ -73,7 +65,7 @@ export function AppHeader({ onOpenShop, onOpenInventory }: AppHeaderProps) {
         </div>
       </div>
 
-      {/* Currencies + Shop (Bible §14.6: Shop in top-corner) */}
+      {/* Right: Wallet only - Hearts/Coins/Gems (Bible v1.10: no shortcut icons) */}
       <div className="flex items-center gap-2 text-sm" role="status" aria-label="Resources">
         {/* Bond display (Bible §4.4: Bond is visible) */}
         <div
@@ -102,29 +94,7 @@ export function AppHeader({ onOpenShop, onOpenInventory }: AppHeaderProps) {
           <span className="text-purple-400 font-medium">{currencies.gems ?? 0}</span>
         </div>
         {/* Energy removed from main HUD per BCT-HUD-001: "Energy may show in mini-game context only" */}
-
-        {/* Inventory button (Bible §14.8: ≤2 taps to access) */}
-        {onOpenInventory && (
-          <button
-            onClick={onOpenInventory}
-            className={`ml-1 px-2 py-1 rounded-full bg-amber-500/20 hover:bg-amber-500/30 flex items-center gap-1 transition-colors ${FOCUS_RING_CLASS}`}
-            aria-label="Open Inventory"
-            data-testid="inventory-button"
-          >
-            <span aria-hidden="true">🎒</span>
-          </button>
-        )}
-        {/* Shop button (Bible §14.6: Top-corner placement) */}
-        {onOpenShop && (
-          <button
-            onClick={onOpenShop}
-            className={`ml-1 px-2 py-1 rounded-full bg-green-500/20 hover:bg-green-500/30 flex items-center gap-1 transition-colors ${FOCUS_RING_CLASS}`}
-            aria-label="Open Shop"
-            data-testid="shop-button"
-          >
-            <span aria-hidden="true">🏪</span>
-          </button>
-        )}
+        {/* Shop/Inventory shortcuts removed - access via Menu (Action Bar → Menu → Shop/Inventory) */}
       </div>
     </header>
   );

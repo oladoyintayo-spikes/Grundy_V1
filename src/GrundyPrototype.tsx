@@ -1143,15 +1143,13 @@ function MainApp() {
     setCurrentView(view);
   }, []);
 
-  // Shop handlers
-  const handleOpenShop = () => setShowShop(true);
+  // Shop handlers (opened via Menu action, not header shortcut)
   const handleCloseShop = () => setShowShop(false);
   const handleBuy = useCallback((foodId: string) => {
     buyFood(foodId, 1);
   }, [buyFood]);
 
-  // P8-INV-CORE: Inventory handlers
-  const handleOpenInventory = () => setShowInventory(true);
+  // P8-INV-CORE: Inventory handlers (opened via Menu action, not header shortcut)
   const handleCloseInventory = () => setShowInventory(false);
   const handleInventoryToShop = () => {
     setShowInventory(false);
@@ -1259,11 +1257,8 @@ function MainApp() {
 
   return (
     <div className={`h-screen w-screen flex flex-col bg-gradient-to-b ${bgClass} overflow-hidden`}>
-      {/* App Header (Bible v1.10 §14.6: currencies visible, menu via Action Bar only) */}
-      <AppHeader
-        onOpenShop={handleOpenShop}
-        onOpenInventory={handleOpenInventory}
-      />
+      {/* App Header (Bible v1.10: pet info + wallet only, no shortcut icons) */}
+      <AppHeader />
 
       {/* Main Content (P5-ART-ROOMS: RoomScene wraps home view) */}
       <main className="flex-1 overflow-hidden flex flex-col">
