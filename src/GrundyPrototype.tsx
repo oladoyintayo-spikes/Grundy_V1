@@ -1287,17 +1287,20 @@ function MainApp() {
       />
 
       {/* Bible v1.10: Food Drawer (≥4 items visible without scrolling) */}
-      <FoodDrawer
-        isOpen={showFoodDrawer}
-        onClose={handleCloseFoodDrawer}
-        foods={allFoods}
-        inventory={inventory}
-        onFeed={handleFeedFromDrawer}
-        isFeeding={false}
-        isStuffed={petStuffed}
-        isOnCooldown={petOnCooldown}
-        cooldownRemaining={cooldownRemaining}
-      />
+      {/* Conditionally render to ensure no layout impact when closed */}
+      {showFoodDrawer && (
+        <FoodDrawer
+          isOpen={showFoodDrawer}
+          onClose={handleCloseFoodDrawer}
+          foods={allFoods}
+          inventory={inventory}
+          onFeed={handleFeedFromDrawer}
+          isFeeding={false}
+          isStuffed={petStuffed}
+          isOnCooldown={petOnCooldown}
+          cooldownRemaining={cooldownRemaining}
+        />
+      )}
 
       {/* Bible v1.10: Pet Selector Modal (triggered from Menu → Switch Pet) */}
       {showPetSelector && (
