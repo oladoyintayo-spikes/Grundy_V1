@@ -1303,6 +1303,7 @@ function MainApp() {
         isMenuOpen={showMenuOverlay}
         isOnCooldown={petOnCooldown}
         isStuffed={petStuffed}
+        cooldownRemainingMs={cooldownRemaining}
       />
 
       {/* P8-SHOP-CATALOG + P8-SHOP-PURCHASE: Shop Modal */}
