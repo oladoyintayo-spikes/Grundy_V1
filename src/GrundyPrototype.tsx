@@ -421,7 +421,12 @@ function HomeView({ onOpenShop, pendingFeedFoodId, onClearPendingFeed }: HomeVie
 // VIEW: GAMES (Mini-Game Hub)
 // P6-NAV-GROUNDWORK: Added data-testid="games-view" for BCT coverage
 // ============================================
-function GamesView() {
+interface GamesViewProps {
+  /** Called when user navigates back from the hub to return to Home */
+  onClose?: () => void;
+}
+
+function GamesView({ onClose }: GamesViewProps) {
   const [selectedGame, setSelectedGame] = useState<MiniGameId | null>(null);
 
   const handleSelectGame = (gameId: MiniGameId) => {
@@ -436,8 +441,13 @@ function GamesView() {
     setSelectedGame(null);
   };
 
-  const handleBackToHub = () => {
-    setSelectedGame(null);
+  // When on hub, back goes to Home; when in game, back goes to hub
+  const handleBack = () => {
+    if (selectedGame) {
+      setSelectedGame(null);
+    } else if (onClose) {
+      onClose();
+    }
   };
 
   // If a game is selected, show the game
@@ -488,7 +498,7 @@ function GamesView() {
   // Show the hub
   return (
     <div className="h-full w-full" data-testid="games-view">
-      <MiniGameHub onSelectGame={handleSelectGame} onBack={handleBackToHub} />
+      <MiniGameHub onSelectGame={handleSelectGame} onBack={handleBack} />
     </div>
   );
 }
@@ -1227,7 +1237,7 @@ function MainApp() {
         )}
         {currentView === 'games' && (
           <RoomScene showAccents={false} showProps={false}>
-            <GamesView />
+            <GamesView onClose={() => setCurrentView('home')} />
           </RoomScene>
         )}
         {currentView === 'settings' && (
