@@ -1202,7 +1202,7 @@ function MainApp() {
       {/* Main Content (P5-ART-ROOMS: RoomScene wraps home view) */}
       <main className="flex-1 overflow-hidden flex flex-col">
         {currentView === 'home' && (
-          <RoomScene showAccents={false}>
+          <RoomScene showAccents={false} showProps={false}>
             {/* P9-B: Show All Pets Away screen if all pets are runaway */}
             {allPetsAway ? (
               <AllPetsAwayScreen
@@ -1224,7 +1224,7 @@ function MainApp() {
           </RoomScene>
         )}
         {currentView === 'games' && (
-          <RoomScene showAccents={false}>
+          <RoomScene showAccents={false} showProps={false}>
             <GamesView />
           </RoomScene>
         )}

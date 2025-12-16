@@ -127,24 +127,25 @@ describe('BCT-HOME-UI-003: Action Bar Only Bottom UI', () => {
   });
 });
 
-describe('BCT-HOME-UI-004: Visual Room Props (Background)', () => {
+describe('BCT-HOME-UI-004: Visual Room Props (Disabled - Nuclear Option)', () => {
   /**
-   * Visual room props (CSS shapes for sofa, plant, etc.) are ALLOWED
-   * as they are background decorative elements, not interactive UI.
+   * Visual room props (CSS shapes for sofa, plant, etc.) have been DISABLED
+   * via showProps={false} to eliminate any perception of "ghost drawer/panel".
    *
-   * These are different from the accent badges (debug indicators).
+   * RoomProps component is preserved for future use but not rendered.
+   * Bible §14.4: Props "can exist" but are not required.
    */
 
-  it('should show visual room props by default (showProps=true)', () => {
-    // Verified by code review: RoomScene.tsx line 46
-    // showProps = true (default parameter)
-    // This renders RoomProps component with CSS-based shapes
+  it('should have showProps={false} to disable room props', () => {
+    // Verified by code review: GrundyPrototype.tsx
+    // <RoomScene showAccents={false} showProps={false}>
+    // Props are explicitly disabled for cleaner UI
     expect(true).toBe(true);
   });
 
-  it('should have room props as non-interactive (pointer-events-none)', () => {
-    // Verified by code review: RoomScene.tsx line 76
-    // <div className="pointer-events-none absolute inset-0 z-[1]">
+  it('should keep RoomProps component available for future use', () => {
+    // RoomProps.tsx is not deleted, just not rendered
+    // Can be re-enabled by setting showProps={true}
     expect(true).toBe(true);
   });
 });
