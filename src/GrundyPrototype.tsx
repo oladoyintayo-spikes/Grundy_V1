@@ -105,61 +105,6 @@ const ReactionDisplay = ({ reaction, message }: { reaction: ReactionType | null;
   );
 };
 
-// Room Selector Component (P6-ENV-UI)
-// Bible §14.4: Explicit room switcher for exploring rooms
-// Note: Activities (feeding, playing) override manual room selection per Bible precedence rule
-const RoomSelector = ({ currentRoom, onSelectRoom }: {
-  currentRoom: RoomId;
-  onSelectRoom: (room: RoomId) => void;
-}) => {
-  // Available rooms for manual selection (yard excluded - reserved for future outdoor features)
-  const rooms: { id: RoomId; icon: string; label: string }[] = [
-    { id: 'living_room', icon: '🏠', label: ROOM_LABELS.living_room },
-    { id: 'kitchen', icon: '🍳', label: ROOM_LABELS.kitchen },
-    { id: 'bedroom', icon: '🛏️', label: ROOM_LABELS.bedroom },
-    { id: 'playroom', icon: '🎮', label: ROOM_LABELS.playroom },
-  ];
-
-  return (
-    <div
-      className="flex justify-center gap-1 shrink-0"
-      data-testid="room-selector"
-      role="tablist"
-      aria-label="Room selection"
-    >
-      {rooms.map((room) => {
-        const isActive = currentRoom === room.id;
-        const testIdMap: Record<RoomId, string> = {
-          living_room: 'room-tab-living',
-          kitchen: 'room-tab-kitchen',
-          bedroom: 'room-tab-bedroom',
-          playroom: 'room-tab-playroom',
-          yard: 'room-tab-yard',
-        };
-        return (
-          <button
-            key={room.id}
-            onClick={() => onSelectRoom(room.id)}
-            className={`
-              px-2 py-1 rounded-lg text-xs transition-all flex items-center gap-1
-              ${isActive
-                ? 'bg-amber-500/30 text-amber-200 border border-amber-500/50'
-                : 'bg-slate-800/50 text-slate-400 hover:bg-slate-700/50 hover:text-slate-200 border border-transparent'}
-            `}
-            data-testid={testIdMap[room.id]}
-            role="tab"
-            aria-selected={isActive}
-            aria-label={`Switch to ${room.label}`}
-          >
-            <span aria-hidden="true">{room.icon}</span>
-            <span className="hidden sm:inline">{room.label}</span>
-          </button>
-        );
-      })}
-    </div>
-  );
-};
-
 // Level Up Modal
 const LevelUpModal = ({ level, onClose }: { level: number; onClose: () => void }) => (
   <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
@@ -337,12 +282,6 @@ function HomeView({ onOpenShop, pendingFeedFoodId, onClearPendingFeed }: HomeVie
             ))}
           </div>
         )}
-
-        {/* P6-ENV-UI: Room Selector - Bible §14.4 explicit room switcher */}
-        {/* Note: Activities (feed→kitchen, play→playroom) override manual selection per Bible precedence */}
-        <div className="mb-2">
-          <RoomSelector currentRoom={environment.room} onSelectRoom={setRoom} />
-        </div>
 
         {/* Bible v1.10 §14.6: Cooldown banner - player-facing visibility (not dev-only) */}
         {(petStuffed || petOnCooldown) && (
