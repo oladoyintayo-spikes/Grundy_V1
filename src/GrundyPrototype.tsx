@@ -1259,12 +1259,10 @@ function MainApp() {
 
   return (
     <div className={`h-screen w-screen flex flex-col bg-gradient-to-b ${bgClass} overflow-hidden`}>
-      {/* App Header (Bible v1.10: Menu icon in header, Bible §14.6: currencies visible) */}
+      {/* App Header (Bible v1.10 §14.6: currencies visible, menu via Action Bar only) */}
       <AppHeader
         onOpenShop={handleOpenShop}
         onOpenInventory={handleOpenInventory}
-        onOpenMenu={handleOpenMenu}
-        isMenuOpen={showMenuOverlay}
       />
 
       {/* Main Content (P5-ART-ROOMS: RoomScene wraps home view) */}

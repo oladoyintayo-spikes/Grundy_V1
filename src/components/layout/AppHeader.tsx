@@ -1,8 +1,8 @@
 // ============================================
 // GRUNDY — APP HEADER
-// Top navigation bar with pet info + currencies + menu icon
+// Top navigation bar with pet info + currencies
 // P3-NAV-2, P3-ENV-3, P5-ART-PETS, P5-A11Y-LABELS, P6-ART-PRODUCTION
-// Bible v1.10: Menu icon in header opens Menu Overlay
+// Bible v1.10: Menu access via Action Bar only (no header hamburger)
 // ============================================
 
 import React from 'react';
@@ -11,7 +11,6 @@ import { getPetById } from '../../data/pets';
 import { TIME_LABELS, ROOM_LABELS } from '../../game/environment';
 import { PetAvatar } from '../pet/PetAvatar';
 import { getHeaderPose } from '../../game/petVisuals';
-import { playUiTap } from '../../audio/audioManager';
 
 // ============================================
 // ENVIRONMENT BADGE
@@ -33,13 +32,9 @@ const FOCUS_RING_CLASS = 'focus-visible:outline-none focus-visible:ring-2 focus-
 export interface AppHeaderProps {
   onOpenShop?: () => void;
   onOpenInventory?: () => void;
-  /** Bible v1.10 §14.5: Menu icon opens Menu Overlay */
-  onOpenMenu?: () => void;
-  /** Whether menu is currently open (for visual feedback) */
-  isMenuOpen?: boolean;
 }
 
-export function AppHeader({ onOpenShop, onOpenInventory, onOpenMenu, isMenuOpen = false }: AppHeaderProps) {
+export function AppHeader({ onOpenShop, onOpenInventory }: AppHeaderProps) {
   const pet = useGameStore((state) => state.pet);
   const currencies = useGameStore((state) => state.currencies);
   // Energy removed from main HUD per BCT-HUD-001
@@ -51,34 +46,14 @@ export function AppHeader({ onOpenShop, onOpenInventory, onOpenMenu, isMenuOpen 
   // Determine pose based on pet state (P5-ART-PETS)
   const headerPose = getHeaderPose(pet.mood, pet.hunger);
 
-  const handleMenuClick = () => {
-    playUiTap();
-    onOpenMenu?.();
-  };
-
   return (
     <header
       className="px-4 py-3 flex items-center justify-between bg-slate-900/80 border-b border-white/10 backdrop-blur"
       role="banner"
       data-testid="app-header"
     >
-      {/* Left: Menu icon (Bible v1.10 §14.5: Menu in header) */}
+      {/* Left: Pet info (Bible v1.10: Menu access via Action Bar only) */}
       <div className="flex items-center gap-3">
-        {onOpenMenu && (
-          <button
-            onClick={handleMenuClick}
-            aria-label="Open menu"
-            aria-expanded={isMenuOpen}
-            data-testid="header-menu-button"
-            className={`w-10 h-10 flex items-center justify-center rounded-lg transition-colors ${
-              isMenuOpen
-                ? 'bg-slate-700 text-white'
-                : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-            } ${FOCUS_RING_CLASS}`}
-          >
-            <span className="text-xl" aria-hidden="true">☰</span>
-          </button>
-        )}
         {/* Pet avatar using real sprites (P5-ART-PETS, P5-A11Y-LABELS, P6-ART-PRODUCTION) */}
         <PetAvatar
           petId={pet.id}
