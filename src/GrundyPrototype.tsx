@@ -871,12 +871,13 @@ function SettingsView() {
         )}
 
         {/* Danger Zone */}
-        <div className="bg-red-900/20 border border-red-500/30 rounded-xl p-4">
+        <div className="bg-red-900/20 border border-red-500/30 rounded-xl p-4" data-testid="danger-zone">
           <h3 className="text-sm font-medium text-red-400 mb-3">Danger Zone</h3>
           {!showResetConfirm ? (
             <button
               onClick={() => setShowResetConfirm(true)}
               className="w-full py-2 px-4 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg transition-colors"
+              data-testid="reset-game-button"
             >
               Reset Game Data
             </button>
