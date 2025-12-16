@@ -15,7 +15,7 @@ import { RoomProps } from './RoomProps';
 export interface RoomSceneProps {
   /** Content to render inside the room scene */
   children?: React.ReactNode;
-  /** Whether to show accent element badge indicators (debug mode) */
+  /** Whether to show accent element badge indicators (DEBUG ONLY - keep false in production) */
   showAccents?: boolean;
   /** Whether to show visual room props (P6-ART-PROPS) */
   showProps?: boolean;
