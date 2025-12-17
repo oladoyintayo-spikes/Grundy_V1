@@ -1,5 +1,8 @@
 # P8-SHOP-B Audit Report
 
+> ⚠️ **Historical Document** — This document is a historical record from Phase 8.
+> For current specifications, see `docs/GRUNDY_MASTER_BIBLE.md` v1.11.
+
 **Phase 8 Closeout Proof Packet + Phase 9 Regression Baseline**
 
 ---

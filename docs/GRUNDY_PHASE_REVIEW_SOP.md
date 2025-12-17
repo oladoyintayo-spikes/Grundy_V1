@@ -1,9 +1,10 @@
 # Grundy — Phase Review SOP
 
-**Version:** 1.0
-**Last Updated:** December 11, 2024 (CE-SOP-REFINE)
+---
+**Document Version:** 1.11
+**Last Updated:** December 16, 2025
+**Bible Alignment:** v1.11
 **Status:** Active
-
 ---
 
 ## Purpose
@@ -11,8 +12,8 @@
 This Standard Operating Procedure (SOP) defines the review process for phases, patches, and hotfixes in the Grundy project.
 
 **Key documents:**
-- **Design specification:** `docs/GRUNDY_MASTER_BIBLE.md` (v1.7)
-- **Test contract:** `docs/BIBLE_COMPLIANCE_TEST.md` (v2.3)
+- **Design specification:** `docs/GRUNDY_MASTER_BIBLE.md` (v1.11)
+- **Test contract:** `docs/BIBLE_COMPLIANCE_TEST.md` (v2.4)
 - **Status tracking:** `GRUNDY_DEV_STATUS.md`
 - **Task tracking:** `TASKS.md`
 
@@ -299,7 +300,11 @@ Agents **CANNOT**:
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0 | 2024-12-11 | Initial SOP with explicit BCT reference, status fields, agent limits, hotfix BCT requirements |
+| 1.11 | 2025-12-16 | Bible v1.11 alignment update |
 
 ---
 
 *This SOP is the process authority for phase reviews. The Bible is the design authority. The BCT is the test authority.*
+
+---
+**Document Version:** 1.11 | **Bible Alignment:** v1.11 | **Updated:** December 16, 2025

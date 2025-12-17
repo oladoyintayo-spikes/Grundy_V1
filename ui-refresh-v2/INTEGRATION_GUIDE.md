@@ -1,7 +1,10 @@
 # UI Integration Guide — Bible v1.10 Navigation Model
 
+> ⚠️ **Historical Document** — This document is a historical record from Bible v1.10 UI refresh.
+> For current specifications, see `docs/GRUNDY_MASTER_BIBLE.md` v1.11.
+
 **Component Integration Reference** — NOT canonical design
-**Canonical Source:** `docs/GRUNDY_MASTER_BIBLE.md` v1.10 (§14.5, §14.6)
+**Canonical Source:** `docs/GRUNDY_MASTER_BIBLE.md` v1.11 (§14.5, §14.6)
 
 ---
 

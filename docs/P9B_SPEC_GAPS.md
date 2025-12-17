@@ -1,5 +1,8 @@
 # P9-B Specification Gaps Report
 
+> ⚠️ **Historical Document** — This document is a historical record from Phase 9.
+> For current specifications, see `docs/GRUNDY_MASTER_BIBLE.md` v1.11.
+
 **Phase:** P9-B-PETSLOTS-RUNTIME v1.3
 **Bible Version:** v1.6
 **BCT Version:** v2.2

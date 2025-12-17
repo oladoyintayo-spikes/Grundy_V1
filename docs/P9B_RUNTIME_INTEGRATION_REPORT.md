@@ -1,5 +1,8 @@
 # P9-B: Multi-Pet Runtime Integration Report
 
+> ⚠️ **Historical Document** — This document is a historical record from Phase 9.
+> For current specifications, see `docs/GRUNDY_MASTER_BIBLE.md` v1.11.
+
 **Phase:** P9-B Multi-Pet Runtime
 **Bible Version:** v1.7
 **BCT Version:** v2.3

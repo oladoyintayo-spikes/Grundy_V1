@@ -1,5 +1,12 @@
 # Phase 12 Plan Reconciliation
 
+---
+**Document Version:** 1.11
+**Last Updated:** December 16, 2025
+**Bible Alignment:** v1.11
+**Status:** Active Planning
+---
+
 **Created:** 2025-12-15
 **Branch:** `claude/define-phase-next-slice-l9PwF`
 **Purpose:** Determine what Phase 12 is according to canonical docs and recommend the next slice.
@@ -231,3 +238,6 @@ PREREQUISITE: Phase 12-1 Bible patch merged
 - **SPEC MISSING:** Achievements system has no Bible section — cannot implement
 - **RECOMMENDATION:** Phase 12-1 should be a doc-only Bible patch to resolve ambiguities
 - **STAKEHOLDER INPUT NEEDED:** Questions in Section 5 require CE/stakeholder decisions before proceeding
+
+---
+**Document Version:** 1.11 | **Bible Alignment:** v1.11 | **Updated:** December 16, 2025

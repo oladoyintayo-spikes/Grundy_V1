@@ -1,11 +1,14 @@
 # 📜 THE GRUNDY CODEX
 ### Collected Fragments on the Small Spirits
 
-**Document Version:** 1.0  
-**Last Updated:** December 2024  
+---
+**Document Version:** 1.11
+**Last Updated:** December 16, 2025
+**Bible Alignment:** v1.11
 **Status:** Canon
+---
 
-> **Design SoT:** `docs/GRUNDY_MASTER_BIBLE.md` — This document is subordinate to the Bible.
+> **Design SoT:** `docs/GRUNDY_MASTER_BIBLE.md` v1.11 — This document is subordinate to the Bible.
 
 ---
 
@@ -816,7 +819,11 @@ LUXE: Loves luxury. Hates anything ordinary.
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0 | Dec 2024 | Initial codex creation with all 8 pets |
+| 1.11 | Dec 16, 2025 | Bible v1.11 alignment update |
 
 ---
 
 *"Some questions aren't meant to be answered. Only lived."*
+
+---
+**Document Version:** 1.11 | **Bible Alignment:** v1.11 | **Updated:** December 16, 2025

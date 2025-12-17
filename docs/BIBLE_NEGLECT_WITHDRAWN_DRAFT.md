@@ -1,9 +1,12 @@
 # BIBLE UPDATE: §9.4.3 Neglect & Withdrawal System
 
-**For:** GRUNDY_MASTER_BIBLE.md  
-**Replaces:** Current "Neglect & Runaway System" subsection in §9.4 (lines 1882-1898)  
-**Version:** 1.5 (proposed)  
-**Status:** DRAFT v3 - Final Review
+> ⚠️ **Historical Document** — This document is a draft from Bible v1.5.
+> For current specifications, see `docs/GRUNDY_MASTER_BIBLE.md` v1.11.
+
+**For:** GRUNDY_MASTER_BIBLE.md
+**Replaces:** Current "Neglect & Runaway System" subsection in §9.4 (lines 1882-1898)
+**Version:** 1.5 (proposed)
+**Status:** DRAFT v3 - Final Review (Integrated into Bible)
 
 ---
 

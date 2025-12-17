@@ -1,5 +1,8 @@
 # P9 Phase 9 Audit Report
 
+> ⚠️ **Historical Document** — This document is a historical record from Phase 9.
+> For current specifications, see `docs/GRUNDY_MASTER_BIBLE.md` v1.11.
+
 **Document:** P9_PHASE9_AUDIT_REPORT.md
 **Auditor:** Claude (Web Implementer Agent)
 **Date:** December 2025

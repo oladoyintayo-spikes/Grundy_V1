@@ -1,6 +1,11 @@
-# AUDIO_NOTES.md
-
 # Grundy Audio System Notes
+
+---
+**Document Version:** 1.11
+**Last Updated:** December 16, 2025
+**Bible Alignment:** v1.11
+**Status:** Current
+---
 
 **Task:** P5-AUDIO-CORE, P5-AUDIO-HOOKS, P5-AUDIO-DOC
 **Phase:** Web Phase 5 — Polish / Web 1.0
@@ -200,3 +205,6 @@ Settings are persisted via Zustand's persist middleware.
 ---
 
 *This file documents the P5-AUDIO-CORE implementation. See TASKS.md for task status.*
+
+---
+**Document Version:** 1.11 | **Bible Alignment:** v1.11 | **Updated:** December 16, 2025
