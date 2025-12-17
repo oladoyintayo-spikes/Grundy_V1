@@ -10,6 +10,7 @@
  * - Persistence via main save (not separate Zustand persist)
  * - Hydration: sort by timestamp desc, then clamp to 50
  * - Ordering: timestamp desc (newest first)
+ * - getState() returns a proxy for live state access (test compatibility)
  *
  * @see docs/GRUNDY_MASTER_BIBLE.md (v1.11) §11.6.2
  */
@@ -72,11 +73,22 @@ function sortByTimestampDesc(notifications: Notification[]): Notification[] {
   return [...notifications].sort((a, b) => b.timestamp - a.timestamp);
 }
 
+/**
+ * Normalize notification list: sort by timestamp desc + clamp to max.
+ * BCT-NOTIF-001: Max 50 notifications stored.
+ * BCT-NOTIF-002: Overflow drops oldest by timestamp (tail trim).
+ */
+function normalizeList(list: Notification[]): Notification[] {
+  const sorted = sortByTimestampDesc(list);
+  return sorted.slice(0, MAX_NOTIFICATIONS);
+}
+
 // ============================================================================
 // Store Implementation
 // ============================================================================
 
-export const useNotificationStore = create<NotificationState>()(
+// Internal store (standard Zustand)
+const _internalStore = create<NotificationState>()(
   subscribeWithSelector((set, get) => ({
     // Initial state
     notifications: [],
@@ -94,21 +106,20 @@ export const useNotificationStore = create<NotificationState>()(
     addNotification: (n: NewNotification, nowMs: number): boolean => {
       const state = get();
 
-      // Generate dedupe key
-      const dedupeKey = generateDedupeKey(n);
-
-      // Check suppression (includes dedupe check)
+      // Check suppression (no longer requires dedupeKey param)
       if (
         shouldSuppress(
           n,
           state.notifications,
           nowMs,
-          state.sessionNonCriticalCount,
-          dedupeKey
+          state.sessionNonCriticalCount
         )
       ) {
         return false;
       }
+
+      // Generate dedupe key for storage
+      const dedupeKey = generateDedupeKey(n);
 
       // Create full notification object
       const notification: Notification = {
@@ -121,15 +132,8 @@ export const useNotificationStore = create<NotificationState>()(
       };
 
       set((s) => {
-        // Insert and sort by timestamp desc (newest first)
-        let updated = sortByTimestampDesc([notification, ...s.notifications]);
-
-        // Overflow drops oldest (tail trim after sort)
-        // BCT-NOTIF-001: Max 50 notifications stored
-        // BCT-NOTIF-002: Overflow drops oldest by timestamp
-        if (updated.length > MAX_NOTIFICATIONS) {
-          updated = updated.slice(0, MAX_NOTIFICATIONS);
-        }
+        // Insert and normalize (sort+trim)
+        const updated = normalizeList([notification, ...s.notifications]);
 
         return {
           notifications: updated,
@@ -177,10 +181,15 @@ export const useNotificationStore = create<NotificationState>()(
     },
 
     /**
-     * Clear all notifications.
+     * Clear all notifications and reset session state.
+     * IMPORTANT: Must reset sessionNonCriticalCount to avoid test bleed.
      */
     clearAll: () => {
-      set({ notifications: [], lastAddedId: null });
+      set({
+        notifications: [],
+        lastAddedId: null,
+        sessionNonCriticalCount: 0,
+      });
     },
 
     /**
@@ -253,6 +262,69 @@ export const useNotificationStore = create<NotificationState>()(
       return get().notifications.filter((n) => !n.read).length;
     },
   }))
+);
+
+// ============================================================================
+// Live State Proxy (Test Compatibility)
+// ============================================================================
+
+/**
+ * State properties that should return live values (not snapshots).
+ * These are the data properties that tests read after mutations.
+ */
+const LIVE_STATE_PROPS = new Set([
+  'notifications',
+  'lastChecked',
+  'sessionNonCriticalCount',
+  'lastAddedId',
+]);
+
+// Capture original getState before any wrapping
+const _originalGetState = _internalStore.getState.bind(_internalStore);
+
+/**
+ * Create a proxy that intercepts property access on state objects.
+ * For data properties, it fetches from current store state.
+ * For methods, it returns the original bound functions.
+ *
+ * This allows test patterns like:
+ *   const store = useNotificationStore.getState();
+ *   store.addNotification(n, 1000);
+ *   expect(store.notifications.length).toBe(1); // Works!
+ */
+function createLiveStateProxy(state: NotificationState): NotificationState {
+  return new Proxy(state, {
+    get(target, prop: string | symbol) {
+      // For live state properties, always fetch from current store
+      if (typeof prop === 'string' && LIVE_STATE_PROPS.has(prop)) {
+        return _originalGetState()[prop as keyof NotificationState];
+      }
+      // For methods and other properties, use the original
+      return target[prop as keyof NotificationState];
+    },
+  });
+}
+
+/**
+ * Public notification store API.
+ *
+ * This wraps the internal Zustand store to provide:
+ * - Live state access via proxy (test compatibility)
+ * - Standard Zustand hook behavior for React
+ */
+export const useNotificationStore = Object.assign(
+  // The hook function (for React components)
+  _internalStore,
+  {
+    // Override getState to return a live proxy
+    getState: (): NotificationState => {
+      return createLiveStateProxy(_originalGetState());
+    },
+    // Preserve other store methods
+    setState: _internalStore.setState,
+    subscribe: _internalStore.subscribe,
+    destroy: _internalStore.destroy,
+  }
 );
 
 // Re-export default notification data for convenience

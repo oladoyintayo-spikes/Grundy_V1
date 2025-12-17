@@ -12,23 +12,19 @@ let __idCounter = 0;
 /**
  * Detect test environment.
  *
- * Checks both Node.js and Vite test environment indicators.
+ * Checks Node.js and Vite/Vitest environment indicators.
+ * Must catch VITEST env var since Vitest may not set NODE_ENV.
  */
 function isTestEnv(): boolean {
-  // Node.js test environment (vitest, jest)
-  if (typeof process !== 'undefined' && process.env?.NODE_ENV === 'test') {
-    return true;
-  }
+  const proc = typeof process !== 'undefined' ? process : undefined;
+  const meta = typeof import.meta !== 'undefined' ? (import.meta as { env?: Record<string, string | boolean | undefined> }) : undefined;
 
-  // Vite test environment
-  if (typeof import.meta !== 'undefined') {
-    const env = (import.meta as { env?: { MODE?: string } }).env;
-    if (env?.MODE === 'test') {
-      return true;
-    }
-  }
-
-  return false;
+  return Boolean(
+    proc?.env?.NODE_ENV === 'test' ||
+    proc?.env?.VITEST ||                  // Vitest sets VITEST=true
+    meta?.env?.MODE === 'test' ||
+    meta?.env?.VITEST
+  );
 }
 
 /**

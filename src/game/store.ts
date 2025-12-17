@@ -769,8 +769,8 @@ export const useGameStore = create<GameStore>()(
             emitGameEvent({
               type: 'LEVEL_UP',
               payload: {
-                petId: activePet.instanceId,
-                petName: activePet.customName || activePet.speciesId,
+                petId: activePetId,
+                petName: currentOwnedPet?.customName || state.pet.id,
                 level: newLevel,
               },
               timestamp: now,
