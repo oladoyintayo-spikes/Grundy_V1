@@ -16,3 +16,24 @@ export function formatCooldownMs(ms: number): string {
   const secs = cappedSeconds % 60;
   return `${mins}:${secs.toString().padStart(2, '0')}`;
 }
+
+/**
+ * Format timestamp as relative time string for notification display.
+ * Per Phase 12-0: Notifications display relative time (e.g., "5 minutes ago").
+ *
+ * @param timestampMs - Event timestamp in milliseconds
+ * @param nowMs - Current time in milliseconds (deterministic, passed in)
+ * @returns Human-readable relative time string
+ */
+export function formatRelativeTime(timestampMs: number, nowMs: number): string {
+  const diffMs = nowMs - timestampMs;
+  const diffSec = Math.floor(diffMs / 1000);
+  const diffMin = Math.floor(diffSec / 60);
+  const diffHour = Math.floor(diffMin / 60);
+  const diffDay = Math.floor(diffHour / 24);
+
+  if (diffSec < 60) return 'Just now';
+  if (diffMin < 60) return `${diffMin} minute${diffMin !== 1 ? 's' : ''} ago`;
+  if (diffHour < 24) return `${diffHour} hour${diffHour !== 1 ? 's' : ''} ago`;
+  return `${diffDay} day${diffDay !== 1 ? 's' : ''} ago`;
+}
