@@ -1,13 +1,15 @@
 # GRUNDY — MASTER BIBLE
 ## Single Source of Truth
 
-**Version:** 1.10
-**Last Updated:** December 14, 2025
+**Version:** 1.11
+**Last Updated:** December 16, 2025
 **Status:** Production Reference
 **Platforms:** Web (First Light 1.0) [Current], Android/iOS [Unity Later]
 **Engine:** Web (Vite + React + TypeScript) [Current], Unity 2022 LTS [Planned Mobile]
+**Aligned Docs Version:** 1.11 (README, TASKS, ROADMAP, DEV_STATUS, INVENTORY)
 
 **Changelog:**
+- v1.11: Comprehensive Update — Mini-Games: Added Pips to burst catalog (§8.0); added §8.1.1 Mini-Game Economy Invariants (no gems, daily cap, play-for-fun after cap); added §8.5 Session Games (6 new games: Snake, Tetris, Runner, Bubble Pop, Pet Café, Merge). Mobile Layout: Changed §14.6 pet stage to flex-1; added edge-to-edge container spec; added pet sprite scaling (max-h-[45%], 400px cap). Notifications: Added §11.6.2 Notification Center (in-app history); added §11.6.3 Notification Trigger Engine; added §12.5-§12.8 Push Notifications [Unity Later] with explicit platform scope. Phase 12: Added §17 Achievements (25 achievements, 425💎); added §10.3.1 Login Streak Days 1-7; added §10.3.2 Mystery Box; added §10.7 Event Framework. Updated §15.6 status tables.
 - v1.10: UI Navigation & Layout Update — Adopted Menu-first + Action Bar as canonical navigation (§14.5), replacing "future" language. Approved Food Drawer as alternative to Food Tray with ≥4 foods visible constraint (§14.6). Standardized "Games" terminology, deprecated "Play" as nav label. Added UI Overlay Safety Rules protecting Poop, Cooldown, Currency, and TOD visibility. No game design changes.
 - v1.9: Cosmetics System (Pet-Bound Ownership) + Currency Consistency — Fixed §11.1 currency hierarchy (coins = food/care only; cosmetics = gems-only). Added §11.5.2 pet-bound ownership model, §11.5.3 slots/equip rules/non-transfer, §11.5.4 rarity display specs. Added §14.7.3 cosmetics shop tab UI, §14.8.3 cosmetics inventory UI. Updated §11.4 gem sources with implementation tags + Phase 11-0 prerequisite gating. Updated §15.6 gap table (P8/P9/P10 → ✅) and phase numbering clarification (Phase 10.5, Phase 11-0, Phase 11). Added §9.3 Cozy mode cosmetics note. See `docs/patches/BIBLE_v1_9_PATCH_FINAL.md` for full patch details.
 - v1.8: Weight & Sickness Multi-Pet Rules — Added §9.4.7 Weight & Sickness Multi-Pet Rules (complete per-pet weight/sickness systems), updated §9.4.6 offline rules table and order of application, clarified §5.7 weight risk calculation, extended §11.6.1 alert routing for weight/sickness alerts, updated §9.3 Cozy Mode immunity list, updated §9.4 care mistakes for offline accumulation, reconciled §9.4.3 Sickness/Neglect co-existence (PATCH 7 critical fix). See `docs/patches/BIBLE_v1.8_PATCH_WEIGHT_SICKNESS_MULTIPET.md` for full patch details.
@@ -38,8 +40,16 @@
 6. [Progression & Unlocks](#6-progression--unlocks)
 7. [Onboarding Flow](#7-onboarding-flow)
 8. [Mini-Games](#8-mini-games)
+    - 8.0 Mini-Game Design Documents (Burst + Session)
+    - 8.1 Overview (Categories, Universal Rules)
+    - 8.1.1 Mini-Game Economy Invariants **[NEW]**
+    - 8.5 Session Mini-Games [Phase 13+] **[NEW]**
 9. [Cozy vs Classic Mode](#9-cozy-vs-classic-mode)
 10. [Events & LiveOps](#10-events--liveops)
+    - 10.3 Login Streak
+    - 10.3.1 Login Streak Days 1-7 **[NEW]**
+    - 10.3.2 Mystery Box **[NEW]**
+    - 10.7 Event Framework **[NEW]**
 11. [Economy & Monetization](#11-economy--monetization)
     - 11.1 Currency Types
     - 11.2 Revenue Strategy
@@ -47,6 +57,9 @@
     - 11.4 Gem Economy
     - 11.5 The Shop (Complete)
     - 11.6 Pet Slots
+    - 11.6.1 Multi-Pet Notifications
+    - 11.6.2 Notification Center **[NEW]**
+    - 11.6.3 Notification Trigger Engine **[NEW]**
     - 11.7 Inventory Slots
     - 11.8 Grundy Plus (Subscription)
     - 11.9 Season Pass [Unity Later]
@@ -54,6 +67,10 @@
     - 11.11 Bundles & Starter Packs
     - 11.12 Economy Data Schema
 12. [Sound & Vibration](#12-sound--vibration)
+    - 12.5 Push Notifications [Unity Later] **[NEW]**
+    - 12.6 App Icon Badge [Unity Later] **[NEW]**
+    - 12.7 Notification Channels [Unity Later] **[NEW]**
+    - 12.8 Notification Settings [Unity Later] **[NEW]**
 13. [Animation & Visuals](#13-animation--visuals)
     - 13.6 Asset Manifest & State System
     - 13.7 Production Art Rule
@@ -64,6 +81,9 @@
     - 15.6 Web Prototype Mapping
 16. [Coverage Notes](#16-coverage-notes)
     - 16.5 Related Documents
+17. [Achievements](#17-achievements) **[NEW]**
+    - 17.2 Achievement List (25 achievements, 425💎)
+    - 17.5 Achievement Schema
 
 ---
 
@@ -1795,16 +1815,30 @@ These rules are **mandatory** during onboarding:
 
 Detailed specifications for each mini-game are in `docs/Minigames/`:
 
-| Game | Design Doc | Duration | Main Skill |
-|------|------------|----------|------------|
-| Snack Catch | [GRUNDY_SNACK_CATCH_DESIGN.md](minigames/GRUNDY_SNACK_CATCH_DESIGN.md) | 60s | Reflexes |
-| Memory Match | [GRUNDY_MEMORY_MATCH_DESIGN.md](minigames/GRUNDY_MEMORY_MATCH_DESIGN.md) | 60-120s | Memory |
-| Rhythm Tap | [GRUNDY_RHYTHM_TAP_DESIGN.md](minigames/GRUNDY_RHYTHM_TAP_DESIGN.md) | 45-60s | Timing |
-| Poop Scoop | [GRUNDY_POOP_SCOOP_DESIGN.md](minigames/GRUNDY_POOP_SCOOP_DESIGN.md) | 60s | Speed |
+### Burst Games (30s - 2 min)
+
+| Game | Design Doc | Duration | Main Skill | Status |
+|------|------------|----------|------------|--------|
+| Snack Catch | [GRUNDY_SNACK_CATCH_DESIGN.md](Minigames/GRUNDY_SNACK_CATCH_DESIGN.md) | 60s | Reflexes | ✅ Implemented |
+| Memory Match | [GRUNDY_MEMORY_MATCH_DESIGN.md](Minigames/GRUNDY_MEMORY_MATCH_DESIGN.md) | 60-120s | Memory | ✅ Implemented |
+| Rhythm Tap | [GRUNDY_RHYTHM_TAP_DESIGN.md](Minigames/GRUNDY_RHYTHM_TAP_DESIGN.md) | 45-60s | Timing | ✅ Implemented |
+| Poop Scoop | [GRUNDY_POOP_SCOOP_DESIGN.md](Minigames/GRUNDY_POOP_SCOOP_DESIGN.md) | 60s | Speed | ✅ Implemented |
+| Pips | [GRUNDY_PIPS_DESIGN.md](Minigames/GRUNDY_PIPS_DESIGN.md) | 30-60s | Strategy | ✅ Implemented |
+
+### Session Games (5 - 15+ min) [Phase 13+]
+
+| Game | Design Doc | Duration | Main Skill | Status |
+|------|------------|----------|------------|--------|
+| Hungry Hungry Grundy | [GRUNDY_SNAKE_DESIGN.md](Minigames/GRUNDY_SNAKE_DESIGN.md) | 5-15 min | Reflexes | 🔲 Phase 13 |
+| Stack Snacks | [GRUNDY_STACK_SNACKS_DESIGN.md](Minigames/GRUNDY_STACK_SNACKS_DESIGN.md) | 5-20 min | Spatial | 🔲 Phase 13 |
+| Munch Run | [GRUNDY_MUNCH_RUN_DESIGN.md](Minigames/GRUNDY_MUNCH_RUN_DESIGN.md) | 5-15 min | Reflexes | 🔲 Phase 13 |
+| Bubble Pop Kitchen | [GRUNDY_BUBBLE_POP_DESIGN.md](Minigames/GRUNDY_BUBBLE_POP_DESIGN.md) | 5-15 min | Aim | 🔲 Future |
+| Pet Café | [GRUNDY_PET_CAFE_DESIGN.md](Minigames/GRUNDY_PET_CAFE_DESIGN.md) | 5-15 min | Speed | 🔲 Future |
+| Grundy Garden | [GRUNDY_GARDEN_DESIGN.md](Minigames/GRUNDY_GARDEN_DESIGN.md) | 5-30+ min | Strategy | 🔲 Future |
 
 Each design doc includes:
 - Complete gameplay rules
-- All 8 pet abilities
+- All 8 pet abilities (where applicable)
 - Reward tiers (Bronze/Silver/Gold/Rainbow)
 - Technical state interfaces
 - Animation & sound specs
@@ -1812,22 +1846,70 @@ Each design doc includes:
 
 **See individual design docs for implementation details.**
 
+> **Catalog Policy:** This list is extendable. New games may be added as long as they comply with §8.1.1 Mini-Game Economy Invariants.
+
 ## 8.1 Overview
 
-| Game | Type | Duration | Main Skill |
-|------|------|----------|------------|
-| Snack Catch | Arcade | 60s | Reflexes |
-| Memory Match | Puzzle | Varies | Memory |
-| Rhythm Tap | Music | 30-60s | Timing |
-| Poop Scoop | Action | 60s | Speed |
+### Game Categories
 
-### Universal Rules
+| Category | Duration | Purpose | Examples |
+|----------|----------|---------|----------|
+| **Burst Games** | 30s - 2 min | Quick dopamine hits | Snack Catch, Memory Match, Rhythm Tap, Poop Scoop, Pips |
+| **Session Games** | 5 - 15+ min | Fill cooldown time | Snake, Tetris, Runner, Bubble Pop, Pet Café, Merge |
+
+### Universal Rules (All Games)
 
 - All games cost **10 energy** to play
 - Rewards scale with active pet level (+1% per level)
 - Fizz gets +25% rewards on ALL mini-games
 - Daily high scores tracked
-- First daily game is FREE
+- First daily game is FREE (costs 0 energy)
+
+### 8.1.1 Mini-Game Economy Invariants
+
+> ⚠️ **LOCKED DESIGN — APPLIES TO ALL GAMES (BURST + SESSION)**
+>
+> These invariants are non-negotiable and apply to every mini-game, current and future. They exist to prevent farming, preserve session rhythm, and maintain ethical monetization.
+
+| Invariant | Value | Rationale |
+|-----------|-------|-----------|
+| **Gems awarded** | ❌ NEVER | Gems are premium currency; mini-games must not devalue them |
+| **Daily rewarded plays** | 3 maximum | Preserves "check-in" session design |
+| **First daily play** | FREE (0 energy) | Encourages daily engagement |
+| **Energy cost** | 10 per play | Consistent across all games |
+| **After daily cap** | ✅ Playable for fun | 0 coins, 0 XP, 0 food rewards |
+
+#### "Play for Fun" Mode
+
+After the daily rewarded cap (3 plays):
+- Games **remain fully playable**
+- Gameplay is identical (no artificial handicaps)
+- High scores still track (bragging rights)
+- **Zero rewards** (coins, XP, food)
+- Energy still consumed (regenerates normally)
+
+**Design Intent:** Players who love a game can keep playing. Players who want rewards come back tomorrow. No farming, no guilt.
+
+#### Gem Income Sources (Reminder)
+
+Mini-games are explicitly excluded from gem income. Per §11.4, gems come from:
+- Level-up rewards
+- Daily login streaks
+- Achievements
+- Special events
+- Purchases
+
+**Do not add gem rewards to any mini-game tier, including Rainbow, including future games.**
+
+#### Adding New Games
+
+New mini-games may be added to the catalog if they:
+1. Comply with all invariants above
+2. Have a complete design doc in `docs/Minigames/`
+3. Are added to the §8.0 catalog table
+4. Have BCT tests for economy compliance
+
+> **The list is extendable; the rules are not.**
 
 ## 8.2 Energy System [Web 1.0]
 
@@ -1863,12 +1945,25 @@ Energy is **GLOBAL** (shared across all owned pets).
 
 ## 8.3 Reward Tiers [Web 1.0]
 
+### Standard Rewards (Plays 1-3)
+
 | Tier | Coins | XP | Food |
 |------|-------|-----|------|
 | Bronze | 2-3 | 3 | — |
 | Silver | 5-7 | 5 | 40% common |
 | Gold | 8-15 | 8 | 75% any |
 | Rainbow | 12-22 | 12 | Rare guaranteed |
+
+### After Daily Cap (Play 4+)
+
+| Tier | Coins | XP | Food |
+|------|-------|-----|------|
+| Bronze | 0 | 0 | — |
+| Silver | 0 | 0 | — |
+| Gold | 0 | 0 | — |
+| Rainbow | 0 | 0 | — |
+
+**After the daily cap:** Players may continue playing for fun (and high scores), but receive zero resource rewards. See §8.1.1 "Play for Fun" Mode.
 
 > ⚠️ **LOCKED INVARIANT — NO GEMS FROM MINI-GAMES**
 >
@@ -2034,6 +2129,95 @@ Rewards are determined by tier (see §8.3). No gems from mini-games.
 | **Grib** | Poop Magnet: Tap once to clear 3 nearby poops |
 | **Chomper** | Gross! Eats poop for double points |
 | **Luxe** | Diva Rage: Every 20 poops, clear all at once "This is DISGUSTING!" |
+
+## 8.5 Session Mini-Games [Phase 13+]
+
+> **Platform Tag:** [Web Phase 13+] — Session games are planned for later phases. Specs are documented here for planning purposes; implementation follows burst games.
+
+Session games are longer-form entertainment designed to fill cooldown time. Unlike burst games, they have indefinite duration and end when the player fails or chooses to stop.
+
+### Session Game Characteristics
+
+| Attribute | Value | Contrast with Burst |
+|-----------|-------|---------------------|
+| Duration | 5 - 15+ minutes | Burst: 30s - 2 min |
+| End condition | Player fails/quits | Timer expires |
+| Scoring | High score focus | Tier-based rewards |
+| Persistence | Save/resume state | Single session |
+| Energy cost | 10 | Same as burst |
+| Daily cap | **Shared with burst** | Combined 3 plays |
+| Gem rewards | ❌ NEVER | Same as burst |
+
+### Planned Session Games
+
+#### Hungry Hungry Grundy (Snake Clone)
+> See `docs/Minigames/GRUNDY_SNAKE_DESIGN.md` for full spec.
+
+Classic snake gameplay. Your pet grows as it eats food. Avoid walls and your own tail.
+
+- **Priority:** P1 (implement first)
+- **Complexity:** Low (2-3 days)
+
+#### Stack Snacks (Tetris Clone)
+> See `docs/Minigames/GRUNDY_STACK_SNACKS_DESIGN.md` for full spec.
+
+Stack falling food blocks. Clear rows to score. Speed increases over time.
+
+- **Priority:** P2
+- **Complexity:** Medium (3-5 days)
+
+#### Munch Run (Endless Runner)
+> See `docs/Minigames/GRUNDY_MUNCH_RUN_DESIGN.md` for full spec.
+
+Run and jump to collect food, avoid obstacles. Distance = score.
+
+- **Priority:** P3
+- **Complexity:** Medium (3-5 days)
+
+#### Bubble Pop Kitchen
+> See `docs/Minigames/GRUNDY_BUBBLE_POP_DESIGN.md` for full spec.
+
+Bubble shooter with food themes. Clear bubbles, match ingredients.
+
+- **Priority:** Future
+- **Complexity:** Medium (4-6 days)
+
+#### Pet Café
+> See `docs/Minigames/GRUNDY_PET_CAFE_DESIGN.md` for full spec.
+
+Time management game. Serve food to visiting Grundys before they leave.
+
+- **Priority:** Future
+- **Complexity:** High (5-7 days)
+
+#### Grundy Garden (Merge Game)
+> See `docs/Minigames/GRUNDY_GARDEN_DESIGN.md` for full spec.
+
+Merge identical items to create higher-tier food/decorations.
+
+- **Priority:** Future
+- **Complexity:** High (5-7 days)
+
+### Session Game Economy Rules
+
+All session games **must comply with §8.1.1 Mini-Game Economy Invariants**:
+- ❌ No gems (ever, regardless of score)
+- ✅ Daily cap: 3 rewarded plays (shared pool with burst)
+- ✅ After cap: Playable for fun (0 rewards)
+- ✅ Energy: 10 per play
+
+### Session Game Rewards
+
+Session games use a **high-score-to-tier** mapping instead of fixed timers:
+
+| Score Percentile | Tier |
+|------------------|------|
+| Top 10% (personal best) | Rainbow |
+| Top 30% | Gold |
+| Top 50% | Silver |
+| Bottom 50% | Bronze |
+
+Rewards per tier remain identical to burst games (see §8.3).
 
 ---
 
@@ -2977,9 +3161,114 @@ Benefits:
 
 - The login streak is based on **consecutive calendar days** (player local time).
 - **Missing any day resets** the streak to **Day 1**.
--  After claiming the **Day 7** reward, the streak **resets to Day 1** on the next eligible login day.
--  The Day 7 gem reward is intended to be earned **once per week** via this 7-day cycle.
+- After claiming the **Day 7** reward, the streak **resets to Day 1** on the next eligible login day.
+- The Day 7 gem reward is intended to be earned **once per week** via this 7-day cycle.
 
+### 10.3.1 Login Streak Days 1-7
+
+> **Platform Tag:** [Web Phase 12-B]
+
+Detailed specifications for the 7-day login streak system.
+
+#### Daily Reward Details
+
+| Day | Primary Reward | Secondary | UI Highlight |
+|-----|----------------|-----------|--------------|
+| 1 | 10 🪙 | — | Small coin stack |
+| 2 | 20 🪙 | — | Medium coin stack |
+| 3 | 30 🪙 | — | Large coin stack |
+| 4 | 40 🪙 | — | Gold chest opening |
+| 5 | 50 🪙 | — | Gold chest + sparkles |
+| 6 | 1× Rare Food | Random rare | Food item reveal |
+| 7 | 10 💎 | Mystery Box | **Grand celebration** |
+
+#### Streak State Schema
+
+```typescript
+interface LoginStreakState {
+  currentDay: number;        // 1-7
+  lastClaimDate: string;     // ISO date of last claim
+  totalStreaksCompleted: number;  // Lifetime 7-day completions
+  longestStreak: number;     // Personal best
+}
+```
+
+#### Claim Rules
+
+| Rule | Specification |
+|------|---------------|
+| Claim window | Once per calendar day (midnight local) |
+| Expiry | 23:59:59 same day |
+| Grace period | None (strict consecutive days) |
+| Offline handling | If offline entire day, streak resets |
+
+#### Streak Protection
+
+Grundy Plus subscribers get one "streak shield" per week:
+- Protects against single-day miss
+- Auto-applied on first missed day
+- Does NOT stack (max 1 shield at any time)
+- Resets each Sunday at midnight
+
+### 10.3.2 Mystery Box
+
+> **Platform Tag:** [Web Phase 12-B]
+
+The Mystery Box is the Day 7 streak reward. It contains randomized loot based on a fixed probability table.
+
+#### Mystery Box Loot Table
+
+| Tier | Chance | Contents |
+|------|--------|----------|
+| Common | 60% | 50-100 🪙 |
+| Uncommon | 25% | 2-3× Uncommon Food |
+| Rare | 12% | 1× Rare Food + 25 🪙 |
+| Epic | 2.5% | 5 💎 |
+| Legendary | 0.5% | 15 💎 + 1× Epic Cosmetic |
+
+#### Mystery Box Rules
+
+| Rule | Value |
+|------|-------|
+| Source | Day 7 login streak only |
+| Can purchase? | ❌ No (earned only) |
+| Contents visible? | After opening (not before) |
+| Animation | Box shake → open → reveal |
+| Guaranteed minimum | 50 🪙 equivalent value |
+
+#### Mystery Box UI
+
+```
+┌─────────────────────────────┐
+│        🎁 MYSTERY BOX       │
+│                             │
+│      ╔═══════════════╗      │
+│      ║   [?] [?] [?] ║      │
+│      ║       🎁      ║      │
+│      ║   [?] [?] [?] ║      │
+│      ╚═══════════════╝      │
+│                             │
+│      [  OPEN BOX  ]         │
+└─────────────────────────────┘
+```
+
+#### Mystery Box Schema
+
+```typescript
+interface MysteryBox {
+  id: string;
+  source: 'login_streak';
+  tier: 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary';
+  contents: {
+    coins?: number;
+    gems?: number;
+    food?: { id: string; quantity: number }[];
+    cosmetic?: string;
+  };
+  opened: boolean;
+  openedAt?: Date;
+}
+```
 
 ## 10.4 Monthly Events
 
@@ -3018,6 +3307,124 @@ On account anniversary (or set date):
 | Summer | Sunrays | ☀️ |
 | Fall | Leaves | 🍂 |
 | Halloween | Candy Corn | 🍬 |
+
+## 10.7 Event Framework
+
+> **Platform Tag:** [Web Phase 12-D]
+
+The Event Framework provides the technical foundation for time-limited events, seasonal content, and LiveOps campaigns.
+
+### 10.7.1 Event Types
+
+| Type | Duration | Frequency | Example |
+|------|----------|-----------|---------|
+| **Seasonal** | 2-4 weeks | 4× per year | Winter Wonderland, Summer Splash |
+| **Holiday** | 3-7 days | 10-12× per year | Valentine's Day, Halloween |
+| **Micro** | 24-72 hours | Weekly/bi-weekly | Double XP Weekend |
+| **Special** | 1-2 weeks | As needed | Anniversary, Collaboration |
+
+### 10.7.2 Event Structure
+
+Every event consists of:
+
+| Component | Required? | Description |
+|-----------|-----------|-------------|
+| **Currency** | ✅ Yes | Unique event token (see §10.6) |
+| **Shop** | ✅ Yes | Event-exclusive items purchasable with event currency |
+| **Goals** | Optional | Trackable milestones (individual/community) |
+| **Quests** | Optional | Daily/weekly tasks for bonus currency |
+| **Leaderboard** | Optional | Competitive ranking |
+| **Cosmetics** | ✅ Yes | At least 1 event-exclusive cosmetic |
+
+### 10.7.3 Event Economy Rules
+
+| Rule | Value | Rationale |
+|------|-------|-----------|
+| Event currency conversion | ❌ Never | Prevents hoarding across events |
+| Event currency expiry | End of event + 24h grace | Creates urgency |
+| Expiry warning | 24h before + 1h before | Player-friendly |
+| Leftover currency | Converted to coins (10:1) | Soft landing |
+| Event items after event | ❌ Unavailable | Preserves exclusivity |
+| Event return | Same items return next year | Annual FOMO, not permanent |
+
+### 10.7.4 Event Currency Earning
+
+| Source | Amount | Notes |
+|--------|--------|-------|
+| Daily login (during event) | 10-50 | Escalates over event |
+| Mini-game (during event) | 5-15 | Bonus on top of regular rewards |
+| Feeding (during event) | 1-3 | Per feeding action |
+| Event quests | 25-100 | Per quest completion |
+| Purchase bundle | Varies | IAP option |
+
+### 10.7.5 Event Shop Design
+
+| Slot | Price Range | Content Type |
+|------|-------------|--------------|
+| 1-3 | 50-150 | Common consumables (food, care items) |
+| 4-5 | 200-400 | Uncommon cosmetics |
+| 6 | 500-800 | Rare cosmetic (main event item) |
+| 7 | 1000+ | Epic cosmetic (grind goal) |
+| 8 | 1500+ | Legendary (for dedicated players) |
+
+### 10.7.6 Event Data Schema
+
+```typescript
+interface Event {
+  id: string;                    // e.g., "winter_2025"
+  name: string;                  // "Winter Wonderland"
+  type: 'seasonal' | 'holiday' | 'micro' | 'special';
+  startDate: Date;
+  endDate: Date;
+  currency: {
+    id: string;                  // e.g., "snowflakes"
+    icon: string;                // "❄️"
+    name: string;                // "Snowflakes"
+  };
+  shop: EventShopItem[];
+  goals?: EventGoal[];
+  quests?: EventQuest[];
+  active: boolean;
+}
+
+interface EventShopItem {
+  id: string;
+  name: string;
+  description: string;
+  cost: number;                  // Event currency amount
+  category: 'food' | 'care' | 'cosmetic';
+  rarity: 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary';
+  stock?: number;                // null = unlimited
+  purchaseLimit?: number;        // Per-player limit
+}
+
+interface EventProgress {
+  eventId: string;
+  currencyEarned: number;
+  currencySpent: number;
+  questsCompleted: string[];
+  goalsReached: string[];
+  shopPurchases: string[];
+}
+```
+
+### 10.7.7 Example Event: Winter Wonderland
+
+| Attribute | Value |
+|-----------|-------|
+| Duration | December 15 - January 5 (3 weeks) |
+| Currency | Snowflakes ❄️ |
+| Theme | Cozy winter, snow, hot cocoa |
+
+**Shop Contents:**
+| Item | Cost | Type |
+|------|------|------|
+| Snowball (food) | 50 ❄️ | Consumable |
+| Hot Cocoa (food) | 100 ❄️ | Consumable |
+| Earmuffs | 250 ❄️ | Cosmetic (Common) |
+| Scarf | 400 ❄️ | Cosmetic (Uncommon) |
+| Winter Coat | 750 ❄️ | Cosmetic (Rare) |
+| Snow Globe Hat | 1200 ❄️ | Cosmetic (Epic) |
 
 ---
 
@@ -3727,6 +4134,117 @@ To prevent alert spam:
 - Alerts from any pet (§11.6.1)
 - Offline applies to all pets (§9.4.6)
 
+### 11.6.2 Notification Center
+
+> **Platform Tag:** [Web Phase 12]
+
+The Notification Center is an in-app history of all notifications, accessible from the main menu.
+
+> ⚠️ **PLATFORM SCOPE**
+>
+> | Platform | In-App Toasts | Notification Center | OS Push | App Badge |
+> |----------|---------------|---------------------|---------|-----------|
+> | **Web** | ✅ Yes | ✅ Yes | ❌ No | ❌ No |
+> | **Unity** | ✅ Yes | ✅ Yes | ✅ Yes | ✅ Yes |
+>
+> **Web Edition uses in-app notifications only.** OS push is [Unity Later].
+
+#### Notification Center Features
+
+| Feature | Description |
+|---------|-------------|
+| History | Last 50 notifications stored |
+| Unread count | Badge on menu icon |
+| Mark as read | Tap to dismiss, swipe to clear |
+| Deep link | Tap notification → relevant screen |
+| Grouping | Group by type (Pets, Games, Events, System) |
+
+#### Notification Types
+
+| Type | Icon | Example | Deep Link Target |
+|------|------|---------|------------------|
+| Pet Care | 🐾 | "Munchlet is hungry!" | Home (pet view) |
+| Neglect | ⚠️ | "Grib is feeling sad" | Home (pet view) |
+| Level Up | ⭐ | "Fizz reached Level 10!" | Home (pet view) |
+| Evolution | 🌟 | "Plompo evolved!" | Evolution screen |
+| Achievement | 🏆 | "Earned: First Steps" | Achievements screen |
+| Mini-Game | 🎮 | "Energy is full!" | Mini-Games hub |
+| Event | 🎉 | "Winter event starts!" | Event hub |
+| Daily | 📅 | "Daily reward ready!" | Login rewards |
+
+#### Notification History Schema
+
+```typescript
+interface Notification {
+  id: string;
+  type: 'pet_care' | 'neglect' | 'level_up' | 'evolution' | 'achievement' | 'minigame' | 'event' | 'daily';
+  title: string;
+  message: string;
+  timestamp: Date;
+  read: boolean;
+  petId?: string;           // If pet-specific
+  deepLink: string;         // Navigation target
+  icon: string;
+  priority: 'low' | 'medium' | 'high' | 'critical';
+}
+
+interface NotificationCenterState {
+  notifications: Notification[];
+  unreadCount: number;
+  lastChecked: Date;
+}
+```
+
+### 11.6.3 Notification Trigger Engine
+
+> **Platform Tag:** [Web Phase 12]
+
+The Trigger Engine determines when notifications fire and which ones are suppressed.
+
+#### Trigger Conditions
+
+| Trigger | Condition | Cooldown | Priority |
+|---------|-----------|----------|----------|
+| Hunger critical | hunger < 20 | 2 hours | Medium |
+| Mood critical | mood < 30 | 2 hours | Medium |
+| Neglect transition | Stage change | Once per stage | High |
+| Runaway | Day 14 reached | Immediate | Critical |
+| Sickness onset | isSick → true | Once | High |
+| Level up | XP threshold | Immediate | Medium |
+| Evolution | Stage change | Immediate | High |
+| Energy full | energy === 50 | 4 hours | Low |
+| Daily reward | New calendar day | Once per day | Medium |
+| Event start | Event becomes active | Immediate | Medium |
+
+#### Suppression Rules
+
+| Rule | Specification |
+|------|---------------|
+| Same-type cooldown | Min 30 min between same notification type |
+| Session limit | Max 5 non-critical notifications per session |
+| Focus mode | User can disable all non-critical notifications |
+| Critical override | Runaway/sickness always fire |
+| Batching | If returning from offline > 1 hour, batch into summary |
+
+#### Trigger Engine Schema
+
+```typescript
+interface TriggerEngine {
+  checkTriggers(state: GameState): Notification[];
+  shouldSuppress(notification: Notification, history: Notification[]): boolean;
+  batch(notifications: Notification[]): Notification;
+}
+
+interface TriggerConfig {
+  type: string;
+  condition: (state: GameState) => boolean;
+  cooldownMs: number;
+  priority: 'low' | 'medium' | 'high' | 'critical';
+  message: (state: GameState) => string;
+  deepLink: string;
+}
+```
+
 ## 11.7 Inventory Slots
 
 ### Overview
@@ -4160,6 +4678,118 @@ interface SeasonPass {
 | SFX Volume | 0-100% | 100% |
 | Vibration | On/Off | On |
 | Mute All | On/Off | Off |
+
+## 12.5 Push Notifications [Unity Later]
+
+> ⚠️ **PLATFORM SCOPE**
+>
+> | Platform | In-App Toasts | Notification Center | OS Push | App Badge |
+> |----------|---------------|---------------------|---------|-----------|
+> | **Web** | ✅ Yes | ✅ Yes | ❌ No | ❌ No |
+> | **Unity** | ✅ Yes | ✅ Yes | ✅ Yes | ✅ Yes |
+>
+> **This section documents Unity-only features.** Web Edition uses in-app notifications only (see §11.6.2-3).
+
+### Push Notification Types
+
+| Type | Trigger | Message Template | Deep Link |
+|------|---------|------------------|-----------|
+| Hunger Alert | hunger < 20 for 2+ hours | "{Pet} is getting hungry!" | Home |
+| Neglect Warning | Neglect Day 4+ | "{Pet} misses you! Come back soon 💕" | Home |
+| Sickness Alert | isSick && 12h since last check | "{Pet} is still sick and needs care" | Home |
+| Level Up | Level threshold reached | "🎉 {Pet} reached Level {N}!" | Home |
+| Evolution | Stage change | "✨ {Pet} evolved! Come see the change!" | Evolution |
+| Achievement | Achievement unlocked | "🏆 New achievement: {Name}" | Achievements |
+| Energy Full | Energy at max for 30+ min | "Your energy is full! Time to play 🎮" | Games |
+| Event Start | Event becomes active | "🎉 {Event} has started!" | Event |
+| Daily Reward | New day, unclaimed reward | "Your daily reward is waiting! 🎁" | Login |
+
+### Push Timing Rules
+
+| Rule | Value | Rationale |
+|------|-------|-----------|
+| Quiet hours | 10 PM - 8 AM (local) | Respect sleep |
+| Max per day | 5 pushes | Prevent spam |
+| Min interval | 2 hours between same type | Avoid annoyance |
+| Critical override | Runaway bypasses quiet hours | Critical path |
+| First-week leniency | Reduced pushes for new users | Gentle onboarding |
+
+## 12.6 App Icon Badge [Unity Later]
+
+> **Platform Tag:** [Unity Later] — Mobile app only
+
+The app icon badge shows the number of pending notifications requiring attention.
+
+| Badge Count | Meaning |
+|-------------|---------|
+| 0 | All clear |
+| 1-3 | Pending notifications |
+| 4+ | "4+" displayed |
+
+### Badge Triggers
+
+| Trigger | Badge Change |
+|---------|--------------|
+| Hungry pet | +1 |
+| Neglected pet | +1 |
+| Sick pet | +1 |
+| Unclaimed daily | +1 |
+| Energy full | +1 (max 1 for energy) |
+| Open app | Reset to 0 |
+
+## 12.7 Notification Channels [Unity Later]
+
+> **Platform Tag:** [Unity Later] — Android 8.0+ notification channels
+
+| Channel ID | Name | Importance | Description |
+|------------|------|------------|-------------|
+| `pet_care` | Pet Care | High | Hunger, health, neglect alerts |
+| `achievements` | Achievements | Default | Level ups, unlocks, badges |
+| `events` | Events & Rewards | Default | Daily rewards, event notifications |
+| `energy` | Mini-Games | Low | Energy refill alerts |
+
+### Channel Behavior
+
+| Channel | Sound | Vibrate | Badge | Heads-up |
+|---------|-------|---------|-------|----------|
+| pet_care | ✅ | ✅ | ✅ | ✅ |
+| achievements | ✅ | ❌ | ✅ | ❌ |
+| events | ✅ | ❌ | ✅ | ❌ |
+| energy | ❌ | ❌ | ❌ | ❌ |
+
+## 12.8 Notification Settings [Unity Later]
+
+> **Platform Tag:** [Unity Later] — In-app notification preferences
+
+| Setting | Options | Default |
+|---------|---------|---------|
+| All Notifications | On/Off | On |
+| Pet Care Alerts | On/Off | On |
+| Achievement Alerts | On/Off | On |
+| Event Alerts | On/Off | On |
+| Energy Alerts | On/Off | Off |
+| Quiet Hours | On/Off | On |
+| Quiet Start | Time picker | 10:00 PM |
+| Quiet End | Time picker | 8:00 AM |
+
+### Settings Schema
+
+```typescript
+interface NotificationSettings {
+  enabled: boolean;
+  channels: {
+    petCare: boolean;
+    achievements: boolean;
+    events: boolean;
+    energy: boolean;
+  };
+  quietHours: {
+    enabled: boolean;
+    start: string;  // "22:00"
+    end: string;    // "08:00"
+  };
+}
+```
 
 ---
 
@@ -5321,7 +5951,172 @@ GRUNDY_MASTER_BIBLE.md          ← CANONICAL (wins all conflicts)
 
 ---
 
+# 17. ACHIEVEMENTS
+
+> **Platform Tag:** [Web Phase 12-A]
+
+## 17.1 Overview
+
+Achievements reward milestones and encourage exploration of all game features. They provide gems as a free-to-play gem income source.
+
+### Achievement System Summary
+
+| Attribute | Value |
+|-----------|-------|
+| Total achievements | 25 |
+| Total gem rewards | 425 💎 |
+| Display location | Achievements screen (from menu) |
+| Notification | Toast + entry in Notification Center |
+
+## 17.2 Achievement List
+
+### Beginner Achievements (75 💎 total)
+
+| ID | Name | Condition | Reward | Icon |
+|----|------|-----------|--------|------|
+| ACH-001 | First Steps | Complete FTUE | 5 💎 | 👣 |
+| ACH-002 | First Meal | Feed your pet for the first time | 5 💎 | 🍎 |
+| ACH-003 | First Friend | Reach Bond Level 1 | 5 💎 | 🤝 |
+| ACH-004 | Getting Started | Reach Level 5 | 10 💎 | ⭐ |
+| ACH-005 | Game On | Play your first mini-game | 5 💎 | 🎮 |
+| ACH-006 | Clean Sweep | Clean poop for the first time | 5 💎 | 🧹 |
+| ACH-007 | Window Shopper | Buy anything from the shop | 5 💎 | 🛒 |
+| ACH-008 | Daily Visitor | Claim your first login reward | 5 💎 | 📅 |
+| ACH-009 | Dress Up | Equip your first cosmetic | 10 💎 | 👒 |
+| ACH-010 | Coin Collector | Earn 500 coins total | 10 💎 | 🪙 |
+| ACH-011 | Energy Saver | Let energy fully regenerate | 5 💎 | ⚡ |
+
+### Intermediate Achievements (150 💎 total)
+
+| ID | Name | Condition | Reward | Icon |
+|----|------|-----------|--------|------|
+| ACH-012 | Growing Up | Reach Youth stage | 15 💎 | 🌱 |
+| ACH-013 | Best Friends | Reach Bond Level 5 | 15 💎 | 💕 |
+| ACH-014 | Level 10 Club | Reach Level 10 | 20 💎 | 🔟 |
+| ACH-015 | Mini-Game Master | Reach Gold tier in any mini-game | 15 💎 | 🥇 |
+| ACH-016 | Rainbow Legend | Reach Rainbow tier in any mini-game | 25 💎 | 🌈 |
+| ACH-017 | Week Streak | Complete a 7-day login streak | 20 💎 | 📆 |
+| ACH-018 | Fashion Forward | Own 5 cosmetics | 15 💎 | 👗 |
+| ACH-019 | Coin Hoarder | Have 1000 coins at once | 15 💎 | 💰 |
+| ACH-020 | Feeding Frenzy | Feed your pet 100 times | 10 💎 | 🍽️ |
+
+### Advanced Achievements (200 💎 total)
+
+| ID | Name | Condition | Reward | Icon |
+|----|------|-----------|--------|------|
+| ACH-021 | Evolution | Reach Evolved stage | 30 💎 | ✨ |
+| ACH-022 | Bond Maximum | Reach Bond Level 10 (max) | 30 💎 | 💖 |
+| ACH-023 | Level 25 Legend | Reach Level 25 | 30 💎 | 🏆 |
+| ACH-024 | Pet Collector | Own 4 different pets | 40 💎 | 🐾 |
+| ACH-025 | True Dedication | Play for 30 days total | 50 💎 | ⭐ |
+| ACH-026 | Style Master | Own 15 cosmetics | 20 💎 | 💎 |
+
+## 17.3 Achievement Categories
+
+| Category | Count | Gem Total | Focus |
+|----------|-------|-----------|-------|
+| Progression | 8 | 140 💎 | Levels, stages, bond |
+| Mini-Games | 3 | 50 💎 | Game performance |
+| Economy | 5 | 60 💎 | Coins, shopping |
+| Cosmetics | 3 | 45 💎 | Fashion, customization |
+| Engagement | 6 | 130 💎 | Daily play, streaks |
+
+## 17.4 Achievement UI
+
+### Achievement Screen Layout
+
+```
+┌─────────────────────────────────────┐
+│  🏆 ACHIEVEMENTS          15/25    │
+├─────────────────────────────────────┤
+│                                     │
+│  ✅ First Steps             5 💎   │
+│  ✅ First Meal              5 💎   │
+│  ✅ First Friend            5 💎   │
+│  🔒 Getting Started        10 💎   │
+│      "Reach Level 5"               │
+│      Progress: 3/5 ████░░░░░       │
+│  🔒 Game On                 5 💎   │
+│      "Play your first mini-game"   │
+│                                     │
+└─────────────────────────────────────┘
+```
+
+### Achievement Toast
+
+```
+┌─────────────────────────────────────┐
+│  🏆 ACHIEVEMENT UNLOCKED!          │
+│                                     │
+│      ⭐ Getting Started ⭐          │
+│         Reach Level 5              │
+│                                     │
+│          +10 💎                     │
+└─────────────────────────────────────┘
+```
+
+## 17.5 Achievement Schema
+
+```typescript
+interface Achievement {
+  id: string;              // "ACH-001"
+  name: string;            // "First Steps"
+  description: string;     // "Complete FTUE"
+  category: 'progression' | 'minigames' | 'economy' | 'cosmetics' | 'engagement';
+  condition: {
+    type: string;          // "level", "bond", "action_count", etc.
+    target: number;        // Target value
+    current?: number;      // Progress (for trackable)
+  };
+  reward: {
+    gems: number;
+    badge?: string;        // Optional badge unlock
+  };
+  icon: string;
+  unlocked: boolean;
+  unlockedAt?: Date;
+  hidden?: boolean;        // For surprise achievements
+}
+
+interface AchievementState {
+  achievements: Achievement[];
+  totalUnlocked: number;
+  totalGems: number;       // Gems earned from achievements
+}
+```
+
+## 17.6 Achievement Rules
+
+| Rule | Specification |
+|------|---------------|
+| Retroactive credit | Achievements unlock retroactively based on current state |
+| Notification | Toast + Notification Center entry |
+| Persistence | Achievement state saved with player data |
+| Multiple pets | Pet-specific achievements (bond, level) use highest pet |
+| Hidden achievements | Not shown until unlocked (surprise) |
+
+## 17.7 Achievement Implementation Notes
+
+- Achievements check on state change, not polling
+- Some achievements have trackable progress (shown as bar)
+- Gem rewards added instantly to player balance
+- Achievement toasts have 3-second display time
+- Multiple achievements can unlock simultaneously (queue toasts)
+
+---
+
 # END OF MASTER BIBLE
+
+---
+
+**Version:** 1.11
+**Last Updated:** December 16, 2025
+**Line Count:** 6109
+**Checksum:** fdb8f76d669816aba11920bb12dbbf71
+
+---
+
+*"Some questions aren't meant to be answered. Only lived."*
 
 **Prepared by:** Consolidation from 9 source documents + design expansion
 **For:** Development, Art, QA, and Production Teams

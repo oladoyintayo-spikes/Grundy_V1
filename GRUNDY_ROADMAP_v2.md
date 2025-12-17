@@ -1,16 +1,32 @@
 # GRUNDY_ROADMAP_v2.md
 
+**Document Version:** 1.11
+**Last Updated:** December 16, 2025
+**Bible Alignment:** v1.11
+**Status:** Current
+
 # Grundy Web Edition — Development Roadmap
 
-**Version:** 2.1
-**Last Updated:** December 11, 2024 (P6-DOC-ALIGN)
-**Current:** Web 1.0 RELEASED | Phase 6 In Progress
+**Version:** 2.2
+**Current:** Web 1.0 RELEASED | Phase 11 Complete | Phase 12 Planned
 
 ---
 
 ## Overview
 
-**Web 1.0 is RELEASED.** This roadmap now tracks **Phase 6+** — bringing Web 1.0 up to Bible v1.4 compliance, then extending with new features.
+**Web 1.0 is RELEASED.** This roadmap tracks **Phase 12+** systems per Bible v1.11.
+
+### Bible v1.11 Phase Structure
+
+| Phase | Focus | Bible Sections |
+|-------|-------|----------------|
+| **Phase 12-A** | Achievements | §17 (25 achievements, 425💎) |
+| **Phase 12-B** | Login Streak + Mystery Box | §10.3.1-2 |
+| **Phase 12** | Notification Center | §11.6.2-3 (in-app) |
+| **Phase 12-C** | Season Pass (Free Track) | §11.9 |
+| **Phase 12-D** | Event Framework | §10.7 |
+| **Phase 13** | Session Mini-Games | §8.5 (Snake, Tetris, Runner) |
+| **[Unity Later]** | Push Notifications | §12.5-12.8 |
 
 ### Web Edition Goals (Web 1.0 — COMPLETE)
 
@@ -270,7 +286,7 @@ npm run dev
 
 ## Sources
 
-- `docs/GRUNDY_MASTER_BIBLE.md` (v1.6) — Design source of truth
+- `docs/GRUNDY_MASTER_BIBLE.md` (v1.11) — Design source of truth
 - `docs/PHASE6_BACKLOG.md` — Phase 6 task backlog
 - `TASKS.md` — Detailed task list
 - `ORCHESTRATOR.md` — Agent workflow
@@ -279,4 +295,7 @@ npm run dev
 ---
 
 *This roadmap tracks the Web Edition only. Unity Edition has a separate roadmap.*
-*Phase 6 = Bible v1.4 compliance. Later phases = extended features beyond Bible v1.4 baseline.*
+
+---
+
+**Document Version:** 1.11 | **Bible Alignment:** v1.11 | **Updated:** December 16, 2025

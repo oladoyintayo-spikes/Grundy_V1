@@ -1,25 +1,36 @@
 # CURRENT_SPRINT.md
 
+**Document Version:** 1.11
+**Last Updated:** December 16, 2025
+**Bible Alignment:** v1.11
+**Status:** Current
+
 # Grundy Web Prototype — Current Sprint Status
 
-**Last Updated:** December 14, 2025
-**Phase:** 10 (Weight & Sickness) — ✅ COMPLETE
+**Phase:** 10 (Weight & Sickness) — ✅ COMPLETE | **Next:** Phase 11+ (Cosmetics, Achievements, etc.)
 
 ---
 
 ## Source of Truth
 
-| Resource | Location |
-|----------|----------|
-| **Design SoT** | `docs/GRUNDY_MASTER_BIBLE.md` |
-| **Agent Workflow** | `ORCHESTRATOR.md` |
-| **Task List** | `TASKS.md` |
-| **Dev Status** | `GRUNDY_DEV_STATUS.md` |
-| **This File** | `CURRENT_SPRINT.md` |
+| Resource | Location | Version |
+|----------|----------|---------|
+| **Design SoT** | `docs/GRUNDY_MASTER_BIBLE.md` | v1.11 |
+| **Agent Workflow** | `ORCHESTRATOR.md` | 2.2 |
+| **Task List** | `TASKS.md` | — |
+| **Dev Status** | `GRUNDY_DEV_STATUS.md` | — |
+| **This File** | `CURRENT_SPRINT.md` | — |
 
 > ⚠️ **Design SoT: `docs/GRUNDY_MASTER_BIBLE.md`**
 >
 > If code or other docs conflict with the Bible, the Bible wins.
+
+### Key Constraints (Bible v1.11)
+
+| Constraint | Rule |
+|------------|------|
+| Mini-game gems | ❌ NEVER award gems (§8.1.1) |
+| Push notifications | [Unity Later] — Web uses in-app only (§12.5-12.8) |
 
 ---
 
@@ -228,3 +239,7 @@ Check TASKS.md and project roadmap for approved scope. Potential items:
 ---
 
 *Sprint status lives here. Design SoT: `docs/GRUNDY_MASTER_BIBLE.md` | Agent Workflow: `ORCHESTRATOR.md` | Tasks: `TASKS.md`*
+
+---
+
+**Document Version:** 1.11 | **Bible Alignment:** v1.11 | **Updated:** December 16, 2025

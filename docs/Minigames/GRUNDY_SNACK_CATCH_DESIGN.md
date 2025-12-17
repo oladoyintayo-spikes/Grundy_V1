@@ -280,4 +280,24 @@ function spawnItem(gameTime: number): FallingItem {
 
 ---
 
+## Economy Compliance
+
+**Aligned with Bible v1.11 §8.1.1**
+
+This game complies with Mini-Game Economy Invariants:
+- ❌ No gems awarded (any tier)
+- ✅ Daily rewarded cap: 3 plays (shared)
+- ✅ After cap: Playable for fun (0 rewards)
+- ✅ Energy cost: 10 per play
+
+See `docs/GRUNDY_MASTER_BIBLE.md` §8.1.1 for authoritative rules.
+
+---
+
+**Document Version:** 1.11
+**Last Updated:** December 16, 2025
+**Bible Alignment:** v1.11
+
+---
+
 *END OF SNACK CATCH DESIGN*

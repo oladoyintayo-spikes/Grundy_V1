@@ -454,8 +454,28 @@ interface Customer {
 
 ---
 
+## Economy Compliance
+
+**Aligned with Bible v1.11 §8.1.1**
+
+This game complies with Mini-Game Economy Invariants:
+- ❌ No gems awarded (any tier)
+- ✅ Daily rewarded cap: 3 plays (shared with burst games)
+- ✅ After cap: Playable for fun (0 rewards)
+- ✅ Energy cost: 10 per play
+
+See `docs/GRUNDY_MASTER_BIBLE.md` §8.1.1 for authoritative rules.
+
+---
+
 ## References
 
-- Bible §7.5.5 Session Games
+- Bible §8.5 Session Mini-Games
+- Bible §8.1.1 Mini-Game Economy Invariants
 - Bible §11.4 Gem Sources (NO gems from mini-games)
-- Bible §7.1 Mini-Game Economy Rules
+
+---
+
+**Document Version:** 1.11
+**Last Updated:** December 16, 2025
+**Bible Alignment:** v1.11

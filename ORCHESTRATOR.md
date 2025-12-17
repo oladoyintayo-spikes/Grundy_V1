@@ -1,9 +1,13 @@
 # Grundy Web – AI Orchestrator Playbook
 
-**Version:** 2.2
+**Document Version:** 1.11
+**Last Updated:** December 16, 2025
+**Bible Alignment:** v1.11
+**Status:** Current
+
+**Version:** 2.3
 **Owner:** Chief Engineer (Amos)
 **Scope:** Grundy web prototype (React + TS + Zustand)
-**Last Updated:** December 14, 2025 (Bible v1.10 Update)
 
 ---
 
@@ -69,7 +73,7 @@ These documents form the **governance triad** for all Grundy development:
 
 | Artifact | Path | Version |
 |----------|------|---------|
-| Bible | `docs/GRUNDY_MASTER_BIBLE.md` | **v1.10** |
+| Bible | `docs/GRUNDY_MASTER_BIBLE.md` | **v1.11** |
 | BCT Spec | `docs/BIBLE_COMPLIANCE_TEST.md` | **v2.4** |
 | Locked Constants | `src/constants/bible.constants.ts` | Single source for locked values |
 | Weight/Sickness Patch | `docs/patches/BIBLE_v1.8_PATCH_WEIGHT_SICKNESS_MULTIPET.md` | **Adopted** |
@@ -156,7 +160,7 @@ GRUNDY_PHASE_REVIEW_SOP.md      ← Process (WHO reviews WHEN)
 
 ### Key Rules
 
-1. **Bible = Design Authority:** All implementation must match Bible v1.7 specification
+1. **Bible = Design Authority:** All implementation must match Bible v1.11 specification
 2. **BCT = Test Contract:** Use BCT-* tests to verify Bible compliance before marking work complete
 3. **SOP = Process Authority:** Follow Dev→CE→QA flow; agents cannot approve their own work
 
@@ -780,7 +784,7 @@ Your Responsibilities:
 
 3. **Verify Bible Compliance**
    - Check BCT test results against docs/BIBLE_COMPLIANCE_TEST.md
-   - Ensure implementation matches Bible v1.7 specification
+   - Ensure implementation matches Bible v1.11 specification
    - Flag any deviations or violations
 
 4. **Decide the task's state**
@@ -947,7 +951,12 @@ docs(tasks): mark P0-1 complete [P0-1]
 |---------|------|---------|
 | 2.0 | 2024-12-10 | Initial structured playbook with role definitions |
 | 2.1 | 2024-12-11 | Added §2.5 Authoritative References (Bible, BCT, SOP), §4.7 Dev/CE/QA Separation, §4.8 Bible Compliance Testing, standardized agent output footers with status fields and BCT compliance [ORCH-REF-01] |
+| 2.3 | 2025-12-16 | Updated all Bible references from v1.7/v1.10 to v1.11, aligned with Bible v1.11 comprehensive update |
 
 ---
 
 *This playbook governs all AI work on Grundy. Follow it.*
+
+---
+
+**Document Version:** 1.11 | **Bible Alignment:** v1.11 | **Updated:** December 16, 2025
