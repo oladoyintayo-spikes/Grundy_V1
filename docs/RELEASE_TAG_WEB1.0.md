@@ -1,5 +1,8 @@
 # Grundy Web Edition – Tagging Release 1.0.0
 
+> ⚠️ **Historical Document** — This document is a release record from Web 1.0.
+> For current specifications, see `docs/GRUNDY_MASTER_BIBLE.md` v1.11.
+
 ## Prerequisites
 
 Before tagging the release, verify the following:

@@ -1,5 +1,8 @@
 # P9-C Slot Unlock Delta Audit Addendum
 
+> ⚠️ **Historical Document** — This document is a historical record from Phase 9.
+> For current specifications, see `docs/GRUNDY_MASTER_BIBLE.md` v1.11.
+
 **Document:** P9C_SLOTS_DELTA_AUDIT_ADDENDUM.md
 **Audit Date:** December 13, 2025
 **Bible Version:** v1.7

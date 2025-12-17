@@ -1,7 +1,13 @@
 # GRUNDY PET ART - ORGANIZED ASSETS
-*Generated: December 2024*
 
-> **Design SoT:** `docs/GRUNDY_MASTER_BIBLE.md` — This document is subordinate to the Bible.
+---
+**Document Version:** 1.11
+**Last Updated:** December 16, 2025
+**Bible Alignment:** v1.11
+**Status:** Current
+---
+
+> **Design SoT:** `docs/GRUNDY_MASTER_BIBLE.md` v1.11 — This document is subordinate to the Bible.
 
 ## Summary
 - **Total Images:** 120
@@ -174,3 +180,6 @@ sleeping → sleep time
 eating → during feeding animation
 eating_loved → feeding favorite food
 ```
+
+---
+**Document Version:** 1.11 | **Bible Alignment:** v1.11 | **Updated:** December 16, 2025

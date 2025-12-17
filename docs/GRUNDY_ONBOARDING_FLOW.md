@@ -1,12 +1,16 @@
 # GRUNDY ONBOARDING FLOW
 ## Lore-Integrated FTUE Design
 
-**Document Version:** 1.0  
-**Last Updated:** December 2024  
-**Status:** Production Ready  
+---
+**Document Version:** 1.11
+**Last Updated:** December 16, 2025
+**Bible Alignment:** v1.11
+**Status:** Production Ready
+---
+
 **Target Duration:** < 60 seconds to first feeding
 
-> **Design SoT:** `docs/GRUNDY_MASTER_BIBLE.md` — This document is subordinate to the Bible.
+> **Design SoT:** `docs/GRUNDY_MASTER_BIBLE.md` v1.11 — This document is subordinate to the Bible.
 
 ---
 
@@ -999,15 +1003,19 @@ These rules from Game Bible v3 remain in effect:
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0 | Dec 2024 | Initial onboarding flow with lore integration |
+| 1.11 | Dec 16, 2025 | Bible v1.11 alignment update |
 
 ---
 
 ## Related Documents
 
-- **GRUNDY_MASTER_BIBLE.md** — Design Source of Truth (Section 7: Onboarding)
+- **GRUNDY_MASTER_BIBLE.md** v1.11 — Design Source of Truth (Section 7: Onboarding)
 - **GRUNDY_LORE_CODEX.md** — Full pet lore and world-building
 - **ASSET_MANIFEST.md** — Sprite files and state mappings
 
 ---
 
 *"One found you."*
+
+---
+**Document Version:** 1.11 | **Bible Alignment:** v1.11 | **Updated:** December 16, 2025

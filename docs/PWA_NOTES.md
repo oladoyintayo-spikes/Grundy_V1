@@ -1,6 +1,11 @@
-# PWA_NOTES.md
-
 # Grundy PWA Implementation Notes
+
+---
+**Document Version:** 1.11
+**Last Updated:** December 16, 2025
+**Bible Alignment:** v1.11
+**Status:** Current
+---
 
 **Task:** P5-PWA-CORE, P5-PWA-SHELL, P5-PWA-DOC
 **Phase:** Web Phase 5 — Polish / Web 1.0
@@ -238,3 +243,6 @@ See `src/__tests__/pwaConfig.test.ts` for:
 ---
 
 *This file documents the P5-PWA implementation. See TASKS.md for task status.*
+
+---
+**Document Version:** 1.11 | **Bible Alignment:** v1.11 | **Updated:** December 16, 2025

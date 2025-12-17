@@ -1,5 +1,8 @@
 # Grundy – Phase 6+ Backlog
 
+> ⚠️ **Historical Document** — This document is a historical record from Phase 6.
+> For current specifications, see `docs/GRUNDY_MASTER_BIBLE.md` v1.11.
+
 **Last Updated:** December 11, 2024 (P6-BACKLOG-TIER1)
 **Scope:** Bible v1.4 Compliance + Post-Web 1.0 Enhancements
 

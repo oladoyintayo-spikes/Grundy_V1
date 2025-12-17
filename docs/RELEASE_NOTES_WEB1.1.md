@@ -1,5 +1,8 @@
 # Grundy Web Edition – Release 1.1.0
 
+> ⚠️ **Historical Document** — This document is a release record from Web 1.1.
+> For current specifications, see `docs/GRUNDY_MASTER_BIBLE.md` v1.11.
+
 **Release Date:** December 14, 2025
 **Codename:** Phase 10 Complete
 

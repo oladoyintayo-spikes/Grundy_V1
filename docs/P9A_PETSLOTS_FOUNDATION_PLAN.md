@@ -1,5 +1,8 @@
 # P9-A Pet Slots Foundation Plan
 
+> ⚠️ **Historical Document** — This document is a historical record from Phase 9.
+> For current specifications, see `docs/GRUNDY_MASTER_BIBLE.md` v1.11.
+
 **Phase:** P9-A-PETSLOTS-DATA+SWITCH v2.1
 **Bible Version:** v1.6
 **BCT Version:** v2.2

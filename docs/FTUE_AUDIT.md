@@ -1,5 +1,8 @@
 # FTUE Audit Document
 
+> ⚠️ **Historical Document** — This document is a historical record from Phase 4.
+> For current specifications, see `docs/GRUNDY_MASTER_BIBLE.md` v1.11.
+
 **Version:** 1.0
 **Date:** December 2024
 **Task:** P4-1 — Audit current FTUE vs Bible

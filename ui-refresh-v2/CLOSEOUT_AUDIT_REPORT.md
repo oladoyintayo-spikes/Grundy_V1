@@ -1,5 +1,8 @@
 # UI Refresh v1.10 Closeout Audit Report
 
+> ⚠️ **Historical Document** — This document is a historical record from Bible v1.10 UI refresh.
+> For current specifications, see `docs/GRUNDY_MASTER_BIBLE.md` v1.11.
+
 **Date:** December 15, 2025
 **Bible Version:** v1.10
 **Auditor:** Claude Closeout Agent

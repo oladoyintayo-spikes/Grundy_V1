@@ -1,5 +1,8 @@
 # CE/QA Phase 9 Signoff Notes
 
+> ⚠️ **Historical Document** — This document is a historical record from Phase 9.
+> For current specifications, see `docs/GRUNDY_MASTER_BIBLE.md` v1.11.
+
 **Document:** CEQA_PHASE9_SIGNOFF_NOTES.md
 **Review Date:** December 12, 2025 (America/Chicago)
 **Reviewer:** Chief Engineer / CE (role placeholder)

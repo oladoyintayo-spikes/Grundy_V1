@@ -1,8 +1,14 @@
 # Grundy Web — Art Integration Notes
 
+---
+**Document Version:** 1.11
+**Last Updated:** December 16, 2025
+**Bible Alignment:** v1.11
+**Status:** Current
+---
+
 **Task IDs:** P5-ART-PETS, P5-ART-ROOMS, P5-ART-DOC
 **Phase:** Web Phase 5 — Polish / Web 1.0
-**Last Updated:** December 10, 2024
 
 ---
 
@@ -295,3 +301,6 @@ Run: `npm test -- --run`
 ---
 
 *This documentation covers P5-ART-PETS, P5-ART-ROOMS, and P5-ART-DOC.*
+
+---
+**Document Version:** 1.11 | **Bible Alignment:** v1.11 | **Updated:** December 16, 2025

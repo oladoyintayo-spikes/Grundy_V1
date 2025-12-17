@@ -1,5 +1,12 @@
 # Grundy Web 1.0 — QA Issues Log
 
+---
+**Document Version:** 1.11
+**Last Updated:** December 16, 2025
+**Bible Alignment:** v1.11
+**Status:** Current
+---
+
 **Version:** 1.0
 **Tasks:** P5-QA-SMOKE, P5-QA-FTUE, P5-QA-MINIGAMES, P5-QA-PWA
 
@@ -229,3 +236,6 @@ S3/S4 items are documented and deferred to Phase 6.
 ---
 
 *This document fulfills P5-QA-REPORT requirements.*
+
+---
+**Document Version:** 1.11 | **Bible Alignment:** v1.11 | **Updated:** December 16, 2025

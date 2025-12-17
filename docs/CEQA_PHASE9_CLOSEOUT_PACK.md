@@ -1,5 +1,8 @@
 # Phase 9 CE/QA Closeout Pack
 
+> ⚠️ **Historical Document** — This document is a historical record from Phase 9.
+> For current specifications, see `docs/GRUNDY_MASTER_BIBLE.md` v1.11.
+
 **Document:** CEQA_PHASE9_CLOSEOUT_PACK.md
 **Date:** December 12, 2025
 **Bible Version:** v1.7

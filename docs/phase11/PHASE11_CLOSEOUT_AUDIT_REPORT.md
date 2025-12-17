@@ -1,5 +1,8 @@
 # Phase 11 Closeout Audit Report
 
+> ⚠️ **Historical Document** — This document is a historical record from Phase 11.
+> For current specifications, see `docs/GRUNDY_MASTER_BIBLE.md` v1.11.
+
 **Audit Date:** 2025-12-15
 **Auditor:** Claude (CE/QA Compliance Agent)
 **Bible Version:** v1.10

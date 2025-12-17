@@ -1,5 +1,12 @@
 # Grundy Web 1.0 — QA Plan
 
+---
+**Document Version:** 1.11
+**Last Updated:** December 16, 2025
+**Bible Alignment:** v1.11
+**Status:** Current
+---
+
 **Version:** 1.0
 **Date:** December 10, 2024
 **Tasks:** P5-QA-SMOKE, P5-QA-FTUE, P5-QA-MINIGAMES, P5-QA-PWA, P5-QA-REPORT
@@ -189,3 +196,6 @@ Web 1.0 is release-ready when:
 ---
 
 *This QA plan covers P5-QA-SMOKE, P5-QA-FTUE, P5-QA-MINIGAMES, and P5-QA-PWA scope.*
+
+---
+**Document Version:** 1.11 | **Bible Alignment:** v1.11 | **Updated:** December 16, 2025

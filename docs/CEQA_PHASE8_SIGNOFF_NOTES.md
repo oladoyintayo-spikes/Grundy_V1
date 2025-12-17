@@ -1,5 +1,8 @@
 # CE/QA Phase 8 Sign-Off Notes (Shop + Inventory)
 
+> ⚠️ **Historical Document** — This document is a historical record from Phase 8.
+> For current specifications, see `docs/GRUNDY_MASTER_BIBLE.md` v1.11.
+
 ## Metadata
 
 | Field | Value |

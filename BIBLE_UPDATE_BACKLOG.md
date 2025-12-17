@@ -1,5 +1,12 @@
 # Grundy Bible Update Backlog
 
+---
+**Document Version:** 1.11
+**Last Updated:** December 16, 2025
+**Bible Alignment:** v1.11
+**Status:** Current
+---
+
 > This file tracks decisions where code/tests are considered correct,
 > but `docs/GRUNDY_MASTER_BIBLE.md` still reflects older values.
 >
@@ -75,4 +82,7 @@ These were checked and confirmed to already match:
 
 ---
 
-*Last updated: 2024-12-10 (P1-DOC-1 completed)*
+*Last updated: December 16, 2025 (Bible v1.11 alignment)*
+
+---
+**Document Version:** 1.11 | **Bible Alignment:** v1.11 | **Updated:** December 16, 2025

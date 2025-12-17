@@ -1,10 +1,16 @@
 # Grundy — Bible Compliance Test (BCT)
 
-**Version:** 2.4
-**Last Updated:** December 2025 (Bible v1.10 Update)
-**Bible Reference:** `docs/GRUNDY_MASTER_BIBLE.md` v1.10
+---
+**Document Version:** 2.4
+**Last Updated:** December 16, 2025
+**Bible Alignment:** v1.11
+**Status:** Current
+---
+
+**Bible Reference:** `docs/GRUNDY_MASTER_BIBLE.md` v1.11
 
 **Changelog:**
+- v2.4 (P12+): Bible v1.11 alignment — Added §8.1.1 Mini-Game Economy Invariants, §8.5 Session Games, §17 Achievements, §11.6.2-3 Notification Center. BCT tests to be added as implementation progresses.
 - v2.4 (P11 Pending): Bible v1.10 updated §14.5 (Menu-first + Action Bar) and §14.6 (Food Drawer, Terminology, Overlay Safety Rules). Navigation and layout BCT tests (BCT-NAV-*, BCT-LAYOUT-*) will be updated when UI implementation PR lands. No new test IDs until implementation.
 - v2.4 (P11 Pending): Bible v1.9 alignment — Phase 11 Cosmetics tests pending (~52 specs planned). Test IDs will be assigned when P11-0/P11 implementation begins. See `docs/patches/BIBLE_v1_9_PATCH_FINAL.md`.
 - v2.4: Weight & Sickness test suites (planned) — Added BCT-WEIGHT (12 tests), BCT-SICKNESS (18 tests), BCT-SICKNESS-OFFLINE (8 tests), BCT-ALERT-HEALTH (8 tests), BCT-COZY-IMMUNITY (6 tests) specifications for P10 Weight/Sickness runtime. Bible v1.8 alignment. See `docs/patches/BIBLE_v1.8_PATCH_WEIGHT_SICKNESS_MULTIPET.md`.
@@ -1885,3 +1891,6 @@ GRUNDY_PHASE_REVIEW_SOP.md      ← Process (WHO reviews WHEN)
 ---
 
 *This document is the contract for CE and QA review. All phases, patches, and hotfixes must pass relevant BCT tests before deployment.*
+
+---
+**Document Version:** 2.4 | **Bible Alignment:** v1.11 | **Updated:** December 16, 2025

@@ -1,5 +1,9 @@
-Grundy Pre-Flight Report
-1. Repo vs Docs Alignment
+# Grundy Pre-Flight Report
+
+> ⚠️ **Historical Document** — This document is a pre-flight report from December 2025.
+> For current specifications, see `docs/GRUNDY_MASTER_BIBLE.md` v1.11.
+
+## 1. Repo vs Docs Alignment
 Files Confirmed to Exist
 Location	Status
 README.md	✅

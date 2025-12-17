@@ -1,5 +1,12 @@
 # UX & Accessibility Notes
 
+---
+**Document Version:** 1.11
+**Last Updated:** December 16, 2025
+**Bible Alignment:** v1.11
+**Status:** Current
+---
+
 **Task ID:** P5-UX-A11Y
 **Sub-task IDs:** P5-UX-KEYS, P5-UX-CONTRAST, P5-A11Y-LABELS, P5-A11Y-DOC
 **Date:** 2025-12-10
@@ -233,3 +240,6 @@ npm test -- uxAccessibility
 | `FtuePetSelect.tsx` | Focus ring, h1/h2, aria-pressed |
 | `FtueModeSelect.tsx` | Focus ring, h1, contrast |
 | `FtueFirstSession.tsx` | Focus ring, h1/h2, semantic regions |
+
+---
+**Document Version:** 1.11 | **Bible Alignment:** v1.11 | **Updated:** December 16, 2025
