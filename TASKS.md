@@ -1415,11 +1415,23 @@ export default {
 
 ---
 
-## WEB PHASE 12: ACHIEVEMENTS, LOGIN STREAK, NOTIFICATIONS, SEASON PASS, EVENTS
+## WEB PHASE 12: NOTIFICATION SYSTEM, ACHIEVEMENTS, LOGIN STREAK, SEASON PASS, EVENTS
 
-> **Bible v1.11 Reference:** §17 (Achievements), §10.3.1-2 (Login Streak + Mystery Box), §11.6.2-3 (Notification Center), §11.9 (Season Pass), §10.7 (Event Framework)
+> **Bible v1.11 Reference:** §11.6.2-3 (Notification Center), §17 (Achievements), §10.3.1-2 (Login Streak + Mystery Box), §11.9 (Season Pass), §10.7 (Event Framework)
+
+### Phase 12-0: Notification System [Bible §11.6.2-3]
+
+| ID | Task | Status | Scope | Notes |
+|----|------|--------|-------|-------|
+| P12-NOTIF-STORE | Create notification history store | ⬜ | src/store | Notification[], unreadCount |
+| P12-NOTIF-ENGINE | Implement trigger engine per §11.6.3 | ⬜ | src/game | Trigger conditions, suppression rules |
+| P12-NOTIF-UI | Create Notification Center UI | ⬜ | src/components | History screen, badges |
+| P12-NOTIF-LINK | Add deep links | ⬜ | src/navigation | Tap → relevant screen |
+| P12-NOTIF-BCT | Add BCT tests (~35) | ⬜ | src/__tests__ | BCT-NOTIF-* |
 
 ### Phase 12-A: Achievements [Bible §17]
+
+> **Prerequisite:** Phase 12-0 (Notification System)
 
 | ID | Task | Status | Scope | Notes |
 |----|------|--------|-------|-------|
@@ -1437,16 +1449,6 @@ export default {
 | P12-MYSTERY-STORE | Implement Mystery Box loot table | ⬜ | src/game | 5-tier probability table per §10.3.2 |
 | P12-MYSTERY-UI | Create Mystery Box UI | ⬜ | src/components | Box opening animation, reveal |
 | P12-STREAK-BCT | Add BCT tests (~25) | ⬜ | src/__tests__ | BCT-STREAK-*, BCT-MYSTERY-* |
-
-### Phase 12: Notification Center [Bible §11.6.2-3]
-
-| ID | Task | Status | Scope | Notes |
-|----|------|--------|-------|-------|
-| P12-NOTIF-STORE | Create notification history store | ⬜ | src/store | Notification[], unreadCount |
-| P12-NOTIF-ENGINE | Implement trigger engine per §11.6.3 | ⬜ | src/game | Trigger conditions, suppression rules |
-| P12-NOTIF-UI | Create Notification Center UI | ⬜ | src/components | History screen, badges |
-| P12-NOTIF-LINK | Add deep links | ⬜ | src/navigation | Tap → relevant screen |
-| P12-NOTIF-BCT | Add BCT tests (~35) | ⬜ | src/__tests__ | BCT-NOTIF-* |
 
 ### Phase 12-C: Season Pass Free Track [Bible §11.9]
 

@@ -137,8 +137,11 @@ These documents form the **governance triad** for all Grundy development:
 | Phase 10.5 | Lore Journal (Bible §6.4) — Not started |
 | Phase 11-0 | **PREREQ** — Gem Sources (Bible v1.9 §11.4) — Required before Phase 11 |
 | Phase 11 | Cosmetics (pet-bound, gems-only, Bible v1.9 §11.5.2–4, §14.7.3, §14.8.3) |
-| Phase 12 | Achievements, Season Pass, Ads |
-| Phase 12+ | LiveOps |
+| Phase 12-0 | Notification System (§11.6.2-3) |
+| Phase 12-A | Achievements (§17) |
+| Phase 12-B | Login Streak + Mystery Box (§10.3.1-2) |
+| Phase 12-C | Season Pass Free Track (§11.9) |
+| Phase 12-D | Event Framework (§10.7) |
 
 ### Agent Constraints
 

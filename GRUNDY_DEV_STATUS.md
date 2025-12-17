@@ -1,14 +1,14 @@
 # GRUNDY_DEV_STATUS.md
 
 **Document Version:** 1.11
-**Last Updated:** December 16, 2025
+**Last Updated:** December 17, 2025
 **Bible Alignment:** v1.11
 **Status:** Current
 
 # Grundy Web Prototype — Development Status
 
 **Current Phase:** Web Phase 11 — ✅ COMPLETE (Cosmetics System)
-**Next Phase:** Phase 12 (Achievements, Login Streak, Notification Center, Season Pass, Event Framework)
+**Next Phase:** Phase 12-0 (Notification System) → 12-A (Achievements) → 12-B (Login Streak) → 12-C (Season Pass) → 12-D (Events)
 
 ---
 
@@ -20,7 +20,7 @@
 | **Task List** | `TASKS.md` | — |
 | **Agent Workflow** | `ORCHESTRATOR.md` | 2.3 |
 | **Bible Update Log** | `BIBLE_UPDATE_BACKLOG.md` | — |
-| **BCT Specs** | `docs/BIBLE_COMPLIANCE_TEST.md` | **v2.4** |
+| **BCT Specs** | `docs/BIBLE_COMPLIANCE_TEST.md` | **v2.5** |
 | **v1.11 Patch** | `docs/patches/BIBLE_v1_11_FINAL.md` | Reference |
 
 ### Canonical Versions (December 2025)
@@ -814,7 +814,11 @@ All Phase 10 tasks complete. Weight system, sickness mechanics, poop system, min
 - **Phase 11-C1:** Render Closeout → ✅ (PetAvatar migration, multi-surface consistency, skin slot asset-blocked)
 - **Phase 11-D:** Cosmetics Purchase → ✅ (buyCosmetic action, gem deduction, no auto-equip)
 - **Phase 11-D1:** Purchase UX Polish → ✅ (double-tap protection, immediate feedback)
-- **Phase 12:** Season Pass, Achievements, Ads, LiveOps
+- **Phase 12-0:** Notification System
+- **Phase 12-A:** Achievements
+- **Phase 12-B:** Login Streak + Mystery Box
+- **Phase 12-C:** Season Pass (Free Track)
+- **Phase 12-D:** Event Framework
 
 ---
 
