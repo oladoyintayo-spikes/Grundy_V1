@@ -135,6 +135,8 @@ import {
   applyOfflineOrderToPet,
   type OfflineOrderResult,
 } from './offlineSickness';
+// P12-0: Event emitter for notification system (Bible §11.6.3)
+import { emitGameEvent } from '../services/eventEmitter';
 
 // ============================================
 // ABILITY TRIGGER MESSAGES (P1-ABILITY-4)
@@ -549,6 +551,9 @@ function createInitialState() {
       loginStreakDay: 1,
     } as LoginStreakState,
     lastFirstFeedDateKey: null as string | null,
+    // P12-0: Notification system state (Bible §11.6.2)
+    // Note: Notifications are persisted separately via notificationStore hydrate/getSaveData
+    // This field is kept for migration compatibility but actual state is in notificationStore
   };
 }
 
@@ -759,6 +764,17 @@ export const useGameStore = create<GameStore>()(
             const finalGems = applyGemMultiplier(state.pet.id, baseGems);
             newCurrencies.gems += finalGems;
             console.log(`[P11-0] Level up! +${finalGems}💎 (${levelsGained} level${levelsGained > 1 ? 's' : ''} × 5)`);
+
+            // P12-0: Emit LEVEL_UP event for notification system (Bible §11.6.3)
+            emitGameEvent({
+              type: 'LEVEL_UP',
+              payload: {
+                petId: activePet.instanceId,
+                petName: activePet.customName || activePet.speciesId,
+                level: newLevel,
+              },
+              timestamp: now,
+            });
           }
 
           // Update stats - Bible §4.3: Each feeding restarts the cooldown timer
@@ -2934,7 +2950,7 @@ export const useGameStore = create<GameStore>()(
     }),
     {
       name: 'grundy-save',
-      version: 6, // P11-A: Bumped for cosmetic state fields
+      version: 7, // P12-0: Bumped for notification system (Bible §11.6.2)
       migrate: (persistedState: unknown, version: number) => {
         let state = persistedState as Record<string, unknown>;
 
@@ -3082,6 +3098,15 @@ export const useGameStore = create<GameStore>()(
             }
             console.log(`[Migration] Injected cosmetic state into ${Object.keys(petsById).length} pets`);
           }
+        }
+
+        // P12-0: Migration from v6 to v7 (notification system)
+        // Bible §11.6.2: Notification Center
+        // Note: Notification state is managed by notificationStore (separate from game store)
+        // This migration just logs for tracking purposes
+        if (version < 7) {
+          console.log('[Migration] Migrating save from v6 to v7 (notification system)');
+          console.log('[Migration] Notification state managed by notificationStore');
         }
 
         return state;
