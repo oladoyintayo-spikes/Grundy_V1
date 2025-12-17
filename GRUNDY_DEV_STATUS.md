@@ -18,7 +18,7 @@
 |----------|----------|---------|
 | **Design SoT** | `docs/GRUNDY_MASTER_BIBLE.md` | **v1.11** |
 | **Task List** | `TASKS.md` | — |
-| **Agent Workflow** | `ORCHESTRATOR.md` | 2.2 |
+| **Agent Workflow** | `ORCHESTRATOR.md` | 2.3 |
 | **Bible Update Log** | `BIBLE_UPDATE_BACKLOG.md` | — |
 | **BCT Specs** | `docs/BIBLE_COMPLIANCE_TEST.md` | **v2.4** |
 | **v1.11 Patch** | `docs/patches/BIBLE_v1_11_FINAL.md` | Reference |
@@ -28,7 +28,7 @@
 | Artifact | Version | Notes |
 |----------|---------|-------|
 | Bible | **v1.11** | Comprehensive Update: §8.1.1 Economy Invariants, §8.5 Session Games, §11.6.2-3 Notification Center, §12.5-12.8 Push [Unity Later], §17 Achievements, §10.3.1-2 Login Streak + Mystery Box, §10.7 Event Framework |
-| BCT | **v2.4** | Weight/Sickness planned suites (~52 tests), Multi-Pet tests |
+| BCT | **v2.4** | Weight/Sickness suites (~52 tests), Multi-Pet tests; P10/P11 complete |
 | Locked Constants | `src/constants/bible.constants.ts` | Single source for locked values |
 
 ### Key Constraints (Bible v1.11)
@@ -51,10 +51,8 @@
 | **Web Phase 3** | Navigation & Environment | 🟡 IN PROGRESS | P3-NAV ✅, P3-ENV ⬜ |
 | **Web Phase 4** | FTUE / Onboarding | ✅ COMPLETE | All FTUE screens, state, tests done |
 | **Web Phase 5** | Polish / Web 1.0 | ✅ RELEASE COMPLETE | Audio ✅, PWA ✅, Art ✅, UX/A11Y ✅, QA ✅, Release ✅ |
-| **Web Phase 6** | Bible v1.4 Compliance | ✅ TIER 1 DEV COMPLETE | Tier 1 implemented; P6-ART-POSES ✅; P6-ABILITY-INTEGRATION ✅; 817 tests (191 BCT); CE Review Required |
-| **Web Phase 6** | Bible v1.4 Compliance | ✅ TIER 1 DEV COMPLETE | Tier 1 implemented; P6-ART-POSES ✅; P6-ART-PRODUCTION ✅; P6-ART-TEST ✅; 1214 tests (594 BCT); CE Review Required |
-| **Web Phase 6** | Tier 2 Polish | ✅ TIER 2 DEV COMPLETE | P6-AUDIO-ROOM ✅; P6-AUDIO-TOD ✅; P6-PWA-PRECACHE ✅; P6-PWA-UI ✅; P6-PWA-UPDATE ✅; 1224 tests; CE Review Required |
-| **Web Phase 7** | Classic Mode | 🟡 P7-NEGLECT ✅ | Neglect & Withdrawal runtime ✅; 49 BCT-NEGLECT tests; Sickness ⬜; Weight ⬜ |
+| **Web Phase 6** | Bible v1.4 Compliance | ✅ TIER 1+2 COMPLETE | Tier 1+2 implemented; Art, Audio, PWA all complete; 1224 tests; Per TASKS.md |
+| **Web Phase 7** | Classic Mode | ✅ CE/QA APPROVED | Neglect & Withdrawal runtime ✅; 49 BCT-NEGLECT tests; Per TASKS.md |
 | **Web Phase 8** | Shop + Inventory | ✅ CE/QA APPROVED | Audit: `947e1b9`; Sign-off: 2025-12-12; See [`docs/CEQA_PHASE8_SIGNOFF_NOTES.md`](docs/CEQA_PHASE8_SIGNOFF_NOTES.md) |
 | **Web Phase 9** | Pet Slots / Multi-Pet | ✅ CE/QA APPROVED | Audit: `83ce657`; Sign-off: 2025-12-12; See [`docs/CEQA_PHASE9_SIGNOFF_NOTES.md`](docs/CEQA_PHASE9_SIGNOFF_NOTES.md) |
 | **Web Phase 10** | Weight & Sickness Runtime | ✅ COMPLETE | P10-A through P10-H all done; 1742 tests, 999 BCT; Ready for CE/QA Review |
@@ -75,7 +73,7 @@
 | Shop & Economy | ✅ CE/QA APPROVED | Shop tabs, bundles, purchase flow, recommendations — Phase 8 |
 | Inventory | ✅ CE/QA APPROVED | Capacity (15 slots), stack max (99), Use-on-Pet flow — Phase 8 |
 | Pet Slots | ✅ CE/QA APPROVED | Multi-pet data model, runtime, UI wiring — Phase 9; Approved 2025-12-12 |
-| Classic Mode | 🟡 PARTIAL | Neglect & Withdrawal ✅ (P7-NEGLECT-SYSTEM); Sickness ⬜; Weight ⬜ (deferred to P9-C) |
+| Classic Mode | ✅ COMPLETE | Neglect & Withdrawal ✅ (P7); Sickness & Weight ✅ (P10); Per TASKS.md |
 
 ---
 

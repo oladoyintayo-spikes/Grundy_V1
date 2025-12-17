@@ -1,9 +1,12 @@
 # GRUNDY_ROADMAP_v2.md
 
 **Document Version:** 1.11
-**Last Updated:** December 16, 2025
+**Last Updated:** December 17, 2025
 **Bible Alignment:** v1.11
 **Status:** Current
+
+> ⚠️ **Snapshot as of December 17, 2025**
+> Phases 0-11 complete; Phase 12 planned. For operational status, see `TASKS.md`.
 
 # Grundy Web Edition — Development Roadmap
 
@@ -70,10 +73,13 @@ Web Phase 5: Polish / Web 1.0 ✅
 [ WEB 1.0 RELEASE ] ← COMPLETE
     │
     ▼
-Web Phase 6: Bible v1.4 Compliance 🟡
+Web Phase 6: Bible v1.4 Compliance ✅
     │
     ▼
-Web Phase 7+: Extended Features
+Web Phase 7-11: Extended Features ✅
+    │
+    ▼
+Web Phase 12: Planned
 ```
 
 ---
@@ -200,44 +206,46 @@ Web Phase 7+: Extended Features
 
 ---
 
-### Web Phase 6: Bible v1.4 Compliance 🟡
+### Web Phase 6: Bible v1.4 Compliance ✅
 
 **Theme:** Bring Web 1.0 up to Bible v1.4 specification.
+
+**Status:** COMPLETE — All Tier 1 + Tier 2 tasks implemented per TASKS.md.
 
 > **Full backlog:** `docs/PHASE6_BACKLOG.md`
 
 | Task Group | Status | Bible Section |
 |------------|--------|---------------|
-| P6-CORE: Core Loop Hardening | ⬜ | §4.3–4.4 |
-| P6-HUD: HUD Cleanup | ⬜ | §4.4 |
-| P6-MOBILE: Layout & Nav | ⬜ | §14.5–14.6 |
-| P6-ENV: Rooms Lite | ⬜ | §14.4 |
-| P6-ART: Art Integration | 🟡 | §13.7 |
+| P6-CORE: Core Loop Hardening | ✅ | §4.3–4.4 |
+| P6-HUD: HUD Cleanup | ✅ | §4.4 |
+| P6-MOBILE: Layout & Nav | ✅ | §14.5–14.6 |
+| P6-ENV: Rooms Lite | ✅ | §14.4 |
+| P6-ART: Art Integration | ✅ | §13.7 |
 | P6-DOC: Documentation | ✅ | — |
 
 **Key Tasks:**
 
 | ID | Task | Status | Notes |
 |----|------|--------|-------|
-| P6-CORE-COOLDOWN | 30-min feeding cooldown | ⬜ | Bible §4.3 |
-| P6-CORE-STUFFED | STUFFED blocks feeding | ⬜ | Bible §4.4 |
-| P6-HUD-PRODUCTION | Bond-only production HUD | ⬜ | Bible §4.4 |
-| P6-HUD-DEBUG | Gate debug HUD | ⬜ | Bible §4.4 |
-| P6-MOBILE-LAYOUT | Mobile viewport constraints | ⬜ | Bible §14.6 |
-| P6-NAV-CONFIRM | Pet switch confirmation | ⬜ | Bible §14.5 |
-| P6-ENV-ROOMS | Activity→room mapping | ⬜ | Bible §14.4 |
+| P6-CORE-COOLDOWN | 30-min feeding cooldown | ✅ | Bible §4.3 |
+| P6-CORE-STUFFED | STUFFED blocks feeding | ✅ | Bible §4.4 |
+| P6-HUD-PRODUCTION | Bond-only production HUD | ✅ | Bible §4.4 |
+| P6-HUD-DEBUG | Gate debug HUD | ✅ | Bible §4.4 |
+| P6-MOBILE-LAYOUT | Mobile viewport constraints | ✅ | Bible §14.6 |
+| P6-NAV-CONFIRM | Pet switch confirmation | ✅ | Bible §14.5 |
+| P6-ENV-ROOMS | Activity→room mapping | ✅ | Bible §14.4 |
 | P6-DOC-BIBLE | Bible v1.4 merge | ✅ | Complete |
 | P6-DOC-ALIGN | Docs alignment | ✅ | Complete |
 
 **Exit Criteria:**
-- [ ] Feeding cooldown enforced (Bible §4.3)
-- [ ] STUFFED blocks feeding (Bible §4.4)
-- [ ] Production HUD: Bond-only (Bible §4.4)
-- [ ] Debug HUD gated behind dev flag (Bible §4.4)
-- [ ] Mobile viewport constraints met (Bible §14.6)
-- [ ] Pet switch shows confirmation (Bible §14.5)
-- [ ] Activity→room mapping works (Bible §14.4)
-- [ ] No emoji in production sprites (Bible §13.7)
+- [x] Feeding cooldown enforced (Bible §4.3)
+- [x] STUFFED blocks feeding (Bible §4.4)
+- [x] Production HUD: Bond-only (Bible §4.4)
+- [x] Debug HUD gated behind dev flag (Bible §4.4)
+- [x] Mobile viewport constraints met (Bible §14.6)
+- [x] Pet switch shows confirmation (Bible §14.5)
+- [x] Activity→room mapping works (Bible §14.4)
+- [x] No emoji in production sprites (Bible §13.7)
 
 ---
 
@@ -298,4 +306,4 @@ npm run dev
 
 ---
 
-**Document Version:** 1.11 | **Bible Alignment:** v1.11 | **Updated:** December 16, 2025
+**Document Version:** 1.11 | **Bible Alignment:** v1.11 | **Updated:** December 17, 2025
