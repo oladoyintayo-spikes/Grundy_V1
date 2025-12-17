@@ -1,5 +1,10 @@
 # README.md
 
+**Document Version:** 1.11
+**Last Updated:** December 16, 2025
+**Bible Alignment:** v1.11
+**Status:** Current
+
 # Grundy Web Prototype
 
 > **Elevator Pitch:** A cozy, ethical-monetization virtual pet game where you feed, nurture, and watch your creature evolve through meaningful interactions—built as a React/TypeScript prototype to validate core mechanics before Unity production.
@@ -12,8 +17,8 @@
 
 | Resource | Location |
 |----------|----------|
-| **Design SoT** | `docs/GRUNDY_MASTER_BIBLE.md` (v1.6) |
-| **BCT Spec** | `docs/BIBLE_COMPLIANCE_TEST.md` (v2.2) |
+| **Design SoT** | `docs/GRUNDY_MASTER_BIBLE.md` (v1.11) |
+| **BCT Spec** | `docs/BIBLE_COMPLIANCE_TEST.md` (v2.4) |
 | **Asset List** | `docs/ASSET_MANIFEST.md` |
 | **Current Sprint** | `CURRENT_SPRINT.md` |
 
@@ -21,6 +26,16 @@
 >
 > If any document or code conflicts with the Bible, the Bible wins.
 > Patch artifacts in `docs/patches/` are non-canonical reference material only.
+
+### Key Design Constraints (Bible v1.11)
+
+| Constraint | Rule | Reference |
+|------------|------|-----------|
+| Mini-game gems | ❌ NEVER award gems | §8.1.1 |
+| Mini-game daily cap | 3 rewarded plays | §8.1.1 |
+| After daily cap | Playable for fun (0 rewards) | §8.1.1 |
+| Push notifications | [Unity Later] | §12.5-12.8 |
+| In-app notifications | ✅ Web Edition | §11.6.2-3 |
 
 ---
 
@@ -328,3 +343,7 @@ Key rules:
 ---
 
 *Built to validate mechanics before Unity investment.*
+
+---
+
+**Document Version:** 1.11 | **Bible Alignment:** v1.11 | **Updated:** December 16, 2025

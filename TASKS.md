@@ -1,8 +1,13 @@
 # TASKS.md
+
+**Document Version:** 1.11
+**Last Updated:** December 16, 2025
+**Bible Alignment:** v1.11
+**Status:** Current
+
 ## Grundy Development Task List
 
-**Last Updated:** December 15, 2025 (Phase 11 Closeout Audit Complete)
-**Design SoT:** `docs/GRUNDY_MASTER_BIBLE.md` v1.10
+**Design SoT:** `docs/GRUNDY_MASTER_BIBLE.md` v1.11
 **Pre-Flight Report:** December 9, 2024 ✅
 
 ---
@@ -1410,6 +1415,89 @@ export default {
 
 ---
 
+## WEB PHASE 12: ACHIEVEMENTS, LOGIN STREAK, NOTIFICATIONS, SEASON PASS, EVENTS
+
+> **Bible v1.11 Reference:** §17 (Achievements), §10.3.1-2 (Login Streak + Mystery Box), §11.6.2-3 (Notification Center), §11.9 (Season Pass), §10.7 (Event Framework)
+
+### Phase 12-A: Achievements [Bible §17]
+
+| ID | Task | Status | Scope | Notes |
+|----|------|--------|-------|-------|
+| P12-ACH-STORE | Create achievements store | ⬜ | src/store | Achievement state, unlock tracking |
+| P12-ACH-DATA | Implement 25 achievements per §17.2 | ⬜ | src/data | Achievement definitions |
+| P12-ACH-UI | Create achievement UI (toast + screen) | ⬜ | src/components | Achievements screen, unlock toasts |
+| P12-ACH-BCT | Add BCT tests (~40) | ⬜ | src/__tests__ | BCT-ACH-* test suite |
+
+### Phase 12-B: Login Streak + Mystery Box [Bible §10.3.1-2]
+
+| ID | Task | Status | Scope | Notes |
+|----|------|--------|-------|-------|
+| P12-STREAK-STORE | Implement 7-day streak tracker | ⬜ | src/store | currentDay, lastClaimDate, streaksCompleted |
+| P12-STREAK-UI | Create streak UI | ⬜ | src/components | Daily reward modal, progress indicator |
+| P12-MYSTERY-STORE | Implement Mystery Box loot table | ⬜ | src/game | 5-tier probability table per §10.3.2 |
+| P12-MYSTERY-UI | Create Mystery Box UI | ⬜ | src/components | Box opening animation, reveal |
+| P12-STREAK-BCT | Add BCT tests (~25) | ⬜ | src/__tests__ | BCT-STREAK-*, BCT-MYSTERY-* |
+
+### Phase 12: Notification Center [Bible §11.6.2-3]
+
+| ID | Task | Status | Scope | Notes |
+|----|------|--------|-------|-------|
+| P12-NOTIF-STORE | Create notification history store | ⬜ | src/store | Notification[], unreadCount |
+| P12-NOTIF-ENGINE | Implement trigger engine per §11.6.3 | ⬜ | src/game | Trigger conditions, suppression rules |
+| P12-NOTIF-UI | Create Notification Center UI | ⬜ | src/components | History screen, badges |
+| P12-NOTIF-LINK | Add deep links | ⬜ | src/navigation | Tap → relevant screen |
+| P12-NOTIF-BCT | Add BCT tests (~35) | ⬜ | src/__tests__ | BCT-NOTIF-* |
+
+### Phase 12-C: Season Pass Free Track [Bible §11.9]
+
+| ID | Task | Status | Scope | Notes |
+|----|------|--------|-------|-------|
+| P12-PASS-STORE | Create season pass store | ⬜ | src/store | Free track only (Web) |
+| P12-PASS-REWARDS | Implement free track rewards | ⬜ | src/data | Reward tiers per §11.9 |
+| P12-PASS-UI | Create season pass UI | ⬜ | src/components | Progress, reward claims |
+| P12-PASS-BCT | Add BCT tests (~20) | ⬜ | src/__tests__ | BCT-PASS-* |
+
+### Phase 12-D: Event Framework [Bible §10.7]
+
+| ID | Task | Status | Scope | Notes |
+|----|------|--------|-------|-------|
+| P12-EVENT-STORE | Create event system store | ⬜ | src/store | Event, EventProgress types |
+| P12-EVENT-CURRENCY | Implement event currency | ⬜ | src/game | Earning, spending, expiry |
+| P12-EVENT-SHOP | Create event shop UI | ⬜ | src/components | Event-exclusive items |
+| P12-EVENT-TEST | Create test event (Winter Wonderland) | ⬜ | src/data | First event per §10.7.7 |
+| P12-EVENT-BCT | Add BCT tests (~15) | ⬜ | src/__tests__ | BCT-EVENT-* |
+
+---
+
+## WEB PHASE 13: SESSION MINI-GAMES [Bible §8.5]
+
+> **Bible v1.11 Reference:** §8.5 Session Mini-Games
+
+### Phase 13: Session Mini-Games
+
+| ID | Task | Status | Scope | Notes |
+|----|------|--------|-------|-------|
+| P13-SHARED | Implement shared systems (pause, tutorial, high scores) | ⬜ | src/games | Common session game infrastructure |
+| P13-SNAKE | Implement Snake (P1) | ⬜ | src/games/snake | Hungry Hungry Grundy per GRUNDY_SNAKE_DESIGN.md |
+| P13-TETRIS | Implement Tetris (P2) | ⬜ | src/games/tetris | Stack Snacks per GRUNDY_STACK_SNACKS_DESIGN.md |
+| P13-RUNNER | Implement Runner (P3) | ⬜ | src/games/runner | Munch Run per GRUNDY_MUNCH_RUN_DESIGN.md |
+| P13-BCT | Add BCT tests (~50) | ⬜ | src/__tests__ | BCT-SESSION-* |
+
+---
+
+## [UNITY LATER] PUSH NOTIFICATIONS [Bible §12.5-§12.8]
+
+> **Platform Tag:** These tasks are deferred to Unity/mobile builds. Web Edition uses in-app notifications only.
+
+| ID | Task | Status | Scope | Notes |
+|----|------|--------|-------|-------|
+| UNITY-PUSH | OS push infrastructure | ⬜ | Unity | §12.5 Push Notifications |
+| UNITY-BADGE | App icon badge | ⬜ | Unity | §12.6 App Icon Badge |
+| UNITY-CHANNELS | Notification channels | ⬜ | Unity | §12.7 Android channels |
+| UNITY-SETTINGS | Settings UI | ⬜ | Unity | §12.8 Notification Settings |
+
+---
+
 ## Notes
 
 ### Pre-Flight Findings (December 9, 2024)
@@ -1429,7 +1517,7 @@ export default {
 
 ### Sources
 
-- `docs/GRUNDY_MASTER_BIBLE.md` v1.3
+- `docs/GRUNDY_MASTER_BIBLE.md` v1.11
 - `docs/ASSET_MANIFEST.md` (120 sprites)
 - `Pre_flight_2025-12-09.md` (diagnostic report)
 - `ORCHESTRATOR.md` (agent workflow)
@@ -1437,3 +1525,7 @@ export default {
 ---
 
 *Update this file as you complete tasks. Keep it accurate.*
+
+---
+
+**Document Version:** 1.11 | **Bible Alignment:** v1.11 | **Updated:** December 16, 2025

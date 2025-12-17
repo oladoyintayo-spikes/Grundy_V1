@@ -1,31 +1,43 @@
 # GRUNDY_DEV_STATUS.md
 
+**Document Version:** 1.11
+**Last Updated:** December 16, 2025
+**Bible Alignment:** v1.11
+**Status:** Current
+
 # Grundy Web Prototype — Development Status
 
-**Last Updated:** December 15, 2025 (Phase 11 Closeout Audit Complete)
 **Current Phase:** Web Phase 11 — ✅ COMPLETE (Cosmetics System)
-**Next Phase:** Phase 12 (Season Pass, Achievements, Ads, LiveOps)
+**Next Phase:** Phase 12 (Achievements, Login Streak, Notification Center, Season Pass, Event Framework)
 
 ---
 
 ## Source of Truth
 
-| Resource | Location |
-|----------|----------|
-| **Design SoT** | `docs/GRUNDY_MASTER_BIBLE.md` v1.10 |
-| **Task List** | `TASKS.md` |
-| **Agent Workflow** | `ORCHESTRATOR.md` |
-| **Bible Update Log** | `BIBLE_UPDATE_BACKLOG.md` |
-| **BCT Specs** | `docs/BIBLE_COMPLIANCE_TEST.md` v2.4 |
-| **Weight/Sickness Patch** | `docs/patches/BIBLE_v1.8_PATCH_WEIGHT_SICKNESS_MULTIPET.md` |
+| Resource | Location | Version |
+|----------|----------|---------|
+| **Design SoT** | `docs/GRUNDY_MASTER_BIBLE.md` | **v1.11** |
+| **Task List** | `TASKS.md` | — |
+| **Agent Workflow** | `ORCHESTRATOR.md` | 2.2 |
+| **Bible Update Log** | `BIBLE_UPDATE_BACKLOG.md` | — |
+| **BCT Specs** | `docs/BIBLE_COMPLIANCE_TEST.md` | **v2.4** |
+| **v1.11 Patch** | `docs/patches/BIBLE_v1_11_FINAL.md` | Reference |
 
 ### Canonical Versions (December 2025)
 
 | Artifact | Version | Notes |
 |----------|---------|-------|
-| Bible | **v1.10** | UI Navigation & Layout (§14.5 Menu+Action Bar, §14.6 Food Drawer, Terminology, Overlay Safety) |
+| Bible | **v1.11** | Comprehensive Update: §8.1.1 Economy Invariants, §8.5 Session Games, §11.6.2-3 Notification Center, §12.5-12.8 Push [Unity Later], §17 Achievements, §10.3.1-2 Login Streak + Mystery Box, §10.7 Event Framework |
 | BCT | **v2.4** | Weight/Sickness planned suites (~52 tests), Multi-Pet tests |
 | Locked Constants | `src/constants/bible.constants.ts` | Single source for locked values |
+
+### Key Constraints (Bible v1.11)
+
+| Constraint | Rule | Reference |
+|------------|------|-----------|
+| Mini-game gems | ❌ NEVER award gems | §8.1.1 |
+| Push notifications | [Unity Later] | §12.5-12.8 |
+| In-app notifications | ✅ Web Edition | §11.6.2-3 |
 
 ---
 
@@ -834,3 +846,7 @@ npm run build
 ---
 
 *This file is auto-maintained. For task details, see `TASKS.md`.*
+
+---
+
+**Document Version:** 1.11 | **Bible Alignment:** v1.11 | **Updated:** December 16, 2025

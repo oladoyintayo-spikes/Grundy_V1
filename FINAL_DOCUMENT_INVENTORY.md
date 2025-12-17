@@ -1,7 +1,9 @@
 # FINAL DOCUMENT INVENTORY
 
-**Status:** Ready for Repo Upload  
-**Date:** December 2024
+**Document Version:** 1.11
+**Last Updated:** December 16, 2025
+**Bible Alignment:** v1.11
+**Status:** Current
 
 ---
 
@@ -20,10 +22,16 @@ All files have Design SoT reference and are production-ready.
 
 | File | Size | Purpose |
 |------|------|---------|
-| `GRUNDY_MASTER_BIBLE.md` | 122KB+ | **DESIGN SOURCE OF TRUTH** (v1.6) |
+| `GRUNDY_MASTER_BIBLE.md` | ~180KB | **DESIGN SOURCE OF TRUTH** (v1.11) |
 | `ASSET_MANIFEST.md` | 4KB | 120 sprite files, 8 pets, state mapping |
 | `GRUNDY_LORE_CODEX.md` | 28KB | Full pet lore, journal system, unlocks |
 | `GRUNDY_ONBOARDING_FLOW.md` | 35KB | FTUE timing, screens, dialogue tables |
+
+### docs/patches/ Directory
+
+| File | Purpose |
+|------|---------|
+| `BIBLE_v1_11_FINAL.md` | Bible v1.11 comprehensive patch source |
 
 ---
 
@@ -84,7 +92,7 @@ grundy/
 ├── CURRENT_SPRINT.md              ← Updated
 │
 ├── docs/
-│   ├── GRUNDY_MASTER_BIBLE.md     ← DESIGN SoT (v1.6)
+│   ├── GRUNDY_MASTER_BIBLE.md     ← DESIGN SoT (v1.11)
 │   ├── ASSET_MANIFEST.md          ← 120 sprites, state mapping
 │   ├── GRUNDY_LORE_CODEX.md       ← Extended lore
 │   └── GRUNDY_ONBOARDING_FLOW.md  ← FTUE detail
@@ -160,3 +168,7 @@ After repo is organized:
 ---
 
 *Ready for upload. All documents have Design SoT references.*
+
+---
+
+**Document Version:** 1.11 | **Bible Alignment:** v1.11 | **Updated:** December 16, 2025
