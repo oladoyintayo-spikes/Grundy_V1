@@ -258,7 +258,7 @@ function HomeView({ onOpenShop, pendingFeedFoodId, onClearPendingFeed }: HomeVie
 
   return (
     <div
-      className="h-full w-full flex flex-col text-white p-2 sm:p-4 overflow-hidden"
+      className="h-full w-full flex flex-col text-white overflow-hidden"
       data-testid="home-view"
     >
       {/* Bible §14.6: Mobile-first layout - all core loop elements visible without scroll */}
@@ -297,10 +297,9 @@ function HomeView({ onOpenShop, pendingFeedFoodId, onClearPendingFeed }: HomeVie
 
         {/* Pet Display Area - Stage fills available space (flex-1), pet centered within */}
         <div
-          className="relative rounded-2xl p-3 sm:p-4 text-center flex-1 min-h-0 flex flex-col justify-center"
+          className="relative p-3 sm:p-4 text-center flex-1 min-h-0 flex flex-col justify-center"
           style={{
             background: `linear-gradient(135deg, ${petColor}22, ${petColor}11)`,
-            border: `2px solid ${petColor}44`,
           }}
           data-testid="active-pet-display"
         >
