@@ -1450,6 +1450,16 @@ export default {
 | P12-MYSTERY-UI | Create Mystery Box UI | ⬜ | src/components | Box opening animation, reveal |
 | P12-STREAK-BCT | Add BCT tests (~25) | ⬜ | src/__tests__ | BCT-STREAK-*, BCT-MYSTERY-* |
 
+### Phase 12: Notification Center [Bible §11.6.2-3] ✅
+
+| ID | Task | Status | Scope | Notes |
+|----|------|--------|-------|-------|
+| P12-NOTIF-STORE | Create notification history store | ✅ | src/stores | notificationStore.ts with Zustand |
+| P12-NOTIF-ENGINE | Implement trigger engine per §11.6.3 | ✅ | src/services | eventEmitter.ts, notificationMapper.ts, suppression logic |
+| P12-NOTIF-UI | Create Notification Center UI | ✅ | src/components | Toast.tsx, ToastManager.tsx, NotificationCenter.tsx |
+| P12-NOTIF-LINK | Add deep links | ✅ | src/utils | navigationUtils.ts with navigateToTarget() |
+| P12-NOTIF-BCT | Add BCT tests (~35) | ✅ | src/__tests__ | bct-notifications.spec.ts (BCT-NOTIF-*, BCT-TRIGGER-*) |
+
 ### Phase 12-C: Season Pass Free Track [Bible §11.9]
 
 | ID | Task | Status | Scope | Notes |

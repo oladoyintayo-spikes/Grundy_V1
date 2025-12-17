@@ -1,7 +1,7 @@
 # Grundy — Bible Compliance Test (BCT)
 
 ---
-**Document Version:** 2.5
+**Document Version:** 2.6
 **Last Updated:** December 17, 2025
 **Bible Alignment:** v1.11
 **Status:** Current
@@ -10,6 +10,7 @@
 **Bible Reference:** `docs/GRUNDY_MASTER_BIBLE.md` v1.11
 
 **Changelog:**
+- v2.6 (Dec 17, 2025): Phase 12-0 Notification System. Activated BCT-NOTIF-001→007 (§11.6.2 Notification Center). Activated BCT-TRIGGER-001→005 (§11.6.3 Trigger Conditions). Tests in `bct-notifications.spec.ts`.
 - v2.5 (Dec 17, 2025): Bible v1.11 alignment. Added BCT-ECON-009→012 (§8.1.1 Economy Invariants). Added BCT-LAYOUT-002→007 (§14.6 Mobile Layout). Reserved Phase 12 IDs: ACH, STREAK, MBOX, NOTIF, TRIGGER, EVENT. Reserved Phase 13 IDs: SESSION. Added Contract Rules block. Removed placeholder test code.
 - v2.4 (Dec 16, 2025): P9/P10/P11 complete. Weight & Sickness (BCT-WEIGHT-*, BCT-SICKNESS-*). Phase 11 Cosmetics (BCT-COS-*). Multi-Pet runtime (BCT-MULTIPET-*, BCT-PETSLOTS-*).
 - v2.3 (Dec 14, 2025): Multi-Pet Runtime tests for P9-B.
@@ -86,6 +87,8 @@ npm test -- --run
 | **Mystery Box** | BCT-MBOX-* | §10.3.2 | 🔲 Reserved (P12-B) |
 | **Notifications** | BCT-NOTIF-* | §11.6.2 | 🔲 Reserved (P12-0) |
 | **Triggers** | BCT-TRIGGER-* | §11.6.3 | 🔲 Reserved (P12-0) |
+| Notifications | BCT-NOTIF-* | §11.6.2 | ✅ Notification Center (P12-0) |
+| Triggers | BCT-TRIGGER-* | §11.6.3 | ✅ Trigger conditions & suppression (P12-0) |
 | **Events** | BCT-EVENT-* | §10.7 | 🔲 Reserved (P12-D) |
 | **Session Games** | BCT-SESSION-* | §8.5 | 🔲 Reserved (P13) |
 
@@ -1480,19 +1483,34 @@ Run **at minimum** the BCT tests for the affected area:
 | BCT-MBOX-003 | Source = Day 7 only (not purchasable) | §10.3.2 |
 
 ### §11.6.2 Notification Center (Phase 12-0)
+### §11.6.2 Notification Center (Phase 12-0) ✅
+
+> **Status:** ✅ Active — Tests implemented in `bct-notifications.spec.ts`
+> **Bible:** §11.6.2
 
 | ID | Requirement | Bible |
 |----|-------------|-------|
-| BCT-NOTIF-001 | Max stored = Bible §11.6.2 limit | §11.6.2 |
-| BCT-NOTIF-002 | Overflow deletes oldest (FIFO) | §11.6.2 |
-| BCT-NOTIF-003 | Deep links route to correct screen | §11.6.2 |
+| BCT-NOTIF-001 | Max 50 notifications stored | §11.6.2 |
+| BCT-NOTIF-002 | Overflow drops oldest by timestamp (tail trim) | §11.6.2 |
+| BCT-NOTIF-003 | Unread count accurate | §11.6.2 |
+| BCT-NOTIF-004 | Mark as read works (single + all) | §11.6.2 |
+| BCT-NOTIF-005 | Ordering by timestamp desc (newest first) | §11.6.2 |
+| BCT-NOTIF-006 | Hydration round-trip preserves ordering + read state | §11.6.2 |
+| BCT-NOTIF-007 | Hydration hardening (sorts, clamps to 50, sanitizes deepLinks) | §11.6.2 |
+
+### §11.6.3 Trigger Engine (Phase 12-0) ✅
 
 ### §11.6.3 Trigger Engine (Phase 12-0)
+> **Status:** ✅ Active — Tests implemented in `bct-notifications.spec.ts`
+> **Bible:** §11.6.3
 
 | ID | Requirement | Bible |
 |----|-------------|-------|
-| BCT-TRIGGER-001 | Hunger critical fires at Bible §11.6.3 threshold | §11.6.3 |
-| BCT-TRIGGER-002 | Same-type cooldown per Bible §11.6.3 | §11.6.3 |
+| BCT-TRIGGER-001 | Event→notification mapping works | §11.6.3 |
+| BCT-TRIGGER-002 | Same-type cooldown uses Bible §11.6.3 values | §11.6.3 |
+| BCT-TRIGGER-003 | Timestamp ordering is deterministic | §11.6.3 |
+| BCT-TRIGGER-004 | Navigation target sanitization (unknown → 'home') | §11.6.3 |
+| BCT-TRIGGER-005 | Session limit enforced (max 5 non-critical) | §11.6.3 |
 
 ### §10.7 Event Framework (Phase 12-D)
 

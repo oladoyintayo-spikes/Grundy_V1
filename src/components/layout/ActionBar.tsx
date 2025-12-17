@@ -28,6 +28,8 @@ export interface ActionBarProps {
   isStuffed?: boolean;
   /** Remaining cooldown time in milliseconds (for countdown display) */
   cooldownRemainingMs?: number;
+  /** P12-0: Number of unread notifications for badge display (Bible §11.6.2) */
+  unreadNotificationCount?: number;
 }
 
 /**
@@ -54,6 +56,7 @@ export function ActionBar({
   isOnCooldown = false,
   isStuffed = false,
   cooldownRemainingMs = 0,
+  unreadNotificationCount = 0,
 }: ActionBarProps) {
   // Local state for 1-second countdown refresh
   const [, setTick] = useState(0);
@@ -161,11 +164,15 @@ export function ActionBar({
       <button
         type="button"
         onClick={handleMenuClick}
-        aria-label="Menu"
+        aria-label={
+          unreadNotificationCount > 0
+            ? `Menu, ${unreadNotificationCount} unread notification${unreadNotificationCount !== 1 ? 's' : ''}`
+            : 'Menu'
+        }
         aria-expanded={isMenuOpen}
         data-testid="action-bar-menu"
         className={[
-          'flex flex-col items-center justify-center w-full h-full text-xs transition-all rounded-lg',
+          'relative flex flex-col items-center justify-center w-full h-full text-xs transition-all rounded-lg',
           isMenuOpen ? 'text-white' : 'text-slate-400 hover:text-slate-200',
           FOCUS_RING_CLASS,
         ].join(' ')}
@@ -177,6 +184,18 @@ export function ActionBar({
           ☰
         </span>
         <span className={isMenuOpen ? 'font-medium' : ''}>Menu</span>
+        {/* P12-0: Notification badge (Bible §11.6.2) */}
+        {unreadNotificationCount > 0 && (
+          <span
+            className="absolute top-1 right-1/4 bg-red-500 text-white
+                       text-[10px] font-bold rounded-full min-w-[1.125rem] h-[1.125rem]
+                       flex items-center justify-center px-1"
+            data-testid="menu-badge"
+            aria-hidden="true"
+          >
+            {unreadNotificationCount > 99 ? '99+' : unreadNotificationCount}
+          </span>
+        )}
       </button>
     </nav>
   );
