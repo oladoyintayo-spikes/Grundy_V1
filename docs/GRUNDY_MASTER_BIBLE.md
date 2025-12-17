@@ -5845,7 +5845,11 @@ interface GameState {
 | **Phase 10.5** | Lore Journal | ⬜ Not started | Originally "Phase 10" in TASKS.md |
 | **Phase 11-0** | Gem Sources | ✅ Implemented | Prerequisite for cosmetics |
 | **Phase 11** | Cosmetics System | ⬜ Not started | Bible v1.9 |
-| Phase 12 | Achievements, Season Pass, Ads, LiveOps | ⬜ Deferred | — |
+| **Phase 12-0** | Notification System | ⬜ Not started | §11.6.2-3 |
+| **Phase 12-A** | Achievements | ⬜ Not started | Requires 12-0 |
+| **Phase 12-B** | Login Streak + Mystery Box | ⬜ Not started | §10.3.1-2 |
+| **Phase 12-C** | Season Pass (Free Track) | ⬜ Not started | §11.9 |
+| **Phase 12-D** | Event Framework | ⬜ Not started | §10.7 |
 
 **Why Phase 10.5?** TASKS.md originally labeled Lore Journal as "Phase 10". Since Weight & Sickness shipped as Phase 10 (Bible v1.8), Lore Journal is renumbered to Phase 10.5 to avoid confusion.
 

@@ -23,9 +23,9 @@
 
 | Phase | Focus | Bible Sections |
 |-------|-------|----------------|
+| **Phase 12-0** | Notification System | §11.6.2-3 (in-app) |
 | **Phase 12-A** | Achievements | §17 (25 achievements, 425💎) |
 | **Phase 12-B** | Login Streak + Mystery Box | §10.3.1-2 |
-| **Phase 12** | Notification Center | §11.6.2-3 (in-app) |
 | **Phase 12-C** | Season Pass (Free Track) | §11.9 |
 | **Phase 12-D** | Event Framework | §10.7 |
 | **Phase 13** | Session Mini-Games | §8.5 (Snake, Tetris, Runner) |

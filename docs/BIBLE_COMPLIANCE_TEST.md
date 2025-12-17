@@ -85,6 +85,8 @@ npm test -- --run
 | **Achievements** | BCT-ACH-* | §17 | 🔲 Reserved (P12-A) |
 | **Login Streak** | BCT-STREAK-* | §10.3.1 | 🔲 Reserved (P12-B) |
 | **Mystery Box** | BCT-MBOX-* | §10.3.2 | 🔲 Reserved (P12-B) |
+| **Notifications** | BCT-NOTIF-* | §11.6.2 | 🔲 Reserved (P12-0) |
+| **Triggers** | BCT-TRIGGER-* | §11.6.3 | 🔲 Reserved (P12-0) |
 | Notifications | BCT-NOTIF-* | §11.6.2 | ✅ Notification Center (P12-0) |
 | Triggers | BCT-TRIGGER-* | §11.6.3 | ✅ Trigger conditions & suppression (P12-0) |
 | **Events** | BCT-EVENT-* | §10.7 | 🔲 Reserved (P12-D) |
@@ -1480,6 +1482,7 @@ Run **at minimum** the BCT tests for the affected area:
 | BCT-MBOX-002 | Guaranteed minimum value | §10.3.2 |
 | BCT-MBOX-003 | Source = Day 7 only (not purchasable) | §10.3.2 |
 
+### §11.6.2 Notification Center (Phase 12-0)
 ### §11.6.2 Notification Center (Phase 12-0) ✅
 
 > **Status:** ✅ Active — Tests implemented in `bct-notifications.spec.ts`
@@ -1497,6 +1500,7 @@ Run **at minimum** the BCT tests for the affected area:
 
 ### §11.6.3 Trigger Engine (Phase 12-0) ✅
 
+### §11.6.3 Trigger Engine (Phase 12-0)
 > **Status:** ✅ Active — Tests implemented in `bct-notifications.spec.ts`
 > **Bible:** §11.6.3
 
