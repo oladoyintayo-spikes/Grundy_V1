@@ -1,9 +1,51 @@
 # GRUNDY_DEV_STATUS.md
 
-**Document Version:** 1.11
+**Document Version:** 1.12
 **Last Updated:** December 17, 2025
 **Bible Alignment:** v1.11
 **Status:** Current
+
+---
+
+## Latest Fix: Feeding Cooldown UI + Offline Hunger Decay
+
+**Branch:** `claude/fix-feeding-cooldown-ui-Mfejt`
+**Date:** December 17, 2025
+
+### Root Cause Analysis
+
+1. **CooldownBanner visibility issue:** The `CooldownBanner` component had an if/else structure where STUFFED state took priority over cooldown - when both were active, only the STUFFED banner showed and the cooldown timer disappeared.
+
+2. **Hunger gain not reduced during cooldown:** The feed action applied the 25% cooldown multiplier to XP, bond, and coins, but NOT to hunger gain. Bible §4.3 states "feeding during cooldown is 25% value (hunger/XP)".
+
+3. **Offline hunger decay used integer periods:** The `calculateOfflineDecay` function used `Math.floor(hoursOffline / 24)` which only applied decay for COMPLETE 24h periods. Bible §9.4.7.0 specifies proportional decay.
+
+4. **Cooldown timer didn't tick:** The displayed time was static and didn't update in real-time.
+
+### Changes Made
+
+| File | Change |
+|------|--------|
+| `src/components/layout/CooldownBanner.tsx` | Show both STUFFED and cooldown banners when both active; add real-time countdown timer |
+| `src/game/store.ts` (feed action) | Apply 25% cooldown multiplier to hunger gain (`adjustedHungerGain`) |
+| `src/game/store.ts` (calculateOfflineDecay) | Use proportional formula for hunger: `(hoursOffline / 24) * 10` |
+| `src/game/store.ts` (applyOfflineDecayToPet) | Round hunger to integer after decay: `Math.round(...)` |
+| `src/__tests__/bct-feeding-cooldown.spec.ts` | NEW: 15 BCT tests for cooldown persistence, reduced feed value, STUFFED blocking, and offline hunger decay |
+
+### Verification
+
+- `npx tsc --noEmit`: ✅ PASS
+- `npm test -- --run`: ✅ 2098 tests passed
+- `npm run build`: ✅ Success
+
+### Bible Compliance
+
+| Rule | Bible Section | Status |
+|------|---------------|--------|
+| Cooldown banner always visible when active | §4.3 | ✅ Fixed |
+| Feeding during cooldown = 25% value (hunger/XP) | §4.3 | ✅ Fixed |
+| STUFFED (91-100) blocks feeding entirely | §4.4 | ✅ Verified |
+| Offline hunger decay: -10 per 24h (proportional) | §9.4.7.0 | ✅ Fixed |
 
 # Grundy Web Prototype — Development Status
 
