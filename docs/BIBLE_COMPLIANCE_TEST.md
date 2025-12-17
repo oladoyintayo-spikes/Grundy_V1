@@ -1,8 +1,8 @@
 # Grundy — Bible Compliance Test (BCT)
 
 ---
-**Document Version:** 2.4
-**Last Updated:** December 16, 2025
+**Document Version:** 2.5
+**Last Updated:** December 17, 2025
 **Bible Alignment:** v1.11
 **Status:** Current
 ---
@@ -10,14 +10,12 @@
 **Bible Reference:** `docs/GRUNDY_MASTER_BIBLE.md` v1.11
 
 **Changelog:**
-- v2.4 (P12+): Bible v1.11 alignment — Added §8.1.1 Mini-Game Economy Invariants, §8.5 Session Games, §17 Achievements, §11.6.2-3 Notification Center. BCT tests to be added as implementation progresses.
-- v2.4 (P11 Complete): Bible v1.10 §14.5 Menu-first + Action Bar, §14.6 Food Drawer. Phase 11 Cosmetics fully implemented with gem sources, purchase, render layering.
-- v2.4 (P10 Complete): Weight & Sickness test suites implemented — BCT-WEIGHT, BCT-SICKNESS, BCT-SICKNESS-OFFLINE, BCT-ALERT-HEALTH, BCT-COZY-IMMUNITY (~52 tests). Bible v1.8 alignment.
-- v2.4 (P9 Complete): Multi-Pet Runtime tests — BCT-MULTIPET (14 tests), BCT-PETSLOTS (11 tests). Bible v1.7 alignment.
-- v2.3: Multi-Pet Runtime tests — Added BCT-MULTIPET (14 tests) for P9-B runtime integration: energy scope, runaway auto-switch, switching constraints, offline rules, alert routing/suppression. Bible v1.7 alignment.
-- v2.2: Shop + Inventory spec tests — Added BCT-SHOP (25 tests), BCT-INV (17 tests), BCT-ECON starting resources tests (5 tests). Total: 47 new specifications for Web Phase 8.
-- v2.1: Bible v1.5 Neglect & Withdrawal tests (BCT-NEGLECT-001 through 023)
-- v2.0: Initial BCT specification
+- v2.5 (Dec 17, 2025): Bible v1.11 alignment. Added BCT-ECON-009→012 (§8.1.1 Economy Invariants). Added BCT-LAYOUT-002→007 (§14.6 Mobile Layout). Reserved Phase 12 IDs: ACH, STREAK, MBOX, NOTIF, TRIGGER, EVENT. Reserved Phase 13 IDs: SESSION. Added Contract Rules block. Removed placeholder test code.
+- v2.4 (Dec 16, 2025): P9/P10/P11 complete. Weight & Sickness (BCT-WEIGHT-*, BCT-SICKNESS-*). Phase 11 Cosmetics (BCT-COS-*). Multi-Pet runtime (BCT-MULTIPET-*, BCT-PETSLOTS-*).
+- v2.3 (Dec 14, 2025): Multi-Pet Runtime tests for P9-B.
+- v2.2 (Dec 12, 2025): Shop + Inventory specs (BCT-SHOP-*, BCT-INV-*, BCT-ECON-004→008).
+- v2.1 (Dec 10, 2025): Neglect & Withdrawal tests (BCT-NEGLECT-*).
+- v2.0: Initial BCT specification.
 
 ---
 
@@ -26,6 +24,19 @@
 This document defines the **Bible Compliance Tests (BCT)** — the contract for CE and QA review of any phase, patch, or hotfix.
 
 All tests reference specific Bible sections. Passing these tests means the implementation matches the canonical design specification.
+
+---
+
+## Contract Rules
+
+- **Bible** (`docs/GRUNDY_MASTER_BIBLE.md`) is the design SoT.
+- **TASKS** (`TASKS.md`) is the status SoT.
+- This BCT doc contains:
+  - ✅ **Implemented BCT IDs** — tests exist in repo, verified passing
+  - 🔲 **Reserved BCT IDs** — ID reservation only, no test files, no code blocks
+- **Never** include placeholder tests or `expect(true).toBe(true)` examples.
+- **Never** assert a phase is implemented unless TASKS confirms it.
+- **Cite Bible sections**, not hardcoded values (values change, sections don't).
 
 ---
 
@@ -70,6 +81,13 @@ npm test -- --run
 | Sickness Offline | BCT-SICKNESS-OFFLINE-* | §9.4.7.3 | Offline timer accumulation, 2× decay |
 | Alert Health | BCT-ALERT-HEALTH-* | §11.6.1 | Weight/Sickness alert routing |
 | Cozy Immunity | BCT-COZY-IMMUNITY-* | §9.3 | Sickness/Obese immunity in Cozy |
+| **Achievements** | BCT-ACH-* | §17 | 🔲 Reserved (P12-A) |
+| **Login Streak** | BCT-STREAK-* | §10.3.1 | 🔲 Reserved (P12-B) |
+| **Mystery Box** | BCT-MBOX-* | §10.3.2 | 🔲 Reserved (P12-B) |
+| **Notifications** | BCT-NOTIF-* | §11.6.2 | 🔲 Reserved (P12) |
+| **Triggers** | BCT-TRIGGER-* | §11.6.3 | 🔲 Reserved (P12) |
+| **Events** | BCT-EVENT-* | §10.7 | 🔲 Reserved (P12-D) |
+| **Session Games** | BCT-SESSION-* | §8.5 | 🔲 Reserved (P13) |
 
 ---
 
@@ -195,6 +213,50 @@ npm test -- --run
 |-------|----------|
 | Tutorial cookie count | inventory.cookie === 1 |
 
+### BCT-ECON-009: After-Cap Rewards Zero
+
+**Bible:** §8.1.1
+**Requirement:** After daily cap (3 plays), all rewards = 0.
+
+| Check | Expected |
+|-------|----------|
+| Coins after play 4+ | 0 |
+| XP after play 4+ | 0 |
+| Food after play 4+ | None |
+| Gems after play 4+ | 0 (always — see BCT-ECON-001) |
+
+### BCT-ECON-010: Games Remain Playable After Cap
+
+**Bible:** §8.1.1
+**Requirement:** Mini-games playable for fun after cap (no lockout).
+
+| Check | Expected |
+|-------|----------|
+| Play 4+ permitted | Yes — game launches |
+| Gameplay quality | Identical (no handicaps) |
+| High scores | Still tracked |
+
+### BCT-ECON-011: Energy Cost Uniform
+
+**Bible:** §8.1.1
+**Requirement:** All mini-games cost Bible §8.2 energy value per play.
+
+| Check | Expected |
+|-------|----------|
+| All burst games | Bible §8.2 energy cost |
+| All session games | Bible §8.2 energy cost |
+| First daily play | 0 (free) |
+
+### BCT-ECON-012: Rainbow Tier Zero Gems (Explicit)
+
+**Bible:** §8.1.1
+**Requirement:** Even Rainbow tier awards 0 gems. No exceptions.
+
+| Check | Expected |
+|-------|----------|
+| Rainbow tier any game | gems === 0 |
+| Rationale | Prevents "special tier" loophole |
+
 ---
 
 ## Evolution Tests (BCT-EVOL-*)
@@ -260,18 +322,77 @@ npm test -- --run
 
 ## Layout Tests (BCT-LAYOUT-*)
 
-### BCT-LAYOUT-001: Mobile Viewport Constraint
+### BCT-LAYOUT-001: Mobile Viewport No-Scroll
 
 **Bible:** §14.6
-**Requirement:** On phone (360×640 to 414×896), pet + actions + nav + currencies visible without scroll.
+**Requirement:** On phone viewport (360×640 to 414×896), all critical elements visible without scrolling.
 
 | Check | Expected |
 |-------|----------|
-| Pet visible | Large, centered, no scroll needed |
-| Primary actions visible | Feed button visible without scroll |
-| Navigation visible | Bottom nav visible |
-| Currencies visible | Coins/gems visible |
-| No vertical scroll needed | All above fits in viewport |
+| Pet sprite | Visible without scroll |
+| Feed action | Accessible without scroll |
+| Navigation | Visible without scroll |
+| Currency display | Visible without scroll |
+
+### BCT-LAYOUT-002: Stage Fills Available Space
+
+**Bible:** §14.6 (flex-1 stage)
+**Requirement:** Pet stage expands to fill vertical space between header and action bar.
+
+| Check | Expected |
+|-------|----------|
+| Stage height | Dynamic (not fixed px) |
+| Stage fills gap | No dead space above/below stage |
+
+### BCT-LAYOUT-003: Stage Edge-to-Edge
+
+**Bible:** §14.6
+**Requirement:** Stage has no horizontal margins (full-width).
+
+| Check | Expected |
+|-------|----------|
+| Stage width | 100% of container |
+| Horizontal gaps | None |
+
+### BCT-LAYOUT-004: Stage No Decorative Styling
+
+**Bible:** §14.6
+**Requirement:** Stage has no border-radius or box-shadow.
+
+| Check | Expected |
+|-------|----------|
+| Rounded corners | None |
+| Drop shadow | None |
+
+### BCT-LAYOUT-005: Sprite Proportional to Stage
+
+**Bible:** §14.6
+**Requirement:** Pet sprite scales relative to stage height (Bible §14.6 ratio).
+
+| Check | Expected |
+|-------|----------|
+| Sprite max height | Bible §14.6 percentage of stage |
+| Sprite not clipped | Fully visible |
+
+### BCT-LAYOUT-006: Sprite Desktop Cap
+
+**Bible:** §14.6
+**Requirement:** On large screens, sprite has maximum height cap per Bible §14.6.
+
+| Check | Expected |
+|-------|----------|
+| Desktop sprite height | ≤ Bible §14.6 desktop cap |
+| Sprite remains proportional | Yes |
+
+### BCT-LAYOUT-007: Food Drawer Constraint
+
+**Bible:** §14.6
+**Requirement:** Food Drawer shows ≥4 foods visible without scrolling when open.
+
+| Check | Expected |
+|-------|----------|
+| Visible food items | ≥ 4 when drawer open |
+| Scroll required | No (for first 4) |
 
 ---
 
@@ -1205,112 +1326,18 @@ Run **at minimum** the BCT tests for the affected area:
 
 ## Phase 11-0 — Gem Sources
 
-> **Status:** Implemented. Bible v1.10 §10.3, §11.4.
+> **Status:** ✅ Implemented. Bible v1.10 §10.3, §11.4.
 
-### BCT-GEM-LEVELUP-001: Level-up awards +5 gems per level gained
-**Bible Reference:** §11.4 (Phase 11-0 Gem Source Prerequisites)
-```typescript
-// Scenario: Pet levels up from feeding
-// Given: Pet is level 5, player has 0 gems
-// When: Pet gains enough XP to reach level 6
-// Then: Player is awarded +5💎 (6 if Luxe ability triggers)
-// Assert: gems increased by 5 (or 10 with Golden Touch)
-
-it('BCT-GEM-LEVELUP-001: Level-up awards +5 gems per level', () => {
-  // Implementation validates gem award on level-up in feed action
-  expect(true).toBe(true); // Placeholder - actual test in bct-p110-gem-sources.spec.ts
-});
-```
-
-### BCT-GEM-DAILYFEED-001: First successful feed of day awards +1 gem
-**Bible Reference:** §11.4 (Phase 11-0 Gem Source Prerequisites)
-```typescript
-// Scenario: First feed of a new calendar day
-// Given: lastFirstFeedDateKey is yesterday (or null)
-// When: Player successfully feeds pet
-// Then: +1💎 awarded, lastFirstFeedDateKey updated to today
-
-it('BCT-GEM-DAILYFEED-001: First feed awards +1 gem', () => {
-  expect(true).toBe(true); // Placeholder - actual test in bct-p110-gem-sources.spec.ts
-});
-```
-
-### BCT-GEM-DAILYFEED-002: Second feed same day awards 0 gems
-**Bible Reference:** §11.4 (Phase 11-0 Gem Source Prerequisites)
-```typescript
-// Scenario: Second or later feed on same calendar day
-// Given: lastFirstFeedDateKey equals today
-// When: Player feeds pet again
-// Then: 0💎 awarded (level-up gems still apply separately)
-
-it('BCT-GEM-DAILYFEED-002: Second feed same day awards 0 daily gems', () => {
-  expect(true).toBe(true); // Placeholder - actual test in bct-p110-gem-sources.spec.ts
-});
-```
-
-### BCT-GEM-DAILYFEED-003: STUFFED-blocked feed awards 0 gems
-**Bible Reference:** §4.4 (STUFFED blocking), §11.4
-```typescript
-// Scenario: Pet is STUFFED (91-100 fullness)
-// When: Player attempts to feed
-// Then: Feed blocked (wasBlocked: true), 0💎 awarded
-
-it('BCT-GEM-DAILYFEED-003: STUFFED-blocked feed awards 0 gems', () => {
-  expect(true).toBe(true); // Placeholder - actual test in bct-p110-gem-sources.spec.ts
-});
-```
-
-### BCT-GEM-STREAK-001: Day 7 awards +10 gems and resets streak to Day 1
-**Bible Reference:** §10.3 (Login Streak), §11.4
-```typescript
-// Scenario: Player reaches Day 7 of login streak
-// Given: loginStreakDay is 6, lastLoginDateKey is yesterday
-// When: processLoginStreak() is called on new day
-// Then: +10💎 awarded, loginStreakDay reset to 1
-
-it('BCT-GEM-STREAK-001: Day 7 awards +10 gems and resets to Day 1', () => {
-  expect(true).toBe(true); // Placeholder - actual test in bct-p110-gem-sources.spec.ts
-});
-```
-
-### BCT-GEM-STREAK-002: Missing day resets streak to Day 1
-**Bible Reference:** §10.3 (Login Streak)
-```typescript
-// Scenario: Player misses a day (non-consecutive login)
-// Given: lastLoginDateKey is 2+ days ago
-// When: processLoginStreak() is called
-// Then: loginStreakDay reset to 1, 0💎 awarded (no Day 7)
-
-it('BCT-GEM-STREAK-002: Missing day resets streak to Day 1', () => {
-  expect(true).toBe(true); // Placeholder - actual test in bct-p110-gem-sources.spec.ts
-});
-```
-
-### BCT-GEM-STREAK-003: Same-day reopen does not re-award or advance streak
-**Bible Reference:** §10.3 (Login Streak)
-```typescript
-// Scenario: Player opens app multiple times same day
-// Given: lastLoginDateKey equals today
-// When: processLoginStreak() is called
-// Then: Returns newDayLogin=false, no state change, 0💎 awarded
-
-it('BCT-GEM-STREAK-003: Same-day reopen no-ops streak', () => {
-  expect(true).toBe(true); // Placeholder - actual test in bct-p110-gem-sources.spec.ts
-});
-```
-
-### BCT-GEM-NOMINIGAME-001: Mini-games do not change gems
-**Bible Reference:** §8.3 (Web Edition awards 0 gems), §11.4
-```typescript
-// Scenario: Player completes any mini-game at any tier
-// Given: Player has N gems
-// When: Mini-game completed (any tier including Rainbow)
-// Then: Gems remain N (0 gems from mini-games in Web Edition)
-
-it('BCT-GEM-NOMINIGAME-001: Mini-games award 0 gems', () => {
-  expect(true).toBe(true); // Placeholder - actual test in bct-p110-gem-sources.spec.ts
-});
-```
+| ID | Requirement | Bible |
+|----|-------------|-------|
+| BCT-GEM-LEVELUP-001 | Level-up awards +5💎 per level gained | §11.4 |
+| BCT-GEM-DAILYFEED-001 | First successful feed of day awards +1💎 | §11.4 |
+| BCT-GEM-DAILYFEED-002 | Second+ feed same day awards 0 daily gems | §11.4 |
+| BCT-GEM-DAILYFEED-003 | STUFFED-blocked feed awards 0💎 | §4.4, §11.4 |
+| BCT-GEM-STREAK-001 | Day 7 login streak awards +10💎 and resets to Day 1 | §10.3, §11.4 |
+| BCT-GEM-STREAK-002 | Missing day resets streak to Day 1 (0💎) | §10.3 |
+| BCT-GEM-STREAK-003 | Same-day reopen does not advance streak | §10.3 |
+| BCT-GEM-NOMINIGAME-001 | Mini-games award 0💎 (all tiers including Rainbow) | §8.3, §11.4 |
 
 ---
 
@@ -1345,425 +1372,58 @@ it('BCT-GEM-NOMINIGAME-001: Mini-games award 0 gems', () => {
 
 ### Phase 11 P11-A Foundations — Implemented Specs
 
-### BCT-COS-OWN-001: Cosmetics are pet-bound (no cross-pet equip)
-**Bible Reference:** §11.5.2 (Pet-Bound Ownership Model)
-```typescript
-// Scenario: Pet B tries to equip cosmetic owned by Pet A
-// Given: Pet A owns cos_hat_cap_blue
-// And: Pet B does NOT own cos_hat_cap_blue
-// When: Code attempts equipCosmetic(petB_id, 'cos_hat_cap_blue')
-// Then: Action fails with error 'NOT_OWNED'
-// And: Pet B's equipped state is unchanged
-
-it('BCT-COS-OWN-001: Cannot equip cosmetic owned by different pet', () => {
-  expect(true).toBe(true); // Actual test in bct-p11a-cosmetics-foundations.spec.ts
-});
-```
-
-### BCT-COS-EQ-001: Equip requires ownership + matching slot
-**Bible Reference:** §11.5.3 (Equip Rules)
-```typescript
-// Scenario: Equip cosmetic pet doesn't own
-// Given: Pet has empty inventory
-// When: Code attempts equipCosmetic(petId, 'cos_hat_cap_blue')
-// Then: Action fails with error 'NOT_OWNED'
-
-it('BCT-COS-EQ-001: Equip requires ownership', () => {
-  expect(true).toBe(true); // Actual test in bct-p11a-cosmetics-foundations.spec.ts
-});
-```
-
-### BCT-COS-EQ-002: One cosmetic per slot; equipping replaces previous
-**Bible Reference:** §11.5.3 (Equip Rules - Swap)
-```typescript
-// Scenario: Equip second hat replaces first
-// Given: Pet owns cos_hat_cap_blue AND cos_hat_bow_pink
-// And: Pet has cos_hat_cap_blue equipped in 'hat' slot
-// When: Code calls equipCosmetic(petId, 'cos_hat_bow_pink')
-// Then: 'hat' slot contains cos_hat_bow_pink
-// And: cos_hat_cap_blue is NOT equipped (but still owned)
-
-it('BCT-COS-EQ-002: One-per-slot replacement', () => {
-  expect(true).toBe(true); // Actual test in bct-p11a-cosmetics-foundations.spec.ts
-});
-```
-
-### BCT-COS-UNEQ-001: Unequip clears slot
-**Bible Reference:** §11.5.3 (Unequip)
-```typescript
-// Scenario: Unequip cosmetic
-// Given: Pet has cos_hat_cap_blue equipped in 'hat' slot
-// When: Code calls unequipCosmetic(petId, 'hat')
-// Then: 'hat' slot is empty (null/undefined)
-// And: cos_hat_cap_blue remains in pet's ownedCosmeticIds
-
-it('BCT-COS-UNEQ-001: Unequip clears slot', () => {
-  expect(true).toBe(true); // Actual test in bct-p11a-cosmetics-foundations.spec.ts
-});
-```
-
-### BCT-COS-MULTI-001: Same cosmetic ID can be owned by multiple pets
-**Bible Reference:** §11.5.2 (Multi-Pet Ownership Structure)
-```typescript
-// Scenario: Both pets can own same cosmetic SKU
-// Given: Pet A owns cos_hat_cap_blue
-// When: Pet B also has cos_hat_cap_blue in ownedCosmeticIds
-// Then: Both Pet A and Pet B have cos_hat_cap_blue in ownedCosmeticIds
-// And: Both can equip it independently
-// Note: Validates ownership state structure; purchase flow tested in P11-B.
-
-it('BCT-COS-MULTI-001: Same ID multi-pet allowed', () => {
-  expect(true).toBe(true); // Actual test in bct-p11a-cosmetics-foundations.spec.ts
-});
-```
-
-### BCT-COS-GEMS-001: Cosmetics catalog is gems-only (no coin pricing)
-**Bible Reference:** §11.1 (Currency Types), §11.5.2 (Cosmetics are gems-only)
-```typescript
-// Scenario: Validate cosmetic catalog gems-only invariant
-// Given: Cosmetic catalog exists
-// When: Checking any cosmetic definition
-// Then: priceGems > 0
-// And: No coinPrice field exists (gems-only by design)
-// Note: This validates catalog structure; purchase flow is P11-B.
-
-it('BCT-COS-GEMS-001: Cosmetics are gems-only', () => {
-  expect(true).toBe(true); // Actual test in bct-p11a-cosmetics-foundations.spec.ts
-});
-```
-
-### BCT-COS-NOSTAT-001: Equipping cosmetics does not affect pet stats
-**Bible Reference:** §11.5.3 (Cosmetics and Gameplay Invariants)
-```typescript
-// Scenario: Stats unchanged after equip/unequip
-// Given: Pet with known stat snapshot (hunger/mood/bond/weight/isSick)
-// When: Pet equips a cosmetic
-// Then: All stat fields remain unchanged
-// When: Pet unequips the cosmetic
-// Then: All stat fields remain unchanged
-
-it('BCT-COS-NOSTAT-001: Stats unaffected by cosmetics', () => {
-  expect(true).toBe(true); // Actual test in bct-p11a-cosmetics-foundations.spec.ts
-});
-```
+| ID | Requirement | Bible |
+|----|-------------|-------|
+| BCT-COS-OWN-001 | Cosmetics are pet-bound (no cross-pet equip) | §11.5.2 |
+| BCT-COS-EQ-001 | Equip requires ownership + matching slot | §11.5.3 |
+| BCT-COS-EQ-002 | One cosmetic per slot; equipping replaces previous | §11.5.3 |
+| BCT-COS-UNEQ-001 | Unequip clears slot (cosmetic remains owned) | §11.5.3 |
+| BCT-COS-MULTI-001 | Same cosmetic ID can be owned by multiple pets | §11.5.2 |
+| BCT-COS-GEMS-001 | Cosmetics catalog is gems-only (no coin pricing) | §11.1, §11.5.2 |
+| BCT-COS-NOSTAT-001 | Equipping cosmetics does not affect pet stats | §11.5.3 |
 
 ---
 
 ### Phase 11 P11-B Cosmetics UI Wiring — Implemented Specs
 
-> **Status:** P11-B UI Wiring implemented. No purchase plumbing (view + equip/unequip only).
+> **Status:** ✅ P11-B UI Wiring implemented.
 
-| Category | Count | Coverage | Status |
-|----------|-------|----------|--------|
-| **BCT-COS-UI-SHOP** | **3** | Shop cosmetics panel: catalog display, equip/unequip controls, price display | ✅ Implemented |
-| **BCT-COS-UI-INV** | **3** | Inventory cosmetics section: slot grouping, equip state, empty state | ✅ Implemented |
-
-### BCT-COS-UI-SHOP-001: Shop shows Cosmetics panel listing catalog items
-**Bible Reference:** §14.7.3 (Shop Cosmetics Tab)
-```typescript
-// Scenario: Shop Cosmetics tab shows full catalog
-// Given: Shop is open and Cosmetics tab is selected
-// When: User views the Cosmetics panel
-// Then: All COSMETIC_CATALOG items are displayed
-// And: Each item shows: displayName, slot, rarity, priceGems
-
-it('BCT-COS-UI-SHOP-001: Shop cosmetics panel shows catalog', () => {
-  expect(true).toBe(true); // Actual test in bct-p11b-cosmetics-ui.spec.tsx
-});
-```
-
-### BCT-COS-UI-SHOP-002: Owned cosmetics show equip/unequip; non-owned are locked
-**Bible Reference:** §14.7.3 (Cosmetics Ownership Display)
-```typescript
-// Scenario: Owned vs non-owned cosmetic display
-// Given: Shop Cosmetics panel is visible
-// And: Active pet owns some cosmetics but not all
-// When: User views catalog items
-// Then: Owned items show Equip/Unequip controls
-// And: Non-owned items show locked state ("🔒 Not Owned")
-// And: No buy CTA exists anywhere
-
-it('BCT-COS-UI-SHOP-002: Owned show controls, non-owned locked', () => {
-  expect(true).toBe(true); // Actual test in bct-p11b-cosmetics-ui.spec.tsx
-});
-```
-
-### BCT-COS-UI-SHOP-003: Price display with gem balance (SUPERSEDED)
-**Bible Reference:** §11.5.2 (Gems-Only Currency)
-**Status:** ⚠️ SUPERSEDED by P11-D — Purchase capability now implemented
-```typescript
-// HISTORICAL NOTE: P11-B originally had "no buy CTA".
-// P11-D adds purchase capability — see BCT-COS-BUY-* specs below.
-// This spec is retained for price display validation.
-
-// Scenario: Price display with gem balance
-// Given: Shop Cosmetics panel is visible
-// When: User views any cosmetic item
-// Then: priceGems is displayed (e.g., "💎 15")
-// And: Current gem balance is shown in header
-
-it('BCT-COS-UI-SHOP-003: Price display with gem balance', () => {
-  expect(true).toBe(true); // Actual test in bct-p11b-cosmetics-ui.spec.tsx
-});
-```
-
-### BCT-COS-UI-INV-001: Inventory includes Cosmetics section grouped by slot
-**Bible Reference:** §14.8.3 (Inventory Cosmetics Tab)
-```typescript
-// Scenario: Inventory cosmetics grouped by slot
-// Given: Inventory is open and Cosmetics tab is selected
-// And: Active pet owns cosmetics in multiple slots
-// When: User views the Cosmetics section
-// Then: Cosmetics are grouped by slot in COSMETIC_SLOTS order
-// And: Each slot shows owned cosmetics with equip controls
-
-it('BCT-COS-UI-INV-001: Inventory groups cosmetics by slot', () => {
-  expect(true).toBe(true); // Actual test in bct-p11b-cosmetics-ui.spec.tsx
-});
-```
-
-### BCT-COS-UI-INV-002: Equipped state visible and consistent with store
-**Bible Reference:** §14.8.3 (Equip State Display)
-```typescript
-// Scenario: Equipped cosmetic display
-// Given: Inventory Cosmetics section is visible
-// And: Pet has cosmetic equipped in a slot
-// When: User views that slot
-// Then: Equipped cosmetic shows "★ Equipped" indicator
-// And: Unequip button is displayed
-// When: User clicks Unequip
-// Then: Slot is cleared in store
-// And: UI updates to show Equip button
-
-it('BCT-COS-UI-INV-002: Equipped state visible and unequip works', () => {
-  expect(true).toBe(true); // Actual test in bct-p11b-cosmetics-ui.spec.tsx
-});
-```
-
-### BCT-COS-UI-INV-003: Inventory empty state when owned cosmetics = 0
-**Bible Reference:** §14.8.3 (Empty State)
-```typescript
-// Scenario: Cosmetics empty state
-// Given: Inventory Cosmetics tab is selected
-// And: Active pet owns 0 cosmetics
-// When: User views the section
-// Then: Empty state is shown with "No cosmetics yet" message
-
-it('BCT-COS-UI-INV-003: Empty state when no cosmetics owned', () => {
-  expect(true).toBe(true); // Actual test in bct-p11b-cosmetics-ui.spec.tsx
-});
-```
-
-### P11-B Test ID Mapping
-
-| BCT ID | Required Test IDs |
-|--------|-------------------|
-| BCT-COS-UI-SHOP-001 | `shop-cosmetics-panel`, `shop-cosmetic-card-${id}`, `shop-cosmetic-rarity-${id}` |
-| BCT-COS-UI-SHOP-002 | `shop-cosmetic-owned-${id}`, `shop-cosmetic-equipped-${id}`, `shop-cosmetic-equip-${id}`, `shop-cosmetic-unequip-${slot}` |
-| BCT-COS-UI-SHOP-003 | `shop-cosmetic-price-${id}` (P11-D adds `shop-cosmetic-buy-${id}`, `shop-cosmetic-buy-disabled-${id}`) |
-| BCT-COS-UI-INV-001 | `inventory-cosmetics-section`, `inventory-cosmetics-slot-${slot}`, `inventory-cosmetic-row-${id}` |
-| BCT-COS-UI-INV-002 | `inventory-cosmetic-equipped-${slot}`, `inventory-cosmetic-equip-${id}`, `inventory-cosmetic-unequip-${slot}` |
-| BCT-COS-UI-INV-003 | `inventory-cosmetics-empty` |
+| ID | Requirement | Bible |
+|----|-------------|-------|
+| BCT-COS-UI-SHOP-001 | Shop shows Cosmetics panel listing catalog items | §14.7.3 |
+| BCT-COS-UI-SHOP-002 | Owned cosmetics show equip/unequip; non-owned are locked | §14.7.3 |
+| BCT-COS-UI-SHOP-003 | Price display with gem balance | §11.5.2 |
+| BCT-COS-UI-INV-001 | Inventory includes Cosmetics section grouped by slot | §14.8.3 |
+| BCT-COS-UI-INV-002 | Equipped state visible and consistent with store | §14.8.3 |
+| BCT-COS-UI-INV-003 | Inventory empty state when owned cosmetics = 0 | §14.8.3 |
 
 ---
 
 ## Phase 11 — P11-C: Cosmetics Render Layering
 
-**Scope:** Render equipped cosmetics as visible layers on pet display surfaces.
-**Bible Reference:** §11.5.3 (Cosmetic Slots & Equip Rules — Render Layer Order)
+> **Status:** ✅ Implemented. Bible §11.5.3.
 
-### P11-C Test Categories
+| ID | Requirement | Bible |
+|----|-------------|-------|
+| BCT-COS-RENDER-001 | Equipped cosmetics render as visible layers | §11.5.3 |
+| BCT-COS-RENDER-002 | Layering respects canonical order (Aura→Skin→Outfit→Accessory→Hat) | §11.5.3 |
+| BCT-COS-RENDER-003 | Switching active pet updates rendered cosmetic layers | §11.5.2 |
+| BCT-COS-RENDER-004 | Multi-surface consistency via shared PetRender component | §11.5.3 |
 
-| Category | Test Count | Description | Status |
-|----------|------------|-------------|--------|
-| **BCT-COS-RENDER** | **4** | Cosmetic layer rendering: visibility, order, pet switching, multi-surface | ✅ Implemented |
-
-### BCT-COS-RENDER-001: Equipped cosmetics render as visible layers
-
-**Bible §11.5.3:** Equipped cosmetics appear as visible layers on the pet.
-
-```typescript
-// Given: Active pet has equipped cosmetics
-// When: Pet is displayed (HomeView PetDisplay)
-// Then: Cosmetic layers render with test IDs pet-render-layer-${slot}
-
-it('BCT-COS-RENDER-001: Equipped cosmetics render as visible layers', () => {
-  expect(true).toBe(true); // Actual test in bct-p11c-cosmetics-render.spec.tsx
-});
-```
-
-### BCT-COS-RENDER-002: Layering respects canonical order
-
-**Bible §11.5.3 Render Layer Order (back to front):**
-```
-1. Aura (background effect behind pet)
-2. Base sprite (pet body + current expression/state)
-3. Skin (body replacement/overlay)
-4. Outfit (body covering)
-5. Accessory (neck/body accent)
-6. Hat (topmost layer)
-```
-
-```typescript
-// Given: Pet has multiple cosmetics equipped (e.g., hat + accessory + aura)
-// When: Pet is rendered
-// Then: Layers have correct z-index order per Bible §11.5.3
-
-it('BCT-COS-RENDER-002: Layering respects canonical order', () => {
-  expect(true).toBe(true); // Actual test in bct-p11c-cosmetics-render.spec.tsx
-});
-```
-
-### BCT-COS-RENDER-003: Switching active pet updates rendered cosmetic layers
-
-**Bible §11.5.2:** Per-pet ownership. Each pet has its own equipped cosmetics.
-
-```typescript
-// Given: Pet A has hat equipped, Pet B has no cosmetics
-// When: User switches from Pet A to Pet B
-// Then: Hat layer disappears (Pet B has no equipped hat)
-
-it('BCT-COS-RENDER-003: Switching active pet updates cosmetic layers', () => {
-  expect(true).toBe(true); // Actual test in bct-p11c-cosmetics-render.spec.tsx
-});
-```
-
-### BCT-COS-RENDER-004: Multi-surface consistency — shared component
-
-**Design Rule:** All pet sprite surfaces use the shared `PetRender` component.
-
-**Clarifications (P11-C1):**
-- **PetDisplay** (main home view): Uses `PetRender` with `variant='display'` and `showCosmeticPlaceholders=true`
-- **PetAvatar** (header, compact avatars): Uses `PetRender` with `variant='avatar'` and `showCosmeticPlaceholders=false`
-- **Compact mode behavior:** Suppresses dev placeholders only. When real cosmetic assets exist, compact avatars WILL render scaled cosmetic layers.
-- **Intent:** `compact != "hide cosmetics"`; `compact == "smaller + no dev placeholders"`
-
-```typescript
-// Given: PetRender component is shared across all pet sprite surfaces
-// And: PetAvatar and PetDisplay both use PetRender internally
-// When: Cosmetics are equipped
-// Then: All surfaces render cosmetic layers consistently
-// And: Compact avatars suppress placeholders but will show real assets
-
-it('BCT-COS-RENDER-004: Shared PetRender component used for all surfaces', () => {
-  expect(true).toBe(true); // Actual test in bct-p11c-cosmetics-render.spec.tsx
-});
-```
-
-### P11-C Test ID Mapping
-
-| BCT ID | Required Test IDs |
-|--------|-------------------|
-| BCT-COS-RENDER-001 | `pet-render-root`, `pet-render-base`, `pet-render-layer-${slot}` |
-| BCT-COS-RENDER-002 | `pet-render-layer-${slot}` (z-index order), data-cosmetic-id attribute |
-| BCT-COS-RENDER-003 | `pet-render-layer-${slot}` (presence/absence on pet switch) |
-| BCT-COS-RENDER-004 | `pet-render-root` (shared component usage across PetDisplay + PetAvatar) |
-
-### P11-C Placeholder Behavior
-
-**Dev placeholders permitted per Bible §13.7** ("Emoji/orb are placeholders only" — OK for dev/testing builds).
-
-When cosmetic assets are not available (dev build), placeholder badges are shown:
-
-| Test ID | Description |
-|---------|-------------|
-| `pet-render-layer-placeholder-${slot}` | Placeholder badge with emoji + [DEV] indicator |
-
-**Placeholder suppression:** Compact avatars (`variant='avatar'` + `showCosmeticPlaceholders=false`) suppress placeholder badges to avoid visual clutter. This does NOT suppress real cosmetic assets when they exist.
-
-### P11-C Skin Slot Clarification
-
-**Skin slot renders placeholder until dedicated sprite variants exist.** Full sprite replacement for skin cosmetics is asset-blocked — no skin sprite variants currently exist in the repository. When skin assets are added, `PetRender` will render actual skin overlays/replacements.
+**Layer Order (back to front):** Aura → Base sprite → Skin → Outfit → Accessory → Hat
 
 ---
 
 ## Phase 11 — P11-D: Cosmetics Purchase Plumbing
 
-**Scope:** Enable buying cosmetics with gems in Shop UI, granting pet-bound ownership.
-**Bible Reference:** §11.5.2 (Pet-Bound Ownership), §11.1 (Gems-Only Currency for Cosmetics)
+> **Status:** ✅ Implemented. Bible §11.5.2, §11.1.
 
-### P11-D Test Categories
-
-| Category | Test Count | Description | Status |
-|----------|------------|-------------|--------|
-| **BCT-COS-BUY** | **4** | Cosmetic purchase: buy button, disabled state, deduction, no auto-equip | ✅ Implemented |
-
-### BCT-COS-BUY-001: Buy button shown for non-owned cosmetics
-
-**Bible §11.5.2:** Pet-bound ownership — cosmetics must be purchased.
-
-```typescript
-// Scenario: Buy button for non-owned cosmetic with sufficient gems
-// Given: Active pet does not own a cosmetic
-// And: Player has >= priceGems for that cosmetic
-// When: Shop Cosmetics panel renders
-// Then: Buy button is enabled with test ID shop-cosmetic-buy-${cosmeticId}
-
-it('BCT-COS-BUY-001: Buy button shown for non-owned cosmetics', () => {
-  expect(true).toBe(true); // Actual test in bct-p11d-cosmetics-purchase.spec.tsx
-});
-```
-
-### BCT-COS-BUY-002: Disabled button when insufficient gems
-
-**Bible §11.5.2:** Gems-only currency — cannot purchase without sufficient gems.
-
-```typescript
-// Scenario: Disabled buy button when gems insufficient
-// Given: Active pet does not own a cosmetic
-// And: Player has < priceGems for that cosmetic
-// When: Shop Cosmetics panel renders
-// Then: Buy button is disabled with test ID shop-cosmetic-buy-disabled-${cosmeticId}
-// And: Shows "Need X more" text
-
-it('BCT-COS-BUY-002: Disabled button when insufficient gems', () => {
-  expect(true).toBe(true); // Actual test in bct-p11d-cosmetics-purchase.spec.tsx
-});
-```
-
-### BCT-COS-BUY-003: Purchase deducts gems and grants pet-bound ownership
-
-**Bible §11.5.2:** Pet-bound ownership. Gems deducted atomically with ownership grant.
-
-```typescript
-// Scenario: Successful cosmetic purchase
-// Given: Active pet does not own cos_hat_cap_blue
-// And: Player has 50 gems
-// And: cos_hat_cap_blue costs 15 gems
-// When: User clicks Buy button for cos_hat_cap_blue
-// Then: gems = 50 - 15 = 35
-// And: Active pet's ownedCosmeticIds includes cos_hat_cap_blue
-// And: Other pets do NOT own cos_hat_cap_blue
-
-it('BCT-COS-BUY-003: Purchase deducts gems and grants pet-bound ownership', () => {
-  expect(true).toBe(true); // Actual test in bct-p11d-cosmetics-purchase.spec.tsx
-});
-```
-
-### BCT-COS-BUY-004: No auto-equip after purchase
-
-**Design Rule:** Purchase grants ownership only; equipping is a separate action.
-
-```typescript
-// Scenario: No auto-equip after purchase
-// Given: Active pet purchases cos_hat_cap_blue
-// When: Purchase completes successfully
-// Then: pet.equippedCosmetics.hat is unchanged (undefined or previous value)
-// And: User must manually equip via Equip button
-
-it('BCT-COS-BUY-004: No auto-equip after purchase', () => {
-  expect(true).toBe(true); // Actual test in bct-p11d-cosmetics-purchase.spec.tsx
-});
-```
-
-### P11-D Test ID Mapping
-
-| BCT ID | Required Test IDs |
-|--------|-------------------|
-| BCT-COS-BUY-001 | `shop-cosmetic-buy-${id}` |
-| BCT-COS-BUY-002 | `shop-cosmetic-buy-disabled-${id}` |
-| BCT-COS-BUY-003 | `shop-cosmetic-buy-${id}`, gems balance update |
-| BCT-COS-BUY-004 | `shop-cosmetic-equip-${id}` (visible after purchase, not auto-triggered) |
+| ID | Requirement | Bible |
+|----|-------------|-------|
+| BCT-COS-BUY-001 | Buy button shown for non-owned cosmetics (sufficient gems) | §11.5.2 |
+| BCT-COS-BUY-002 | Disabled button when insufficient gems | §11.5.2 |
+| BCT-COS-BUY-003 | Purchase deducts gems and grants pet-bound ownership | §11.5.2 |
+| BCT-COS-BUY-004 | No auto-equip after purchase (ownership only) | §11.5.2 |
 
 ### P11-D Error Codes
 
@@ -1778,101 +1438,86 @@ it('BCT-COS-BUY-004: No auto-equip after purchase', () => {
 
 ## Phase 11 — P11-D1: Cosmetics Purchase UX Polish
 
-**Scope:** Improve cosmetics purchase UX without changing economics/rules.
-**Bible Reference:** §11.5.2 (Pet-Bound Ownership)
+> **Status:** ✅ Implemented. Bible §11.5.2.
 
-### P11-D1 Test Categories
-
-| Category | Test Count | Description | Status |
-|----------|------------|-------------|--------|
-| **BCT-COS-BUY-UI** | **2** | Purchase UX: immediate UI update, double-tap protection | ✅ Implemented |
-
-### BCT-COS-BUY-UI-001: After purchase, Shop updates immediately
-
-**Design Rule:** Gems decrease and item becomes Owned with equip controls available (no auto-equip).
-
-```typescript
-// Scenario: Immediate UI update after successful purchase
-// Given: Active pet does not own a cosmetic
-// And: Player has sufficient gems
-// When: User clicks Buy button
-// Then: gems decrease by priceGems immediately
-// And: Item shows Owned state with equip controls
-// And: No auto-equip occurs
-
-it('BCT-COS-BUY-UI-001: After purchase, owned state appears immediately', () => {
-  expect(true).toBe(true); // Actual test in bct-p11d1-cosmetics-purchase-ui.spec.ts
-});
-```
-
-### BCT-COS-BUY-UI-002: Double-tap protection prevents multiple deductions
-
-**Design Rule:** Button disables during purchase and prevents multiple deductions.
-
-```typescript
-// Scenario: Double-tap protection
-// Given: User clicks Buy button
-// When: Buy action is in progress
-// Then: Button shows disabled "Purchasing..." state
-// And: Additional clicks are ignored
-// And: Only one gem deduction occurs
-
-it('BCT-COS-BUY-UI-002: Double-tap protection prevents multiple deductions', () => {
-  expect(true).toBe(true); // Actual test in bct-p11d1-cosmetics-purchase-ui.spec.ts
-});
-```
-
-### P11-D1 Test ID Mapping
-
-| BCT ID | Required Test IDs |
-|--------|-------------------|
-| BCT-COS-BUY-UI-001 | `shop-cosmetic-buy-${id}`, `shop-cosmetic-owned-${id}`, `shop-gems-balance` |
-| BCT-COS-BUY-UI-002 | `shop-cosmetic-buy-${id}` (disabled attribute during purchase) |
-
-### P11-D1 UX Notes
-
-- **Disabled state text:** Shows deterministic "Need {X} more" where X = priceGems - currentGems
-- **Error feedback:** INSUFFICIENT_GEMS shows disabled button; impossible errors (INVALID_*) logged to console only
-- **Purchase-in-progress:** Button shows "💎 Purchasing..." with cursor-wait
+| ID | Requirement | Bible |
+|----|-------------|-------|
+| BCT-COS-BUY-UI-001 | After purchase, Shop updates immediately (no auto-equip) | §11.5.2 |
+| BCT-COS-BUY-UI-002 | Double-tap protection prevents multiple deductions | §11.5.2 |
 
 ---
 
-### Key Test Specifications (Preview - P11-C/Purchase)
+## Reserved IDs — Phase 12
 
-**BCT-COSMETICS-OWNERSHIP-001** (Planned - Purchase Phase)
-```
-Given: Pet A has purchased cos_hat_cap_blue
-When: User switches to Pet B and views shop
-Then: cos_hat_cap_blue shows "Owned by [Pet A]"
-And: CTA shows "Buy for [Pet B] — X💎"
-And: Pet B can purchase the same SKU
-```
+> **Status:** 🔲 Reserved — ID reservation only. No tests until implementation.
+> **Enable when:** TASKS.md shows Phase 12-X as COMPLETE.
 
-**BCT-COSMETICS-EQUIP-GUARD-001** (Planned - P11-B)
-```
-Given: Pet A owns cos_hat_cap_blue
-And: Pet B does NOT own cos_hat_cap_blue
-When: Code attempts equipCosmetic('cos_hat_cap_blue', 'pet_b')
-Then: Action is blocked
-And: Pet B's equipped state is unchanged
-```
+### §17 Achievements (Phase 12-A)
 
-**BCT-COSMETICS-INVARIANT-001** (Planned)
-```
-Given: Pet has equipped cos_aura_rainbow (Legendary)
-When: Pet gains XP from feeding
-Then: XP gain is unchanged from baseline (no cosmetic bonus)
-```
+| ID | Requirement | Bible |
+|----|-------------|-------|
+| BCT-ACH-001 | Total achievements = Bible §17.1 count | §17.1 |
+| BCT-ACH-002 | Total gem rewards = Bible §17.1 sum | §17.1 |
+| BCT-ACH-003 | Categories = Bible §17.3 list | §17.3 |
+| BCT-ACH-004 | Retroactive unlock supported | §17 |
+| BCT-ACH-005 | Gems delivered instantly on unlock | §17 |
 
-**BCT-GEM-SOURCES-001** (Planned)
-```
-Given: Pet is level 4
-When: Pet reaches level 5
-Then: Player receives +5 gems
-And: Toast displays "+5💎 Level Up!"
-```
+### §10.3.1 Login Streak (Phase 12-B)
 
-> **Note:** ~52 specs planned per Bible v1.9. IDs TBD when P11-0/P11 implementation begins. No fabricated IDs.
+| ID | Requirement | Bible |
+|----|-------------|-------|
+| BCT-STREAK-001 | 7-day cycle, then reset | §10.3.1 |
+| BCT-STREAK-002 | Day 7 = Mystery Box | §10.3.1 |
+| BCT-STREAK-003 | No grace period (strict consecutive) | §10.3.1 |
+| BCT-STREAK-004 | Manual claim required | §10.3.1 |
+
+### §10.3.2 Mystery Box (Phase 12-B)
+
+| ID | Requirement | Bible |
+|----|-------------|-------|
+| BCT-MBOX-001 | Loot table weights per Bible §10.3.2 | §10.3.2 |
+| BCT-MBOX-002 | Guaranteed minimum value | §10.3.2 |
+| BCT-MBOX-003 | Source = Day 7 only (not purchasable) | §10.3.2 |
+
+### §11.6.2 Notification Center (Phase 12)
+
+| ID | Requirement | Bible |
+|----|-------------|-------|
+| BCT-NOTIF-001 | Max stored = Bible §11.6.2 limit | §11.6.2 |
+| BCT-NOTIF-002 | Overflow deletes oldest (FIFO) | §11.6.2 |
+| BCT-NOTIF-003 | Deep links route to correct screen | §11.6.2 |
+
+### §11.6.3 Trigger Engine (Phase 12)
+
+| ID | Requirement | Bible |
+|----|-------------|-------|
+| BCT-TRIGGER-001 | Hunger critical fires at Bible §11.6.3 threshold | §11.6.3 |
+| BCT-TRIGGER-002 | Same-type cooldown per Bible §11.6.3 | §11.6.3 |
+
+### §10.7 Event Framework (Phase 12-D)
+
+| ID | Requirement | Bible |
+|----|-------------|-------|
+| BCT-EVENT-001 | Currency expires per Bible §10.7.3 timing | §10.7.3 |
+| BCT-EVENT-002 | Leftover conversion per Bible §10.7.3 rate | §10.7.3 |
+| BCT-EVENT-003 | Expiry warnings per Bible §10.7.3 schedule | §10.7.3 |
+
+---
+
+## Reserved IDs — Phase 13
+
+> **Status:** 🔲 Reserved — ID reservation only. No tests until implementation.
+
+### §8.5 Session Mini-Games (Phase 13)
+
+| ID | Requirement | Bible |
+|----|-------------|-------|
+| BCT-SESSION-001 | Energy cost = Bible §8.5 value | §8.5 |
+| BCT-SESSION-002 | Daily cap shared with burst (Bible §8.5) | §8.5 |
+| BCT-SESSION-003 | Gems = 0 (same invariant as burst) | §8.1.1, §8.5 |
+| BCT-SESSION-004 | Score-to-tier mapping per Bible §8.5 | §8.5 |
+| BCT-SESSION-005 | Playable after cap (0 rewards) | §8.1.1, §8.5 |
+| BCT-SESSION-006 | Six games per Bible §8.5 catalog | §8.5 |
 
 ---
 
@@ -1893,4 +1538,4 @@ GRUNDY_PHASE_REVIEW_SOP.md      ← Process (WHO reviews WHEN)
 *This document is the contract for CE and QA review. All phases, patches, and hotfixes must pass relevant BCT tests before deployment.*
 
 ---
-**Document Version:** 2.4 | **Bible Alignment:** v1.11 | **Updated:** December 16, 2025
+**Document Version:** 2.5 | **Bible Alignment:** v1.11 | **Updated:** December 17, 2025
