@@ -11,9 +11,9 @@
 
 **Changelog:**
 - v2.4 (P12+): Bible v1.11 alignment — Added §8.1.1 Mini-Game Economy Invariants, §8.5 Session Games, §17 Achievements, §11.6.2-3 Notification Center. BCT tests to be added as implementation progresses.
-- v2.4 (P11 Pending): Bible v1.10 updated §14.5 (Menu-first + Action Bar) and §14.6 (Food Drawer, Terminology, Overlay Safety Rules). Navigation and layout BCT tests (BCT-NAV-*, BCT-LAYOUT-*) will be updated when UI implementation PR lands. No new test IDs until implementation.
-- v2.4 (P11 Pending): Bible v1.9 alignment — Phase 11 Cosmetics tests pending (~52 specs planned). Test IDs will be assigned when P11-0/P11 implementation begins. See `docs/patches/BIBLE_v1_9_PATCH_FINAL.md`.
-- v2.4: Weight & Sickness test suites (planned) — Added BCT-WEIGHT (12 tests), BCT-SICKNESS (18 tests), BCT-SICKNESS-OFFLINE (8 tests), BCT-ALERT-HEALTH (8 tests), BCT-COZY-IMMUNITY (6 tests) specifications for P10 Weight/Sickness runtime. Bible v1.8 alignment. See `docs/patches/BIBLE_v1.8_PATCH_WEIGHT_SICKNESS_MULTIPET.md`.
+- v2.4 (P11 Complete): Bible v1.10 §14.5 Menu-first + Action Bar, §14.6 Food Drawer. Phase 11 Cosmetics fully implemented with gem sources, purchase, render layering.
+- v2.4 (P10 Complete): Weight & Sickness test suites implemented — BCT-WEIGHT, BCT-SICKNESS, BCT-SICKNESS-OFFLINE, BCT-ALERT-HEALTH, BCT-COZY-IMMUNITY (~52 tests). Bible v1.8 alignment.
+- v2.4 (P9 Complete): Multi-Pet Runtime tests — BCT-MULTIPET (14 tests), BCT-PETSLOTS (11 tests). Bible v1.7 alignment.
 - v2.3: Multi-Pet Runtime tests — Added BCT-MULTIPET (14 tests) for P9-B runtime integration: energy scope, runaway auto-switch, switching constraints, offline rules, alert routing/suppression. Bible v1.7 alignment.
 - v2.2: Shop + Inventory spec tests — Added BCT-SHOP (25 tests), BCT-INV (17 tests), BCT-ECON starting resources tests (5 tests). Total: 47 new specifications for Web Phase 8.
 - v2.1: Bible v1.5 Neglect & Withdrawal tests (BCT-NEGLECT-001 through 023)
@@ -65,11 +65,11 @@ npm test -- --run
 | Inventory | BCT-INV-* | §11.7, §14.8 | Capacity, stacking, decomposition, UI |
 | Multi-Pet | BCT-MULTIPET-* | §8.2.1, §9.4.4–9.4.6, §14.6 | Energy scope, runaway handling, switching, offline, alerts |
 | Pet Slots | BCT-PETSLOTS-* | §11.6, §6 | Multi-pet ownership, slots, global resources |
-| Weight | BCT-WEIGHT-* | §5.7, §9.4.7.1 | Weight states, gain, decay, offline (PLANNED) |
-| Sickness | BCT-SICKNESS-* | §9.4.2, §9.4.7.2 | Sickness triggers, effects, recovery (PLANNED) |
-| Sickness Offline | BCT-SICKNESS-OFFLINE-* | §9.4.7.3 | Offline timer accumulation, 2× decay (PLANNED) |
-| Alert Health | BCT-ALERT-HEALTH-* | §11.6.1 | Weight/Sickness alert routing (PLANNED) |
-| Cozy Immunity | BCT-COZY-IMMUNITY-* | §9.3 | Sickness/Obese immunity in Cozy (PLANNED) |
+| Weight | BCT-WEIGHT-* | §5.7, §9.4.7.1 | Weight states, gain, decay, offline |
+| Sickness | BCT-SICKNESS-* | §9.4.2, §9.4.7.2 | Sickness triggers, effects, recovery |
+| Sickness Offline | BCT-SICKNESS-OFFLINE-* | §9.4.7.3 | Offline timer accumulation, 2× decay |
+| Alert Health | BCT-ALERT-HEALTH-* | §11.6.1 | Weight/Sickness alert routing |
+| Cozy Immunity | BCT-COZY-IMMUNITY-* | §9.3 | Sickness/Obese immunity in Cozy |
 
 ---
 
@@ -1006,9 +1006,9 @@ Run **at minimum** the BCT tests for the affected area:
 
 ---
 
-## Weight Tests (BCT-WEIGHT-*) — PLANNED (P10)
+## Weight Tests (BCT-WEIGHT-*) — P10 COMPLETE
 
-> **Status:** Planned for P10 Weight/Sickness runtime implementation.
+> **Status:** Implemented in P10 Weight/Sickness runtime (December 2025).
 > **Bible Reference:** §5.7, §9.4.7.1
 
 ### BCT-WEIGHT-001: Per-Pet Weight Tracking
@@ -1052,9 +1052,9 @@ Run **at minimum** the BCT tests for the affected area:
 
 ---
 
-## Sickness Tests (BCT-SICKNESS-*) — PLANNED (P10)
+## Sickness Tests (BCT-SICKNESS-*) — P10 COMPLETE
 
-> **Status:** Planned for P10 Weight/Sickness runtime implementation.
+> **Status:** Implemented in P10 Weight/Sickness runtime (December 2025).
 > **Bible Reference:** §9.4.2, §9.4.7.2
 
 ### BCT-SICKNESS-001: Classic Mode Only
@@ -1095,9 +1095,9 @@ Run **at minimum** the BCT tests for the affected area:
 
 ---
 
-## Sickness Offline Tests (BCT-SICKNESS-OFFLINE-*) — PLANNED (P10)
+## Sickness Offline Tests (BCT-SICKNESS-OFFLINE-*) — P10 COMPLETE
 
-> **Status:** Planned for P10 Weight/Sickness runtime implementation.
+> **Status:** Implemented in P10 Weight/Sickness runtime (December 2025).
 > **Bible Reference:** §9.4.7.3
 
 ### BCT-SICKNESS-OFFLINE-001: Timer Accumulation
@@ -1128,9 +1128,9 @@ Run **at minimum** the BCT tests for the affected area:
 
 ---
 
-## Alert Health Tests (BCT-ALERT-HEALTH-*) — PLANNED (P10)
+## Alert Health Tests (BCT-ALERT-HEALTH-*) — P10 COMPLETE
 
-> **Status:** Planned for P10 Weight/Sickness runtime implementation.
+> **Status:** Implemented in P10 Weight/Sickness runtime (December 2025).
 > **Bible Reference:** §11.6.1
 
 ### BCT-ALERT-HEALTH-001: Obese Weight Warning
@@ -1169,9 +1169,9 @@ Run **at minimum** the BCT tests for the affected area:
 
 ---
 
-## Cozy Immunity Tests (BCT-COZY-IMMUNITY-*) — PLANNED (P10)
+## Cozy Immunity Tests (BCT-COZY-IMMUNITY-*) — P10 COMPLETE
 
-> **Status:** Planned for P10 Weight/Sickness runtime implementation.
+> **Status:** Implemented in P10 Weight/Sickness runtime (December 2025).
 > **Bible Reference:** §9.3
 
 ### BCT-COZY-IMMUNITY-001: No Sickness in Cozy
