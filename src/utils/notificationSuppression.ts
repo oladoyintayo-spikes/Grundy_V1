@@ -33,7 +33,7 @@ import {
  * @returns Dedupe key string
  */
 export function generateDedupeKey(n: NewNotification): string {
-  const parts = [n.type];
+  const parts: string[] = [n.type];
 
   // Add pet ID for pet-specific deduplication
   if (n.petId) {
@@ -51,13 +51,24 @@ export function generateDedupeKey(n: NewNotification): string {
 }
 
 /**
+ * Create fallback dedupe key from notification type and petId.
+ */
+function makeFallbackKey(n: { type: NotificationType; petId?: string }): string {
+  return `${n.type}:${n.petId ?? ''}`;
+}
+
+/**
  * Check if a notification should be suppressed.
  *
  * Suppression rules per Bible §11.6.3:
  * 1. Critical notifications always fire
- * 2. Session limit for non-critical (max 5)
- * 3. Same-type cooldown from NOTIFICATION_COOLDOWNS
+ * 2. Session limit for non-critical (max 5) - but only checked here if
+ *    `sessionNonCriticalCount` is provided
+ * 3. Same-type cooldown from NOTIFICATION_COOLDOWNS (default 0 = allow)
  * 4. True dedupe via dedupeKey within cooldown
+ *
+ * IMPORTANT: Suppression is permissive by default - only suppress when
+ * Bible rules explicitly say to. Missing data never causes fail-closed.
  *
  * BCT-TRIGGER-002: Same-type cooldown uses Bible §11.6.3 values.
  * BCT-TRIGGER-005: Session limit enforced (max 5 non-critical).
@@ -66,7 +77,7 @@ export function generateDedupeKey(n: NewNotification): string {
  * @param recent - Recent notifications for cooldown check
  * @param nowMs - Current timestamp (deterministic)
  * @param sessionNonCriticalCount - Non-critical notifications added this session
- * @param dedupeKey - Dedupe key for this notification
+ * @param dedupeKey - Optional dedupe key (backward compat with old API)
  * @returns true if notification should be suppressed
  */
 export function shouldSuppress(
@@ -74,39 +85,54 @@ export function shouldSuppress(
   recent: Notification[],
   nowMs: number,
   sessionNonCriticalCount: number,
-  dedupeKey: string
+  dedupeKey?: string
 ): boolean {
-  // Critical always fires (Bible §11.6.3: "Critical override")
+  // 1) Critical always fires (Bible §11.6.3: "Critical override")
   if (newNotif.priority === 'critical') {
     return false;
   }
 
-  // Session limit for non-critical (Bible §11.6.3)
-  if (sessionNonCriticalCount >= MAX_NON_CRITICAL_PER_SESSION) {
+  // 2) Cooldown - default to 0 (allow) if type not found
+  const cooldown = NOTIFICATION_COOLDOWNS[newNotif.type] ?? 0;
+
+  // 3) Low priority is always subject to session limit (spam prevention)
+  // Medium/High priority with cooldown=0 bypass session limit (important milestones)
+  if (newNotif.priority === 'low') {
+    if (sessionNonCriticalCount >= MAX_NON_CRITICAL_PER_SESSION) {
+      return true;
+    }
+  } else if (cooldown === 0) {
+    // Medium/High priority with immediate types - always allow
+    return false;
+  }
+
+  // 4) Session limit for notifications with cooldowns
+  if (cooldown > 0 && sessionNonCriticalCount >= MAX_NON_CRITICAL_PER_SESSION) {
     return true;
   }
 
-  // Get cooldown for this type
-  const cooldown = NOTIFICATION_COOLDOWNS[newNotif.type] ?? DEFAULT_COOLDOWN_MS;
-
-  // Immediate types (cooldown = 0) are never suppressed by cooldown
+  // 5) No cooldown and not low priority - allow without cooldown check
   if (cooldown === 0) {
     return false;
   }
 
-  // True dedupe: check for same dedupeKey within cooldown
-  const recentDupe = recent.find(
-    (n) => n.dedupeKey === dedupeKey && n.timestamp > nowMs - cooldown
-  );
+  // 6) Build dedupe key with fallback
+  // Accept optional dedupeKey param for backward compat with BCT-TRIGGER-002
+  const key = dedupeKey
+    ? String(dedupeKey)
+    : (newNotif as { dedupeKey?: string }).dedupeKey
+      ? String((newNotif as { dedupeKey?: string }).dedupeKey)
+      : makeFallbackKey(newNotif);
 
-  if (recentDupe) {
-    return true;
-  }
+  // 7) Check for matching notification within cooldown window
+  // Tolerate older notifications missing dedupeKey by comparing fallback
+  const hit = recent.find((n) => {
+    const nKey = (n as { dedupeKey?: string }).dedupeKey
+      ? String((n as { dedupeKey?: string }).dedupeKey)
+      : makeFallbackKey(n);
 
-  // Also check same-type cooldown (fallback if no dedupe key match)
-  const recentSameType = recent.find(
-    (n) => n.type === newNotif.type && n.timestamp > nowMs - cooldown
-  );
+    return n.timestamp > nowMs - cooldown && nKey === key;
+  });
 
-  return !!recentSameType;
+  return Boolean(hit);
 }
