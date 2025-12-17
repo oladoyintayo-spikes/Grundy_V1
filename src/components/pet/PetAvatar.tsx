@@ -251,7 +251,7 @@ export function PetRender({
     <div
       data-testid="pet-render-root"
       className={[
-        'relative flex items-center justify-center',
+        'relative flex items-center justify-center p-4',
         breathing && 'animate-breath',
         className,
       ]
@@ -261,12 +261,12 @@ export function PetRender({
       {/* Aura layer (background, behind pet) - render first if equipped */}
       {equippedCosmetics.aura && renderCosmeticLayer('aura')}
 
-      {/* Base pet sprite */}
+      {/* Base pet sprite - Bible §13.6: Clear silhouettes at appropriate size, §14.6: Pet is focal point */}
       <img
         data-testid="pet-render-base"
         src={src}
         alt={altText}
-        className="w-32 h-32 sm:w-40 sm:h-40 object-contain drop-shadow-lg"
+        className="max-h-[45%] max-w-[80%] lg:max-h-[400px] object-contain drop-shadow-lg"
         style={{ position: 'relative', zIndex: LAYER_Z_INDEX.base }}
         loading="lazy"
         draggable={false}
