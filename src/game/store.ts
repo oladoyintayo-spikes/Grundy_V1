@@ -289,6 +289,7 @@ function createInitialAlertSuppressionState(): AlertSuppressionState {
 /**
  * Calculate offline stat decay for a single pet.
  * Bible §9.4.6: Offline decay rates per 24 hours.
+ * Bible §9.4.7.0: Hunger decays -10 per 24h offline (proportional).
  * @param hoursOffline Number of hours the player was offline
  * @param hasPlusSubscription Whether player has Grundy Plus
  * @returns Decay amounts to apply
@@ -297,7 +298,7 @@ function calculateOfflineDecay(
   hoursOffline: number,
   hasPlusSubscription: boolean = false
 ): { moodDecay: number; bondDecay: number; hungerDecay: number } {
-  // Calculate number of 24h periods (use full periods for deterministic behavior)
+  // Calculate number of 24h periods (use full periods for mood/bond)
   const periods24h = Math.floor(hoursOffline / 24);
 
   // Bible §9.4.6 rates: per 24h offline
@@ -306,7 +307,11 @@ function calculateOfflineDecay(
     ? OFFLINE_DECAY_RATES.BOND_PER_24H_PLUS
     : OFFLINE_DECAY_RATES.BOND_PER_24H;
   const bondDecay = periods24h * bondDecayRate;
-  const hungerDecay = periods24h * OFFLINE_DECAY_RATES.HUNGER_PER_24H;
+
+  // Bible §9.4.7.0: Hunger decays proportionally (-10 per 24h)
+  // Formula: hungerDecay = (hoursOffline / 24) * 10
+  // Final value is rounded for integer storage
+  const hungerDecay = (hoursOffline / 24) * OFFLINE_DECAY_RATES.HUNGER_PER_24H;
 
   return { moodDecay, bondDecay, hungerDecay };
 }
@@ -365,10 +370,11 @@ function applyOfflineDecayToPet(
       OFFLINE_DECAY_RATES.BOND_FLOOR,
       pet.bond - effectiveBondDecay
     ),
-    hunger: Math.max(
+    // Bible §9.4.7.0: Round hunger to integer for stable storage
+    hunger: Math.round(Math.max(
       OFFLINE_DECAY_RATES.HUNGER_FLOOR,
       pet.hunger - effectiveHungerDecay
-    ),
+    )),
   };
 }
 
@@ -629,14 +635,17 @@ export const useGameStore = create<GameStore>()(
           const newMoodValue = updateMoodValue(state.pet.moodValue ?? 50, result.reaction, state.pet.id, state.playMode);
 
           // Update pet with adjusted gains
+          // Bible §4.3: Apply cooldown multiplier to hunger gain as well
+          const baseHungerGain = result.reaction === 'ecstatic' ? 20 :
+            result.reaction === 'positive' ? 15 :
+            result.reaction === 'negative' ? 5 : 10;
+          const adjustedHungerGain = Math.round(baseHungerGain * feedValueMultiplier);
+
           const newPet: PetState = {
             ...state.pet,
             xp: state.pet.xp + adjustedXP,
             bond: Math.min(GAME_CONFIG.maxBond, state.pet.bond + adjustedBond),
-            hunger: Math.min(GAME_CONFIG.maxHunger, state.pet.hunger +
-              (result.reaction === 'ecstatic' ? 20 :
-               result.reaction === 'positive' ? 15 :
-               result.reaction === 'negative' ? 5 : 10)),
+            hunger: Math.min(GAME_CONFIG.maxHunger, state.pet.hunger + adjustedHungerGain),
             mood: syncMoodState(newMoodValue),
             moodValue: newMoodValue,
             lastMoodUpdate: feedTime,
